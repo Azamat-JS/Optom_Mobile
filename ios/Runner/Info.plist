@@ -26,6 +26,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Mahsulot shtrix-kodini skanerlash va mahsulot rasmini olish uchun kamera kerak.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Mahsulot uchun rasm tanlash uchun galereyaga kirish kerak.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

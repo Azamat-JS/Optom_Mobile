@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:bsmart/core/enums/user_role.dart';
+import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 /// Placeholder landing screen after login — the real seller/retailer
@@ -56,6 +58,12 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(height: 4),
               Text(user!.shopName!, style: Theme.of(context).textTheme.bodySmall),
             ],
+            const SizedBox(height: 32),
+            FilledButton.icon(
+              onPressed: () => context.push(RouteNames.products),
+              icon: const Icon(Icons.inventory_2_outlined),
+              label: const Text('Mahsulotlar'),
+            ),
           ],
         ),
       ),

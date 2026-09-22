@@ -8,6 +8,10 @@ import 'package:bsmart/features/auth/presentation/providers/session_notifier.dar
 import 'package:bsmart/features/auth/presentation/screens/login_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/splash_screen.dart';
 import 'package:bsmart/features/dashboard/presentation/screens/home_screen.dart';
+import 'package:bsmart/features/products/domain/entities/product.dart';
+import 'package:bsmart/features/products/presentation/screens/product_detail_screen.dart';
+import 'package:bsmart/features/products/presentation/screens/product_form_screen.dart';
+import 'package:bsmart/features/products/presentation/screens/products_list_screen.dart';
 
 /// Notifies [GoRouter] to re-run its `redirect` whenever auth state changes,
 /// so e.g. a forced logout (refresh-token failure) immediately routes back
@@ -38,6 +42,28 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.home,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const HomeScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.products,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const ProductsListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.productNew,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const ProductFormScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.productDetailPattern,
+        pageBuilder: (context, state) => fadeThroughPage(
+          state: state,
+          child: ProductDetailScreen(productId: state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.productEditPattern,
+        pageBuilder: (context, state) => fadeThroughPage(
+          state: state,
+          child: ProductFormScreen(editingProduct: state.extra as Product?),
+        ),
       ),
     ],
   );

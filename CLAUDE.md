@@ -149,8 +149,21 @@ features/
     presentation/active_store_notifier.dart   → thin, will grow real data/domain layers in Milestone 6
   dashboard/
     presentation/screens/home_screen.dart     → placeholder landing screen (see Progress Log)
+  categories/         → READ-ONLY browse (category CRUD is SUPER_ADMIN-only, see "Product/Catalog model")
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/
+    presentation/{providers,widgets}/         → CategoryPickerField (leaf-only picker, used by product form)
+  products/           → the tenant's own inventory (full CRUD + images + barcode + receive-stock)
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/  → one usecase class per repository method (LoginUseCase-style)
+    presentation/{providers,screens,widgets}/ → ProductsListNotifier (paginated/filtered list state)
+  master_catalog/     → READ-ONLY browse of the shared MasterProduct catalog ("Add from Catalog" picker)
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/
+    presentation/screens/master_catalog_picker_screen.dart
 
-shared/widgets/    → empty so far; put generic cross-feature widgets here (empty states, error views, shimmer lists, currency badges, role gates) as they're needed
+shared/widgets/
+  barcode_scanner_screen.dart   → full-screen mobile_scanner camera view, reused by products now and POS later
 ```
 
 Every future feature (`products`, `categories`, `orders`, `customers`, `sales_pos`, `debts`,
@@ -179,6 +192,35 @@ SUPER_ADMIN via the `user` module. So `AuthRepository` deliberately has no `regi
 there is no Register screen in Phase 1 — only `LoginScreen`. Customer self-registration
 (`POST /auth/register`) is Phase 2 scope, when the `CUSTOMER` role and public storefront are built.
 
+### Product / Catalog model (confirmed against real backend source, 2026-09-22)
+- **`GET /products` is always scoped to the caller's own `sellerId`/store** — it is the tenant's
+  own inventory-management list, never a browsable market of other sellers' stock. A separate
+  `catalog` module (buyer-facing B2B market browsing) exists on the backend but is not yet
+  consumed by bsmart — that's Milestone 3's concern.
+- **`Category` CRUD is SUPER_ADMIN-only** (`POST`/`PATCH`/`DELETE`/image routes all require
+  `@Roles(SUPER_ADMIN)`) — mirrors the "no self-registration" correction from Milestone 1.
+  SELLER/RETAILER only ever `GET` categories, so `features/categories` is deliberately read-only
+  in Phase 1; full category management is Phase 3, SUPER_ADMIN-panel scope.
+- **`MasterProduct` (shared catalog) moderation is SUPER_ADMIN-only** the same way — SELLER/
+  RETAILER only browse `APPROVED` entries (enforced server-side, `TenantFilter.masterProduct`
+  forces `isActive: true` for non-SUPER_ADMIN roles) to link a new product via "Add from Catalog"
+  or to `share-to-catalog` an existing one. Approve/reject queue is Phase 3.
+- **`POST /products/:id/barcode` generates a random barcode server-side** — the client never
+  supplies a barcode value here. Native camera scanning (`mobile_scanner`) is instead used to
+  *find* an existing product by exact-barcode search (`ProductQuery.barcode`, wired through the
+  product list's scan action) — the natural POS-scanning groundwork for Milestone 4.
+- **Prisma `Decimal` fields serialize as JSON strings, not numbers** — `Product.price`,
+  `.costPrice`, `.stock` all come over the wire as strings (e.g. `"15000.00"`). Every model parsing
+  one of these fields must go through `core/utils/decimal_parser.dart`'s `parseDecimal`/
+  `parseNullableDecimal` — casting `as num`/`as double` directly will throw.
+- **Pagination envelope is identical across `category`/`product`/`master-product`**: `{data: T[],
+  meta: {total, page, limit, totalPages, hasNext, hasPrev}}` — modeled once as
+  `core/network/paginated_result.dart`'s `PaginatedResult<T>`, reused by every list endpoint.
+- For a catalog-linked product (`masterProductId != null`), the backend's `resolveDisplay()`
+  already overwrites `name`/`description`/`images`/`brand` with the linked `MasterProduct`'s
+  values before the JSON reaches the client — `product_model.dart` never needs to resolve this
+  itself, and the edit form correctly treats `name`/`description` as read-only for linked products.
+
 ### Offline strategy
 Hive is a **read-cache layer only** — write-through on a successful remote fetch, fall back to the
 cached value on a `NetworkApiException`. **No offline writes** (no queuing an order/sale/payment
@@ -203,7 +245,7 @@ different data), Uzbek-only UI (no i18n framework needed yet, but route strings 
 |---|---|---|
 | 0 | Project setup & housekeeping (bundle id, platform trim, deps, folder skeleton) | ✅ Done 2026-09-22 |
 | 1 | Auth + Shell + Dashboard | 🟡 Auth done (login/splash/session restore/logout); role-aware dashboard (reporting charts, KPI cards, UZS/USD toggle, `GET /store`-based switcher visibility) **not yet built** — `HomeScreen` is a placeholder |
-| 2 | Products, Categories, Master-Catalog browse | ⬜ Not started |
+| 2 | Products, Categories, Master-Catalog browse | 🟡 Product CRUD + barcode-generate + receive-stock + delete verified live end-to-end (2026-09-22). Category/master-catalog pickers built and code-reviewed but **not runtime-verified** (fresh test DB had no category/catalog data — re-verify once seed data exists). Image upload/delete built but not runtime-verified (needs a real photo on the test device/emulator). Barcode-scan-to-find not runtime-verified (needs a real device — `mobile_scanner` doesn't work on Apple-Silicon iOS Simulator, and the Android emulator's virtual camera has no real barcode to scan) |
 | 3 | B2B Orders | ⬜ Not started |
 | 4 | Customers + B2C Sales/POS (native barcode scanning) | ⬜ Not started |
 | 5 | Debts + Payments | ⬜ Not started |
@@ -244,6 +286,36 @@ in the field; bsmart must never hard-depend on this track (every integration poi
 
 ---
 
+## Local Verification Workflow
+
+Every milestone should be verified against the **real, running** Optom Savdo backend, not mocked
+(matches that project's own dev practice). Steps, repeatable each session:
+
+1. **Start the backend**: `cd ../Optom_Savdo && pnpm --filter server dev` (reads its own `.env` —
+   check the printed `PORT` in the startup log; it's not always 4004, e.g. it ran on 4005 during
+   Milestone 2 verification because something else already held 4004 locally).
+2. **Point bsmart at it**: edit `bsmart/.env`'s `API_BASE_URL`. From an Android emulator, the host
+   machine's `localhost` is reachable at `10.0.2.2` — e.g. `http://10.0.2.2:4005/api`. Revert to
+   the `.env.example` default (`http://localhost:3000/api`) when done, so the repo's checked-in
+   default stays sane for the next session.
+3. **You need a real SELLER/RETAILER account** — there is no self-registration for these roles
+   (see "Session / auth model"). If none exists in the local dev DB yet, create one directly via
+   Prisma (mirrors the exact pattern the reference backend's own `CLAUDE.md` documents for its
+   verification passes): a scratch Node script using `apps/server`'s own `generated/prisma` client,
+   `@prisma/adapter-pg`'s `PrismaPg` + a `pg.Pool` built from `DATABASE_URL` (matching
+   `prisma.service.ts`'s exact construction — a bare `new PrismaClient()` throws in Prisma 7
+   without the adapter), and `bcrypt.hash()` for the password. Create both a `User` (`role:
+   'SELLER'`) and its default `Store` (`isDefault: true`) — the backend's own `UserService.create`
+   does both together for real signups, and any store-scoped write will fail without one.
+4. **Clean up afterward**: hard-delete any `Product`/etc. rows created by the test account, then
+   delete the `User` row itself (cascades to its `Store` — confirm the relevant relation's
+   `onDelete` in `schema.prisma` before assuming cascade elsewhere). Never leave test data behind
+   in the shared local dev DB. Stop the backend process when done.
+5. Local dev Postgres for this project lives at `localhost:5432/optom` (see `apps/server/.env`) —
+   safe for throwaway test data, unlike a shared staging/production database.
+
+---
+
 ## Progress Log
 
 ### 2026-09-22 — Milestone 0 + Auth foundation
@@ -274,3 +346,44 @@ in the field; bsmart must never hard-depend on this track (every integration poi
 
 **Next up:** Milestone 1's actual dashboard (reporting endpoints + charts + UZS/USD toggle), then
 Milestone 2 (Products/Categories/Master-Catalog).
+
+### 2026-09-22 — Milestone 2 (Products, Categories, Master-Catalog)
+- Read the real `category`/`product`/`product-image`/`master-product` controllers, every DTO, and
+  the relevant Prisma models directly (not a prior research summary) before writing any data-layer
+  code — see "Product/Catalog model" above for what that surfaced, including two corrections to
+  the original plan (category/catalog CRUD is SUPER_ADMIN-only; barcode-assign generates
+  server-side rather than accepting a scanned value).
+- Built `features/categories` (read-only tree browse + `CategoryPickerField`), `features/products`
+  (full CRUD, list with search/category-filter/infinite-scroll, detail, create/edit form with an
+  "Add from Catalog" vs. custom-product choice, image upload/delete, quick stock-adjust sheet,
+  barcode generation, share-to-catalog), and `features/master_catalog` (read-only search picker) —
+  all following `features/auth`'s exact `data`/`domain`/`presentation` shape, one usecase class per
+  repository method.
+- Added `shared/widgets/barcode_scanner_screen.dart` (`mobile_scanner` full-screen camera view) and
+  `core/utils/{decimal_parser,currency_formatter}.dart`, `core/network/paginated_result.dart` as
+  new cross-cutting primitives.
+- Added the required iOS (`NSCameraUsageDescription`, `NSPhotoLibraryUsageDescription`) and Android
+  (`CAMERA` permission + optional camera feature) manifest entries for `mobile_scanner`/
+  `image_picker` — missing these would have crashed the app on first camera/gallery access.
+- `flutter analyze`: clean. `flutter test`: passing (unchanged from Milestone 1's suite; no new
+  pure-logic units were extracted this milestone beyond what's already covered).
+- **Verified live** against a real running Optom Savdo backend (see "Local Verification Workflow"
+  above) with a throwaway test SELLER account: login → empty product list renders correctly →
+  create a product (custom, not catalog-linked) → detail screen renders correctly with currency
+  formatting → generate barcode (server-assigned, UI updates and hides the button correctly) →
+  receive stock via the quick-adjust sheet (0 → 25, confirmed) → edit (price 15000 → 20000,
+  confirmed) → delete (soft-delete, list correctly empties again). All steps screenshotted and
+  confirmed against the actual rendered UI, not just "no exception thrown." Test data fully cleaned
+  up from the local DB afterward (product hard-deleted, test user deleted cascading its store).
+- **Not runtime-verified this pass** (see roadmap table): category picker and master-catalog picker
+  (the fresh test DB had zero categories/catalog entries to pick from), product image upload/delete
+  (needs a real photo available to the test device's gallery), and barcode-scan-to-find (needs a
+  real device with a real barcode to point a camera at — the Android emulator's simulated camera
+  has nothing to scan, and iOS Simulator can't run `mobile_scanner` at all). These are built and
+  analyzer-clean but should be exercised for real before considering Milestone 2 fully closed —
+  particularly image upload, since multipart form upload is new code with no prior verified
+  precedent in this app to lean on.
+
+**Next up:** finish verifying the three gaps above (ideally on a real device, or a seeded dev DB
+with categories/catalog entries and a gallery photo), then Milestone 1's dashboard, then Milestone
+3 (B2B Orders).

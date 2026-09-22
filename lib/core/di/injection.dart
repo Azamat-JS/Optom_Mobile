@@ -14,6 +14,28 @@ import 'package:bsmart/features/auth/domain/usecases/login_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/verify_password_usecase.dart';
+import 'package:bsmart/features/categories/data/datasources/categories_remote_data_source.dart';
+import 'package:bsmart/features/categories/data/repositories/categories_repository_impl.dart';
+import 'package:bsmart/features/categories/domain/repositories/categories_repository.dart';
+import 'package:bsmart/features/categories/domain/usecases/get_categories_usecase.dart';
+import 'package:bsmart/features/master_catalog/data/datasources/master_catalog_remote_data_source.dart';
+import 'package:bsmart/features/master_catalog/data/repositories/master_catalog_repository_impl.dart';
+import 'package:bsmart/features/master_catalog/domain/repositories/master_catalog_repository.dart';
+import 'package:bsmart/features/master_catalog/domain/usecases/search_master_catalog_usecase.dart';
+import 'package:bsmart/features/products/data/datasources/products_remote_data_source.dart';
+import 'package:bsmart/features/products/data/repositories/products_repository_impl.dart';
+import 'package:bsmart/features/products/domain/repositories/products_repository.dart';
+import 'package:bsmart/features/products/domain/usecases/assign_barcode_usecase.dart';
+import 'package:bsmart/features/products/domain/usecases/create_product_usecase.dart';
+import 'package:bsmart/features/products/domain/usecases/delete_product_image_usecase.dart';
+import 'package:bsmart/features/products/domain/usecases/delete_product_usecase.dart';
+import 'package:bsmart/features/products/domain/usecases/get_next_plu_usecase.dart';
+import 'package:bsmart/features/products/domain/usecases/get_product_usecase.dart';
+import 'package:bsmart/features/products/domain/usecases/list_products_usecase.dart';
+import 'package:bsmart/features/products/domain/usecases/receive_stock_usecase.dart';
+import 'package:bsmart/features/products/domain/usecases/share_to_catalog_usecase.dart';
+import 'package:bsmart/features/products/domain/usecases/update_product_usecase.dart';
+import 'package:bsmart/features/products/domain/usecases/upload_product_image_usecase.dart';
 
 const _bareDioInstance = 'bareDio';
 const _mainDioInstance = 'mainDio';
@@ -56,6 +78,31 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => GetCurrentUserUseCase(getIt()));
   getIt.registerFactory(() => UpdateProfileUseCase(getIt()));
   getIt.registerFactory(() => VerifyPasswordUseCase(getIt()));
+
+  // --- features/categories ---
+  getIt.registerLazySingleton(() => CategoriesRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<CategoriesRepository>(() => CategoriesRepositoryImpl(getIt()));
+  getIt.registerFactory(() => GetCategoriesUseCase(getIt()));
+
+  // --- features/products ---
+  getIt.registerLazySingleton(() => ProductsRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<ProductsRepository>(() => ProductsRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListProductsUseCase(getIt()));
+  getIt.registerFactory(() => GetProductUseCase(getIt()));
+  getIt.registerFactory(() => CreateProductUseCase(getIt()));
+  getIt.registerFactory(() => UpdateProductUseCase(getIt()));
+  getIt.registerFactory(() => DeleteProductUseCase(getIt()));
+  getIt.registerFactory(() => ReceiveStockUseCase(getIt()));
+  getIt.registerFactory(() => AssignBarcodeUseCase(getIt()));
+  getIt.registerFactory(() => ShareToCatalogUseCase(getIt()));
+  getIt.registerFactory(() => GetNextPluUseCase(getIt()));
+  getIt.registerFactory(() => UploadProductImageUseCase(getIt()));
+  getIt.registerFactory(() => DeleteProductImageUseCase(getIt()));
+
+  // --- features/master_catalog ---
+  getIt.registerLazySingleton(() => MasterCatalogRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<MasterCatalogRepository>(() => MasterCatalogRepositoryImpl(getIt()));
+  getIt.registerFactory(() => SearchMasterCatalogUseCase(getIt()));
 }
 
 /// The main authenticated [Dio] instance — for feature data sources
