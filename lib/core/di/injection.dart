@@ -18,10 +18,29 @@ import 'package:bsmart/features/categories/data/datasources/categories_remote_da
 import 'package:bsmart/features/categories/data/repositories/categories_repository_impl.dart';
 import 'package:bsmart/features/categories/domain/repositories/categories_repository.dart';
 import 'package:bsmart/features/categories/domain/usecases/get_categories_usecase.dart';
+import 'package:bsmart/features/catalog/data/datasources/catalog_remote_data_source.dart';
+import 'package:bsmart/features/catalog/data/repositories/catalog_repository_impl.dart';
+import 'package:bsmart/features/catalog/domain/repositories/catalog_repository.dart';
+import 'package:bsmart/features/catalog/domain/usecases/browse_catalog_usecase.dart';
+import 'package:bsmart/features/catalog/domain/usecases/list_catalog_sellers_usecase.dart';
+import 'package:bsmart/features/catalog/domain/usecases/list_seller_stores_usecase.dart';
+import 'package:bsmart/features/dashboard/data/datasources/reporting_remote_data_source.dart';
+import 'package:bsmart/features/dashboard/data/repositories/reporting_repository_impl.dart';
+import 'package:bsmart/features/dashboard/domain/repositories/reporting_repository.dart';
+import 'package:bsmart/features/dashboard/domain/usecases/get_income_debt_chart_usecase.dart';
+import 'package:bsmart/features/dashboard/domain/usecases/get_retailer_dashboard_usecase.dart';
+import 'package:bsmart/features/dashboard/domain/usecases/get_wholesaler_dashboard_usecase.dart';
 import 'package:bsmart/features/master_catalog/data/datasources/master_catalog_remote_data_source.dart';
 import 'package:bsmart/features/master_catalog/data/repositories/master_catalog_repository_impl.dart';
 import 'package:bsmart/features/master_catalog/domain/repositories/master_catalog_repository.dart';
 import 'package:bsmart/features/master_catalog/domain/usecases/search_master_catalog_usecase.dart';
+import 'package:bsmart/features/orders/data/datasources/orders_remote_data_source.dart';
+import 'package:bsmart/features/orders/data/repositories/orders_repository_impl.dart';
+import 'package:bsmart/features/orders/domain/repositories/orders_repository.dart';
+import 'package:bsmart/features/orders/domain/usecases/create_order_usecase.dart';
+import 'package:bsmart/features/orders/domain/usecases/get_order_usecase.dart';
+import 'package:bsmart/features/orders/domain/usecases/list_orders_usecase.dart';
+import 'package:bsmart/features/orders/domain/usecases/update_order_status_usecase.dart';
 import 'package:bsmart/features/products/data/datasources/products_remote_data_source.dart';
 import 'package:bsmart/features/products/data/repositories/products_repository_impl.dart';
 import 'package:bsmart/features/products/domain/repositories/products_repository.dart';
@@ -103,6 +122,28 @@ void setupDependencyInjection() {
   getIt.registerLazySingleton(() => MasterCatalogRemoteDataSource(mainDio));
   getIt.registerLazySingleton<MasterCatalogRepository>(() => MasterCatalogRepositoryImpl(getIt()));
   getIt.registerFactory(() => SearchMasterCatalogUseCase(getIt()));
+
+  // --- features/dashboard ---
+  getIt.registerLazySingleton(() => ReportingRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<ReportingRepository>(() => ReportingRepositoryImpl(getIt()));
+  getIt.registerFactory(() => GetWholesalerDashboardUseCase(getIt()));
+  getIt.registerFactory(() => GetRetailerDashboardUseCase(getIt()));
+  getIt.registerFactory(() => GetIncomeDebtChartUseCase(getIt()));
+
+  // --- features/catalog (buyer-facing browsing, for the create-order flow) ---
+  getIt.registerLazySingleton(() => CatalogRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<CatalogRepository>(() => CatalogRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListCatalogSellersUseCase(getIt()));
+  getIt.registerFactory(() => ListSellerStoresUseCase(getIt()));
+  getIt.registerFactory(() => BrowseCatalogUseCase(getIt()));
+
+  // --- features/orders ---
+  getIt.registerLazySingleton(() => OrdersRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<OrdersRepository>(() => OrdersRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListOrdersUseCase(getIt()));
+  getIt.registerFactory(() => GetOrderUseCase(getIt()));
+  getIt.registerFactory(() => CreateOrderUseCase(getIt()));
+  getIt.registerFactory(() => UpdateOrderStatusUseCase(getIt()));
 }
 
 /// The main authenticated [Dio] instance — for feature data sources

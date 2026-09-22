@@ -10,4 +10,12 @@ abstract final class RouteNames {
 
   static String productDetail(String id) => '/products/$id';
   static String productEdit(String id) => '/products/$id/edit';
+
+  static const orders = '/orders';
+  static const orderNewSellerPicker = '/orders/new';
+  static const orderCatalogBrowse = '/orders/new/catalog';
+  static const orderReview = '/orders/new/review';
+  static const orderDetailPattern = '/orders/:id';
+
+  static String orderDetail(String id) => '/orders/$id';
 }

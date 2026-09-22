@@ -147,8 +147,10 @@ features/
     presentation/{providers,screens,widgets}/
   active_store/
     presentation/active_store_notifier.dart   → thin, will grow real data/domain layers in Milestone 6
-  dashboard/
-    presentation/screens/home_screen.dart     → placeholder landing screen (see Progress Log)
+  dashboard/           → `GET /reports/{wholesaler,retailer,income-debt-chart}` — role-aware home screen
+    data/{datasources,repositories}/          → no separate `models/` split, see "Reporting/dashboard model"
+    domain/{entities,repositories,usecases}/  → WholesalerDashboard/RetailerDashboard + shared value objects
+    presentation/{providers,screens,widgets}/ → DashboardNotifier, HomeScreen, KpiCard/chart widgets
   categories/         → READ-ONLY browse (category CRUD is SUPER_ADMIN-only, see "Product/Catalog model")
     data/{datasources,models,repositories}/
     domain/{entities,repositories,usecases}/
@@ -161,6 +163,22 @@ features/
     data/{datasources,models,repositories}/
     domain/{entities,repositories,usecases}/
     presentation/screens/master_catalog_picker_screen.dart
+  catalog/            → READ-ONLY buyer-facing B2B browse (a seller's stores + their products),
+                         powers order creation; never exposes costPrice (backend strips it)
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/
+  orders/             → full B2B order lifecycle: create (RETAILER), list (incoming/outgoing,
+                         same endpoint disambiguated server-side), detail + status timeline,
+                         approve/reject/mark-delivered (SELLER)
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/   → OrderQuery/CreateOrderParams/UpdateOrderStatusParams
+                                                  mirror the backend DTOs field-for-field
+    presentation/
+      providers/   → OrdersListNotifier (paginated), CreateOrderCartNotifier (plain Notifier,
+                     holds seller/store/line-items map, blocks mixed-currency adds)
+      screens/     → SellerPickerScreen, OrderCatalogBrowseScreen, OrderReviewScreen,
+                     OrdersListScreen, OrderDetailScreen
+      widgets/order_status_badge.dart
 
 shared/widgets/
   barcode_scanner_screen.dart   → full-screen mobile_scanner camera view, reused by products now and POS later
@@ -232,6 +250,67 @@ there is no Register screen in Phase 1 — only `LoginScreen`. Customer self-reg
   on the Optom Savdo side (or against a different environment where it isn't present) — re-check
   next time `GET /master-products` is needed rather than assuming it's still broken forever.
 
+### Reporting / dashboard model (confirmed against real backend source, 2026-09-22)
+- **Unlike `Product`, every numeric field in `reporting.service.ts`'s responses is already a
+  plain JSON number** — the service explicitly converts via its own `num()`/`Number()` helper
+  before responding, never leaving a raw Prisma `Decimal`. So dashboard entities parse with a
+  plain `(json['x'] as num).toDouble()`, never through `core/utils/decimal_parser.dart` — that
+  helper is a `Product`/`Category`/`MasterProduct`-specific concern, not a blanket rule.
+  `features/dashboard`'s entities carry their own `fromJson` factories directly (no separate
+  `data/models` split like `auth`/`products` have) — a deliberate, lighter-weight variation
+  since these are pure read-only report DTOs with no write path, so an Entity/Model split adds
+  no real value here.
+- **The Swagger `@ApiResponse` doc comments on `ReportingController` are stale** for
+  `wholesalerDashboard`/`retailerDashboard` — they describe `paymentBreakdown`/`salesTrend` as
+  flat (single-currency) shapes, but the actual `reporting.service.ts` implementation returns
+  `{uzs: {...}, usd: {...}}` for both (multi-currency support was added after the Swagger
+  comments were written and the comments were never updated). Always verify against the real
+  `return {...}` statement in the service method, not just the controller's doc comment.
+- **Critical, easy-to-miss distinction for the wholesaler dashboard**: `todaySales`/`totalSales`/
+  `salesTrend` aggregate from the **`Order`** model (B2B orders to retailers), not from `Sale`
+  (POS/register sales) — confirmed by reading `wholesalerDashboard()`'s Prisma queries directly.
+  `receivedPayments`/`cardPayments` aggregate from `Payment` generically (any target — order,
+  debt, sale, saleDebt), which is why POS `Sale`+`Payment` rows alone showed up there but left
+  `todaySales`/`totalSales`/the trend chart at zero during verification — not a bug, just the
+  wrong model to seed against. The retailer dashboard's `todaySales`/`totalSales`/`salesTrend`
+  **do** come from `Sale` (a retailer's B2C register), matching its actual business role.
+- `outstandingDebts` (wholesaler) comes from `Debt` (B2B); `customerDebts`/`wholesalerDebts`
+  (retailer) come from `SaleDebt`/`Debt` respectively — no dashboard KPI ever blends B2B and B2C
+  debt into one figure.
+
+### B2B Order / Catalog model (confirmed against real backend source, 2026-09-22)
+- **`catalog` module is the buyer-facing browse surface**, distinct from `product` (tenant's own
+  inventory management, see above). `GET /catalog/sellers` lists sellers a RETAILER can order
+  from, `GET /catalog/sellers/:id/stores` their stores, `GET /catalog` the products for a chosen
+  seller/store — this is what `OrderCatalogBrowseScreen` walks through, one screen per step
+  (`SellerPickerScreen` → store choice folded into the seller pick where only one store exists →
+  `OrderCatalogBrowseScreen`).
+- **`costPrice` is stripped server-side from every catalog product response** (confirmed in
+  `catalog.service.ts`'s `productIncludes()`/select shape) — `CatalogProduct` the domain entity
+  has no `costPrice` field at all, unlike `products`' own `Product` entity. Never add it back
+  speculatively; a buyer should never see a seller's cost basis.
+- **`POST /order` enforces single-currency, single-store-per-order** server-side (confirmed in
+  `order.service.ts`) — `CreateOrderCartNotifier.addProduct()` mirrors this client-side as UX
+  polish (returns `false`, screen shows a SnackBar) so the user gets instant feedback instead of
+  a round-trip 400. This is UX-only; the server remains the actual authority.
+- **`VALID_TRANSITIONS`**: `NEW → APPROVED | REJECTED`, `APPROVED → DELIVERED`. `Order` entity's
+  `canApproveOrReject`/`canMarkDelivered` getters mirror this for hiding already-invalid actions
+  in the UI — again UX polish, not a security boundary (the server re-validates the transition on
+  every `PATCH /order/:id/status` regardless).
+- **On approve (B2B), the backend does three things atomically**: decrements the seller's
+  `Product.stock` for every line item, creates a `Debt` (`creditorId`=seller, `debtorId`=buyer,
+  `balance`=order total, `currency` matching the order), and **auto-creates/restocks a mirror
+  `Product` row owned by the retailer** (same name/price/currency, `stock` incremented by the
+  ordered quantity) — so the retailer's own inventory reflects the incoming goods without them
+  re-entering it by hand. All three confirmed by direct DB query after a live approve+deliver,
+  not just read from source — see Progress Log below for the exact verified values.
+- **List endpoint disambiguates "incoming" vs "outgoing" by role, not by a query param**: a
+  SELLER's `GET /order` shows orders where they're the seller (incoming to fulfill); a RETAILER's
+  shows orders where they're the buyer (outgoing they placed) — confirmed via
+  `TenantFilter.order()`. `OrdersListScreen` therefore never sends a `view=incoming|outgoing`
+  param (the plan originally assumed one might be needed; it isn't) — the same endpoint, scoped
+  server-side by the caller's own tenant context, is sufficient.
+
 ### Offline strategy
 Hive is a **read-cache layer only** — write-through on a successful remote fetch, fall back to the
 cached value on a `NetworkApiException`. **No offline writes** (no queuing an order/sale/payment
@@ -255,9 +334,9 @@ different data), Uzbek-only UI (no i18n framework needed yet, but route strings 
 | # | Milestone | Status |
 |---|---|---|
 | 0 | Project setup & housekeeping (bundle id, platform trim, deps, folder skeleton) | ✅ Done 2026-09-22 |
-| 1 | Auth + Shell + Dashboard | 🟡 Auth done (login/splash/session restore/logout); role-aware dashboard (reporting charts, KPI cards, UZS/USD toggle, `GET /store`-based switcher visibility) **not yet built** — `HomeScreen` is a placeholder |
+| 1 | Auth + Shell + Dashboard | 🟢 Done 2026-09-22, verified live with real seeded data (see log). Auth + role-aware dashboard (KPI cards, sales-trend line chart, payment-breakdown donut, income/debt bar chart, UZS/USD toggle) all working. **Deferred, not part of this milestone**: `GET /store`-based multi-store switcher visibility (Milestone 6 scope — a single-store owner should see no switcher at all) |
 | 2 | Products, Categories, Master-Catalog browse | 🟢 Nearly closed (2026-09-22). Verified live: product CRUD, barcode-generate, receive-stock, delete, the leaf-only category picker, and image upload/delete (real multipart upload to ImageKit, confirmed rendering + delete). **Two remaining gaps, both environment-blocked, not bsmart bugs**: master-catalog picker (blocked by a pre-existing `master_products.unit` DB drift on this machine's local backend, see "Product/Catalog model"), and barcode-scan-to-find (needs a real device with a real barcode — no simulator/emulator camera can supply one) |
-| 3 | B2B Orders | ⬜ Not started |
+| 3 | B2B Orders | 🟢 Done 2026-09-22, verified live end-to-end (create→approve→deliver, DB side-effects confirmed, see log) |
 | 4 | Customers + B2C Sales/POS (native barcode scanning) | ⬜ Not started |
 | 5 | Debts + Payments | ⬜ Not started |
 | 6 | Stores/multi-branch + Staff (Admins) management | ⬜ Not started |
@@ -440,3 +519,98 @@ with categories/catalog entries and a gallery photo), then Milestone 1's dashboa
 Milestone 3 (B2B Orders). Re-attempt the master-catalog picker and barcode-scan-to-find
 verification opportunistically if a fixed DB or a real device becomes available, but don't block
 further milestones on either.
+
+### 2026-09-22 — Milestone 1 dashboard (reporting + charts)
+- Read `reporting.controller.ts` and the real `reporting.service.ts` implementation directly
+  (not just the Swagger doc comments, which turned out to be stale — see "Reporting/dashboard
+  model" above) before writing any code, same discipline as every prior milestone.
+- Built `features/dashboard`: `WholesalerDashboard`/`RetailerDashboard`/shared value-object
+  entities (`MoneyByCurrency`, `CountAndAmountByCurrency`, `DebtSummaryByCurrency`,
+  `PaymentBreakdownByCurrency`, `TrendPointsByCurrency`, `InventoryStatsByCurrency`,
+  `IncomeDebtChart`), a `DashboardNotifier` that fetches the right dashboard for the session's
+  role family and the 6-month income/debt chart together, and a separate
+  `selectedDashboardCurrencyProvider` (`StateProvider<Currency>`) for the UZS/USD toggle — pure
+  UI state, since every response already carries both currencies split out.
+- Rebuilt `HomeScreen` (previously Milestone 0's placeholder) into the real dashboard: welcome
+  header, role-specific KPI card grid (`KpiCard`), a 14-day sales-trend line chart
+  (`SalesTrendChart`, `fl_chart` `LineChart`), a payment-method donut (`PaymentBreakdownChart`,
+  `PieChart`), and a 6-month income-vs-debt grouped bar chart (`IncomeDebtBarChart`,
+  `BarChart`) — all switching together via the currency toggle, all with explicit "Ma'lumot yo'q"
+  empty states (verified, not just written speculatively).
+- `flutter analyze`/`flutter test`: clean.
+- **Verified live with real seeded data** (not just an empty-state check, specifically to exercise
+  `fl_chart` rendering with actual values): seeded a SELLER with 3 POS `Sale`+`Payment` rows
+  (cash/card/bank-transfer) — this alone left `todaySales`/`totalSales`/the trend chart at zero,
+  which is how the `Order`-vs-`Sale` distinction above was actually discovered, not guessed at.
+  Seeded one B2B `Order` (a throwaway RETAILER buyer → the same SELLER, 90 000 so'm, APPROVED)
+  to properly populate those. End result, all confirmed via screenshot: KPI cards showed correct
+  values (90 000 so'm / 1 sale for today+total, 0 debt, 120 000 so'm received payments); the
+  trend line chart rendered a real spike on today's data point; the payment donut showed exactly
+  50%/33%/17% (Naqd/Karta/Bank) matching the seeded split precisely; the income/debt bar chart
+  showed a correctly-positioned income bar on the current month with no debt bar. Switched to USD
+  and confirmed every KPI/chart correctly showed `$0`/empty state with no cross-currency bleeding
+  (all seed data was UZS-only). All seed data (2 test users + stores, product, customer, 3
+  sales, 3 payments, 1 order) removed afterward; backend and app stopped; `.env` reset.
+
+**Next up:** Milestone 3 (B2B Orders). The multi-store switcher (`GET /store`-driven visibility)
+stays deliberately deferred to Milestone 6, per the roadmap table.
+
+### 2026-09-22 — Milestone 3 (B2B Orders)
+- Read the real `order.controller.ts`, `order.service.ts` (full ~600 lines), all 3 order DTOs,
+  `catalog.controller.ts`/`catalog.service.ts`, and `tenant.filter.ts`'s `order()` method directly
+  before writing any code — see "B2B Order / Catalog model" above for what that surfaced,
+  including two corrections to the original plan: the list endpoint disambiguates incoming/
+  outgoing by role via `TenantFilter`, not a `view` query param (so `OrderQuery` deliberately
+  omits one); and approving an order auto-creates a mirror `Product` in the retailer's own
+  inventory, not just a `Debt` (not previously documented anywhere).
+- Built `features/catalog` (read-only seller/store/product browse for order creation) and
+  `features/orders` (full CRUD-minus-delete lifecycle) with the standard `data`/`domain`/
+  `presentation` split: `Order`/`OrderQuery`/`CreateOrderParams`/`UpdateOrderStatusParams`
+  entities, `OrdersListNotifier` (paginated `AsyncNotifier`), `CreateOrderCartNotifier` (plain
+  `Notifier` cart holding seller/store/line-items, blocking mixed-currency adds client-side as UX
+  polish), and 5 screens (`SellerPickerScreen`, `OrderCatalogBrowseScreen`, `OrderReviewScreen`,
+  `OrdersListScreen`, `OrderDetailScreen` with approve/reject/mark-delivered actions gated by
+  `Order.canApproveOrReject`/`canMarkDelivered`).
+- `flutter analyze`/`flutter test`: clean.
+- **Verified live, full lifecycle, against a real running backend** with two seeded throwaway
+  accounts (SELLER + RETAILER, per "Local Verification Workflow"): RETAILER logs in → empty
+  orders list → FAB → seller picker (showed both real sellers already in the DB and the test one
+  — confirmed the picker works against real data without needing to touch it) → catalog browse
+  showed both seeded products → added both to cart (currency-mixing guard not exercised this
+  pass, both products were UZS) → review screen → filled delivery address → submitted →
+  order created and detail screen rendered all fields correctly. Logged out, logged in as SELLER
+  → dashboard correctly still showed 0 sales (re-confirms the Order-vs-Sale dashboard distinction
+  from Milestone 1 — a NEW order doesn't count as a sale) → incoming-orders list showed the order,
+  no FAB (buy-side-only action) → detail → tapped Approve → confirm dialog → order moved to
+  APPROVED, timeline updated, Approve/Reject buttons correctly replaced by a Deliver button →
+  tapped Deliver → confirm dialog → order moved to DELIVERED, timeline showed all three entries,
+  action buttons correctly disappeared entirely (terminal state).
+- **Confirmed all three approve-time side effects via a direct DB query** (not just "no exception
+  thrown" — actual before/after values): seller's two products decremented exactly by the ordered
+  quantities (100→99, 50→49); a `Debt` row created with `creditorId`=seller, `debtorId`=retailer,
+  `balance`=40000, `currency`=UZS, `status`=ACTIVE; a mirror `Product` pair auto-created under the
+  retailer's own `sellerId` with matching name/price/currency and `stock`=1 each (the ordered
+  quantities) — this last one is the previously-undocumented auto-restock behavior mentioned
+  above, discovered by reading `order.service.ts`'s approve-transition code, not assumed.
+- Verification tooling note: screen-tap coordinates for this pass were computed by sampling the
+  actual button's pixel color directly from the raw `adb exec-out screencap` PNG (native
+  1080×2424 resolution) rather than eyeballing the tool's downscaled preview image — the preview
+  is shown at 891×2000 with a "×1.21 to map to original" note, and applying that multiplier a
+  *second* time (i.e. treating the raw screenshot file as if it were also downscaled) produced
+  several missed taps this session before the mistake was caught. **Screenshot PNG files read
+  directly via the file path are always already at native device resolution — never rescale
+  them.** `uiautomator dump` bounds were also unreliable for this specific button (returned a
+  full-width container bounds instead of the button's own, and once returned a dump with no
+  matching node at all despite the button being clearly visible on screen) — direct pixel-color
+  sampling proved more reliable than either coordinate-estimation-from-preview or
+  `uiautomator dump` bounds for this button. Worth trying pixel-sampling first next time a tap
+  needs to be precise.
+- All seed data (2 test users + stores, 2 products, the order + its status history, the created
+  `Debt`, and the 2 auto-restocked retailer products) removed afterward via a companion cleanup
+  script; backend dev server and `flutter run` both stopped; `.env` reset to its checked-in
+  default.
+
+**Next up:** Milestone 4 (Customers + B2C Sales/POS, native barcode scanning) — the heaviest
+animation-investment milestone per the original plan (§2.7). Barcode-scan-to-find and the
+master-catalog picker remain the two opportunistic re-verification items from Milestone 2, still
+not blocking further progress.

@@ -8,6 +8,11 @@ import 'package:bsmart/features/auth/presentation/providers/session_notifier.dar
 import 'package:bsmart/features/auth/presentation/screens/login_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/splash_screen.dart';
 import 'package:bsmart/features/dashboard/presentation/screens/home_screen.dart';
+import 'package:bsmart/features/orders/presentation/screens/order_catalog_browse_screen.dart';
+import 'package:bsmart/features/orders/presentation/screens/order_detail_screen.dart';
+import 'package:bsmart/features/orders/presentation/screens/order_review_screen.dart';
+import 'package:bsmart/features/orders/presentation/screens/orders_list_screen.dart';
+import 'package:bsmart/features/orders/presentation/screens/seller_picker_screen.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/presentation/screens/product_detail_screen.dart';
 import 'package:bsmart/features/products/presentation/screens/product_form_screen.dart';
@@ -63,6 +68,29 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => fadeThroughPage(
           state: state,
           child: ProductFormScreen(editingProduct: state.extra as Product?),
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.orders,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const OrdersListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.orderNewSellerPicker,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const SellerPickerScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.orderCatalogBrowse,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const OrderCatalogBrowseScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.orderReview,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const OrderReviewScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.orderDetailPattern,
+        pageBuilder: (context, state) => fadeThroughPage(
+          state: state,
+          child: OrderDetailScreen(orderId: state.pathParameters['id']!),
         ),
       ),
     ],
