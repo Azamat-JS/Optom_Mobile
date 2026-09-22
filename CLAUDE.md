@@ -220,6 +220,17 @@ there is no Register screen in Phase 1 — only `LoginScreen`. Customer self-reg
   already overwrites `name`/`description`/`images`/`brand` with the linked `MasterProduct`'s
   values before the JSON reaches the client — `product_model.dart` never needs to resolve this
   itself, and the edit form correctly treats `name`/`description` as read-only for linked products.
+- **Known pre-existing backend/DB issue (not a bsmart bug, do not try to fix it here):** on this
+  machine's local dev DB, `GET /master-products` currently 500s with `{"message":"Database
+  error"}` — confirmed live 2026-09-22 by calling it directly. Root cause: the local Postgres
+  table is missing the `unit` column that `schema.prisma` declares on `MasterProduct` (any
+  `prisma.masterProduct` query touches it via the default all-columns select). This is the exact
+  `master_products.unit` local-dev-DB drift Optom Savdo's own `CLAUDE.md` already documents as
+  found-but-unresolved (search that file for "master_products.unit" for the full history) —
+  it predates and is unrelated to bsmart. **Effect on this app**: the master-catalog picker
+  (`features/master_catalog`) cannot be verified against this local DB until that drift is fixed
+  on the Optom Savdo side (or against a different environment where it isn't present) — re-check
+  next time `GET /master-products` is needed rather than assuming it's still broken forever.
 
 ### Offline strategy
 Hive is a **read-cache layer only** — write-through on a successful remote fetch, fall back to the
@@ -245,7 +256,7 @@ different data), Uzbek-only UI (no i18n framework needed yet, but route strings 
 |---|---|---|
 | 0 | Project setup & housekeeping (bundle id, platform trim, deps, folder skeleton) | ✅ Done 2026-09-22 |
 | 1 | Auth + Shell + Dashboard | 🟡 Auth done (login/splash/session restore/logout); role-aware dashboard (reporting charts, KPI cards, UZS/USD toggle, `GET /store`-based switcher visibility) **not yet built** — `HomeScreen` is a placeholder |
-| 2 | Products, Categories, Master-Catalog browse | 🟡 Product CRUD + barcode-generate + receive-stock + delete verified live end-to-end (2026-09-22). Category/master-catalog pickers built and code-reviewed but **not runtime-verified** (fresh test DB had no category/catalog data — re-verify once seed data exists). Image upload/delete built but not runtime-verified (needs a real photo on the test device/emulator). Barcode-scan-to-find not runtime-verified (needs a real device — `mobile_scanner` doesn't work on Apple-Silicon iOS Simulator, and the Android emulator's virtual camera has no real barcode to scan) |
+| 2 | Products, Categories, Master-Catalog browse | 🟢 Nearly closed (2026-09-22). Verified live: product CRUD, barcode-generate, receive-stock, delete, the leaf-only category picker, and image upload/delete (real multipart upload to ImageKit, confirmed rendering + delete). **Two remaining gaps, both environment-blocked, not bsmart bugs**: master-catalog picker (blocked by a pre-existing `master_products.unit` DB drift on this machine's local backend, see "Product/Catalog model"), and barcode-scan-to-find (needs a real device with a real barcode — no simulator/emulator camera can supply one) |
 | 3 | B2B Orders | ⬜ Not started |
 | 4 | Customers + B2C Sales/POS (native barcode scanning) | ⬜ Not started |
 | 5 | Debts + Payments | ⬜ Not started |
@@ -387,3 +398,45 @@ Milestone 2 (Products/Categories/Master-Catalog).
 **Next up:** finish verifying the three gaps above (ideally on a real device, or a seeded dev DB
 with categories/catalog entries and a gallery photo), then Milestone 1's dashboard, then Milestone
 3 (B2B Orders).
+
+### 2026-09-22 — Milestone 2 gap-closing verification pass
+- Seeded throwaway data directly via Prisma (per "Local Verification Workflow") to close three of
+  the four gaps left open by the first pass: a second test SELLER, a root category + subcategory,
+  and a `MasterProduct` entry — plus pushed a test image into the Android emulator's gallery via
+  `adb push` + a media-scanner broadcast for the image-upload test.
+- **Seeding the `MasterProduct` surfaced a real, pre-existing backend/DB issue**: `prisma
+  .masterProduct.create()` failed with `P2022 ColumnNotFound` on `unit` — the local Postgres
+  table is missing a column `schema.prisma` declares. Confirmed this isn't just a seeding
+  inconvenience by calling the live `GET /master-products` endpoint directly: it 500s the same
+  way for real traffic, not just raw Prisma access. This is the exact `master_products.unit`
+  local-dev-DB drift Optom Savdo's own `CLAUDE.md` already flags as found-but-unresolved — not a
+  new bug, not a bsmart bug, and out of scope to fix here (would mean altering that project's
+  database). Documented in "Product/Catalog model" above so it isn't re-discovered from scratch
+  next time. Worked around the *seeding* step with an explicit `select` omitting `unit`; the
+  master-catalog picker itself remains genuinely blocked until that drift is fixed or a different
+  DB is used.
+- **Verified live, closing three of the four gaps:**
+  - **Category picker**: opened correctly, showed the real leaf-only list (pre-existing
+    categories in this DB plus the two seeded ones — the picker correctly excluded parent
+    categories that have children, exactly per its documented design), search field present,
+    selection persisted correctly onto the created product and displayed on its detail screen.
+  - **Image upload**: native Android Photo Picker opened via `image_picker`, a photo was selected,
+    the UI correctly showed the busy state (`_isBusy`, buttons disabled) during upload, and the
+    uploaded image rendered correctly in the gallery strip afterward — a real multipart request
+    to the backend's `product-image` module succeeded end-to-end (ImageKit-backed).
+  - **Image delete**: tapping the image's delete overlay removed it correctly, confirmed via
+    screenshot.
+  - Also re-confirmed product create/detail/currency-display still work correctly with the second
+    test account, incidentally re-validating Milestone 1's login flow against a different account.
+- **Still not verified** (both are environment/hardware limits, not code gaps): master-catalog
+  picker (see the DB drift above) and barcode-scan-to-find (no simulator/emulator can present a
+  real barcode to a virtual camera — needs a physical device).
+- All seed data (second test user + store, both categories, the `MasterProduct`, and the one
+  product created through the app with its uploaded image) removed afterward via a companion
+  cleanup script; test image removed from the emulator's gallery; backend dev server and app both
+  stopped; `.env` reset to its checked-in default.
+
+**Next up:** Milestone 1's dashboard (reporting endpoints + charts + UZS/USD toggle), then
+Milestone 3 (B2B Orders). Re-attempt the master-catalog picker and barcode-scan-to-find
+verification opportunistically if a fixed DB or a real device becomes available, but don't block
+further milestones on either.
