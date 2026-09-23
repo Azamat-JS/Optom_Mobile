@@ -1,5 +1,5 @@
 import 'package:bsmart/core/network/result.dart';
-import 'package:bsmart/features/dashboard/domain/entities/dashboard_shared.dart';
+import 'package:bsmart/core/entities/reporting_shared.dart';
 import 'package:bsmart/features/dashboard/domain/repositories/reporting_repository.dart';
 
 class GetIncomeDebtChartUseCase {

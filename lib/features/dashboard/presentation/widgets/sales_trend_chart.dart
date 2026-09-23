@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import 'package:bsmart/core/enums/currency.dart';
-import 'package:bsmart/features/dashboard/domain/entities/dashboard_shared.dart';
+import 'package:bsmart/core/entities/reporting_shared.dart';
 
 /// 14-day daily-total line chart — `salesTrend` from the dashboard response,
 /// already zero-filled/gap-free per day server-side.

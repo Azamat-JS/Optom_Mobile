@@ -13,6 +13,7 @@ import 'package:bsmart/features/dashboard/presentation/widgets/income_debt_bar_c
 import 'package:bsmart/features/dashboard/presentation/widgets/kpi_card.dart';
 import 'package:bsmart/features/dashboard/presentation/widgets/payment_breakdown_chart.dart';
 import 'package:bsmart/features/dashboard/presentation/widgets/sales_trend_chart.dart';
+import 'package:bsmart/features/stores/presentation/widgets/store_switcher.dart';
 
 /// The Milestone 1 role-aware dashboard (SELLER/RETAILER + their `_ADMIN`
 /// staff) — KPI cards, sales-trend/payment-breakdown/income-debt charts, all
@@ -34,6 +35,10 @@ class HomeScreen extends ConsumerWidget {
       UserRole.retailer || UserRole.retailerAdmin => "Do'konchi",
       _ => '',
     };
+    // Stores/staff management is owner-only server-side (`assertIsOwner` in
+    // both `store.service.ts`/`admin.service.ts`) — locked staff never see
+    // these nav entries or the branch switcher, matching that enforcement.
+    final isOwner = !(authState?.session?.isStaff ?? true);
 
     return Scaffold(
       appBar: AppBar(
@@ -51,23 +56,44 @@ class HomeScreen extends ConsumerWidget {
           ),
           PopupMenuButton<String>(
             onSelected: (route) => context.push(route),
-            itemBuilder: (context) => const [
-              PopupMenuItem(
+            itemBuilder: (context) => [
+              const PopupMenuItem(
                 value: RouteNames.products,
                 child: ListTile(leading: Icon(Icons.inventory_2_outlined), title: Text('Mahsulotlar')),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: RouteNames.customers,
                 child: ListTile(leading: Icon(Icons.groups_outlined), title: Text('Mijozlar')),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: RouteNames.sales,
                 child: ListTile(leading: Icon(Icons.history), title: Text('Sotuvlar tarixi')),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: RouteNames.debts,
                 child: ListTile(leading: Icon(Icons.receipt_long), title: Text('Qarzlar')),
               ),
+              // Reports/work-day are @Roles(SELLER, RETAILER) with RolesGuard's
+              // admin-inherits-parent-role logic — staff see this too, unlike
+              // Expenditures below (owner-only, enforced server-side).
+              const PopupMenuItem(
+                value: RouteNames.reports,
+                child: ListTile(leading: Icon(Icons.bar_chart_outlined), title: Text('Hisobotlar')),
+              ),
+              if (isOwner) ...[
+                const PopupMenuItem(
+                  value: RouteNames.stores,
+                  child: ListTile(leading: Icon(Icons.storefront_outlined), title: Text("Do'konlar")),
+                ),
+                const PopupMenuItem(
+                  value: RouteNames.admins,
+                  child: ListTile(leading: Icon(Icons.badge_outlined), title: Text('Xodimlar')),
+                ),
+                const PopupMenuItem(
+                  value: RouteNames.expenditures,
+                  child: ListTile(leading: Icon(Icons.account_balance_wallet_outlined), title: Text('Harajatlarim')),
+                ),
+              ],
             ],
           ),
           IconButton(
@@ -83,9 +109,17 @@ class HomeScreen extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(16),
           children: [
-            Text(
-              'Xush kelibsiz, ${user?.fullName ?? ''}',
-              style: Theme.of(context).textTheme.titleLarge,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'Xush kelibsiz, ${user?.fullName ?? ''}',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                if (isOwner) const StoreSwitcher(),
+              ],
             ),
             if (roleLabel.isNotEmpty || user?.shopName != null) ...[
               const SizedBox(height: 2),

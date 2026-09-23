@@ -137,8 +137,15 @@ core/
     route_names.dart, transitions.dart
   theme/app_theme.dart, app_motion.dart
   config/env.dart             → API_BASE_URL from .env
-  enums/user_role.dart, business_type.dart, currency.dart   → mirror backend Prisma enums exactly
+  enums/user_role.dart, business_type.dart, currency.dart, expenditure_type.dart, ...
+                               → mirror backend Prisma enums exactly
   utils/jwt_decoder.dart      → local JWT payload decode (no signature check needed client-side)
+  entities/reporting_shared.dart → MoneyByCurrency/CountAndAmountByCurrency/DebtSummaryByCurrency/
+                               TrendPointsByCurrency/InventoryStatsByCurrency/IncomeDebtChart —
+                               value objects shared by features/dashboard and features/reports
+                               (moved here from features/dashboard/domain/entities/ in Milestone 7
+                               specifically to avoid a cross-feature-domain import; see the file's
+                               own doc comment)
 
 features/
   auth/
@@ -209,6 +216,45 @@ features/
       screens/     → SellerPickerScreen, OrderCatalogBrowseScreen, OrderReviewScreen,
                      OrdersListScreen, OrderDetailScreen
       widgets/order_status_badge.dart
+  stores/             → owner-only multi-branch CRUD (`Store`), backs the dashboard's
+                         `StoreSwitcher` (hidden entirely for locked staff / single-store owners)
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/   → CreateStoreParams/UpdateStoreParams
+    presentation/
+      providers/   → StoresListNotifier
+      screens/     → StoresListScreen (create/edit/activate/deactivate/delete)
+      widgets/     → StoreSwitcher (invalidates every store-scoped provider on switch — see
+                     "Store / Admin (Staff) model" below)
+  staff_admins/       → owner-only `_ADMIN` staff CRUD, locked to one store at creation
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/   → CreateAdminParams/UpdateAdminParams
+    presentation/
+      providers/   → AdminsListNotifier
+      screens/     → AdminsListScreen, AdminFormScreen (mandatory store picker)
+  expenditures/       → owner-only business overhead spending CRUD ("Harajatlarim") —
+                         `_ADMIN` staff get 403'd server-side (`TenantFilter.expenditure`), so
+                         `HomeScreen` gates its nav entry on `isOwner` same as stores/admins
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/   → CreateExpenditureParams/UpdateExpenditureParams,
+                                                  ExpenditureListResult (adds `meta.totalAmount`,
+                                                  which no other list envelope in this app has)
+    presentation/
+      providers/   → ExpendituresListNotifier (paginated + type filter + running total)
+      screens/     → ExpendituresListScreen, ExpenditureFormScreen
+  reports/            → the period-selectable sibling of `features/dashboard`'s fixed-14-day home
+                         screen ("Hisobotlar") — period-stats/sales-chart (accessible to owner
+                         *and* `_ADMIN`, unlike expenditures above) + work-day (Ish kuni) shift
+                         start/end + Excel debts export
+    data/{datasources,repositories}/
+    domain/{entities,repositories,usecases}/   → PeriodStats/SalesChartResult/WorkDay entities,
+                                                  ReportPeriod enum (only `last30`/`month` — the
+                                                  one window shape all 3 endpoints share)
+    presentation/
+      providers/   → ReportsNotifier (period-stats + sales-chart together), WorkDayNotifier,
+                     BestSellingProductsNotifier (reuses features/products' own bestSelling())
+      screens/     → ReportsScreen
+      widgets/     → SalesAmountChart, WorkDayCard (Excel export via share_plus's
+                     `XFile.fromData` — no on-disk temp file needed)
 
 shared/widgets/
   barcode_scanner_screen.dart   → full-screen mobile_scanner camera view, reused by products now and POS later
@@ -450,6 +496,128 @@ there is no Register screen in Phase 1 — only `LoginScreen`. Customer self-reg
   response shape is not itself Decimal-backed, unlike almost everything else in this app's
   "always assume Decimal-as-string" rule.
 
+### Store / Admin (Staff) model (confirmed against real backend source, 2026-09-23)
+- **Both `store.controller.ts` and `admin.controller.ts` are owner-only** (`assertIsOwner` in both
+  services, `@Roles(SELLER, RETAILER)` — never `_ADMIN`) — confirmed by reading both controllers
+  and services in full. This is why `HomeScreen` computes `isOwner = !(session.isStaff)` and gates
+  the "Do'konlar"/"Xodimlar" overflow-menu items and the `StoreSwitcher` on it, rather than on role
+  alone — an `_ADMIN`'s `role` is still e.g. `SELLER_ADMIN`, but `isStaff` (from `managedUserId`)
+  is the actual server-side authorization boundary being mirrored.
+- **`CreateAdminDto` has no `canAccessPos` field** — this corrects an assumption in the original
+  milestone plan wording ("admin creation... sets `canAccessPos`"). Reading `create-admin.dto.ts`
+  directly shows only `storeId`/`firstName`/`lastName`/`phone`/`password`; `canAccessPos` is a
+  `SUPER_ADMIN`-gated flag settable only via the generic `PATCH /users/:id`, out of scope for the
+  owner-facing admin form. `AdminFormScreen` correctly has no such toggle.
+- **`admin.service.ts`'s `create()` validates `storeId` belongs to the calling tenant first**, then
+  checks phone uniqueness, and always assigns the role via a fixed `ADMIN_ROLE_FOR` map
+  (SELLER→`SELLER_ADMIN`, RETAILER→`RETAILER_ADMIN`) — the owner never picks the resulting role
+  directly, it's derived from their own role. Phone must match `^\+998\d{9}$` — same Uzbek-format
+  regex as everywhere else in this app.
+- **Store deletion is a soft-delete, not a hard delete**: `store.service.ts`'s `remove()` calls
+  `prisma.store.update({ data: { deletedAt: new Date(), isActive: false } })`, and `findAll()`
+  filters on `deletedAt: null` — confirmed live (two stores deleted through the UI both correctly
+  disappeared from the list, but direct Prisma queries afterward showed the rows still present
+  with `deletedAt` set, until the owning `User` itself was later deleted, which hard-cascades
+  everything regardless of `deletedAt`). `admin.service.ts`'s `remove()` uses the same
+  `deletedAt`-stamping pattern but additionally mangles `phone` to `deleted:<id>:<original>` to
+  free the globally-unique phone field for reuse — `Store` has no such unique field to free, so its
+  soft-delete only touches `deletedAt`/`isActive`.
+- **Guards confirmed live, not just read from source**: `setActive(false)` 409s with "This is your
+  only active store and cannot be deactivated — create or activate another store first" when it's
+  the sole active store (`otherActiveCount === 0`); `remove()` 409s with "This store still has
+  staff assigned — reassign or remove them first" when any admin/staff row has that `storeId`
+  (checked before the sole-store-count guard). Both error messages come through as-is from the
+  backend's exception message (English, not translated to Uzbek like the rest of the UI) — a minor
+  cosmetic gap, not a functional one; `ApiException`'s message mapping surfaces them correctly
+  either way.
+- **`StoreSwitcher` invalidates every store-scoped Riverpod provider on switch**
+  (`dashboardProvider`, `productsListProvider`, `customersListProvider`, `salesListProvider`,
+  `ordersListProvider`, `debtsListProvider`, `saleDebtsListProvider`) rather than relying on each
+  screen to notice the `X-Store-Id` change itself — the mobile equivalent of the web app's
+  `window.location.reload()` on store switch, but scoped (only these providers refetch, not the
+  whole app). Confirmed live: creating a product while on one store, then switching to another via
+  the switcher, correctly showed an empty products list on the new store with no stale data or
+  manual refresh needed.
+- **A stale `X-Store-Id` could otherwise survive across accounts**: `ActiveStoreStorage` persists
+  to `SharedPreferences` keyed by device, not by account, so without an explicit clear, logging out
+  of one owner and into a different one would silently resend the previous account's selected
+  `storeId` header — the backend would correctly 403 this (`assertIsOwner`/store-ownership check),
+  but the failure would be confusing without this context. Fixed proactively (found while reading
+  the existing scaffolding, before it was ever observed failing) by calling
+  `getIt<ActiveStoreStorage>().clear()` in `SessionNotifier._clearState()`. Confirmed live: logged
+  out of the owner account (which had "Bosh filial" active), logged in as a different account, no
+  403 occurred and the dashboard loaded cleanly.
+
+### Expenditures / Reports (period-stats, sales-chart, work-day) model (confirmed against real backend source, 2026-09-23)
+- **`ExpenditureController` is owner-only, but `ReportingController`'s period-comparison
+  endpoints and `WorkDayController` are not** — confirmed by reading all three directly.
+  `TenantFilter.expenditure(ctx)` throws `ForbiddenException` for `SELLER_ADMIN`/`RETAILER_ADMIN`
+  (the one `TenantFilter.*` method with that exception, per that project's own `CLAUDE.md`);
+  `/reports/period-stats`, `/reports/sales-chart`, `/reports/sales-trend`, `/reports/income-debt-chart`,
+  `/product/best-selling`, and every `/work-day/*` route are all `@Roles(SELLER, RETAILER)` with
+  `RolesGuard`'s ordinary admin-inheritance, so staff can see them. `HomeScreen`'s overflow menu
+  reflects this exactly: "Hisobotlar" is unconditional, "Harajatlarim" is inside the `isOwner` block
+  alongside "Do'konlar"/"Xodimlar".
+- **`/reports/period-stats` and `/reports/sales-chart`/`/reports/sales-trend` don't share a window
+  vocabulary** — `period-stats` accepts `last7|last30|month`, the chart endpoints only accept
+  `last30|month`. `ReportPeriod` (`features/reports`) deliberately exposes only the two values in
+  common, so the Reports hub's single period selector drives every section consistently rather
+  than needing per-section window state.
+- **`/reports/period-stats` returns the exact same shape as a closed `WorkDay.summary` snapshot**
+  (both are `ReportingService.shiftSummary()`'s return type, just windowed differently — a
+  caller-selected period vs. a shift's actual start/end) — modeled as one shared `PeriodStats`
+  entity (`features/reports/domain/entities/period_stats.dart`) reused by both `ReportsNotifier`
+  and `WorkDay.summary`.
+- **`salesByPaymentMethod` has 6 methods** (`cash/card/bankTransfer/click/payme/debt`), unlike the
+  dashboard's `paymentBreakdown` (4: no `click`/`payme`) — confirmed these are genuinely different
+  shapes by reading both response types directly, not assumed to be the same `PaymentBreakdown`.
+  `SalesByPaymentMethod`/`SalesByPaymentMethodByCurrency` are new types, not a reuse.
+- **`GET /product/best-selling` returns plain `Product[]`, no sold-quantity figure** — confirmed by
+  reading `findBestSelling()`: it groups `SaleItem` by `productId` internally to rank, but the
+  response is just the ranked `Product` rows (same shape as every other product list), so
+  `ReportsScreen`'s best-selling section shows name/price/stock only, never a "sold: N" figure —
+  there's nothing in the response to show it from.
+- **Work-day (`Ish kuni`) is a real trading-shift concept, not just a UI label**: `POST /work-day/start`
+  is idempotent (returns the existing open shift if one exists); `POST /work-day/end` computes and
+  persists a `ShiftSummary` snapshot, then **best-effort** notifies the Telegram bot (fire-and-forget
+  on the backend, irrelevant to bsmart, which has no bot integration) — bsmart's `WorkDayNotifier`
+  only calls `start()`/`end()` and re-reads `GET /work-day/current`, which returns the open shift if
+  one exists, else the most-recently-closed one (so the summary stays visible right after ending a
+  shift instead of the UI going blank).
+- **`GET /work-day/debts-export.xlsx` is not scoped to a shift** — it's the tenant's full outstanding-
+  debts ledger (both `Debt`-as-creditor and `SaleDebt` rows the tenant holds, plus, on a second
+  sheet, `Debt`-as-debtor rows) at the moment of the call, confirmed by reading
+  `getOutstandingDebtsExport()` directly. bsmart's "Qarzlar (Excel)" button is therefore always
+  available, not gated on having an open/closed work day.
+- **Excel export handed to `share_plus`, not written to a fixed path**: `ReportsRemoteDataSource
+  .exportDebtsXlsx()` fetches the response as raw bytes (`ResponseType.bytes`), and `WorkDayCard`
+  hands them to `Share.shareXFiles([XFile.fromData(bytes, name: 'qarzlar.xlsx', mimeType: ...)])`
+  (`share_plus` 10.x's older `Share.shareXFiles` API, not the newer `SharePlus.instance.share`/
+  `ShareParams` shape a later `share_plus` major version uses) — no `path_provider` dependency
+  needed, since `XFile.fromData` keeps the bytes in memory until the OS share sheet consumes them.
+  **Known cosmetic gap**: the file name shown inside the Android share sheet is a generated UUID
+  (e.g. `74d-11f1-....xlsx`), not `qarzlar.xlsx` — the `name:` parameter passed to `XFile.fromData`
+  isn't consistently honored by every share target on Android with this package version. The
+  underlying file content/extension is correct either way; not worth chasing further unless it
+  becomes a real complaint.
+- **Real bug found and fixed during live verification — `PopupMenuButton<T?>` with a null-valued
+  item is silently unselectable.** `ExpendituresListScreen`'s type-filter menu originally used
+  `PopupMenuButton<ExpenditureType?>` with `PopupMenuItem(value: null, child: Text('Barchasi'))`
+  for "show all types." Flutter's own `PopupMenuButton._PopupMenuButtonState.showButtonMenu()`
+  (`popup_menu.dart`) awaits `showMenu<T>()` and then does `if (newValue == null) { onCanceled
+  ?.call(); return; }` **before** calling `onSelected` — so selecting an item whose value actually
+  *is* `null` is indistinguishable from dismissing the menu without choosing anything, and
+  `onSelected` never fires. Caught live: filtering to a type, deleting that row, then tapping
+  "Barchasi" left the list stuck on an empty/stale state no matter how carefully the tap was timed
+  (first suspected a race condition in `ExpendituresListNotifier.delete()`'s un-awaited `refresh()`
+  call — genuinely fixed that too, since it's a real bug in its own right, but it was **not** what
+  caused this symptom; direct Prisma queries against the backend proved the data was always intact,
+  isolating the bug to the button itself). **Fixed** by keying the button on the wire string instead
+  (`PopupMenuButton<String>`, `''` sentinel for "no filter", mapped back to `ExpenditureType?` in
+  `onSelected`) — never give a `PopupMenuItem`/`DropdownMenuItem` a literal `null` value in this
+  app; use a non-null sentinel and map it, the same pattern now used here. Grepped the rest of the
+  codebase for the same `PopupMenuItem(value: null` pattern — this was the only occurrence.
+
 ### Offline strategy
 Hive is a **read-cache layer only** — write-through on a successful remote fetch, fall back to the
 cached value on a `NetworkApiException`. **No offline writes** (no queuing an order/sale/payment
@@ -478,8 +646,8 @@ different data), Uzbek-only UI (no i18n framework needed yet, but route strings 
 | 3 | B2B Orders | 🟢 Done 2026-09-22, verified live end-to-end (create→approve→deliver, DB side-effects confirmed, see log) |
 | 4 | Customers + B2C Sales/POS (native barcode scanning) | 🟢 Done 2026-09-23, verified live (create→approve wasn't needed here, but full PAID/DEBT checkout + return lifecycle verified end-to-end, see log). Barcode-scan-to-find remains hardware-blocked (same limitation as Milestone 2), not re-attempted this pass |
 | 5 | Debts + Payments | 🟢 Done 2026-09-23, verified live (FIFO pay-down, single-debt payment, close-debt, and two real bugs found+fixed — see log) |
-| 6 | Stores/multi-branch + Staff (Admins) management | ⬜ Not started |
-| 7 | Expenditures + Reports/dashboard charts | ⬜ Not started |
+| 6 | Stores/multi-branch + Staff (Admins) management | 🟢 Done 2026-09-23, verified live (multi-store switcher, store-scoping, all deactivate/delete guards, staff creation/login/nav-gating — see log) |
+| 7 | Expenditures + Reports/dashboard charts | 🟢 Done 2026-09-23, verified live (owner-only expenditure CRUD, period-comparison reports hub, best-selling reuse, work-day start/end + Excel export, two real bugs found+fixed — see log). **Phase 1 complete.** |
 
 Endpoint-to-screen mapping, edge cases, and per-milestone detail live in the original plan
 conversation — re-derive from the reference backend's controllers/DTOs/Swagger docs at
@@ -912,3 +1080,146 @@ since Milestone 2) remain opportunistic, non-blocking follow-ups.
 **Next up:** Milestone 6 (Stores/Multi-branch + Staff/Admins management). Shared cart (park/
 resume, deferred from Milestone 4) and the barcode-scan-to-find / master-catalog-picker
 re-verifications (deferred since Milestone 2) remain opportunistic, non-blocking follow-ups.
+
+### 2026-09-23 — Milestone 6 (Stores/Multi-branch + Staff/Admins management)
+- Read `store.controller.ts`/`.service.ts`/both DTOs and `admin.controller.ts`/`.service.ts`/all 3
+  DTOs directly before writing any code — see "Store / Admin (Staff) model" above for what that
+  surfaced, most importantly a correction to the original plan: `CreateAdminDto` has no
+  `canAccessPos` field (it's `SUPER_ADMIN`-gated via the generic user-update endpoint, not settable
+  by the owner at admin-creation time).
+- Built `features/stores` (full CRUD: list/create/edit/activate/deactivate/delete, plus
+  `StoreSwitcher`) and `features/staff_admins` (full CRUD: list/create/edit/activate/deactivate/
+  delete, with a mandatory store picker in the create/edit form) — same `data`/`domain`/
+  `presentation` shape as every prior feature. Modified `HomeScreen` to compute `isOwner` from
+  `session.isStaff` and gate the "Do'konlar"/"Xodimlar" overflow-menu items and the `StoreSwitcher`
+  on it; modified `SessionNotifier._clearState()` to proactively clear `ActiveStoreStorage` on
+  logout (see "Store / Admin (Staff) model" above for why).
+- `flutter analyze`/`flutter test`/`flutter build apk --debug`: all clean.
+- **Verified live, full lifecycle**, against a real running backend with one seeded throwaway
+  SELLER (`+998900000011`) with its auto-created default store ("Bosh filial"):
+  - Logged in → confirmed `StoreSwitcher` correctly absent with only one store, "Do'konlar"/
+    "Xodimlar" correctly present in the overflow menu (owner session).
+  - **Store CRUD**: created a second store ("Ikkinchi filial") via the FAB form → `StoreSwitcher`
+    correctly appeared on the dashboard → switched to the new store → created a product while on
+    it → switched back to "Bosh filial" → confirmed the products list was correctly empty there
+    (store-scoping via `X-Store-Id` + the switcher's provider-invalidation both confirmed working
+    together, not just in isolation).
+  - **Deactivate guard**: deactivated "Ikkinchi filial" (succeeded, "Bosh filial" still active) →
+    attempted to deactivate "Bosh filial" (now the sole active store) → correctly 409'd with the
+    exact guard message, store remained active.
+  - **Delete + delete-with-staff guard**: deleted "Ikkinchi filial" (empty, no staff) → succeeded,
+    removed from list. Created a third store ("Filial3") → created an admin locked to it → attempted
+    to delete "Filial3" → correctly 409'd with "This store still has staff assigned..." → deleted
+    the admin → retried delete → succeeded.
+  - **Admin CRUD + login**: created admin "Ali Valiyev" (`+998900000012`, locked to "Filial3") →
+    appeared in the list with the correct store name resolved via the lookup map → deactivated
+    (menu correctly flipped to "Faollashtirish") → reactivated → logged out of the owner account →
+    logged in as the admin → dashboard correctly showed "Optomchi" role label with no `shopName`
+    line, **no `StoreSwitcher`**, and the overflow menu correctly showed only
+    Mahsulotlar/Mijozlar/Sotuvlar tarixi/Qarzlar — no "Do'konlar"/"Xodimlar" — confirming the
+    `isStaff`-based gating end-to-end, not just by reading the code.
+  - **Logout-clears-active-store fix**: logged out of the admin session, logged back in as the
+    owner (who had "Bosh filial" active before) — no 403 occurred and the dashboard loaded cleanly,
+    confirming the proactive fix works as intended.
+  - **Store soft-delete discovered live, not just from source**: after deleting "Ikkinchi filial"
+    and "Filial3" through the UI, a direct Prisma query showed both rows still present with
+    `deletedAt` set — confirmed this is intentional (`findAll()` filters `deletedAt: null`), not a
+    bug, by reading `store.service.ts` afterward. Documented in "Store / Admin (Staff) model" above
+    so it isn't mistaken for orphaned data next time.
+- **Known cosmetic gap, not fixed this pass**: `AdminsListScreen`'s row has no visible
+  active/inactive indicator (unlike `StoresListScreen`'s greyed-out icon + "Asosiy" badge pattern)
+  — deactivating an admin only shows through the popup menu's action flipping to "Faollashtirish".
+  Functionally correct (confirmed via the menu-state check above), just less immediately visible
+  than the stores screen's equivalent. Small follow-up, not a blocker.
+- All seed data (1 test SELLER + its stores, the one product created during the store-scoping
+  check, and the one admin/staff user — the latter two already soft/hard-deleted through the UI
+  during the guard tests themselves) removed afterward via a companion cleanup script that deletes
+  the seller (cascading all remaining stores/products regardless of soft-delete state); backend dev
+  server and `flutter run` both stopped; `.env` reset to its checked-in default.
+
+**Next up:** Milestone 7 (Expenditures + Reports/dashboard charts) — the last Phase 1 milestone.
+Shared cart (park/resume, deferred from Milestone 4), the barcode-scan-to-find /
+master-catalog-picker re-verifications (deferred since Milestone 2), and the admin-list
+active/inactive visual indicator (deferred above) remain opportunistic, non-blocking follow-ups.
+
+### 2026-09-23 — Milestone 7 (Expenditures + Reports/dashboard charts) — Phase 1 complete
+- Read `expenditure.controller.ts`/`.service.ts`/all 3 DTOs, `reporting.controller.ts`'s
+  `period-stats`/`sales-chart`/`sales-trend` handlers and their real `reporting.service.ts`
+  implementations (not just the Swagger doc comments — confirmed those are accurate here, unlike a
+  past milestone's stale ones), `work-day.controller.ts`/`.service.ts` (incl. the Excel-export
+  workbook builder), and `product.controller.ts`'s `best-selling` handler directly before writing
+  any code — see "Expenditures / Reports (period-stats, sales-chart, work-day) model" above for
+  what that surfaced.
+- Built `features/expenditures` (full CRUD: list/create/edit/delete, type filter, a running
+  `totalAmount` strip sourced from the list endpoint's own `meta`) and `features/reports` (a new
+  "Hisobotlar" hub: period-selectable stats KPIs, a sales-amount line chart, best-selling products
+  reusing `features/products`' own never-wired `bestSelling()` repository method from Milestone 2,
+  and an "Ish kuni" card for work-day start/end + Excel debts export via `share_plus`). Relocated
+  `dashboard_shared.dart` → `core/entities/reporting_shared.dart` so both features could share its
+  8 value-object classes without a cross-feature-domain import (see that file's own doc comment).
+  Added `GetBestSellingProductsUseCase` (the missing usecase layer for Milestone 2's orphaned
+  repository method) and `core/enums/expenditure_type.dart`.
+- `flutter analyze`/`flutter test`/`flutter build apk --debug`: all clean.
+- **Two real bugs caught and fixed during live verification, neither catchable by static
+  analysis:**
+  1. **`ExpendituresListNotifier.delete()`'s un-awaited `refresh()`** — a real race condition
+     (fixed on sight, confirmed by reasoning about the code, though it turned out not to be what
+     caused the symptom that led to finding it — see bug #2). `delete()` called `refresh()` inside
+     `result.fold()` without awaiting it, so a `setTypeFilter()` call made shortly after could
+     start a second fetch that resolves *before* the trailing unawaited one, which would then
+     overwrite the correct state with stale data on completion. Fixed by awaiting the whole `fold`
+     (`Future<void>.error(failure)` in the failure branch keeps the existing "throw on failure"
+     convention while giving both branches the same `Future<void>` return type `fold` requires).
+  2. **`PopupMenuButton<T?>` with a `null`-valued item is silently unselectable** — the actual
+     cause of "switching the expenditure type filter back to 'Barchasi' shows an empty list no
+     matter what." Flutter's own `PopupMenuButton` treats a selected item's `null` value the same
+     as "menu dismissed without choosing anything" internally, so `onSelected` never fires for that
+     item — confirmed by reading `popup_menu.dart`'s `showButtonMenu()` after direct Prisma queries
+     against the backend proved the underlying data was correct at every step, isolating the bug to
+     the button itself rather than the notifier or the API. Fixed by keying the button on the wire
+     string (`''` sentinel for "no filter") instead of a nullable enum. Grepped the codebase for the
+     same `PopupMenuItem(value: null` pattern — this was the only occurrence. **Worth remembering
+     project-wide**: never give a `PopupMenuItem`/`DropdownMenuItem` a literal `null` value; use a
+     non-null sentinel and map it back, same as done here.
+- **Verified live**, against a real running backend with a seeded throwaway SELLER
+  (`+998900000013`) + default store, 2 products, 1 customer, and 3 seeded sales (2 `PAID` totaling
+  85 000, 1 `DEBT` for 30 000, opening a `SaleDebt`):
+  - **Reports hub**: period-stats KPIs (Tushum 85 000, Yangi qarzlar 30 000/1 ta, Qarz to'lovlari
+    0, Qoldiq qarzdorlik 30 000/1 ta) matched the seed exactly on first load; switching "So'nggi 30
+    kun" ↔ "Bu oy" correctly re-fetched and re-shaped the sales chart (a 30-day trailing view vs. a
+    calendar-month view, today's spike positioned differently in each); switching UZS ↔ USD
+    correctly zeroed every figure with no cross-currency bleeding (all seed data was UZS-only) and
+    showed the chart's "Ma'lumot yo'q" empty state. Best-selling correctly listed both seeded
+    products. Cross-validated against the existing (Milestone 1) dashboard's own KPI cards, which
+    independently agreed on "Qabul qilingan to'lovlar" = 85 000 — same cross-validation discipline
+    used in prior milestones.
+  - **Ish kuni**: `Ish kunini boshlash` → correctly showed `Ochiq` + start timestamp, button
+    flipped to `Ish kunini yakunlash`; ending it correctly showed `Yopilgan` + both timestamps,
+    button flipped back to allow starting a new shift. `Qarzlar (Excel)` correctly opened the
+    native Android share sheet with a real `.xlsx` payload (file content correct; see the cosmetic
+    filename gap noted above).
+  - **Expenditures**: created/edited/deleted entries across multiple `ExpenditureType`s; the
+    "Jami xarajat" total strip correctly tracked the sum of whatever the active type filter
+    matched (not just the unfiltered total) at every step, matching the backend's
+    per-filter-not-per-page `meta.totalAmount` design. Both bugs above were caught and fixed during
+    this part of the pass, then the exact repro sequence (filter → delete the only matching row →
+    switch back to "Barchasi") was re-run after each fix until it produced the correct result.
+  - **Owner-only nav gating**: confirmed via code inspection that `Harajatlarim` reuses the same
+    `isOwner` gate already live-verified end-to-end in Milestone 6 (owner sees it, staff don't);
+    not re-run against a fresh staff login this pass since the gating mechanism itself was already
+    proven, not new code — noted here rather than silently assumed.
+- All seed data (1 SELLER + its store, 2 products, 1 customer, 3 sales + items/payment/saleDebt,
+  and every expenditure created during the bug-hunting pass) removed afterward via a companion
+  cleanup script (deletes the seller, cascading everything else); confirmed zero active
+  expenditures remained via a direct DB query before running it. Backend dev server and
+  `flutter run` both stopped; `.env` reset to its checked-in default.
+
+**Phase 1 (Operator core) is now fully built and verified end-to-end across all 8 milestones
+(0–7).** Remaining opportunistic, non-blocking follow-ups carried forward from earlier milestones:
+shared cart (park/resume, Milestone 4), barcode-scan-to-find and the master-catalog picker
+(Milestone 2, hardware/DB-drift-blocked), the admins-list active/inactive visual indicator
+(Milestone 6), and the Excel-export share-sheet filename cosmetic gap (this milestone). Next up per
+the roadmap: **Phase 2 — CUSTOMER role + public storefront** (guest-eligible catalog browsing,
+customer self-registration via `POST /auth/register` — finally applicable, since that endpoint
+always creates a `CUSTOMER` account, favorites, a `CustomerShell`, and an allowlist-aware router
+redirect instead of Phase 1's blanket "no session → login").

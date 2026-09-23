@@ -67,6 +67,7 @@ import 'package:bsmart/features/products/data/repositories/products_repository_i
 import 'package:bsmart/features/products/domain/repositories/products_repository.dart';
 import 'package:bsmart/features/products/domain/usecases/assign_barcode_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/create_product_usecase.dart';
+import 'package:bsmart/features/products/domain/usecases/get_best_selling_products_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/delete_product_image_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/delete_product_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/get_next_plu_usecase.dart';
@@ -76,6 +77,38 @@ import 'package:bsmart/features/products/domain/usecases/receive_stock_usecase.d
 import 'package:bsmart/features/products/domain/usecases/share_to_catalog_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/update_product_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/upload_product_image_usecase.dart';
+import 'package:bsmart/features/expenditures/data/datasources/expenditures_remote_data_source.dart';
+import 'package:bsmart/features/expenditures/data/repositories/expenditures_repository_impl.dart';
+import 'package:bsmart/features/expenditures/domain/repositories/expenditures_repository.dart';
+import 'package:bsmart/features/expenditures/domain/usecases/create_expenditure_usecase.dart';
+import 'package:bsmart/features/expenditures/domain/usecases/delete_expenditure_usecase.dart';
+import 'package:bsmart/features/expenditures/domain/usecases/list_expenditures_usecase.dart';
+import 'package:bsmart/features/expenditures/domain/usecases/update_expenditure_usecase.dart';
+import 'package:bsmart/features/reports/data/datasources/reports_remote_data_source.dart';
+import 'package:bsmart/features/reports/data/repositories/reports_repository_impl.dart';
+import 'package:bsmart/features/reports/domain/repositories/reports_repository.dart';
+import 'package:bsmart/features/reports/domain/usecases/end_work_day_usecase.dart';
+import 'package:bsmart/features/reports/domain/usecases/export_debts_xlsx_usecase.dart';
+import 'package:bsmart/features/reports/domain/usecases/get_current_work_day_usecase.dart';
+import 'package:bsmart/features/reports/domain/usecases/get_period_stats_usecase.dart';
+import 'package:bsmart/features/reports/domain/usecases/get_sales_chart_usecase.dart';
+import 'package:bsmart/features/reports/domain/usecases/start_work_day_usecase.dart';
+import 'package:bsmart/features/staff_admins/data/datasources/admins_remote_data_source.dart';
+import 'package:bsmart/features/staff_admins/data/repositories/admins_repository_impl.dart';
+import 'package:bsmart/features/staff_admins/domain/repositories/admins_repository.dart';
+import 'package:bsmart/features/staff_admins/domain/usecases/create_admin_usecase.dart';
+import 'package:bsmart/features/staff_admins/domain/usecases/delete_admin_usecase.dart';
+import 'package:bsmart/features/staff_admins/domain/usecases/list_admins_usecase.dart';
+import 'package:bsmart/features/staff_admins/domain/usecases/set_admin_active_usecase.dart';
+import 'package:bsmart/features/staff_admins/domain/usecases/update_admin_usecase.dart';
+import 'package:bsmart/features/stores/data/datasources/stores_remote_data_source.dart';
+import 'package:bsmart/features/stores/data/repositories/stores_repository_impl.dart';
+import 'package:bsmart/features/stores/domain/repositories/stores_repository.dart';
+import 'package:bsmart/features/stores/domain/usecases/create_store_usecase.dart';
+import 'package:bsmart/features/stores/domain/usecases/delete_store_usecase.dart';
+import 'package:bsmart/features/stores/domain/usecases/list_stores_usecase.dart';
+import 'package:bsmart/features/stores/domain/usecases/set_store_active_usecase.dart';
+import 'package:bsmart/features/stores/domain/usecases/update_store_usecase.dart';
 import 'package:bsmart/features/sales/data/datasources/sales_remote_data_source.dart';
 import 'package:bsmart/features/sales/data/repositories/sales_repository_impl.dart';
 import 'package:bsmart/features/sales/domain/repositories/sales_repository.dart';
@@ -137,6 +170,7 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => ListProductsUseCase(getIt()));
   getIt.registerFactory(() => GetProductUseCase(getIt()));
   getIt.registerFactory(() => CreateProductUseCase(getIt()));
+  getIt.registerFactory(() => GetBestSellingProductsUseCase(getIt()));
   getIt.registerFactory(() => UpdateProductUseCase(getIt()));
   getIt.registerFactory(() => DeleteProductUseCase(getIt()));
   getIt.registerFactory(() => ReceiveStockUseCase(getIt()));
@@ -203,6 +237,42 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => CloseDebtUseCase(getIt()));
   getIt.registerFactory(() => CreatePaymentUseCase(getIt()));
   getIt.registerFactory(() => PayDownUseCase(getIt()));
+
+  // --- features/stores ---
+  getIt.registerLazySingleton(() => StoresRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<StoresRepository>(() => StoresRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListStoresUseCase(getIt()));
+  getIt.registerFactory(() => CreateStoreUseCase(getIt()));
+  getIt.registerFactory(() => UpdateStoreUseCase(getIt()));
+  getIt.registerFactory(() => SetStoreActiveUseCase(getIt()));
+  getIt.registerFactory(() => DeleteStoreUseCase(getIt()));
+
+  // --- features/staff_admins ---
+  getIt.registerLazySingleton(() => AdminsRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<AdminsRepository>(() => AdminsRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListAdminsUseCase(getIt()));
+  getIt.registerFactory(() => CreateAdminUseCase(getIt()));
+  getIt.registerFactory(() => UpdateAdminUseCase(getIt()));
+  getIt.registerFactory(() => SetAdminActiveUseCase(getIt()));
+  getIt.registerFactory(() => DeleteAdminUseCase(getIt()));
+
+  // --- features/expenditures ---
+  getIt.registerLazySingleton(() => ExpendituresRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<ExpendituresRepository>(() => ExpendituresRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListExpendituresUseCase(getIt()));
+  getIt.registerFactory(() => CreateExpenditureUseCase(getIt()));
+  getIt.registerFactory(() => UpdateExpenditureUseCase(getIt()));
+  getIt.registerFactory(() => DeleteExpenditureUseCase(getIt()));
+
+  // --- features/reports (period-stats/sales-chart + work-day) ---
+  getIt.registerLazySingleton(() => ReportsRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<ReportsRepository>(() => ReportsRepositoryImpl(getIt()));
+  getIt.registerFactory(() => GetPeriodStatsUseCase(getIt()));
+  getIt.registerFactory(() => GetSalesChartUseCase(getIt()));
+  getIt.registerFactory(() => GetCurrentWorkDayUseCase(getIt()));
+  getIt.registerFactory(() => StartWorkDayUseCase(getIt()));
+  getIt.registerFactory(() => EndWorkDayUseCase(getIt()));
+  getIt.registerFactory(() => ExportDebtsXlsxUseCase(getIt()));
 }
 
 /// The main authenticated [Dio] instance — for feature data sources

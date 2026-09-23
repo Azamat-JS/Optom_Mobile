@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/network/auth_event_bus.dart';
+import 'package:bsmart/core/storage/active_store_storage.dart';
 import 'package:bsmart/features/auth/domain/entities/session.dart';
 import 'package:bsmart/features/auth/domain/entities/user.dart';
 import 'package:bsmart/features/auth/domain/repositories/auth_repository.dart';
@@ -62,6 +63,13 @@ class SessionNotifier extends AsyncNotifier<AuthState> {
   }
 
   void _clearState() {
+    // A stale active-store selection from a previous account would otherwise
+    // survive into the next login and get sent as `X-Store-Id` for a store
+    // that account doesn't own — the backend correctly 403s that, but the
+    // failure is confusing without this context. Fire-and-forget: nothing in
+    // this synchronous method awaits it, matching how little state clearing
+    // elsewhere in this app needs to block on I/O.
+    getIt<ActiveStoreStorage>().clear();
     state = const AsyncData(AuthState.loggedOut);
   }
 }

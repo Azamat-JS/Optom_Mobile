@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import 'package:bsmart/features/dashboard/domain/entities/dashboard_shared.dart';
+import 'package:bsmart/core/entities/reporting_shared.dart';
 
 /// Last-6-months income-vs-debt grouped bar chart.
 class IncomeDebtBarChart extends StatelessWidget {

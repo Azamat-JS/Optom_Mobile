@@ -1,9 +1,16 @@
-/// Shared value objects reused across the wholesaler/retailer dashboard
-/// responses — field names/shapes mirror `reporting.service.ts` exactly
+/// Shared value objects reused by both `features/dashboard` (wholesaler/
+/// retailer dashboard responses) and `features/reports` (period-stats/
+/// sales-chart) — field names/shapes mirror `reporting.service.ts` exactly
 /// (`MoneyByCurrency`, `CountAndAmount(ByCurrency)`, `TrendPoint(sByCurrency)`,
-/// `InventoryStats(ByCurrency)`). Unlike `Product`'s `Decimal` fields, every
-/// numeric value here is already a plain JSON number — the reporting service
-/// converts explicitly via its own `num()` helper before responding.
+/// `InventoryStats(ByCurrency)`). Lives in `core/` rather than either
+/// feature's `domain/` on purpose — a feature's domain should not depend on
+/// another feature's domain (see `Product.ProductCategoryRef`'s doc comment
+/// for the same rule stated the other way, via duplication instead of a
+/// shared home) — since both features consume the same `ReportingService`
+/// endpoints and would otherwise duplicate 8 classes verbatim. Unlike
+/// `Product`'s `Decimal` fields, every numeric value here is already a plain
+/// JSON number — the reporting service converts explicitly via its own
+/// `num()` helper before responding.
 library;
 
 class MoneyByCurrency {

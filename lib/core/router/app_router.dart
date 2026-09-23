@@ -10,6 +10,10 @@ import 'package:bsmart/features/auth/presentation/screens/splash_screen.dart';
 import 'package:bsmart/features/customers/presentation/screens/customers_list_screen.dart';
 import 'package:bsmart/features/dashboard/presentation/screens/home_screen.dart';
 import 'package:bsmart/features/debts/presentation/screens/debts_list_screen.dart';
+import 'package:bsmart/features/expenditures/presentation/screens/expenditures_list_screen.dart';
+import 'package:bsmart/features/reports/presentation/screens/reports_screen.dart';
+import 'package:bsmart/features/staff_admins/presentation/screens/admins_list_screen.dart';
+import 'package:bsmart/features/stores/presentation/screens/stores_list_screen.dart';
 import 'package:bsmart/features/orders/presentation/screens/order_catalog_browse_screen.dart';
 import 'package:bsmart/features/orders/presentation/screens/order_detail_screen.dart';
 import 'package:bsmart/features/orders/presentation/screens/order_review_screen.dart';
@@ -112,6 +116,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.debts,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const DebtsListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.stores,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const StoresListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.admins,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const AdminsListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.expenditures,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const ExpendituresListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.reports,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const ReportsScreen()),
       ),
     ],
   );

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
-import 'package:bsmart/features/dashboard/domain/entities/dashboard_shared.dart';
+import 'package:bsmart/core/entities/reporting_shared.dart';
 import 'package:bsmart/features/dashboard/domain/entities/retailer_dashboard.dart';
 import 'package:bsmart/features/dashboard/domain/entities/wholesaler_dashboard.dart';
 import 'package:bsmart/features/dashboard/domain/usecases/get_income_debt_chart_usecase.dart';

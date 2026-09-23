@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'package:bsmart/features/dashboard/domain/entities/dashboard_shared.dart';
+import 'package:bsmart/core/entities/reporting_shared.dart';
 import 'package:bsmart/features/dashboard/domain/entities/retailer_dashboard.dart';
 import 'package:bsmart/features/dashboard/domain/entities/wholesaler_dashboard.dart';
 

@@ -1,4 +1,4 @@
-import 'package:bsmart/features/dashboard/domain/entities/dashboard_shared.dart';
+import 'package:bsmart/core/entities/reporting_shared.dart';
 
 /// `GET /reports/retailer` — RETAILER/RETAILER_ADMIN only.
 class RetailerDashboard {
