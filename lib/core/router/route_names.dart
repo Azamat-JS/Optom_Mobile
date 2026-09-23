@@ -18,4 +18,8 @@ abstract final class RouteNames {
   static const orderDetailPattern = '/orders/:id';
 
   static String orderDetail(String id) => '/orders/$id';
+
+  static const customers = '/customers';
+  static const pos = '/pos';
+  static const sales = '/sales';
 }

@@ -167,6 +167,24 @@ features/
                          powers order creation; never exposes costPrice (backend strips it)
     data/{datasources,models,repositories}/
     domain/{entities,repositories,usecases}/
+  customers/          → a SELLER's/RETAILER's own B2C customer roster (full CRUD)
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/
+    presentation/
+      screens/         → CustomersListScreen, CustomerFormScreen (create/edit, also reused by
+                          POS checkout's quick-create — see `CustomerPickerSheet`)
+  sales/              → POS Sell tab + B2C sale history/returns — no separate "POS" backend
+                         service, this feature is a cart-based UI channel over `/sales`
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/
+    presentation/
+      providers/       → PosCartNotifier (plain Notifier, mirrors CreateOrderCartNotifier's
+                          single-currency guard), SalesListNotifier (paginated)
+      screens/          → PosScreen (search/scan + cart), CheckoutScreen (customer picker,
+                          PAID/DEBT, discount, payment method), SaleDetailScreen (receipt),
+                          SaleReturnScreen, SalesListScreen (history, type filter)
+      widgets/          → CustomerPickerSheet (search + quick-create bottom sheet, shared by
+                          checkout), sale_status_badge.dart (SaleStatusBadge/SaleTypeBadge)
   orders/             → full B2B order lifecycle: create (RETAILER), list (incoming/outgoing,
                          same endpoint disambiguated server-side), detail + status timeline,
                          approve/reject/mark-delivered (SELLER)
@@ -311,6 +329,64 @@ there is no Register screen in Phase 1 — only `LoginScreen`. Customer self-reg
   param (the plan originally assumed one might be needed; it isn't) — the same endpoint, scoped
   server-side by the caller's own tenant context, is sufficient.
 
+### Customers / POS (B2C Sales) model (confirmed against real backend source, 2026-09-23)
+- **POS is not a separate backend service — it's a cart-based UI channel over the existing B2C
+  `Sale` flow**, exactly as documented in Optom Savdo's own `CLAUDE.md` ("Point of Sale (POS) &
+  Inventory Receiving"). `POST /sales` is the single write path for both a `PAID` and a `DEBT`
+  checkout; there is no `POST /pos/*` route to look for. `SaleController`/`CustomerController`
+  both accept `SELLER, SELLER_ADMIN, RETAILER, RETAILER_ADMIN` — this milestone works identically
+  for a wholesaler's own register and a retailer's, unlike the Milestone 3 order flow which is
+  asymmetric (buyer vs. seller side).
+- **`WorkDay` does NOT gate POS checkout server-side** — confirmed by reading `work-day.service.ts`
+  and `sale.service.ts` directly: `WorkDay` is a pure shift-reporting/analytics-snapshot concept
+  (`start`/`end`/`getByDate`, feeding `ReportingService.shiftSummary`), never referenced by
+  `SaleService.create()`. The original plan flagged this as an open question ("verify whether an
+  open WorkDay gates POS sales") — answer: it doesn't, so bsmart's POS screen never needs to
+  check/require an open work day before allowing checkout. `WorkDay` start/end + shift-summary UI
+  stays deliberately deferred to Milestone 7 (Reports), per the roadmap.
+- **Every `Sale` requires a `Customer`** — there is no anonymous/walk-in checkout path server-side
+  (unlike the reference web app's own POS, which lazily creates a "Walk-in" `Customer` via
+  `CustomerService.create()`). bsmart's `CheckoutScreen` requires picking one via
+  `CustomerPickerSheet`, which offers a "Yangi" quick-create dialog backed by the same
+  `POST /customers` endpoint — functionally equivalent to the web app's walk-in pattern, just
+  explicit rather than automatic.
+- **`CreateCustomerDto.lastName` is `@IsNotEmpty()`** — a real bug was caught live during
+  verification: the quick-create dialog only asks for one "Ism" (name) field (by design, for
+  speed at the register) and originally sent `lastName: ''`, which the backend correctly rejected
+  with `400 lastName should not be empty`. Fixed in `customer_picker_sheet.dart`'s
+  `_QuickCreateCustomerDialogState._submit()` — splits the single input on the first space into
+  `firstName`/`lastName`, defaulting `lastName` to `'-'` when there's no second word. This is a
+  real, permanent backend constraint (not a bsmart-side choice) — any future customer quick-create
+  UI must handle it the same way.
+- **A `Sale` cannot mix currencies**, same invariant/enforcement pattern as `Order`
+  (`sale.service.ts` reduces the fetched products' distinct currencies, rejects if >1) —
+  `PosCartNotifier.addProduct()` mirrors this client-side exactly like
+  `CreateOrderCartNotifier.addProduct()` does for orders.
+- **`SaleItemInputDto.productId` is optional** — a manual/custom line item (no backing `Product`,
+  e.g. the reference web app's generic "Mahsulot" card) is a real, supported shape
+  (`productName`+`unitPrice` required instead) — modeled in bsmart as
+  `CreateSaleItemParams(productId: null, productName: ..., unitPrice: ...)`, though the current
+  POS screen only ever adds product-backed items (no generic-amount card built this milestone —
+  not required by the original plan's Milestone 4 scope, a possible small follow-up later).
+- **PAID vs DEBT, and the `paidAmount` partial-upfront-payment case**: `type: PAID` always creates
+  exactly one `Payment` for the full total; `type: DEBT` creates a `SaleDebt` for the total, and
+  **additionally** a `Payment` + reduces the debt's opening balance when `paidAmount > 0` — a
+  "customer pays part now, owes the rest" checkout in one API call. `CheckoutScreen` exposes this
+  as an optional "Oldindan to'lov" field that only appears in DEBT mode; `paymentMethod` is
+  included in the request only when relevant (always for PAID, only for DEBT when
+  `paidAmount > 0`) — sending it otherwise would be silently ignored server-side but is omitted
+  for clarity.
+- **Returns (`POST /sales/:id/returns`) are per-`SaleItem`, quantity-capped by
+  `quantity - returnedQuantity`**, and `refundMethod` is required only when the original sale was
+  `PAID` (a `DEBT` sale's return just reduces the linked `SaleDebt` balance, no money changes
+  hands) — `SaleReturnScreen` conditionally shows the refund-method dropdown on exactly that
+  condition. A sale stays returnable (`Sale.canReturn`) while `status` is `COMPLETED` or
+  `PARTIALLY_RETURNED` — becomes `false` once fully `RETURNED`.
+- **Decimal-as-string gotcha applies here too**: `Sale.subtotal/discount/total`,
+  `SaleItem.quantity/unitPrice/discount/total/returnedQuantity`, `SaleDebt.*Amount/balance`, and
+  `Payment.amount` are all Prisma `Decimal` fields serialized as JSON strings — `sale_model.dart`
+  parses every one of them through `parseDecimal`/`parseNullableDecimal`, same as `Product`.
+
 ### Offline strategy
 Hive is a **read-cache layer only** — write-through on a successful remote fetch, fall back to the
 cached value on a `NetworkApiException`. **No offline writes** (no queuing an order/sale/payment
@@ -337,7 +413,7 @@ different data), Uzbek-only UI (no i18n framework needed yet, but route strings 
 | 1 | Auth + Shell + Dashboard | 🟢 Done 2026-09-22, verified live with real seeded data (see log). Auth + role-aware dashboard (KPI cards, sales-trend line chart, payment-breakdown donut, income/debt bar chart, UZS/USD toggle) all working. **Deferred, not part of this milestone**: `GET /store`-based multi-store switcher visibility (Milestone 6 scope — a single-store owner should see no switcher at all) |
 | 2 | Products, Categories, Master-Catalog browse | 🟢 Nearly closed (2026-09-22). Verified live: product CRUD, barcode-generate, receive-stock, delete, the leaf-only category picker, and image upload/delete (real multipart upload to ImageKit, confirmed rendering + delete). **Two remaining gaps, both environment-blocked, not bsmart bugs**: master-catalog picker (blocked by a pre-existing `master_products.unit` DB drift on this machine's local backend, see "Product/Catalog model"), and barcode-scan-to-find (needs a real device with a real barcode — no simulator/emulator camera can supply one) |
 | 3 | B2B Orders | 🟢 Done 2026-09-22, verified live end-to-end (create→approve→deliver, DB side-effects confirmed, see log) |
-| 4 | Customers + B2C Sales/POS (native barcode scanning) | ⬜ Not started |
+| 4 | Customers + B2C Sales/POS (native barcode scanning) | 🟢 Done 2026-09-23, verified live (create→approve wasn't needed here, but full PAID/DEBT checkout + return lifecycle verified end-to-end, see log). Barcode-scan-to-find remains hardware-blocked (same limitation as Milestone 2), not re-attempted this pass |
 | 5 | Debts + Payments | ⬜ Not started |
 | 6 | Stores/multi-branch + Staff (Admins) management | ⬜ Not started |
 | 7 | Expenditures + Reports/dashboard charts | ⬜ Not started |
@@ -614,3 +690,90 @@ stays deliberately deferred to Milestone 6, per the roadmap table.
 animation-investment milestone per the original plan (§2.7). Barcode-scan-to-find and the
 master-catalog picker remain the two opportunistic re-verification items from Milestone 2, still
 not blocking further progress.
+
+### 2026-09-23 — Milestone 4 (Customers + B2C Sales/POS)
+- Read `customer.controller.ts`/`.service.ts`/DTOs, `sale.controller.ts`/`.service.ts`/DTOs
+  (create/query/return), `work-day.controller.ts`/`.service.ts`, `sale-debt.controller.ts`, and
+  `shared-cart.controller.ts`/DTO directly before writing any code — see "Customers / POS (B2C
+  Sales) model" above for what that surfaced, most importantly: `WorkDay` does not gate checkout
+  (an open question from the original plan, now resolved), and `CreateSaleDto.paidAmount` enables
+  a partial-upfront-payment DEBT checkout in one call.
+- Built `features/customers` (full CRUD: list/search, create, edit, deactivate — following
+  `features/products`' exact `data`/`domain`/`presentation` shape) and `features/sales` (POS Sell
+  tab, checkout, receipt, returns, history) — new cross-cutting primitives added:
+  `core/enums/payment_method.dart`, `core/enums/sale_enums.dart` (`SaleType`/`SaleStatus`/
+  `DebtStatus`). Reused the existing `shared/widgets/barcode_scanner_screen.dart` for POS's scan
+  action (one-shot scan → `GET /products?barcode=` lookup → add to cart, or a "not found" toast) —
+  the original plan's "continuous-scan debounce" refinement was **not** built this pass (the
+  scanner still requires re-opening per item); noted here as a known simplification, not a gap
+  that blocks the milestone, since the one-shot flow is fully functional.
+- **Shared cart (park/resume) was scoped out of this pass** — the original plan listed it under
+  Milestone 4, but given the POS core (cart/checkout/returns) was already the bulk of this
+  milestone's surface, it was deliberately deferred rather than rushed. Not yet built as of this
+  writing; revisit as a small follow-up feature, not a blocker for Milestone 5.
+- `flutter analyze`/`flutter test`/`flutter build apk --debug`: all clean.
+- **Real bug caught and fixed during live verification, not by static analysis**: the POS
+  checkout's customer quick-create dialog sent `lastName: ''`, which `CreateCustomerDto`'s
+  `@IsNotEmpty()` correctly rejected with a live `400` the first time it was exercised against the
+  real backend — see "Customers / POS (B2C Sales) model" above for the fix
+  (`customer_picker_sheet.dart` now splits the one "Ism" field on its first space, defaulting
+  `lastName` to `'-'`). This is exactly the kind of bug `flutter analyze`/`flutter test` cannot
+  catch — only caught by actually submitting the form against the live server.
+- **Verified live, full lifecycle**, against a real running backend with one seeded throwaway
+  SELLER account (`+998900000007`) + 2 products (no customer seeded — the quick-create flow was
+  exercised live instead, which is what surfaced the bug above): logged in → Kassa (POS) →
+  searched/added both products to cart (currency-mixing guard not exercised this pass, both
+  products were UZS) → opened checkout → picked "Mijozni tanlang" → quick-created a walk-in
+  customer ("Ali -" after the fix) → submitted as **PAID/Naqd** → receipt screen showed correct
+  items/subtotal/total/payment line and a "Qaytarish" (Return) action → **returned 1 unit** of one
+  product → receipt correctly updated to "Qisman qaytarilgan" (Partially Returned) with
+  recalculated subtotal/total, the returned item annotated "qaytarilgan: 1" → went back to Kassa,
+  confirmed stock levels reflected both the sale and the return correctly (see below) → added the
+  other product, checked out as **DEBT** with no upfront payment → receipt correctly showed a
+  "Qarz" card (`To'langan: 0`, `Qoldiq: 12 000 so'm`) and a `Qarzga` status badge, no payments
+  section (correct — no `Payment` row should exist for a zero-upfront DEBT sale) → verified
+  `Sotuvlar tarixi` (Sales history) lists both sales correctly with type badges → verified
+  `Mijozlar` (Customers) list shows the created customer, and its edit form correctly pre-fills
+  `firstName`/`lastName`/`phone`.
+- **Confirmed all side effects via a direct DB query** (not just "no exception thrown"): both
+  products' `stock` correctly reflected two separate 1-unit sale decrements plus one 1-unit return
+  increment (50→49→48 for the product sold in both sales, 30→29→30 for the product sold once and
+  fully returned); exactly one `Payment` row (20 000 CASH, linked to the PAID sale); exactly one
+  `SaleDebt` row (balance 12 000, status ACTIVE, linked to the DEBT sale); exactly one
+  `SaleReturn` row (8 000, refundMethod CASH, cashOwed 0); the PAID `Sale`'s own
+  `subtotal`/`total` correctly reduced from 20 000 to 12 000 after the return, `status`
+  `PARTIALLY_RETURNED`.
+- **Verification tooling notes, both newly discovered this pass** (added here so they aren't
+  re-discovered from scratch next time):
+  - **`adb shell input text` silently drops a leading `+`** when typing directly into a phone-
+    number field (observed repeatedly across the login screen and the quick-create-customer
+    dialog) — the character before the first digit is lost even though the rest of the string
+    types correctly. Workaround: type the digits first, then move the cursor to the start
+    (`adb shell input keyevent --longpress KEYCODE_MOVE_HOME`) and type just `+` as a second,
+    separate `input text` call — this always lands correctly, whereas retrying the full string
+    with the `+` included reproduces the same drop.
+  - **`adb shell input text "word1 word2"` (an unescaped space inside one shell-quoted argument)
+    does not reliably type both words** — observed dropping the second word entirely, or (once)
+    routing it into a different, previously-focused field. Reliable workaround: use the literal
+    `%s` token adb documents for a space (`adb shell input text "word1%sword2"`), or split into
+    two `input text` calls with an explicit cursor move between them. Bash-level quoting does not
+    help here — the space is consumed/mishandled by `adb`/the on-device `input` command itself,
+    not by the local shell.
+  - Once again (third time this project, after two separate instances in the Milestone 3
+    verification pass), a button's true tap target came from a **fresh `uiautomator dump`'s
+    `bounds` attribute**, not from visually estimating a coordinate off a screenshot — several
+    taps this pass landed on the wrong field/button (the Ism/Telefon dialog fields, the
+    Qarzga/To'landi segmented toggle, the Saqlash button, the return screen's +/− steppers) purely
+    from eyeballing screenshot pixel positions. **Standing rule going forward: for any tap where
+    precision matters (small buttons, adjacent form fields, segmented controls), pull a fresh
+    uiautomator dump and read the exact `bounds` first — do not estimate from a screenshot, even a
+    native-resolution one.**
+- All seed data (1 test SELLER user + store, 2 products, the created customer, both sales + their
+  items/payment/debt/return) removed afterward via a companion cleanup script; backend dev server
+  and `flutter run` both stopped; `.env` reset to its checked-in default.
+
+**Next up:** Milestone 5 (Debts + Payments) — the FIFO pay-down preview is flagged in the original
+plan as the highest-risk pure-logic piece of this whole project; budget real design attention
+there, not just a mechanical port of the B2B/B2C debt list screens. Shared cart (park/resume,
+deferred above) and the barcode-scan-to-find / master-catalog-picker re-verifications (deferred
+since Milestone 2) remain opportunistic, non-blocking follow-ups.

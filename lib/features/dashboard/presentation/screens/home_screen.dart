@@ -40,14 +40,31 @@ class HomeScreen extends ConsumerWidget {
         title: const Text('bsmart'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.inventory_2_outlined),
-            tooltip: 'Mahsulotlar',
-            onPressed: () => context.push(RouteNames.products),
+            icon: const Icon(Icons.point_of_sale_outlined),
+            tooltip: 'Kassa',
+            onPressed: () => context.push(RouteNames.pos),
           ),
           IconButton(
             icon: const Icon(Icons.receipt_long_outlined),
             tooltip: 'Buyurtmalar',
             onPressed: () => context.push(RouteNames.orders),
+          ),
+          PopupMenuButton<String>(
+            onSelected: (route) => context.push(route),
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: RouteNames.products,
+                child: ListTile(leading: Icon(Icons.inventory_2_outlined), title: Text('Mahsulotlar')),
+              ),
+              PopupMenuItem(
+                value: RouteNames.customers,
+                child: ListTile(leading: Icon(Icons.groups_outlined), title: Text('Mijozlar')),
+              ),
+              PopupMenuItem(
+                value: RouteNames.sales,
+                child: ListTile(leading: Icon(Icons.history), title: Text('Sotuvlar tarixi')),
+              ),
+            ],
           ),
           IconButton(
             icon: const Icon(Icons.logout),

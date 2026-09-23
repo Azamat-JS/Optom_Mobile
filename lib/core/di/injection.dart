@@ -24,6 +24,15 @@ import 'package:bsmart/features/catalog/domain/repositories/catalog_repository.d
 import 'package:bsmart/features/catalog/domain/usecases/browse_catalog_usecase.dart';
 import 'package:bsmart/features/catalog/domain/usecases/list_catalog_sellers_usecase.dart';
 import 'package:bsmart/features/catalog/domain/usecases/list_seller_stores_usecase.dart';
+import 'package:bsmart/features/customers/data/datasources/customers_remote_data_source.dart';
+import 'package:bsmart/features/customers/data/repositories/customers_repository_impl.dart';
+import 'package:bsmart/features/customers/domain/repositories/customers_repository.dart';
+import 'package:bsmart/features/customers/domain/usecases/create_customer_usecase.dart';
+import 'package:bsmart/features/customers/domain/usecases/deactivate_customer_usecase.dart';
+import 'package:bsmart/features/customers/domain/usecases/delete_customer_usecase.dart';
+import 'package:bsmart/features/customers/domain/usecases/get_customer_usecase.dart';
+import 'package:bsmart/features/customers/domain/usecases/list_customers_usecase.dart';
+import 'package:bsmart/features/customers/domain/usecases/update_customer_usecase.dart';
 import 'package:bsmart/features/dashboard/data/datasources/reporting_remote_data_source.dart';
 import 'package:bsmart/features/dashboard/data/repositories/reporting_repository_impl.dart';
 import 'package:bsmart/features/dashboard/domain/repositories/reporting_repository.dart';
@@ -55,6 +64,13 @@ import 'package:bsmart/features/products/domain/usecases/receive_stock_usecase.d
 import 'package:bsmart/features/products/domain/usecases/share_to_catalog_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/update_product_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/upload_product_image_usecase.dart';
+import 'package:bsmart/features/sales/data/datasources/sales_remote_data_source.dart';
+import 'package:bsmart/features/sales/data/repositories/sales_repository_impl.dart';
+import 'package:bsmart/features/sales/domain/repositories/sales_repository.dart';
+import 'package:bsmart/features/sales/domain/usecases/create_sale_return_usecase.dart';
+import 'package:bsmart/features/sales/domain/usecases/create_sale_usecase.dart';
+import 'package:bsmart/features/sales/domain/usecases/get_sale_usecase.dart';
+import 'package:bsmart/features/sales/domain/usecases/list_sales_usecase.dart';
 
 const _bareDioInstance = 'bareDio';
 const _mainDioInstance = 'mainDio';
@@ -144,6 +160,24 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => GetOrderUseCase(getIt()));
   getIt.registerFactory(() => CreateOrderUseCase(getIt()));
   getIt.registerFactory(() => UpdateOrderStatusUseCase(getIt()));
+
+  // --- features/customers ---
+  getIt.registerLazySingleton(() => CustomersRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<CustomersRepository>(() => CustomersRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListCustomersUseCase(getIt()));
+  getIt.registerFactory(() => GetCustomerUseCase(getIt()));
+  getIt.registerFactory(() => CreateCustomerUseCase(getIt()));
+  getIt.registerFactory(() => UpdateCustomerUseCase(getIt()));
+  getIt.registerFactory(() => DeactivateCustomerUseCase(getIt()));
+  getIt.registerFactory(() => DeleteCustomerUseCase(getIt()));
+
+  // --- features/sales (POS Sell tab reuses this same B2C endpoint) ---
+  getIt.registerLazySingleton(() => SalesRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<SalesRepository>(() => SalesRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListSalesUseCase(getIt()));
+  getIt.registerFactory(() => GetSaleUseCase(getIt()));
+  getIt.registerFactory(() => CreateSaleUseCase(getIt()));
+  getIt.registerFactory(() => CreateSaleReturnUseCase(getIt()));
 }
 
 /// The main authenticated [Dio] instance — for feature data sources
