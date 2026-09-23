@@ -80,7 +80,8 @@ class _DebtsListScreenState extends ConsumerState<DebtsListScreen> with SingleTi
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, _) => Center(child: Text('Xatolik: $error')),
             data: (debts) {
-              final groups = groupDebts(debts);
+              final currentUserId = ref.read(sessionNotifierProvider).valueOrNull?.session?.userId ?? '';
+              final groups = groupDebts(debts, currentUserId: currentUserId);
               if (groups.isEmpty) return const Center(child: Text('Qarzlar topilmadi'));
               return RefreshIndicator(
                 onRefresh: () => ref.read(debtsListProvider.notifier).refresh(),
@@ -111,6 +112,12 @@ class _DebtsListScreenState extends ConsumerState<DebtsListScreen> with SingleTi
 
   Widget _buildGroupList(List<DebtGroup> groups) {
     return ListView.separated(
+      // A short list (e.g. one group) doesn't fill the viewport, and Android's
+      // default ClampingScrollPhysics then never overscrolls — RefreshIndicator
+      // needs that overscroll to trigger, so pull-to-refresh silently does
+      // nothing without this. Confirmed live: pull-to-refresh had no effect
+      // with a single debt group until this was added.
+      physics: const AlwaysScrollableScrollPhysics(),
       itemCount: groups.length,
       separatorBuilder: (_, _) => const Divider(height: 1),
       itemBuilder: (context, index) {

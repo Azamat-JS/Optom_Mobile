@@ -185,6 +185,18 @@ features/
                           SaleReturnScreen, SalesListScreen (history, type filter)
       widgets/          → CustomerPickerSheet (search + quick-create bottom sheet, shared by
                           checkout), sale_status_badge.dart (SaleStatusBadge/SaleTypeBadge)
+  debts/              → B2B `Debt` + B2C `SaleDebt` hub, plus `/payments` (single + FIFO pay-down)
+    data/{datasources,models,repositories}/   → 3 data sources (debts, sale_debts, payments)
+                                                 behind one DebtsRepository
+    domain/{entities,repositories,usecases}/
+    presentation/
+      providers/        → DebtsListNotifier (role toggle for RETAILER), SaleDebtsListNotifier
+      screens/           → DebtsListScreen (B2B/Mijozlar tabs, grouped by person), 
+                           DebtGroupDetailScreen (FIFO pay-down preview + per-debt payment/close)
+      widgets/           → debt_like.dart (DebtLike/DebtGroup — a presentation-only adapter
+                           unifying Debt/SaleDebt for one shared list/detail UI; see
+                           "B2B Debt / Payment model" below for the viewer-perspective bug this
+                           needed a fix for), RecordPaymentSheet, DebtStatusBadge
   orders/             → full B2B order lifecycle: create (RETAILER), list (incoming/outgoing,
                          same endpoint disambiguated server-side), detail + status timeline,
                          approve/reject/mark-delivered (SELLER)
@@ -387,6 +399,57 @@ there is no Register screen in Phase 1 — only `LoginScreen`. Customer self-reg
   `Payment.amount` are all Prisma `Decimal` fields serialized as JSON strings — `sale_model.dart`
   parses every one of them through `parseDecimal`/`parseNullableDecimal`, same as `Product`.
 
+### B2B Debt / Payment model (confirmed against real backend source, 2026-09-23)
+- **`Debt` (B2B) is symmetric — the same tenant can be creditor on some rows and debtor on
+  others**, unlike `SaleDebt` (B2C) where the viewing tenant is always the `ownerId`/creditor
+  side. `DebtController`'s default `GET /debts` (no `role` param) uses `TenantFilter.debt()`,
+  which for a RETAILER returns `OR: [{debtorId: self}, {creditorId: self}]` — a genuinely mixed
+  list. The `role=debtor`/`role=creditor` query param (`DebtQueryDto.role`) lets a RETAILER split
+  the two views explicitly; a SELLER only ever gets the creditor-only default in this app (no
+  toggle exposed), matching that role's actual usage (a wholesaler tracks retailers owing them,
+  not itself owing someone else, in the mobile app's v1 scope).
+- **Real bug found and fixed during live verification**: `groupDebts()` originally grouped every
+  `Debt` row by `debt.debtor` and displayed that name — correct when the viewer is the creditor
+  (the common case), but when a RETAILER views "Mening qarzim" (their own debts to a wholesaler,
+  `role=debtor`), `debt.debtor` **is the viewer themselves**, so the UI showed the retailer's own
+  name instead of who they actually owe. Fixed by grouping by the **other party relative to the
+  signed-in `currentUserId`** (`debt.debtorId == currentUserId ? debt.creditor : debt.debtor`) —
+  `DebtGroup` now carries a `viewerIsDebtor` flag from this same check.
+- **Only the creditor may record a payment or close a debt** — `payment.service.ts`'s
+  `createForDebt`/`payDown` and `debt.service.ts`'s `close()` all scope their write to
+  `creditorId: tenant.tenantId` (self-owed/no-creditor debts are the one exception, handled by a
+  separate `OR: [{creditorId: null, debtorId: tenant.tenantId}]` branch not exercised by this
+  app's UI). Concretely: a RETAILER viewing their own "Mening qarzim" debts could never
+  successfully record a payment against them (that's the wholesaler's job) — `DebtGroupDetailScreen`
+  now hides the FIFO pay-down card and every per-debt "To'lov"/"Yopish" button whenever
+  `group.viewerIsDebtor` is true, instead of showing buttons that would only ever 404.
+- **`SaleDebt` (B2C) has no close endpoint** — `sale-debt.controller.ts` only exposes `GET`
+  routes; the only way to fully settle one is paying down its exact remaining balance (which the
+  backend auto-transitions to `SETTLED` once `balance <= 0`, same as `Debt`). `DebtGroupDetailScreen`
+  only renders the "Yopish" button for `DebtKind.b2b` items, never for `saleDebt` ones.
+- **The FIFO pay-down (`POST /payments/pay-down`) allocates oldest-first, capped per-row at that
+  row's own balance** — `PaymentService.payDown()`'s loop is `for (const r of rows) { applied =
+  min(remaining, balance); remaining -= applied; ... }` over debts/saleDebts sorted by
+  `createdAt: 'asc'`. `DebtGroupDetailScreen._previewAllocation()` mirrors this exact loop
+  client-side (same sort, same min/subtract) so the preview shown before confirming is
+  authoritative, not just illustrative — confirmed live by seeding two debts with staggered
+  `createdAt` and checking the preview against the actual post-submit balances, which matched
+  exactly on every test (a 40 000 payment across a 30 000 + 50 000 debt pair correctly showed
+  "30 000 (yopiladi) / 10 000" and the server applied exactly that).
+- **UZS/USD are never pooled in one FIFO pass** — `PayDownDto.currency` (default `UZS`) scopes
+  every fetched debt/saleDebt to one currency; `DebtGroup` is itself already keyed by
+  `(person, currency)`, so a person with debts in both currencies simply appears as two separate
+  groups, each with its own independent FIFO pay-down — no extra client-side logic needed beyond
+  the existing per-currency grouping.
+- **Decimal-as-string gotcha applies here too**: `Debt`/`SaleDebt`'s `originalAmount`/`paidAmount`/
+  `balance` and every nested `Payment.amount` are Prisma `Decimal` fields — `debt_model.dart`
+  parses them all through `parseDecimal`. `PaymentService.payDown()`'s own response fields
+  (`totalApplied`/`remainingBalance`) are, by contrast, **plain JS numbers** (computed via the
+  file's own `round2()` helper, never touching a `Decimal` column directly) — `parseDecimal` still
+  works on them since it accepts either a `num` or a numeric string, but it's worth knowing this
+  response shape is not itself Decimal-backed, unlike almost everything else in this app's
+  "always assume Decimal-as-string" rule.
+
 ### Offline strategy
 Hive is a **read-cache layer only** — write-through on a successful remote fetch, fall back to the
 cached value on a `NetworkApiException`. **No offline writes** (no queuing an order/sale/payment
@@ -414,7 +477,7 @@ different data), Uzbek-only UI (no i18n framework needed yet, but route strings 
 | 2 | Products, Categories, Master-Catalog browse | 🟢 Nearly closed (2026-09-22). Verified live: product CRUD, barcode-generate, receive-stock, delete, the leaf-only category picker, and image upload/delete (real multipart upload to ImageKit, confirmed rendering + delete). **Two remaining gaps, both environment-blocked, not bsmart bugs**: master-catalog picker (blocked by a pre-existing `master_products.unit` DB drift on this machine's local backend, see "Product/Catalog model"), and barcode-scan-to-find (needs a real device with a real barcode — no simulator/emulator camera can supply one) |
 | 3 | B2B Orders | 🟢 Done 2026-09-22, verified live end-to-end (create→approve→deliver, DB side-effects confirmed, see log) |
 | 4 | Customers + B2C Sales/POS (native barcode scanning) | 🟢 Done 2026-09-23, verified live (create→approve wasn't needed here, but full PAID/DEBT checkout + return lifecycle verified end-to-end, see log). Barcode-scan-to-find remains hardware-blocked (same limitation as Milestone 2), not re-attempted this pass |
-| 5 | Debts + Payments | ⬜ Not started |
+| 5 | Debts + Payments | 🟢 Done 2026-09-23, verified live (FIFO pay-down, single-debt payment, close-debt, and two real bugs found+fixed — see log) |
 | 6 | Stores/multi-branch + Staff (Admins) management | ⬜ Not started |
 | 7 | Expenditures + Reports/dashboard charts | ⬜ Not started |
 
@@ -777,3 +840,75 @@ plan as the highest-risk pure-logic piece of this whole project; budget real des
 there, not just a mechanical port of the B2B/B2C debt list screens. Shared cart (park/resume,
 deferred above) and the barcode-scan-to-find / master-catalog-picker re-verifications (deferred
 since Milestone 2) remain opportunistic, non-blocking follow-ups.
+
+### 2026-09-23 — Milestone 5 (Debts + Payments)
+- Read `debt.controller.ts`/`.service.ts` (all 4 create-DTO variants), `payment.controller.ts`/
+  `.service.ts` (`create`/`payDown`/`findAll`/`findOne`), `sale-debt.controller.ts`/`.service.ts`,
+  and `TenantFilter.debt()`/`.payment()` directly before writing any code — see "B2B Debt /
+  Payment model" above for what that surfaced, most importantly the `Debt` model's symmetry (a
+  RETAILER can be creditor on some rows, debtor on others) and the creditor-only write scoping on
+  every payment/close endpoint.
+- Built `features/debts`: `Debt`/`SaleDebt`/`PaymentEntry` entities, `DebtsRepository` fronting 3
+  data sources (`/debts`, `/sale-debts`, `/payments`), and a presentation-only `DebtLike`/
+  `DebtGroup` adapter (`debt_like.dart`) that unifies both debt types into one shared grouped
+  list/detail UI — `DebtsListScreen` (B2B/Mijozlar tabs, each grouped client-side by person +
+  currency, since neither list endpoint returns pre-grouped debtor summaries) and
+  `DebtGroupDetailScreen` (the FIFO pay-down card + per-debt payment/close actions).
+  `RecordPaymentSheet` is the shared single-payment bottom sheet.
+- `flutter analyze`/`flutter test`/`flutter build apk --debug`: all clean.
+- **Two real bugs caught and fixed during live verification, neither catchable by static
+  analysis:**
+  1. **Wrong person name shown when the viewer is the debtor** (see "B2B Debt / Payment model"
+     above for the full explanation) — `groupDebts()` always displayed `debt.debtor`'s name,
+     which is the *viewer's own name* when a RETAILER checks "Mening qarzim." Fixed by grouping on
+     the party *other than* `currentUserId`, and added a `DebtGroup.viewerIsDebtor` flag that now
+     also hides the FIFO pay-down card and every per-debt payment/close button in that view (they
+     would only ever 404 server-side, since only the creditor may write a payment).
+  2. **Pull-to-refresh silently doing nothing on every short list/detail screen in the whole
+     app** — discovered here first (the Debts B2B tab has just one grouped row in typical test
+     data, so it never fills the viewport). Root cause: Android's default `ClampingScrollPhysics`
+     doesn't overscroll when content is shorter than the viewport, and `RefreshIndicator` needs
+     that overscroll to trigger — so `onRefresh` silently never fired. Fixed by adding
+     `physics: const AlwaysScrollableScrollPhysics()` to the scrollable under every
+     `RefreshIndicator` in the app — this was **not** scoped to the new Debts screens; a grep
+     found the identical gap in `customers_list_screen.dart`, `products_list_screen.dart` +
+     `product_detail_screen.dart`, `home_screen.dart` (the dashboard), `orders_list_screen.dart` +
+     `order_detail_screen.dart`, and `sales_list_screen.dart` — i.e. every pull-to-refresh built
+     since Milestone 1. All 8 fixed in this pass. **Any new `RefreshIndicator` added from now on
+     must include this physics override from the start** — it's easy to miss because the bug only
+     manifests with short content, which real usage will eventually have but a freshly-seeded test
+     account usually doesn't.
+- **Verified live, full lifecycle**, against a real running backend with a seeded SELLER
+  (`+998900000008`) + RETAILER (`+998900000009`) pair, two B2B `Debt` rows with staggered
+  `createdAt` (30 000 then 50 000 UZS) to exercise FIFO ordering, and a customer with two B2C
+  `SaleDebt` rows (15 000 then 20 000 UZS):
+  - **B2B tab**: correctly grouped both debts under the retailer with a combined 80 000 balance;
+    confirmed the wholesaler dashboard's own "Qarzdorlik" stat card independently agreed (80 000)
+    — cross-validates this feature's reads against the pre-existing reporting endpoint.
+  - **FIFO pay-down**: a 40 000 payment correctly closed the older 30 000 debt and applied the
+    remaining 10 000 to the 50 000 debt, exactly matching the client-side preview shown before
+    confirming — balance dropped 80 000 → 40 000, statuses updated to `To'langan`/`Qisman
+    to'langan` respectively.
+  - **Single-debt payment**: a 15 000 payment against the remaining debt correctly reduced its
+    balance 40 000 → 25 000 without touching the other (already-settled) row.
+  - **Close debt**: closing the remaining 25 000 balance correctly settled it (balance → 0,
+    status `To'langan`) and created the expected `Payment` row for the written-off remainder — the
+    FIFO card correctly disappeared once the group's total active balance reached zero.
+  - **RETAILER role toggle**: switching to "Mening qarzim" (after seeding one more small active
+    debt to have something non-settled to check) correctly showed "Bsmart Debt" (the wholesaler)
+    as the group name — confirming bug #1's fix — with no FIFO card and no per-debt action buttons
+    visible, confirming the creditor-only write gating.
+  - **Mijozlar (B2C) tab**: grouped the customer's two `SaleDebt` rows correctly (35 000 combined);
+    a 25 000 FIFO pay-down correctly closed the 15 000 row and left 10 000 on the 20 000 row,
+    with no "Yopish" button ever rendered for either row (correct — no close endpoint exists for
+    `SaleDebt`).
+  - Confirmed via direct DB query that every `Payment` row created during this pass (6 total
+    across both roles/kinds) had the correct `amount`/`debtId`/`saleDebtId`/`receiverId`, and that
+    the final `Debt`/`SaleDebt` balances matched the UI exactly at every step.
+- All seed data (2 users + stores, 1 customer, 2 sales + their saleDebts, 3 debts, and all 6
+  payments created during testing) removed afterward via a companion cleanup script; backend dev
+  server and `flutter run` both stopped; `.env` reset to its checked-in default.
+
+**Next up:** Milestone 6 (Stores/Multi-branch + Staff/Admins management). Shared cart (park/
+resume, deferred from Milestone 4) and the barcode-scan-to-find / master-catalog-picker
+re-verifications (deferred since Milestone 2) remain opportunistic, non-blocking follow-ups.

@@ -86,6 +86,7 @@ class _SalesListScreenState extends ConsumerState<SalesListScreen> {
                 return RefreshIndicator(
                   onRefresh: () => ref.read(salesListProvider.notifier).refresh(),
                   child: ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     controller: _scrollController,
                     itemCount: items.length + (state.hasNext ? 1 : 0),
                     separatorBuilder: (_, _) => const Divider(height: 1),

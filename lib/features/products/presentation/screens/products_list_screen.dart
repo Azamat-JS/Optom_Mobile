@@ -112,6 +112,7 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
                 return RefreshIndicator(
                   onRefresh: () => ref.read(productsListProvider.notifier).refresh(),
                   child: ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     controller: _scrollController,
                     itemCount: state.items.length + (state.hasNext ? 1 : 0),
                     separatorBuilder: (_, _) => const Divider(height: 1),

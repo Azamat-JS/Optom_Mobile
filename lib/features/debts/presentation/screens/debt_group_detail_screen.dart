@@ -177,7 +177,7 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
               ),
             ),
           ),
-          if (totalActiveBalance > 0) ...[
+          if (totalActiveBalance > 0 && !_group.viewerIsDebtor) ...[
             const SizedBox(height: 16),
             Card(
               child: Padding(
@@ -287,7 +287,7 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
                         "Muddat: ${'${item.dueDate!.toLocal()}'.split(' ').first}",
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                    if (!item.isSettled) ...[
+                    if (!item.isSettled && !_group.viewerIsDebtor) ...[
                       const SizedBox(height: 8),
                       Row(
                         children: [
