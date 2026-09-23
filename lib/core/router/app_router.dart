@@ -9,6 +9,7 @@ import 'package:bsmart/features/auth/presentation/screens/login_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/splash_screen.dart';
 import 'package:bsmart/features/customers/presentation/screens/customers_list_screen.dart';
 import 'package:bsmart/features/dashboard/presentation/screens/home_screen.dart';
+import 'package:bsmart/features/debts/presentation/screens/debts_list_screen.dart';
 import 'package:bsmart/features/orders/presentation/screens/order_catalog_browse_screen.dart';
 import 'package:bsmart/features/orders/presentation/screens/order_detail_screen.dart';
 import 'package:bsmart/features/orders/presentation/screens/order_review_screen.dart';
@@ -107,6 +108,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.sales,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const SalesListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.debts,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const DebtsListScreen()),
       ),
     ],
   );

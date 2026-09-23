@@ -34,6 +34,18 @@ import 'package:bsmart/features/customers/domain/usecases/get_customer_usecase.d
 import 'package:bsmart/features/customers/domain/usecases/list_customers_usecase.dart';
 import 'package:bsmart/features/customers/domain/usecases/update_customer_usecase.dart';
 import 'package:bsmart/features/dashboard/data/datasources/reporting_remote_data_source.dart';
+import 'package:bsmart/features/debts/data/datasources/debts_remote_data_source.dart';
+import 'package:bsmart/features/debts/data/datasources/payments_remote_data_source.dart';
+import 'package:bsmart/features/debts/data/datasources/sale_debts_remote_data_source.dart';
+import 'package:bsmart/features/debts/data/repositories/debts_repository_impl.dart';
+import 'package:bsmart/features/debts/domain/repositories/debts_repository.dart';
+import 'package:bsmart/features/debts/domain/usecases/close_debt_usecase.dart';
+import 'package:bsmart/features/debts/domain/usecases/create_payment_usecase.dart';
+import 'package:bsmart/features/debts/domain/usecases/get_debt_usecase.dart';
+import 'package:bsmart/features/debts/domain/usecases/get_sale_debt_usecase.dart';
+import 'package:bsmart/features/debts/domain/usecases/list_debts_usecase.dart';
+import 'package:bsmart/features/debts/domain/usecases/list_sale_debts_usecase.dart';
+import 'package:bsmart/features/debts/domain/usecases/pay_down_usecase.dart';
 import 'package:bsmart/features/dashboard/data/repositories/reporting_repository_impl.dart';
 import 'package:bsmart/features/dashboard/domain/repositories/reporting_repository.dart';
 import 'package:bsmart/features/dashboard/domain/usecases/get_income_debt_chart_usecase.dart';
@@ -178,6 +190,19 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => GetSaleUseCase(getIt()));
   getIt.registerFactory(() => CreateSaleUseCase(getIt()));
   getIt.registerFactory(() => CreateSaleReturnUseCase(getIt()));
+
+  // --- features/debts (Debt/SaleDebt + Payment/pay-down) ---
+  getIt.registerLazySingleton(() => DebtsRemoteDataSource(mainDio));
+  getIt.registerLazySingleton(() => SaleDebtsRemoteDataSource(mainDio));
+  getIt.registerLazySingleton(() => PaymentsRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<DebtsRepository>(() => DebtsRepositoryImpl(getIt(), getIt(), getIt()));
+  getIt.registerFactory(() => ListDebtsUseCase(getIt()));
+  getIt.registerFactory(() => ListSaleDebtsUseCase(getIt()));
+  getIt.registerFactory(() => GetDebtUseCase(getIt()));
+  getIt.registerFactory(() => GetSaleDebtUseCase(getIt()));
+  getIt.registerFactory(() => CloseDebtUseCase(getIt()));
+  getIt.registerFactory(() => CreatePaymentUseCase(getIt()));
+  getIt.registerFactory(() => PayDownUseCase(getIt()));
 }
 
 /// The main authenticated [Dio] instance — for feature data sources

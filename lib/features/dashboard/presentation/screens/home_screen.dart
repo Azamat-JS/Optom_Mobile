@@ -64,6 +64,10 @@ class HomeScreen extends ConsumerWidget {
                 value: RouteNames.sales,
                 child: ListTile(leading: Icon(Icons.history), title: Text('Sotuvlar tarixi')),
               ),
+              PopupMenuItem(
+                value: RouteNames.debts,
+                child: ListTile(leading: Icon(Icons.receipt_long), title: Text('Qarzlar')),
+              ),
             ],
           ),
           IconButton(

@@ -22,4 +22,5 @@ abstract final class RouteNames {
   static const customers = '/customers';
   static const pos = '/pos';
   static const sales = '/sales';
+  static const debts = '/debts';
 }
