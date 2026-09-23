@@ -1,7 +1,19 @@
 abstract final class RouteNames {
   static const splash = '/splash';
   static const login = '/login';
+  static const register = '/register';
   static const home = '/home';
+
+  // --- Phase 2: CUSTOMER storefront (guest-eligible — see app_router.dart's
+  // redirect allowlist) ---
+  static const customerHome = '/customer';
+  static const customerProductDetailPattern = '/customer/products/:id';
+  static const customerCartReview = '/customer/cart/review';
+  static const customerDebts = '/customer/debts';
+  static const customerDebtDetailPattern = '/customer/debts/:id';
+
+  static String customerProductDetail(String id) => '/customer/products/$id';
+  static String customerDebtDetail(String id) => '/customer/debts/$id';
 
   static const products = '/products';
   static const productNew = '/products/new';

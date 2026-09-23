@@ -12,6 +12,7 @@ import 'package:bsmart/features/auth/domain/repositories/auth_repository.dart';
 import 'package:bsmart/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/login_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:bsmart/features/auth/domain/usecases/register_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/verify_password_usecase.dart';
 import 'package:bsmart/features/categories/data/datasources/categories_remote_data_source.dart';
@@ -78,6 +79,12 @@ import 'package:bsmart/features/products/domain/usecases/share_to_catalog_usecas
 import 'package:bsmart/features/products/domain/usecases/update_product_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/upload_product_image_usecase.dart';
 import 'package:bsmart/features/expenditures/data/datasources/expenditures_remote_data_source.dart';
+import 'package:bsmart/features/favorites/data/datasources/favorites_remote_data_source.dart';
+import 'package:bsmart/features/favorites/data/repositories/favorites_repository_impl.dart';
+import 'package:bsmart/features/favorites/domain/repositories/favorites_repository.dart';
+import 'package:bsmart/features/favorites/domain/usecases/list_favorite_ids_usecase.dart';
+import 'package:bsmart/features/favorites/domain/usecases/list_favorites_usecase.dart';
+import 'package:bsmart/features/favorites/domain/usecases/toggle_favorite_usecase.dart';
 import 'package:bsmart/features/expenditures/data/repositories/expenditures_repository_impl.dart';
 import 'package:bsmart/features/expenditures/domain/repositories/expenditures_repository.dart';
 import 'package:bsmart/features/expenditures/domain/usecases/create_expenditure_usecase.dart';
@@ -93,6 +100,12 @@ import 'package:bsmart/features/reports/domain/usecases/get_current_work_day_use
 import 'package:bsmart/features/reports/domain/usecases/get_period_stats_usecase.dart';
 import 'package:bsmart/features/reports/domain/usecases/get_sales_chart_usecase.dart';
 import 'package:bsmart/features/reports/domain/usecases/start_work_day_usecase.dart';
+import 'package:bsmart/features/storefront/data/datasources/storefront_remote_data_source.dart';
+import 'package:bsmart/features/storefront/data/repositories/storefront_repository_impl.dart';
+import 'package:bsmart/features/storefront/domain/repositories/storefront_repository.dart';
+import 'package:bsmart/features/storefront/domain/usecases/browse_storefront_usecase.dart';
+import 'package:bsmart/features/storefront/domain/usecases/get_storefront_product_usecase.dart';
+import 'package:bsmart/features/storefront/domain/usecases/list_storefront_categories_usecase.dart';
 import 'package:bsmart/features/staff_admins/data/datasources/admins_remote_data_source.dart';
 import 'package:bsmart/features/staff_admins/data/repositories/admins_repository_impl.dart';
 import 'package:bsmart/features/staff_admins/domain/repositories/admins_repository.dart';
@@ -154,6 +167,7 @@ void setupDependencyInjection() {
     () => AuthRepositoryImpl(remote: getIt(), local: getIt()),
   );
   getIt.registerFactory(() => LoginUseCase(getIt()));
+  getIt.registerFactory(() => RegisterUseCase(getIt()));
   getIt.registerFactory(() => LogoutUseCase(getIt()));
   getIt.registerFactory(() => GetCurrentUserUseCase(getIt()));
   getIt.registerFactory(() => UpdateProfileUseCase(getIt()));
@@ -273,8 +287,26 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => StartWorkDayUseCase(getIt()));
   getIt.registerFactory(() => EndWorkDayUseCase(getIt()));
   getIt.registerFactory(() => ExportDebtsXlsxUseCase(getIt()));
+
+  // --- features/storefront (Phase 2: guest-eligible public catalog + cart) ---
+  getIt.registerLazySingleton(() => StorefrontRemoteDataSource(publicDio));
+  getIt.registerLazySingleton<StorefrontRepository>(() => StorefrontRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListStorefrontCategoriesUseCase(getIt()));
+  getIt.registerFactory(() => BrowseStorefrontUseCase(getIt()));
+  getIt.registerFactory(() => GetStorefrontProductUseCase(getIt()));
+
+  // --- features/favorites (Phase 2) ---
+  getIt.registerLazySingleton(() => FavoritesRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<FavoritesRepository>(() => FavoritesRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ToggleFavoriteUseCase(getIt()));
+  getIt.registerFactory(() => ListFavoritesUseCase(getIt()));
+  getIt.registerFactory(() => ListFavoriteIdsUseCase(getIt()));
 }
 
 /// The main authenticated [Dio] instance — for feature data sources
 /// registered outside this file (e.g. future `products`/`orders` modules).
 Dio get mainDio => getIt<Dio>(instanceName: _mainDioInstance);
+
+/// The interceptor-free [Dio] instance — for the guest-eligible storefront
+/// (Phase 2), which must never send an `Authorization` header.
+Dio get publicDio => getIt<Dio>(instanceName: _bareDioInstance);

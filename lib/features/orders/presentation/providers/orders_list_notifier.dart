@@ -24,9 +24,11 @@ class OrdersListState {
   }
 }
 
-/// No `view` param is ever sent — the backend's default scoping already
+/// Defaults to no `view` param — the backend's default scoping already
 /// gives a SELLER their incoming B2B orders and a RETAILER their own
-/// outgoing B2B orders (see `OrderQuery`'s doc comment).
+/// outgoing B2B orders. [setView] lets a RETAILER additionally switch to
+/// their incoming B2C orders from customers (see `OrderQuery`'s doc
+/// comment).
 class OrdersListNotifier extends AsyncNotifier<OrdersListState> {
   @override
   Future<OrdersListState> build() => _fetch(const OrderQuery());
@@ -48,6 +50,17 @@ class OrdersListNotifier extends AsyncNotifier<OrdersListState> {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
       () => _fetch(OrderQuery(status: status, page: 1)),
+    );
+  }
+
+  /// RETAILER-only toggle (see `OrderQuery.view`'s doc comment) — `null`
+  /// shows their own outgoing B2B orders, `'incoming'` their incoming B2C
+  /// orders from customers. Resets status filter/page, same as
+  /// [filterByStatus], since it's effectively a different list.
+  Future<void> setView(String? view) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => _fetch(OrderQuery(view: view, page: 1)),
     );
   }
 

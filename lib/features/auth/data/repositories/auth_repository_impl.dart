@@ -33,6 +33,28 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Result<AuthResult>> register({
+    required String firstName,
+    required String lastName,
+    required String phone,
+    required String password,
+  }) async {
+    try {
+      final (accessToken, refreshToken, user) = await _remote.register(
+        firstName: firstName,
+        lastName: lastName,
+        phone: phone,
+        password: password,
+      );
+      final session = sessionFromTokens(accessToken: accessToken, refreshToken: refreshToken);
+      await _local.saveSession(session);
+      return Result.ok(AuthResult(session: session, user: user));
+    } on DioException catch (e) {
+      return Result.err(mapDioException(e));
+    }
+  }
+
+  @override
   Future<Session?> restoreSession() => _local.restoreSession();
 
   @override

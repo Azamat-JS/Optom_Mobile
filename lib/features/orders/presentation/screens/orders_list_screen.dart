@@ -9,9 +9,14 @@ import 'package:bsmart/features/auth/presentation/providers/session_notifier.dar
 import 'package:bsmart/features/orders/presentation/providers/orders_list_notifier.dart';
 import 'package:bsmart/features/orders/presentation/widgets/order_status_badge.dart';
 
-/// The backend disambiguates by role server-side (see `OrderQuery`'s doc
-/// comment) — a SELLER sees incoming B2B orders here, a RETAILER sees their
-/// own outgoing ones, with no client-side `view` toggle needed in Milestone 3.
+/// The backend disambiguates by role server-side by default (see
+/// `OrderQuery`'s doc comment) — a SELLER sees incoming B2B orders here,
+/// every other role that can only ever *place* one (CUSTOMER — Phase 2 —
+/// and WAITER/COURIER staff, who inherit their owner's orders) sees their
+/// own outgoing ones. A RETAILER is the one role that plays both sides —
+/// sourcing stock from a wholesaler (B2B, outgoing/buyer) *and* fulfilling
+/// a CUSTOMER's storefront order (B2C, incoming/seller) — so it alone gets
+/// the `view` toggle below, wired to `OrdersListNotifier.setView`.
 class OrdersListScreen extends ConsumerStatefulWidget {
   const OrdersListScreen({super.key});
 
@@ -21,6 +26,7 @@ class OrdersListScreen extends ConsumerStatefulWidget {
 
 class _OrdersListScreenState extends ConsumerState<OrdersListScreen> {
   final _scrollController = ScrollController();
+  String? _view;
 
   @override
   void initState() {
@@ -44,10 +50,37 @@ class _OrdersListScreenState extends ConsumerState<OrdersListScreen> {
   Widget build(BuildContext context) {
     final role = ref.watch(sessionNotifierProvider).valueOrNull?.session?.role;
     final isRetailer = role == UserRole.retailer || role == UserRole.retailerAdmin;
+    // Whether *this screen instance* is currently showing the seller side of
+    // the order graph — true for a SELLER always, and for a RETAILER only
+    // while their incoming-orders toggle is selected. Never role-alone —a
+    // RETAILER's own `Order.seller`/`.buyer` roles flip per order, not per
+    // account (see the `view` toggle doc comment above).
+    final isSellerView = role == UserRole.seller || role == UserRole.sellerAdmin || (isRetailer && _view == 'incoming');
     final listState = ref.watch(ordersListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(isRetailer ? 'Buyurtmalarim' : 'Kelgan buyurtmalar')),
+      appBar: AppBar(
+        title: Text(isSellerView ? 'Kelgan buyurtmalar' : 'Buyurtmalarim'),
+        bottom: isRetailer
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(56),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: SegmentedButton<String?>(
+                    segments: const [
+                      ButtonSegment(value: null, label: Text('Chiqarilgan')),
+                      ButtonSegment(value: 'incoming', label: Text('Kelgan')),
+                    ],
+                    selected: {_view},
+                    onSelectionChanged: (selection) {
+                      setState(() => _view = selection.first);
+                      ref.read(ordersListProvider.notifier).setView(selection.first);
+                    },
+                  ),
+                ),
+              )
+            : null,
+      ),
       body: listState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('Xatolik: $error')),
@@ -70,7 +103,7 @@ class _OrdersListScreenState extends ConsumerState<OrdersListScreen> {
                   );
                 }
                 final order = state.items[index];
-                final counterpart = isRetailer ? order.seller : order.buyer;
+                final counterpart = isSellerView ? order.buyer : order.seller;
                 return ListTile(
                   title: Text(order.orderNumber),
                   subtitle: Text(
@@ -94,7 +127,7 @@ class _OrdersListScreenState extends ConsumerState<OrdersListScreen> {
           );
         },
       ),
-      floatingActionButton: isRetailer
+      floatingActionButton: isRetailer && !isSellerView
           ? FloatingActionButton(
               onPressed: () => context.push(RouteNames.orderNewSellerPicker),
               child: const Icon(Icons.add),

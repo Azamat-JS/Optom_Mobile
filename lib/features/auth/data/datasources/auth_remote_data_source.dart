@@ -24,6 +24,29 @@ class AuthRemoteDataSource {
     );
   }
 
+  /// `POST /auth/register` always creates a `CUSTOMER` account server-side
+  /// (see `auth.service.ts`) — this is only ever reached from the Phase 2
+  /// storefront's register screen, never from the operator login screen.
+  /// Same response shape as login (tokens minted immediately, no separate
+  /// verification step), so the same tuple return type is reused.
+  Future<(String, String, User)> register({
+    required String firstName,
+    required String lastName,
+    required String phone,
+    required String password,
+  }) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/auth/register',
+      data: {'firstName': firstName, 'lastName': lastName, 'phone': phone, 'password': password},
+    );
+    final data = response.data!;
+    return (
+      data['accessToken'] as String,
+      data['refreshToken'] as String,
+      userFromJson(data['user'] as Map<String, dynamic>),
+    );
+  }
+
   Future<User> getMe() async {
     final response = await _dio.get<Map<String, dynamic>>('/auth/me');
     return userFromJson(response.data!);

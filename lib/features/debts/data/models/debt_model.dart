@@ -57,6 +57,7 @@ SaleDebt saleDebtFromJson(Map<String, dynamic> json) {
     dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate'] as String) : null,
     notes: json['notes'] as String?,
     customer: debtPersonRefFromJson(json['customer'] as Map<String, dynamic>?),
+    owner: debtPersonRefFromJson(json['owner'] as Map<String, dynamic>?),
     payments: paymentsJson.map((e) => paymentEntryFromJson(e as Map<String, dynamic>)).toList(),
     createdAt: DateTime.parse(json['createdAt'] as String),
   );

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/order_status.dart';
-import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 import 'package:bsmart/features/orders/domain/entities/order.dart';
@@ -57,7 +56,16 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     result.fold(
       (order) {
         setState(() => _order = order);
-        ref.invalidate(ordersListProvider);
+        // Not `ref.invalidate` — that rebuilds the notifier from scratch via
+        // `build()`, which always starts from a *default* `OrderQuery()`
+        // (no status/view filter), silently discarding whatever filter the
+        // list screen had active (e.g. a RETAILER's "Kelgan" B2C-incoming
+        // toggle) even though the toggle button itself stays visually
+        // selected — caught live: approving an order from here left the
+        // orders list showing "Buyurtmalar topilmadi" while "Kelgan" still
+        // looked selected. `refresh()` re-fetches using the notifier's own
+        // *current* stored query instead, so any active filter survives.
+        ref.read(ordersListProvider.notifier).refresh();
       },
       (failure) => ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -121,8 +129,14 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final order = _order;
-    final role = ref.watch(sessionNotifierProvider).valueOrNull?.session?.role;
-    final isSeller = role == UserRole.seller || role == UserRole.sellerAdmin;
+    // Per-order, not per-role: a RETAILER is the *seller* side of their own
+    // B2C orders from a CUSTOMER, even though their account role is never
+    // literally SELLER/SELLER_ADMIN — comparing against `order.seller.id`
+    // directly is the only way that works for both B2B and B2C orders (a
+    // role-based check here would silently hide every approve/reject/deliver
+    // action from a RETAILER fulfilling a storefront order).
+    final currentUserId = ref.watch(sessionNotifierProvider).valueOrNull?.session?.userId;
+    final isSeller = order != null && currentUserId != null && order.seller?.id == currentUserId;
 
     return Scaffold(
       appBar: AppBar(title: Text(order?.orderNumber ?? 'Buyurtma')),
@@ -188,7 +202,10 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
             ListTile(
               leading: const Icon(Icons.storefront_outlined),
               title: Text(order.seller!.fullName),
-              subtitle: const Text('Optomchi'),
+              // Deliberately generic, not "Optomchi" (Wholesaler) — the
+              // seller side of a B2C order (Phase 2: a CUSTOMER buying from
+              // a RETAILER's storefront) is a retailer, not a wholesaler.
+              subtitle: const Text('Sotuvchi'),
               dense: true,
             ),
           if (order.buyer != null)

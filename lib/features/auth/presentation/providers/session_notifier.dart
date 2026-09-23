@@ -9,6 +9,7 @@ import 'package:bsmart/features/auth/domain/repositories/auth_repository.dart';
 import 'package:bsmart/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/login_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:bsmart/features/auth/domain/usecases/register_usecase.dart';
 
 /// The authenticated app's whole auth state: `null`/`null` means logged out.
 class AuthState {
@@ -51,6 +52,25 @@ class SessionNotifier extends AsyncNotifier<AuthState> {
   Future<void> login({required String phone, required String password}) async {
     state = const AsyncLoading();
     final result = await getIt<LoginUseCase>().call(phone: phone, password: password);
+    state = result.fold(
+      (authResult) => AsyncData(AuthState(session: authResult.session, user: authResult.user)),
+      (failure) => AsyncError(failure, StackTrace.current),
+    );
+  }
+
+  Future<void> register({
+    required String firstName,
+    required String lastName,
+    required String phone,
+    required String password,
+  }) async {
+    state = const AsyncLoading();
+    final result = await getIt<RegisterUseCase>().call(
+      firstName: firstName,
+      lastName: lastName,
+      phone: phone,
+      password: password,
+    );
     state = result.fold(
       (authResult) => AsyncData(AuthState(session: authResult.session, user: authResult.user)),
       (failure) => AsyncError(failure, StackTrace.current),

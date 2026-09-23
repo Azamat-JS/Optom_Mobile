@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:bsmart/core/network/api_exception.dart';
+import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
-/// Login for SELLER/RETAILER (+ their `_ADMIN` staff) — the only Phase 1
-/// roles. There is deliberately no "Register" link here: self-registration
-/// (`POST /auth/register`) always creates a `CUSTOMER` account server-side
-/// (see `auth.service.ts`), so operator accounts are provisioned by
-/// SUPER_ADMIN, not self-service. Customer self-registration is Phase 2.
+/// One login screen for every role — SELLER/RETAILER (+ their `_ADMIN`
+/// staff) sign in here exactly as in Phase 1, and a `CUSTOMER` lands here
+/// too whenever the storefront's guest checkout flow requires signing in
+/// (see `app_router.dart`'s redirect). The "Ro'yxatdan o'tish" link below
+/// only ever creates a `CUSTOMER` account (`POST /auth/register` — see
+/// `auth.service.ts`); SELLER/RETAILER accounts stay SUPER_ADMIN-provisioned
+/// only, never self-service.
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -129,6 +133,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           )
                         : const Text('Kirish'),
                   ).animate().fadeIn(delay: AppMotion.slow),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () => context.go(RouteNames.register),
+                    child: const Text("Mijozmisiz? Ro'yxatdan o'ting"),
+                  ),
                 ],
               ),
             ),

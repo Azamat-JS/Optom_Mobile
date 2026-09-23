@@ -81,6 +81,7 @@ class SaleDebt {
     this.dueDate,
     this.notes,
     this.customer,
+    this.owner,
     this.payments = const [],
     required this.createdAt,
   });
@@ -94,6 +95,12 @@ class SaleDebt {
   final DateTime? dueDate;
   final String? notes;
   final DebtPersonRef? customer;
+  /// The retailer/wholesaler this debt is owed to — always present on the
+  /// backend response (`sale-debt.service.ts`'s `saleDebtIncludes.owner`)
+  /// but only actually useful once a `CUSTOMER` views their own debts here
+  /// (Phase 2): the retailer's own B2C tab already knows it's the owner,
+  /// since every row on that screen is theirs.
+  final DebtPersonRef? owner;
   final List<PaymentEntry> payments;
   final DateTime createdAt;
 

@@ -256,6 +256,36 @@ features/
       widgets/     → SalesAmountChart, WorkDayCard (Excel export via share_plus's
                      `XFile.fromData` — no on-disk temp file needed)
 
+  storefront/          → Phase 2: the guest-eligible B2C storefront — a deliberately separate
+                         bounded context from `features/catalog` (that one is the authenticated
+                         buyer-facing B2B browse from Milestone 3; this one hits
+                         `/public/catalog/*` for both guests and logged-in customers alike, see
+                         "CUSTOMER / Storefront model" below)
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/   → StorefrontProduct/StorefrontCategory/
+                                                  StorefrontQuery; checkout itself reuses
+                                                  features/orders' CreateOrderUseCase as-is
+    presentation/
+      providers/   → StorefrontCartNotifier (single-seller/single-currency guard, same pattern as
+                     CreateOrderCartNotifier/PosCartNotifier), StorefrontCategoriesNotifier,
+                     StorefrontProductsNotifier
+      screens/     → CustomerHomeScreen (the `IndexedStack` tab shell — Katalog/Savat/
+                     Sevimlilar/Profil — deliberately not a go_router `StatefulShellRoute`, since
+                     there's no other bottom-nav shell yet to stay consistent with),
+                     StorefrontCatalogTab, StorefrontProductDetailScreen, StorefrontCartTab,
+                     StorefrontCartReviewScreen (feeds into features/orders' checkout),
+                     StorefrontProfileTab, CustomerDebtsScreen (thin wrapper over the existing
+                     `saleDebtsListProvider` from Milestone 5 — zero new domain-layer code needed)
+  favorites/           → Phase 2: toggle/list a CUSTOMER's favorited products
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/
+    presentation/
+      providers/   → FavoriteIdsNotifier (id-set, powers the product-detail heart icon,
+                     optimistic toggle), FavoritesListNotifier (the Sevimlilar tab's full list) —
+                     two independently-fetched providers, see the cross-invalidation bug in
+                     "CUSTOMER / Storefront model" below
+      screens/     → FavoritesTab
+
 shared/widgets/
   barcode_scanner_screen.dart   → full-screen mobile_scanner camera view, reused by products now and POS later
 ```
@@ -618,6 +648,97 @@ there is no Register screen in Phase 1 — only `LoginScreen`. Customer self-reg
   app; use a non-null sentinel and map it, the same pattern now used here. Grepped the rest of the
   codebase for the same `PopupMenuItem(value: null` pattern — this was the only occurrence.
 
+### CUSTOMER / Storefront model (confirmed against real backend source, 2026-09-23)
+- **`/public/catalog/*` and the authenticated `/catalog` share one `CatalogService`** — both guest
+  and logged-in storefront browsing go through the unauthenticated public endpoints in this app
+  (see `features/storefront`), so there is only one browsing code path regardless of auth state;
+  "login required" is enforced purely by the router's allowlist (see below), never per-screen.
+- **`CreateOrderDto`/`OrderService.create()` are already fully generic across buyer roles** —
+  `sellerId` works identically whether the target is a SELLER (B2B) or a RETAILER (B2C); `OrderType`
+  is derived server-side from the target's role, not client-specified. This meant
+  `features/orders`' existing `CreateOrderUseCase`/`OrderReviewScreen`/`OrdersListScreen`/
+  `OrderDetailScreen` (all built role-agnostically since Milestone 3) were reusable as-is for
+  CUSTOMER checkout — only a new storefront cart-building UI path was needed, no domain-layer
+  duplication.
+- **Critical correction to a Milestone 3 assumption**: `OrderQueryDto.view` (`'incoming'|
+  'outgoing'`) exists specifically because a RETAILER plays *both* sides of the order graph —
+  sourcing stock from a wholesaler (B2B, `buyerId` scoping, the default) **and** fulfilling a
+  CUSTOMER's storefront order (B2C, `sellerId` scoping, `view=incoming`) — confirmed by reading
+  `order.service.ts findAll()`'s explicit branch. Milestone 3 documented `view` as "deliberately
+  not exposed... Phase 2 scope" and that flag held: `OrdersListScreen` now shows a RETAILER-only
+  `SegmentedButton` ("Chiqarilgan"/"Kelgan") wired to `OrdersListNotifier.setView()`.
+- **Real bug caught live, not by static analysis**: both `OrdersListScreen`'s counterpart-display
+  logic and `OrderDetailScreen`'s approve/reject/deliver gating were still keyed on **session
+  role** (`role == UserRole.seller`) from Milestone 3, which only worked because a RETAILER was
+  *always* the buyer in Phase 1 (B2B-only). Once a RETAILER could also be the *seller* of a B2C
+  order, this silently broke: the incoming-orders row showed the RETAILER's own name as if they
+  were their own counterpart, and `OrderDetailScreen` never showed Approve/Reject/Deliver at all
+  for a RETAILER fulfilling a storefront order — logging in as the seeded RETAILER and opening the
+  live order confirmed both symptoms before either fix. **Fixed** by making both per-*order*
+  instead of per-role: `OrderDetailScreen.isSeller` now compares `order.seller?.id ==
+  session.userId` directly; `OrdersListScreen` derives an `isSellerView` (true for SELLER always,
+  or for a RETAILER only while their `view` toggle is on `'incoming'`) and uses that for both the
+  counterpart shown and the FAB's visibility, instead of a raw role check.
+- **A second real bug, caught immediately after fixing the first**: `OrderDetailScreen`'s
+  `_updateStatus()` called `ref.invalidate(ordersListProvider)` after a successful approve/reject/
+  deliver — this rebuilds `OrdersListNotifier` from scratch via `build()`, which always starts
+  from a **default** `OrderQuery()` (no status/view filter), silently discarding whatever filter
+  the list screen had active. Caught live: approving the order from the "Kelgan" (incoming) tab
+  left the list showing "Buyurtmalar topilmadi" while the segmented button still visually showed
+  "Kelgan" selected — the toggle and the underlying data had desynced. **Fixed** by calling
+  `ref.read(ordersListProvider.notifier).refresh()` instead, which re-fetches using the notifier's
+  own *current* stored query rather than resetting to the default — re-verified live afterward
+  (approve → deliver → back to the list, "Kelgan" stayed selected and showed the order throughout).
+- **Approving a B2C order auto-creates a `Sale` + `Customer` + `SaleDebt`, not a B2B `Debt`** —
+  confirmed via a direct DB query after a live approve: `order.service.ts`'s approve-transition
+  branches on the *target's* role, and for a RETAILER target it creates a phone-matched `Customer`
+  row (linked to the CUSTOMER's own `User.phone`) plus a `Sale`/`SaleDebt` pair instead of a
+  `Debt` row, on top of the same stock-decrement side effect already documented for B2B orders.
+  This is exactly what backs the phone-matching `SaleDebt` CUSTOMER-scoping already noted in
+  `sale-debt.service.ts` — now confirmed from the write side too, not just the read side.
+- **`SaleDebt.owner` needed adding to the client entity** — the backend already returned it, but
+  `debt_model.dart`/`debt.dart` never parsed it (no prior screen needed to show "owed to whom" from
+  the debtor's own perspective). Added `owner: DebtPersonRef?` so `CustomerDebtsScreen` can show
+  it; reused as-is by every other debt screen too since it's just a new optional field.
+- **Two bugs caught and fixed *before* live testing, by re-reading existing code with Phase 2's
+  new guest-vs-authenticated split in mind**: (1) `OrdersListScreen`'s old `isRetailer`-only
+  counterpart check would have shown a CUSTOMER as their own order's counterpart — generalized to
+  an `isBuyerRole`-style check covering every non-seller role (later superseded by the per-order
+  fix above once the RETAILER-dual-role case surfaced); (2) `SplashScreen` was initially included
+  in the guest-allowed route set, which — combined with `SplashScreen` never navigating itself —
+  would have left a logged-out user stuck on the spinner forever; fixed by excluding splash from
+  that set and adding an explicit "logged-out + splash → `customerHome`" redirect branch instead.
+- **Real bug caught live in `features/favorites`**: `FavoriteIdsNotifier.toggle()` never
+  invalidated `favoritesListProvider` after a successful toggle — the id-set provider (product
+  detail's heart icon) and the list provider (Sevimlilar tab) are independently fetched with no
+  shared cache, so a freshly favorited product didn't appear in "Sevimlilar" until something else
+  happened to trigger a refetch. Reproduced live, fixed by adding `ref.invalidate
+  (favoritesListProvider)` after a successful toggle, re-verified live (favorite → tab shows it
+  immediately; un-favorite → disappears immediately, no relaunch needed either time).
+- **Verified live, full lifecycle**, against a real running backend with a seeded RETAILER
+  (`+998900000020`, store + category + 2 products) and a CUSTOMER registered live through the
+  app's own UI (`+998900000030`): guest cold-start landed on the storefront (not `/login`) →
+  browsed the catalog and a product detail while logged out → tapped checkout → correctly
+  redirected to login (guest-disallowed route) → registered a new CUSTOMER via
+  `POST /auth/register` → added a product to cart → checked out with a delivery address →
+  order created (`type: B2C`, correct `buyerId`/`sellerId`/`currency`/`total`, confirmed via direct
+  DB query) → "Buyurtmalarim" correctly showed the RETAILER as counterpart → logged out (correctly
+  landed back on the guest storefront, not stuck) → logged in as the RETAILER (correctly landed on
+  the *operator* `HomeScreen`, not the customer shell) → "Kelgan buyurtmalar" tab showed the order
+  with the CUSTOMER as counterpart → approved it (stock decremented, `Sale`/`Customer`/`SaleDebt`
+  created, confirmed via DB query and cross-validated against the RETAILER's own dashboard KPIs
+  updating to match) → marked delivered → logged back in as the CUSTOMER → "Qarzlarim" correctly
+  showed the new debt with the RETAILER's name via the `owner` field.
+- All seed data (the RETAILER + its store/category/products/orders/sales/debts, and the
+  live-registered CUSTOMER) removed afterward via a companion cleanup script, in FK-safe deletion
+  order (payments → saleDebts/saleReturns/saleItems → sales → customers →
+  orderStatusHistory/orderItems → debts → orders → products/category → stores → users) — a plain
+  `prisma.user.delete()` on the retailer 409'd on `sales_storeId_fkey` the first time, since this
+  local DB's `Sale.storeId`/`Sale.ownerId` foreign keys don't actually cascade/set-null the way
+  `schema.prisma` declares (the same class of local-dev-DB drift already documented for
+  `master_products.unit` — not a bsmart bug, just another reason to always delete children
+  explicitly in a cleanup script rather than relying on a single cascading `user.delete()`).
+
 ### Offline strategy
 Hive is a **read-cache layer only** — write-through on a successful remote fetch, fall back to the
 cached value on a `NetworkApiException`. **No offline writes** (no queuing an order/sale/payment
@@ -659,6 +780,10 @@ Guest-eligible catalog/product-detail/cart (own `publicDioProvider`, no auth int
 self-registration (`POST /auth/register` — finally applicable), favorites, CUSTOMER dashboard (own
 orders/debts). New `CustomerShell` (Catalog/Cart/Favorites/Profile). Router redirect must become
 allowlist-aware (guest browsing allowed pre-login, login required only at checkout).
+
+| # | Milestone | Status |
+|---|---|---|
+| 8 | CUSTOMER role + public storefront | 🟢 Done 2026-09-23, verified live end-to-end (guest browse→register→checkout→RETAILER approve/deliver→CUSTOMER debt-visibility cycle, DB side-effects confirmed, see log). Three real bugs found+fixed beyond the two caught before live testing (see "CUSTOMER / Storefront model" below) |
 
 ### Phase 3 — SUPER_ADMIN panel
 Platform analytics, wholesalers/retailers management, one generic `BusinessType`-filtered
@@ -1223,3 +1348,63 @@ the roadmap: **Phase 2 — CUSTOMER role + public storefront** (guest-eligible c
 customer self-registration via `POST /auth/register` — finally applicable, since that endpoint
 always creates a `CUSTOMER` account, favorites, a `CustomerShell`, and an allowlist-aware router
 redirect instead of Phase 1's blanket "no session → login").
+
+### 2026-09-23 — Milestone 8 (CUSTOMER role + public storefront) — Phase 2 complete
+- Read `catalog.controller.ts`/`public-catalog.controller.ts`/`catalog.service.ts` (confirmed the
+  public and authenticated endpoints share one service/response shape), `favorite.controller.ts`/
+  `.service.ts`, `auth.service.ts`'s `register()`, `order.controller.ts`/`order.service.ts` (the
+  generic `sellerId` handling and the `view` query param — see below), and
+  `sale-debt.service.ts`'s CUSTOMER phone-matching branch directly before writing any code.
+- Built `features/storefront` (guest-eligible catalog/product-detail/cart/checkout, an
+  `IndexedStack`-based `CustomerHomeScreen` shell, `CustomerDebtsScreen`) and `features/favorites`
+  (toggle/list) as new bounded contexts, deliberately separate from the existing authenticated
+  `features/catalog` (Milestone 3's B2B buyer-browse). Added a `publicDio` getter to
+  `core/di/injection.dart` (reusing the existing interceptor-free "bare" Dio pattern), a
+  `RegisterScreen`/`RegisterUseCase`, and reused `features/orders`' `CreateOrderUseCase`/
+  `OrderReviewScreen`/`OrdersListScreen`/`OrderDetailScreen` and `features/debts`'
+  `saleDebtsListProvider` as-is for CUSTOMER checkout/order-history/debt-viewing — no new
+  domain-layer code needed for either. Rewrote `app_router.dart`'s `_redirect`/`_isGuestAllowed`
+  from Phase 1's blanket "no session → login" to an allowlist (guest browsing allowed; cart
+  review, orders, and debts require login purely by being absent from the allowlist).
+- `flutter analyze`/`flutter test`/`flutter build apk --debug`: all clean.
+- **Five real bugs found and fixed this milestone** — two caught by re-reading existing Milestone
+  3 code before any live testing (the `OrdersListScreen` counterpart check and a `SplashScreen`
+  guest-lockout that would have stranded a logged-out user on the spinner forever), and three
+  caught live: the `FavoriteIdsNotifier`/`favoritesListProvider` cross-invalidation gap, and — the
+  most significant pair — `OrdersListScreen`/`OrderDetailScreen` both keying their seller/buyer
+  logic on session **role** rather than per-order, which silently broke the instant a RETAILER
+  became capable of being the *seller* side of an order (a case that didn't exist before Phase 2).
+  Full detail on all five, plus the previously-undocumented `OrderQueryDto.view` param and the
+  B2C approve-time `Sale`/`Customer`/`SaleDebt` auto-creation, is in "CUSTOMER / Storefront model"
+  above — not repeated here.
+- **Verified live, full lifecycle**, against a real running backend with a seeded RETAILER
+  (`+998900000020`, default store, 1 category, 2 products) and a CUSTOMER registered live through
+  the app's own registration screen (`+998900000030`): guest cold-start → browsed catalog/product
+  detail while logged out → checkout correctly redirected to login → registered → added to cart
+  → checked out with a delivery address → order created and verified via direct DB query
+  (`type: B2C`, correct `buyerId`/`sellerId`/`currency`/`total`) → "Buyurtmalarim" correctly showed
+  the RETAILER as counterpart (first counterpart-display fix confirmed) → logged out (landed back
+  on the guest storefront, not stuck) → logged in as the RETAILER (landed on the operator
+  `HomeScreen`, not the customer shell — role branch confirmed) → the new "Kelgan"/"Chiqarilgan"
+  toggle correctly showed the order with the CUSTOMER as counterpart and an enabled Approve/Reject
+  (second fix, the per-order `isSeller`, confirmed) → approved (stock 40→39, `Sale`+phone-matched
+  `Customer`+`SaleDebt` created, confirmed via DB query and cross-validated against the RETAILER's
+  own dashboard KPIs updating to match) → the "Kelgan" tab correctly stayed on the incoming view
+  after the approve-triggered refresh (third fix, `refresh()` vs `invalidate()`, confirmed) →
+  marked delivered → logged back in as the CUSTOMER → "Qarzlarim" correctly showed the new debt
+  with the RETAILER's name via the added `SaleDebt.owner` field.
+- All seed data (the RETAILER + its store/category/products and everything the approval created —
+  order, sale, customer, saleDebt — plus the live-registered CUSTOMER) removed afterward via a
+  companion cleanup script, deleting children before parents in FK-safe order (this local DB's
+  `Sale.storeId`/`ownerId` foreign keys don't cascade/set-null the way `schema.prisma` declares — a
+  plain `user.delete()` 409'd on `sales_storeId_fkey` the first attempt; same class of local-dev-DB
+  drift as the already-documented `master_products.unit` issue, not a bsmart bug). Backend dev
+  server and `flutter run` both stopped; `.env` reset to its checked-in default.
+
+**Phase 2 (CUSTOMER role + public storefront) is now complete.** Carried-forward opportunistic,
+non-blocking follow-ups from earlier milestones remain: shared cart (park/resume), barcode-scan-
+to-find and the master-catalog picker (hardware/DB-drift-blocked), the admins-list active/inactive
+visual indicator, and the Excel-export share-sheet filename cosmetic gap. Next up per the roadmap:
+**Phase 3 — SUPER_ADMIN panel** (platform analytics, wholesalers/retailers management, a generic
+`BusinessType`-filtered retailer-list screen, master-product moderation queue, a new simpler
+`SuperAdminShell`).
