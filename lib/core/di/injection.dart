@@ -18,7 +18,12 @@ import 'package:bsmart/features/auth/domain/usecases/verify_password_usecase.dar
 import 'package:bsmart/features/categories/data/datasources/categories_remote_data_source.dart';
 import 'package:bsmart/features/categories/data/repositories/categories_repository_impl.dart';
 import 'package:bsmart/features/categories/domain/repositories/categories_repository.dart';
+import 'package:bsmart/features/categories/domain/usecases/create_category_usecase.dart';
+import 'package:bsmart/features/categories/domain/usecases/delete_category_usecase.dart';
 import 'package:bsmart/features/categories/domain/usecases/get_categories_usecase.dart';
+import 'package:bsmart/features/categories/domain/usecases/list_categories_paginated_usecase.dart';
+import 'package:bsmart/features/categories/domain/usecases/update_category_usecase.dart';
+import 'package:bsmart/features/categories/domain/usecases/upload_category_image_usecase.dart';
 import 'package:bsmart/features/catalog/data/datasources/catalog_remote_data_source.dart';
 import 'package:bsmart/features/catalog/data/repositories/catalog_repository_impl.dart';
 import 'package:bsmart/features/catalog/domain/repositories/catalog_repository.dart';
@@ -55,7 +60,28 @@ import 'package:bsmart/features/dashboard/domain/usecases/get_wholesaler_dashboa
 import 'package:bsmart/features/master_catalog/data/datasources/master_catalog_remote_data_source.dart';
 import 'package:bsmart/features/master_catalog/data/repositories/master_catalog_repository_impl.dart';
 import 'package:bsmart/features/master_catalog/domain/repositories/master_catalog_repository.dart';
+import 'package:bsmart/features/master_catalog/domain/usecases/approve_master_product_usecase.dart';
+import 'package:bsmart/features/master_catalog/domain/usecases/create_master_product_usecase.dart';
+import 'package:bsmart/features/master_catalog/domain/usecases/delete_master_product_usecase.dart';
+import 'package:bsmart/features/master_catalog/domain/usecases/get_master_product_usecase.dart';
+import 'package:bsmart/features/master_catalog/domain/usecases/reject_master_product_usecase.dart';
+import 'package:bsmart/features/master_catalog/domain/usecases/remove_master_product_image_usecase.dart';
 import 'package:bsmart/features/master_catalog/domain/usecases/search_master_catalog_usecase.dart';
+import 'package:bsmart/features/master_catalog/domain/usecases/update_master_product_usecase.dart';
+import 'package:bsmart/features/master_catalog/domain/usecases/upload_master_product_image_usecase.dart';
+import 'package:bsmart/features/platform_dashboard/data/datasources/platform_dashboard_remote_data_source.dart';
+import 'package:bsmart/features/platform_dashboard/data/repositories/platform_dashboard_repository_impl.dart';
+import 'package:bsmart/features/platform_dashboard/domain/repositories/platform_dashboard_repository.dart';
+import 'package:bsmart/features/platform_dashboard/domain/usecases/get_platform_dashboard_usecase.dart';
+import 'package:bsmart/features/platform_dashboard/domain/usecases/get_platform_income_debt_chart_usecase.dart';
+import 'package:bsmart/features/platform_users/data/datasources/platform_users_remote_data_source.dart';
+import 'package:bsmart/features/platform_users/data/repositories/platform_users_repository_impl.dart';
+import 'package:bsmart/features/platform_users/domain/repositories/platform_users_repository.dart';
+import 'package:bsmart/features/platform_users/domain/usecases/create_platform_user_usecase.dart';
+import 'package:bsmart/features/platform_users/domain/usecases/delete_platform_user_usecase.dart';
+import 'package:bsmart/features/platform_users/domain/usecases/list_platform_users_usecase.dart';
+import 'package:bsmart/features/platform_users/domain/usecases/set_platform_user_active_usecase.dart';
+import 'package:bsmart/features/platform_users/domain/usecases/update_platform_user_usecase.dart';
 import 'package:bsmart/features/orders/data/datasources/orders_remote_data_source.dart';
 import 'package:bsmart/features/orders/data/repositories/orders_repository_impl.dart';
 import 'package:bsmart/features/orders/domain/repositories/orders_repository.dart';
@@ -177,6 +203,11 @@ void setupDependencyInjection() {
   getIt.registerLazySingleton(() => CategoriesRemoteDataSource(mainDio));
   getIt.registerLazySingleton<CategoriesRepository>(() => CategoriesRepositoryImpl(getIt()));
   getIt.registerFactory(() => GetCategoriesUseCase(getIt()));
+  getIt.registerFactory(() => ListCategoriesPaginatedUseCase(getIt()));
+  getIt.registerFactory(() => CreateCategoryUseCase(getIt()));
+  getIt.registerFactory(() => UpdateCategoryUseCase(getIt()));
+  getIt.registerFactory(() => UploadCategoryImageUseCase(getIt()));
+  getIt.registerFactory(() => DeleteCategoryUseCase(getIt()));
 
   // --- features/products ---
   getIt.registerLazySingleton(() => ProductsRemoteDataSource(mainDio));
@@ -198,6 +229,29 @@ void setupDependencyInjection() {
   getIt.registerLazySingleton(() => MasterCatalogRemoteDataSource(mainDio));
   getIt.registerLazySingleton<MasterCatalogRepository>(() => MasterCatalogRepositoryImpl(getIt()));
   getIt.registerFactory(() => SearchMasterCatalogUseCase(getIt()));
+  getIt.registerFactory(() => GetMasterProductUseCase(getIt()));
+  getIt.registerFactory(() => CreateMasterProductUseCase(getIt()));
+  getIt.registerFactory(() => UpdateMasterProductUseCase(getIt()));
+  getIt.registerFactory(() => ApproveMasterProductUseCase(getIt()));
+  getIt.registerFactory(() => RejectMasterProductUseCase(getIt()));
+  getIt.registerFactory(() => DeleteMasterProductUseCase(getIt()));
+  getIt.registerFactory(() => UploadMasterProductImageUseCase(getIt()));
+  getIt.registerFactory(() => RemoveMasterProductImageUseCase(getIt()));
+
+  // --- features/platform_users (Phase 3, SUPER_ADMIN) ---
+  getIt.registerLazySingleton(() => PlatformUsersRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<PlatformUsersRepository>(() => PlatformUsersRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListPlatformUsersUseCase(getIt()));
+  getIt.registerFactory(() => CreatePlatformUserUseCase(getIt()));
+  getIt.registerFactory(() => UpdatePlatformUserUseCase(getIt()));
+  getIt.registerFactory(() => SetPlatformUserActiveUseCase(getIt()));
+  getIt.registerFactory(() => DeletePlatformUserUseCase(getIt()));
+
+  // --- features/platform_dashboard (Phase 3, SUPER_ADMIN) ---
+  getIt.registerLazySingleton(() => PlatformDashboardRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<PlatformDashboardRepository>(() => PlatformDashboardRepositoryImpl(getIt()));
+  getIt.registerFactory(() => GetPlatformDashboardUseCase(getIt()));
+  getIt.registerFactory(() => GetPlatformIncomeDebtChartUseCase(getIt()));
 
   // --- features/dashboard ---
   getIt.registerLazySingleton(() => ReportingRemoteDataSource(mainDio));

@@ -174,6 +174,32 @@ class InventoryStatsByCurrency {
       );
 }
 
+/// `{count, balance}` — the Super Admin dashboard's `debts.b2b`/`debts.b2c`
+/// shape (no `originalAmount`, unlike [DebtSummary]'s per-tenant version —
+/// confirmed against the real `reporting.service.ts adminDashboard()` return
+/// statement, not assumed identical to [DebtSummary]).
+class CountAndBalance {
+  const CountAndBalance({required this.count, required this.balance});
+  final int count;
+  final double balance;
+
+  factory CountAndBalance.fromJson(Map<String, dynamic> json) => CountAndBalance(
+        count: json['count'] as int,
+        balance: (json['balance'] as num).toDouble(),
+      );
+}
+
+class CountAndBalanceByCurrency {
+  const CountAndBalanceByCurrency({required this.uzs, required this.usd});
+  final CountAndBalance uzs;
+  final CountAndBalance usd;
+
+  factory CountAndBalanceByCurrency.fromJson(Map<String, dynamic> json) => CountAndBalanceByCurrency(
+        uzs: CountAndBalance.fromJson(json['uzs'] as Map<String, dynamic>),
+        usd: CountAndBalance.fromJson(json['usd'] as Map<String, dynamic>),
+      );
+}
+
 /// `income-debt-chart`'s per-month point (6 entries, oldest → newest).
 class IncomeDebtPoint {
   const IncomeDebtPoint({required this.month, required this.income, required this.debt});

@@ -14,6 +14,7 @@ MasterProduct masterProductFromJson(Map<String, dynamic> json) {
     barcode: json['barcode'] as String?,
     unit: json['unit'] != null ? ProductUnit.fromWire(json['unit'] as String) : null,
     status: MasterProductStatus.fromWire(json['status'] as String? ?? 'APPROVED'),
+    isActive: json['isActive'] as bool? ?? true,
     categoryId: category?['id'] as String?,
     categoryName: category?['name'] as String?,
     images: imagesJson

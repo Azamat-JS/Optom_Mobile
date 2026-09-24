@@ -158,18 +158,34 @@ features/
     data/{datasources,repositories}/          → no separate `models/` split, see "Reporting/dashboard model"
     domain/{entities,repositories,usecases}/  → WholesalerDashboard/RetailerDashboard + shared value objects
     presentation/{providers,screens,widgets}/ → DashboardNotifier, HomeScreen, KpiCard/chart widgets
-  categories/         → READ-ONLY browse (category CRUD is SUPER_ADMIN-only, see "Product/Catalog model")
+  categories/         → READ-ONLY tree browse for everyone except SUPER_ADMIN (Phase 3 added full
+                         CRUD + image upload on top, kept in this same feature folder since it's
+                         the same backend module — see "SUPER_ADMIN model" below)
     data/{datasources,models,repositories}/
-    domain/{entities,repositories,usecases}/
-    presentation/{providers,widgets}/         → CategoryPickerField (leaf-only picker, used by product form)
+    domain/{entities,repositories,usecases}/  → CategoryQuery (flat admin list)/CreateCategoryParams/
+                                                 UpdateCategoryParams alongside the original
+                                                 read-only tree-fetch method
+    presentation/
+      providers/   → CategoriesNotifier (read-only tree, shared app-wide), CategoriesAdminListNotifier
+                     (Phase 3, flat + inactive-inclusive)
+      widgets/     → CategoryPickerField (leaf-only picker, used by product form)
+      screens/     → CategoriesAdminListScreen, CategoryFormScreen (Phase 3, SUPER_ADMIN only)
   products/           → the tenant's own inventory (full CRUD + images + barcode + receive-stock)
     data/{datasources,models,repositories}/
     domain/{entities,repositories,usecases}/  → one usecase class per repository method (LoginUseCase-style)
     presentation/{providers,screens,widgets}/ → ProductsListNotifier (paginated/filtered list state)
-  master_catalog/     → READ-ONLY browse of the shared MasterProduct catalog ("Add from Catalog" picker)
+  master_catalog/     → READ-ONLY browse for everyone except SUPER_ADMIN ("Add from Catalog"
+                         picker); Phase 3 added full CRUD + approve/reject moderation + image
+                         management on top, same feature folder (same backend module)
     data/{datasources,models,repositories}/
-    domain/{entities,repositories,usecases}/
-    presentation/screens/master_catalog_picker_screen.dart
+    domain/{entities,repositories,usecases}/  → Create/UpdateMasterProductParams,
+                                                 approve/reject/delete/upload/removeImage usecases
+                                                 alongside the original read-only search
+    presentation/
+      screens/     → MasterCatalogPickerScreen (read-only), MasterCatalogAdminListScreen (Phase 3
+                     — status-chip-filtered; filtering to "Kutilmoqda" turns it into the
+                     moderation review queue, one screen not a separate one),
+                     MasterProductFormScreen (Phase 3, create/edit + multi-image gallery)
   catalog/            → READ-ONLY buyer-facing B2B browse (a seller's stores + their products),
                          powers order creation; never exposes costPrice (backend strips it)
     data/{datasources,models,repositories}/
@@ -285,6 +301,28 @@ features/
                      two independently-fetched providers, see the cross-invalidation bug in
                      "CUSTOMER / Storefront model" below
       screens/     → FavoritesTab
+  platform_users/      → Phase 3: SUPER_ADMIN-only generic `/users` directory — backs every
+                         "management" screen (wholesalers, each of the 8 retailer verticals,
+                         customers) via one filterable list, not 7+ separate screens
+    data/{datasources,models,repositories}/
+    domain/{entities,repositories,usecases}/   → PlatformUserQuery (role/businessType/search),
+                                                  Create/UpdatePlatformUserParams
+    presentation/
+      providers/   → PlatformUsersListNotifier (paginated, `setRole`/`setBusinessType`/`search`)
+      screens/     → PlatformUsersListScreen (role dropdown + conditional businessType dropdown
+                     when role=RETAILER — the "one generic BusinessType-filtered retailer-list
+                     screen" from the plan), PlatformUserFormScreen (create/edit any role)
+  platform_dashboard/  → Phase 3: `/reports/admin*` platform-wide analytics
+    data/{datasources,repositories}/
+    domain/{entities,repositories,usecases}/   → PlatformDashboard (reuses core/reporting_shared's
+                                                  value objects field-for-field), a new
+                                                  CountAndBalance(ByCurrency) for the b2b/b2c debt
+                                                  shape only this endpoint has
+    presentation/
+      providers/   → PlatformDashboardNotifier
+      screens/     → SuperAdminHomeScreen — deliberately the dashboard itself plus an overflow
+                     menu (Foydalanuvchilar/Kategoriyalar/Katalog nazorati), not a bottom-nav
+                     shell, mirroring `HomeScreen`'s own pattern rather than inventing a new one
 
 shared/widgets/
   barcode_scanner_screen.dart   → full-screen mobile_scanner camera view, reused by products now and POS later
@@ -739,6 +777,102 @@ there is no Register screen in Phase 1 — only `LoginScreen`. Customer self-reg
   `master_products.unit` — not a bsmart bug, just another reason to always delete children
   explicitly in a cleanup script rather than relying on a single cascading `user.delete()`).
 
+### SUPER_ADMIN model (confirmed against real backend source, 2026-09-24)
+- **`/users` is a fully generic CRUD directory, not a role-specific endpoint** — `GET /users`
+  accepts `role`/`businessType`/`search` filters, and the *same* screen drives every "management"
+  view the plan called for (wholesalers via `role=seller`, each of the 8 retailer verticals via
+  `role=retailer&businessType=...`, customers via `role=customer`) — confirmed by reading
+  `user.controller.ts`/`user.service.ts`/all 3 DTOs directly. This is exactly the "one generic
+  BusinessType-filtered retailer-list screen, not 7 separate ones" the plan specified, and it
+  needed zero backend-shape surprises to build — `UserQueryDto`/`CreateUserDto`/`UpdateUserDto`
+  map field-for-field onto `PlatformUserQuery`/`Create`/`UpdatePlatformUserParams`.
+- **`UpdateUserDto` has no `password` field at all** — there is no admin-resets-a-user's-password
+  flow server-side; `PlatformUserFormScreen`'s edit mode correctly has no password field (only
+  create does). **The role picker is also correctly absent from edit mode** — a user's role is
+  immutable after creation on the backend (no field for it in `UpdateUserDto`), so the edit form
+  only lets `businessType` change (relevant when `role == retailer`), never `role` itself.
+- **`GET /reports/admin`'s real shape has extra fields the Swagger doc comment omits** — the same
+  "stale Swagger comment" gotcha already documented for the wholesaler/retailer dashboards.
+  `users.businessTypes` (the 8-vertical breakdown) and `debts.b2b`/`debts.b2c` (each
+  `{uzs: {count, balance}, usd: {count, balance}}`, no `originalAmount` — a new, narrower shape
+  than the existing `DebtSummary`) aren't in the doc comment but are in the actual
+  `adminDashboard()` return statement. Added `CountAndBalance(ByCurrency)` to
+  `core/entities/reporting_shared.dart` for the narrower shape rather than reusing `DebtSummary`
+  and leaving `originalAmount` unparsed. Every other field (`sales`, `totalSellings`,
+  `cashReceived`, `cardReceived`, `paymentBreakdown`, `salesTrend`) reuses the exact same shared
+  value objects the wholesaler/retailer dashboard already uses, field-for-field — confirmed by
+  reading the real service method, not assumed from the shape's name alone.
+- **`SuperAdminHomeScreen` is deliberately just the dashboard plus an overflow menu**, not a new
+  navigation shape — mirrors `HomeScreen`'s own established dashboard-plus-`PopupMenuButton`
+  pattern rather than inventing a bottom-nav shell for a role that only has 3 drill-down
+  destinations (Foydalanuvchilar/Kategoriyalar/Katalog nazorati), matching the plan's "much
+  simpler... list/drill-down console."
+- **`MasterProduct.isActive` needed adding to the client entity** — the existing (Milestone 2,
+  read-only) entity only carried `status` (PENDING/APPROVED/REJECTED); Phase 3's edit form needs
+  the independent `isActive` off-switch too (a `REJECTED` entry could still be `isActive: true` or
+  an `APPROVED` one `false` — the two fields are orthogonal on the backend, confirmed by reading
+  `create()`'s `isActive: dto.isActive ?? true` alongside the separate `approve()`/`reject()`
+  status-only mutations). Parsed it in `master_product_model.dart` alongside `status`.
+- **The master-product image-upload endpoint returns just the created image row, not the whole
+  `MasterProduct`** — confirmed by reading `uploadImage()`'s `prisma.masterProductImage.create()`
+  return value directly, unlike `create()`/`update()`/`approve()`/`reject()` which all use
+  `include: this.defaultIncludes()` and return the full entity. `MasterCatalogRemoteDataSource
+  .uploadImage()` parses just `{id, url, isPrimary}` into a `MasterProductImageRef`; the form
+  screen re-fetches the full product via `GetMasterProductUseCase` afterward to refresh its image
+  gallery — same pattern `ProductDetailScreen._addImage()` already uses for the regular product
+  image endpoint, not something invented fresh here.
+- **Real bug caught live, fixed same-pass**: `CategoriesAdminListScreen`'s original sort was
+  "every root category, sorted by `sortOrder`, followed by every child category across the *entire*
+  DB, also sorted by `sortOrder`" — technically showed each child's correct parent name as its
+  subtitle, but visually dumped all children from every root into one undifferentiated block at
+  the end rather than nesting each child under its own parent. Reproduced live immediately after
+  creating a subcategory under a freshly-created root (the new child appeared far down the list in
+  the "all children" block instead of right after its parent, and a scroll-down confirmed every
+  other pre-existing subcategory in the DB had the same problem, not just the new one). **Fixed**
+  by grouping categories into `(root, [its children sorted by sortOrder])` pairs first, sorting the
+  roots by `sortOrder`, then flattening — each child now renders immediately after its own parent.
+  Added a safety fallback (`orphanedChildren`) for a child whose `parentId` isn't among the
+  fetched roots (a pagination-boundary edge case that shouldn't occur at the current
+  `CategoryQuery(limit: 100)` fetch size, but fails safe — appended at the end — rather than
+  silently dropping the row — instead of crashing or vanishing). Re-verified live after the fix:
+  the same subcategory now renders correctly directly beneath its parent, and every pre-existing
+  multi-level category in the DB does too.
+- **Known pre-existing environment limitation, not a new bsmart bug**: `MasterCatalogAdminListScreen`
+  ("Katalog nazorati") 500s with the exact same `master_products.unit` local-dev-DB column-drift
+  already documented since Milestone 2 (`GET /master-products` — and by extension any endpoint
+  touching the `MasterProduct` table without an explicit column-excluding `select` — fails on this
+  machine's local Postgres regardless of caller). Confirmed the screen **fails gracefully** (shows
+  "Xatolik: Database error", no crash) rather than assuming it does — this is the moderation-queue
+  screen's only live-verification gap this milestone, purely environmental. `prisma migrate status`
+  reports "Database schema is up to date!" despite the column being genuinely absent from the live
+  table (confirmed via a direct `information_schema.columns` query) — so the root cause is deeper
+  than a simply-unapplied migration; not something to chase further on the bsmart side.
+- **Verified live, full lifecycle**, against a real running backend with a seeded SUPER_ADMIN
+  (`+998900000040`) plus a wholesaler, two retailers (GENERAL and PHARMACY verticals), and a
+  customer: platform dashboard rendered real live cross-tenant aggregates (correctly reflecting
+  every account across the shared local dev DB, not just this session's seed data) → Foydalanuvchilar
+  → role filter (all 8 roles listed with correct Uzbek labels) → businessType filter appearing only
+  for `role=retailer` and correctly narrowing the list → created a new AUTO_PARTS retailer (DB
+  row confirmed correct) → deactivated it (confirmed `isActive: false` in DB, avatar greyed out in
+  the UI) → edited its shop name (confirmed persisted, deactivated state survived the edit) →
+  deleted it (confirmed hard-deleted from DB, list returned to its correct empty state) →
+  Kategoriyalar → created a subcategory under a root (confirmed `parentId` linkage in DB) →
+  uploaded a real image via multipart to ImageKit (confirmed `imageUrl` persisted) → edited its
+  name (confirmed persisted) → deleted it (confirmed soft-deleted, `deletedAt` set, list correctly
+  updated) → Katalog nazorati confirmed failing gracefully per the environment limitation above.
+- All seed data (the SUPER_ADMIN, wholesaler, two retailers, customer, and the category tree)
+  removed afterward via a companion cleanup script; confirmed zero leftover rows via a direct DB
+  query before finishing. Backend dev server and `flutter run` both stopped; `.env` reset to its
+  checked-in default.
+- **Housekeeping side-note, unrelated to this milestone's own scope but noticed while seeding**:
+  the shared local dev DB currently holds a substantial amount of leftover test data from earlier
+  milestones (e.g. an "Ahmad testev" retailer with multiple products still visible in live storefront
+  browsing, several "Test User" customer accounts) that prior sessions' own cleanup scripts
+  evidently didn't fully catch — every prior Progress Log entry's "all seed data removed" claim
+  should be read as "this session's own seed data," not "the DB is pristine." Not cleaned up here
+  (out of scope for this milestone, and none of it was created or relied upon by this pass), but
+  worth knowing next time a fresh/empty-feeling DB is assumed.
+
 ### Offline strategy
 Hive is a **read-cache layer only** — write-through on a successful remote fetch, fall back to the
 cached value on a `NetworkApiException`. **No offline writes** (no queuing an order/sale/payment
@@ -789,6 +923,10 @@ allowlist-aware (guest browsing allowed pre-login, login required only at checko
 Platform analytics, wholesalers/retailers management, one generic `BusinessType`-filtered
 retailer-list screen (not 7 separate ones), master-product moderation queue. Separate, simpler
 `SuperAdminShell` (list/drill-down, not bottom-nav-heavy).
+
+| # | Milestone | Status |
+|---|---|---|
+| 9 | SUPER_ADMIN panel | 🟢 Done 2026-09-24, verified live (platform dashboard, generic user directory with role/businessType filters, full CRUD; category CRUD + image upload with a real live-caught sort bug fixed — see "SUPER_ADMIN model" below). **One gap, environment-blocked, not a bsmart bug**: master-catalog moderation (Katalog nazorati) fails gracefully with the same pre-existing `master_products.unit` local-DB drift already documented since Milestone 2 — built and analyzer-clean, but not live-verifiable on this machine's DB |
 
 ### Phase 4 — WAITER/COURIER + restaurant vertical
 Products re-skins as "Menu" for RESTAURANT vertical (reuse Milestone 2, don't rewrite),
@@ -1408,3 +1546,75 @@ visual indicator, and the Excel-export share-sheet filename cosmetic gap. Next u
 **Phase 3 — SUPER_ADMIN panel** (platform analytics, wholesalers/retailers management, a generic
 `BusinessType`-filtered retailer-list screen, master-product moderation queue, a new simpler
 `SuperAdminShell`).
+
+### 2026-09-24 — Milestone 9 (SUPER_ADMIN panel) — Phase 3 complete
+- Read `user.controller.ts`/`.service.ts`/all 3 DTOs, `reporting.controller.ts`'s `/reports/admin*`
+  handlers and the real `adminDashboard()`/`adminSalesChart()`/`adminMonthlyIncomeDebtChart()`
+  implementations, `category.controller.ts`/`.service.ts`, and `master-product.controller.ts`/
+  `.service.ts`/all 5 DTOs directly before writing any code — see "SUPER_ADMIN model" above for
+  what that surfaced, most importantly that `/users` is already a fully generic role/businessType-
+  filterable directory (no backend changes or surprises needed to satisfy the plan's "one generic
+  BusinessType-filtered retailer-list screen" requirement) and that the admin dashboard's stale
+  Swagger doc comment omits real fields, same gotcha as the operator dashboards.
+- Built three new features — `features/platform_users` (generic user directory: list/create/
+  update/activate/deactivate/delete, one screen serving every role/vertical "management" view) and
+  `features/platform_dashboard` (`/reports/admin*` platform analytics, reusing
+  `core/entities/reporting_shared.dart`'s value objects field-for-field plus one new
+  `CountAndBalance(ByCurrency)` type) — and extended two existing Phase 1/2 features in place
+  rather than duplicating them: `features/categories` (added the SUPER_ADMIN admin-list/create/
+  update/image-upload/delete surface alongside the existing read-only tree browse) and
+  `features/master_catalog` (added SUPER_ADMIN create/update/approve/reject/delete/image-management
+  alongside the existing read-only "Add from Catalog" picker) — both following the "one Flutter
+  feature folder per backend module" convention already established, since these are the same
+  backend modules Milestone 2 already has a `features/` folder for. `SuperAdminHomeScreen` is
+  deliberately just the platform dashboard plus a `PopupMenuButton` (Foydalanuvchilar/
+  Kategoriyalar/Katalog nazorati), mirroring `HomeScreen`'s own established pattern rather than
+  building a new bottom-nav shell for a role with only 3 drill-down destinations. Added a
+  `UserRole.label` getter (Uzbek display labels) — the first place in the app showing a raw role
+  list to a human rather than branching UI behavior on it. Updated `app_router.dart`'s `_redirect`
+  to send a logged-in `SUPER_ADMIN` to `/admin` instead of the operator `HomeScreen` or the
+  CUSTOMER storefront. Also removed two dead, never-wired `RouteNames` entries
+  (`customerDebtDetailPattern`/`customerDebtDetail`) found while auditing the router — leftover
+  from Phase 2 planning, never referenced anywhere.
+- `flutter analyze`/`flutter test`/`flutter build apk --debug`: all clean.
+- **One real bug caught live and fixed same-pass**: `CategoriesAdminListScreen`'s sort put every
+  root category first, then every child category from the *entire* database in one flat trailing
+  block — technically correct-but-confusing, since each child's parent name was still shown in its
+  subtitle, but visually the list looked unsorted/broken the moment more than one root category had
+  children. Fixed by grouping into `(root, [its own children])` pairs before flattening; re-verified
+  live afterward that a freshly created subcategory (and every pre-existing multi-level category in
+  the DB) now renders correctly nested directly beneath its own parent.
+- **Verified live, full lifecycle**, against a real running backend with a seeded SUPER_ADMIN
+  (`+998900000040`), a wholesaler, two retailers (GENERAL + PHARMACY verticals), and a customer:
+  platform dashboard rendered correct live cross-tenant aggregates → Foydalanuvchilar's role filter
+  (all 8 roles, correct Uzbek labels) → businessType filter appearing only for `role=retailer` and
+  correctly narrowing results → created/deactivated/edited/deleted a throwaway AUTO_PARTS retailer,
+  each step confirmed via direct DB query → Kategoriyalar → created a subcategory under a root,
+  uploaded a real image via multipart to ImageKit, edited its name, deleted it — every step
+  confirmed via DB query, including catching and fixing the sort bug above mid-pass → Katalog
+  nazorati confirmed failing gracefully (not crashing) under the pre-existing `master_products.unit`
+  local-DB drift already documented since Milestone 2 (same root cause, re-confirmed rather than
+  assumed: `GET /master-products` genuinely 500s on this machine regardless of caller, and
+  `prisma migrate status` misleadingly reports "up to date" despite the column being verifiably
+  absent from the live table).
+- All seed data (the SUPER_ADMIN, wholesaler, two retailers, customer, and category tree) removed
+  afterward via a companion cleanup script; confirmed zero leftover rows via a direct DB query.
+  Backend dev server and `flutter run` both stopped; `.env` reset to its checked-in default.
+- **Housekeeping note for future sessions** (not this milestone's own scope, but worth recording):
+  the shared local dev DB has accumulated a non-trivial amount of leftover test data from earlier
+  milestones that those sessions' own cleanup scripts evidently didn't fully catch (visible live
+  during this pass — e.g. an "Ahmad testev" retailer with several products still browsable in the
+  guest storefront, multiple stray "Test User" customer accounts). Every prior Progress Log entry's
+  "all seed data removed" should be read as "that session's own seed data," not "the DB is
+  pristine" — don't assume a clean slate next time without checking first.
+
+**Phase 3 (SUPER_ADMIN panel) is now complete — all four planned phases (Operator core, CUSTOMER
+storefront, SUPER_ADMIN panel) from the original implementation plan are now built and verified
+live**, aside from the carried-forward opportunistic gaps (shared cart, barcode-scan-to-find, the
+master-catalog picker/moderation — both DB-drift-blocked, the admins-list active/inactive visual
+indicator, and the Excel-export filename cosmetic gap). Next up per the roadmap: **Phase 4 —
+WAITER/COURIER + restaurant vertical** (Products re-skinned as "Menu" for RESTAURANT-vertical
+retailers, restaurant-tables management, an independent restaurant-orders board, narrow
+`WaiterShell`/`CourierShell` shells built from explicit allow-lists since neither role is
+admin-inherited server-side, and an isolated polling repository abstraction in place of any
+WebSocket layer, since none exists server-side).

@@ -23,6 +23,7 @@ class MasterProduct {
     this.barcode,
     this.unit,
     required this.status,
+    required this.isActive,
     this.categoryId,
     this.categoryName,
     this.images = const [],
@@ -35,6 +36,11 @@ class MasterProduct {
   final String? barcode;
   final ProductUnit? unit;
   final MasterProductStatus status;
+
+  /// Independent of [status] — `isActive: false` hides an otherwise-approved
+  /// entry from "Add from Catalog" without rejecting it (a soft off-switch,
+  /// distinct from the approve/reject moderation flow).
+  final bool isActive;
   final String? categoryId;
   final String? categoryName;
   final List<MasterProductImageRef> images;

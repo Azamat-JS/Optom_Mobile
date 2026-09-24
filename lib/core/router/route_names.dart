@@ -10,10 +10,8 @@ abstract final class RouteNames {
   static const customerProductDetailPattern = '/customer/products/:id';
   static const customerCartReview = '/customer/cart/review';
   static const customerDebts = '/customer/debts';
-  static const customerDebtDetailPattern = '/customer/debts/:id';
 
   static String customerProductDetail(String id) => '/customer/products/$id';
-  static String customerDebtDetail(String id) => '/customer/debts/$id';
 
   static const products = '/products';
   static const productNew = '/products/new';
@@ -39,4 +37,10 @@ abstract final class RouteNames {
   static const admins = '/admins';
   static const expenditures = '/expenditures';
   static const reports = '/reports';
+
+  // --- Phase 3: SUPER_ADMIN panel ---
+  static const superAdminHome = '/admin';
+  static const superAdminUsers = '/admin/users';
+  static const superAdminCategories = '/admin/categories';
+  static const superAdminCatalog = '/admin/catalog';
 }

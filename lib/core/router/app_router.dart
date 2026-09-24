@@ -25,6 +25,10 @@ import 'package:bsmart/features/orders/presentation/screens/order_detail_screen.
 import 'package:bsmart/features/orders/presentation/screens/order_review_screen.dart';
 import 'package:bsmart/features/orders/presentation/screens/orders_list_screen.dart';
 import 'package:bsmart/features/orders/presentation/screens/seller_picker_screen.dart';
+import 'package:bsmart/features/categories/presentation/screens/categories_admin_list_screen.dart';
+import 'package:bsmart/features/master_catalog/presentation/screens/master_catalog_admin_list_screen.dart';
+import 'package:bsmart/features/platform_dashboard/presentation/screens/super_admin_home_screen.dart';
+import 'package:bsmart/features/platform_users/presentation/screens/platform_users_list_screen.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/presentation/screens/product_detail_screen.dart';
 import 'package:bsmart/features/products/presentation/screens/product_form_screen.dart';
@@ -162,6 +166,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.reports,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const ReportsScreen()),
       ),
+      GoRoute(
+        path: RouteNames.superAdminHome,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const SuperAdminHomeScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.superAdminUsers,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const PlatformUsersListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.superAdminCategories,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const CategoriesAdminListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.superAdminCatalog,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const MasterCatalogAdminListScreen()),
+      ),
     ],
   );
 });
@@ -189,7 +209,8 @@ bool _isGuestAllowed(String location) {
 /// storefront needs an allowlist instead (see [_isGuestAllowed]) — everyone
 /// else still funnels through the same login-required default. A logged-in
 /// `CUSTOMER` lands on the storefront shell instead of the operator
-/// `HomeScreen`; every other role is unchanged from Phase 1.
+/// `HomeScreen`; a logged-in `SUPER_ADMIN` (Phase 3) lands on
+/// `/admin` instead of either. Every other role is unchanged from Phase 1.
 ///
 /// Splash always resolves *away* once loading finishes, for both outcomes —
 /// it is deliberately never itself a "stay here" guest-allowed destination
@@ -210,7 +231,9 @@ String? _redirect(Ref ref, GoRouterState state) {
 
   final session = authState.valueOrNull;
   final loggedIn = session?.isAuthenticated ?? false;
-  final isCustomer = session?.session?.role == UserRole.customer;
+  final role = session?.session?.role;
+  final isCustomer = role == UserRole.customer;
+  final isSuperAdmin = role == UserRole.superAdmin;
 
   if (!loggedIn) {
     if (isSplash) return RouteNames.customerHome;
@@ -218,6 +241,7 @@ String? _redirect(Ref ref, GoRouterState state) {
   }
 
   if (isAuthScreen || isSplash) {
+    if (isSuperAdmin) return RouteNames.superAdminHome;
     return isCustomer ? RouteNames.customerHome : RouteNames.home;
   }
 
