@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:bsmart/core/enums/business_type.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/core/router/route_names.dart';
@@ -39,6 +40,13 @@ class HomeScreen extends ConsumerWidget {
     // both `store.service.ts`/`admin.service.ts`) — locked staff never see
     // these nav entries or the branch switcher, matching that enforcement.
     final isOwner = !(authState?.session?.isStaff ?? true);
+    // Restaurant-only nav (Phase 4): tables/order-board are operational —
+    // owner AND admin see them, mirroring `RestaurantTableController`'s own
+    // non-owner-only access. Waiter/Courier *account management* stays
+    // owner-only below, matching `assertIsRestaurantOwner`/
+    // `assertCanManageCouriers`'s exact-role checks server-side.
+    final isRestaurant = user?.businessType == BusinessType.restaurant;
+    final courierFeatureEnabled = user?.courierFeatureEnabled ?? false;
 
     return Scaffold(
       appBar: AppBar(
@@ -80,6 +88,16 @@ class HomeScreen extends ConsumerWidget {
                 value: RouteNames.reports,
                 child: ListTile(leading: Icon(Icons.bar_chart_outlined), title: Text('Hisobotlar')),
               ),
+              if (isRestaurant) ...[
+                const PopupMenuItem(
+                  value: RouteNames.restaurantOrders,
+                  child: ListTile(leading: Icon(Icons.dining_outlined), title: Text('Restoran buyurtmalari')),
+                ),
+                const PopupMenuItem(
+                  value: RouteNames.restaurantTables,
+                  child: ListTile(leading: Icon(Icons.table_restaurant_outlined), title: Text('Stollar')),
+                ),
+              ],
               if (isOwner) ...[
                 const PopupMenuItem(
                   value: RouteNames.stores,
@@ -89,6 +107,16 @@ class HomeScreen extends ConsumerWidget {
                   value: RouteNames.admins,
                   child: ListTile(leading: Icon(Icons.badge_outlined), title: Text('Xodimlar')),
                 ),
+                if (isRestaurant)
+                  const PopupMenuItem(
+                    value: RouteNames.waiters,
+                    child: ListTile(leading: Icon(Icons.room_service_outlined), title: Text('Ofitsiantlar')),
+                  ),
+                if (courierFeatureEnabled)
+                  const PopupMenuItem(
+                    value: RouteNames.couriers,
+                    child: ListTile(leading: Icon(Icons.moped_outlined), title: Text('Kuryerlar')),
+                  ),
                 const PopupMenuItem(
                   value: RouteNames.expenditures,
                   child: ListTile(leading: Icon(Icons.account_balance_wallet_outlined), title: Text('Harajatlarim')),

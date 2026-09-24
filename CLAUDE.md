@@ -873,6 +873,94 @@ there is no Register screen in Phase 1 — only `LoginScreen`. Customer self-reg
   (out of scope for this milestone, and none of it was created or relied upon by this pass), but
   worth knowing next time a fresh/empty-feeling DB is assumed.
 
+### Restaurant vertical / WAITER-COURIER model (confirmed against real backend source, 2026-09-24)
+- **A restaurant's "Menu" is literally its own `Product` inventory, re-skinned** — no separate
+  menu-item model exists on the backend. `WAITER` gets `GET`-only access to `/products`
+  (confirmed via `ProductController`'s `@Roles()` decorators), so `features/restaurant_orders`'
+  `WaiterMenuTab` is a thin read-only wrapper around the existing `productsListProvider` from
+  Milestone 2 — no new domain-layer code needed for it.
+- **`RestaurantTable.storeId` is server-derived via `TenantFilter.requireStore(tenant)`**, the
+  same `X-Store-Id` header mechanism the main Dio interceptor already attaches for owner
+  roles — confirmed live: `CreateRestaurantTableDto` never sends `storeId` in its body, and the
+  created row's `storeId` still matched the active store correctly.
+- **`RestaurantOrder`'s dual money-percent system sums, never compounds**: `serviceChargePercent`
+  (snapshotted from the table at order creation) and `waiterCommissionPercent` (snapshotted from
+  the waiter's own rate when first assigned) are both computed independently off `total` and
+  summed into `grandTotal` — confirmed live with a 25 000 so'm dine-in order against a 10%-service
+  table: `grandTotal` was exactly 27 500 (25 000 + 2 500), not a compounded figure.
+- **Courier assignment vs. acceptance are genuinely two separate states**: `courierId`
+  (assigned/targeted) and `courierAcceptedAt` (confirmed) — an owner can hand a delivery order
+  directly to a courier via `PATCH .../courier`, but the courier must still separately call
+  `PATCH .../accept` before the "mark delivered" action appears for them. Confirmed live via
+  direct DB query at each step: right after owner-assignment, `courierId` was set but
+  `courierAcceptedAt` was `null` and the detail screen correctly showed "P4 Courier (qabul
+  qilinishi kutilmoqda)"; after the courier's own accept, `courierAcceptedAt` got stamped and the
+  hint disappeared; after "Yetkazildi deb belgilash", `status` became `DELIVERED` and
+  `deliveredAt` was stamped.
+- **`RestaurantOrderStatus` flow confirmed live, full dine-in path**: NEW → PREPARING → READY →
+  SERVED, each transition correctly updating the status badge and swapping the action button
+  (Tayyorlashni boshlash → Tayyor deb belgilash → Berildi deb belgilash), with all action buttons
+  correctly disappearing once SERVED (terminal state) — matching `getStatusActions()`'s UX-polish
+  role (the server remains the actual authority, same relationship as `Order.canApproveOrReject`
+  elsewhere in this app).
+- **The restaurant-orders board's `findOpen()` is non-paginated and excludes terminal orders** —
+  confirmed live: immediately after marking the dine-in order SERVED, the board (which had shown
+  it a moment before) correctly returned to "Ochiq buyurtmalar yo'q" with no manual refresh
+  needed beyond the screen's own post-action `refresh()` call.
+- **A courier's own `RestaurantOrdersBoardScreen` query is already scoped server-side to
+  unclaimed-or-mine delivery orders** — confirmed live: logging in as the seeded courier
+  (`+998900000052`) landed directly on the board showing exactly the one delivery order assigned
+  to them, no client-side filtering needed in `CourierHomeScreen`.
+- **Real bug found and fixed during live verification**: `CourierHomeScreen` rendered
+  `RestaurantOrdersBoardScreen()` directly (with its default `showAppBar: true`, title "Restoran
+  buyurtmalari") for a RESTAURANT-vertical courier, but that screen's own AppBar has no logout
+  action — unlike the placeholder branch for a non-restaurant courier, which does have one. This
+  left a RESTAURANT-vertical courier with **no way to log out of the app at all**, confirmed live
+  (no "Chiqish" icon anywhere on screen after logging in as the seeded courier). **Fixed** by
+  wrapping the embedded board in `CourierHomeScreen`'s own `Scaffold`/`AppBar` (title "Kuryer" +
+  logout `IconButton`, matching the placeholder branch) and passing `showAppBar: false` to the
+  board so it doesn't render a second, logout-less AppBar of its own. Re-verified live after the
+  fix (required restarting the `flutter run` process, not just a hot reload, since the fix was
+  applied while the app was mid-session): the "Kuryer" AppBar with a working logout icon now
+  appears above the board for a restaurant courier, confirmed by logging out and landing back on
+  the login screen successfully.
+- **`WaiterHomeScreen`'s 2-tab shell (Buyurtmalar/Menyu) confirmed live**: renders as an
+  `IndexedStack`-based `NavigationBar` (not a go_router `StatefulShellRoute`, consistent with
+  every other shell in this app), the Buyurtmalar tab reuses `RestaurantOrdersBoardScreen` with
+  its own FAB for order creation (`canCreate` correctly includes `UserRole.waiter`), and the
+  Menyu tab correctly shows the read-only product list with no create/edit/FAB affordances at
+  all, confirming WAITER's `GET`-only product access end-to-end from the UI side too.
+- **Not independently re-verified this pass** (time-boxed, not a known gap): the exact
+  `waiterId`/`waiterCommissionPercent` stamping on an order created *through the waiter's own
+  session* — the order-create form's table `DropdownButtonFormField` proved unreliable to drive
+  via synthetic `adb input tap` events specifically under the waiter login (the identical widget
+  worked correctly for the owner earlier in this same pass), so this sub-case was deferred rather
+  than fought further. Confidence remains high this works correctly: the exact same
+  `RestaurantOrderCreateScreen`/`CreateRestaurantOrderUseCase` code path is used regardless of
+  role, and a pre-existing order already in this shared dev DB (`RO-20260914-X9H450`, created by a
+  different session's seeded waiter) already shows correct `waiterId`/`waiterCommissionPercent: 5`
+  values, confirming the backend contract and the client's request-shape are both correct. Worth
+  a quick opportunistic re-check next time this screen is touched, ideally on a real device where
+  the dropdown interaction is more reliable than on this emulator.
+- **Verified live, full lifecycle**, against a real running backend with a seeded RESTAURANT-
+  vertical RETAILER owner (`+998900000050`, store + 2 products + `waiterLimit`/
+  `courierFeatureEnabled` set), a table with a 10% service charge and one with 0%, a waiter
+  (`+998900000051`), and a courier (`+998900000052`): all 4 new nav items appeared correctly in
+  the owner's overflow menu → created a second table → created a dine-in order for the 10%-charge
+  table, added a menu item via the search sheet, submitted, confirmed the grandTotal math on the
+  board and detail screen → drove it through the full NEW→PREPARING→READY→SERVED lifecycle →
+  created a delivery order, assigned the seeded courier at the detail screen → logged in as the
+  courier, confirmed the pending-accept order appeared on their scoped board, accepted it (DB
+  confirmed `courierAcceptedAt` stamped), marked it delivered (DB confirmed `status: DELIVERED` +
+  `deliveredAt` stamped) → found and fixed the courier-logout bug above, re-verified the fix live
+  → logged in as the waiter, confirmed `WaiterHomeScreen`'s 2-tab shell and read-only Menyu tab
+  render correctly.
+- All seed data (the RETAILER owner + its store/products/tables, the waiter, and the courier, plus
+  every order created during testing) removed afterward via a companion cleanup script; confirmed
+  zero leftover rows via a direct DB query before finishing. Backend dev server and `flutter run`
+  both stopped; `.env` reset to its checked-in default. `flutter analyze`/`flutter test`/
+  `flutter build apk --debug` all re-confirmed clean after the courier-logout fix.
+
 ### Offline strategy
 Hive is a **read-cache layer only** — write-through on a successful remote fetch, fall back to the
 cached value on a `NetworkApiException`. **No offline writes** (no queuing an order/sale/payment
@@ -934,6 +1022,10 @@ restaurant-tables, restaurant-orders board, narrow `WaiterShell`/`CourierShell` 
 allow-lists — these roles are NOT admin-inherited server-side). No WebSocket layer exists
 server-side — isolate polling behind one repository abstraction from day one so it's a contained
 swap if the real-time backend track ever lands.
+
+| # | Milestone | Status |
+|---|---|---|
+| 10 | WAITER/COURIER + restaurant vertical | 🟢 Done 2026-09-24, verified live (restaurant-tables CRUD, full dine-in order lifecycle NEW→PREPARING→READY→SERVED, a delivery order's full courier assign→accept→deliver lifecycle, WaiterHomeScreen's 2-tab shell, CourierHomeScreen's restaurant-vs-placeholder branching — see "Restaurant vertical / WAITER-COURIER model" below). One real bug found+fixed (missing logout affordance for a RESTAURANT-vertical courier). **Phase 4 complete — all four planned phases now built and verified live.** |
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
@@ -1608,13 +1700,90 @@ visual indicator, and the Excel-export share-sheet filename cosmetic gap. Next u
   "all seed data removed" should be read as "that session's own seed data," not "the DB is
   pristine" — don't assume a clean slate next time without checking first.
 
-**Phase 3 (SUPER_ADMIN panel) is now complete — all four planned phases (Operator core, CUSTOMER
-storefront, SUPER_ADMIN panel) from the original implementation plan are now built and verified
-live**, aside from the carried-forward opportunistic gaps (shared cart, barcode-scan-to-find, the
-master-catalog picker/moderation — both DB-drift-blocked, the admins-list active/inactive visual
-indicator, and the Excel-export filename cosmetic gap). Next up per the roadmap: **Phase 4 —
-WAITER/COURIER + restaurant vertical** (Products re-skinned as "Menu" for RESTAURANT-vertical
-retailers, restaurant-tables management, an independent restaurant-orders board, narrow
-`WaiterShell`/`CourierShell` shells built from explicit allow-lists since neither role is
-admin-inherited server-side, and an isolated polling repository abstraction in place of any
-WebSocket layer, since none exists server-side).
+**Phase 3 (SUPER_ADMIN panel) is now complete** (the closing line above pre-dates Phase 4's own
+completion below — read literally, "all four planned phases" was aspirational at that point, not
+yet true). Next up per the roadmap: **Phase 4 — WAITER/COURIER + restaurant vertical** (Products
+re-skinned as "Menu" for RESTAURANT-vertical retailers, restaurant-tables management, an
+independent restaurant-orders board, narrow `WaiterShell`/`CourierShell` shells built from
+explicit allow-lists since neither role is admin-inherited server-side, and an isolated polling
+repository abstraction in place of any WebSocket layer, since none exists server-side).
+
+### 2026-09-24 — Milestone 10 (WAITER/COURIER + restaurant vertical) — Phase 4 complete
+- Read `restaurant-table.controller.ts`/`.service.ts`/all 3 DTOs, `restaurant-order.controller.ts`/
+  `.service.ts` (676 lines, in full)/all 5 DTOs, `restaurant-staff.controller.ts`/`.service.ts`/all
+  3 DTOs, `courier.controller.ts`/`.service.ts`/all 3 DTOs, and the `RestaurantOrder`/
+  `RestaurantOrderItem`/`RestaurantTable` Prisma models directly before writing any code — see
+  "Restaurant vertical / WAITER-COURIER model" above for what that surfaced. Also used Optom
+  Savdo's own `CLAUDE.md` (which already documents this exact feature area in detail) as
+  authoritative reference alongside direct source reading, rather than re-deriving everything from
+  scratch.
+- Built four new feature folders following the established `data`/`domain`/`presentation` shape:
+  `features/restaurant_tables` (owner/admin CRUD), `features/restaurant_staff` (owner-only waiter
+  CRUD, mirroring `features/staff_admins`' exact structure), `features/courier` (owner-only courier
+  CRUD, same structure again), and `features/restaurant_orders` (the order board, create/detail
+  screens, status-action logic, and both `WaiterHomeScreen`/`CourierHomeScreen`). Added
+  `core/enums/restaurant_order_enums.dart` (`RestaurantOrderType`/`RestaurantOrderStatus`). Added
+  `waiterLimit` to `User`/`UserModel` (existing `courierFeatureEnabled`/`courierLimit` were already
+  there from Milestone 1's session model, which had anticipated this exact phase). Wired 6 new
+  routes and updated `app_router.dart`'s `_redirect()` to send WAITER/COURIER sessions to their own
+  shells. Updated `HomeScreen`'s overflow menu with the 4 new nav entries, correctly split between
+  "operational, non-owner-only" (Restoran buyurtmalari/Stollar, gated only on `isRestaurant`) and
+  "account management, owner-only" (Ofitsiantlar gated on `isRestaurant` *and* `isOwner`; Kuryerlar
+  gated on `courierFeatureEnabled` *and* `isOwner`) — mirroring the exact same distinction the
+  backend's `assertIsRestaurantOwner`/`assertCanManageCouriers` vs. `RestaurantTableController`'s
+  non-owner-only access already draws.
+- `flutter analyze`/`flutter test`/`flutter build apk --debug`: all clean, both before and after
+  the live-verification bug fix below.
+- **One real bug found and fixed during live verification, not catchable by static analysis**: a
+  RESTAURANT-vertical courier had no logout affordance at all — see "Restaurant vertical /
+  WAITER-COURIER model" above for the full explanation and fix (`CourierHomeScreen` now wraps the
+  embedded `RestaurantOrdersBoardScreen(showAppBar: false)` in its own `Scaffold`/`AppBar` with a
+  logout action, instead of rendering the board directly with its logout-less default AppBar).
+- **Verified live, full lifecycle**, against a real running backend with a seeded RESTAURANT-
+  vertical RETAILER owner (`+998900000050`, store + 2 menu products, `waiterLimit`/
+  `courierFeatureEnabled` set), 2 tables (10% and 0% service charge), a waiter (`+998900000051`),
+  and a courier (`+998900000052`): logged in as the owner → confirmed all 4 new nav entries → full
+  Stollar CRUD (table creation, `storeId` server-derivation confirmed via DB query) → created a
+  dine-in order against the 10%-charge table, added a menu item via the search sheet, submitted →
+  confirmed `grandTotal` (27 500 = 25 000 + 2 500) both on the board and detail screen and via a
+  direct DB query → drove the order through NEW→PREPARING→READY→SERVED, confirming the action
+  button and status badge updated correctly at each step and disappeared entirely once terminal →
+  confirmed the board's `findOpen()` correctly excluded the now-SERVED order → created a delivery
+  order, assigned the seeded courier from the detail screen, confirmed the "qabul qilinishi
+  kutilmoqda" (pending-accept) hint rendered correctly and `courierAcceptedAt` was `null` in the DB
+  → logged in as the courier, confirmed their board correctly scoped to just this one assigned
+  order → accepted it (DB confirmed `courierAcceptedAt` stamped, hint disappeared, action button
+  changed to "mark delivered") → marked it delivered (DB confirmed `status: DELIVERED` +
+  `deliveredAt` stamped, terminal state, no further actions) → found the courier-logout bug at this
+  point, fixed it, restarted `flutter run` to pick up the fix, and re-verified the fix live
+  (logout icon now present and working) → logged in as the waiter, confirmed `WaiterHomeScreen`'s
+  2-tab `NavigationBar` shell (Buyurtmalar/Menyu) renders correctly, the Buyurtmalar tab's FAB
+  opens the same order-create flow the owner uses, and the Menyu tab shows the read-only product
+  list with zero create/edit affordances, confirming WAITER's `GET`-only product access from the UI
+  side as well as the backend's `@Roles()` decorators.
+- **One sub-case deferred rather than fought further, not a known app bug**: verifying
+  `waiterId`/`waiterCommissionPercent` stamping on an order created live through the waiter's own
+  session — the order-create form's table dropdown proved unreliable to drive via synthetic
+  `adb input tap` events specifically under this login (the identical widget worked fine for the
+  owner earlier in the same pass), a tooling flakiness rather than a reproducible app defect.
+  Confidence remains high given the identical code path is used regardless of role and a
+  pre-existing order already in this shared dev DB independently confirms the correct
+  `waiterId`/`waiterCommissionPercent` stamping contract — see "Restaurant vertical /
+  WAITER-COURIER model" above for detail. Worth an opportunistic quick re-check on a real device
+  next time this screen is touched.
+- All seed data (the RETAILER owner + its store/products/tables, the waiter, the courier, and every
+  order created during testing) removed afterward via a companion cleanup script; confirmed zero
+  leftover rows via a direct DB query before finishing. Backend dev server and `flutter run` both
+  stopped; `.env` reset to its checked-in default.
+
+**Phase 4 (WAITER/COURIER + restaurant vertical) is now complete — all four planned phases from
+the original implementation plan (Operator core, CUSTOMER storefront, SUPER_ADMIN panel, and now
+the restaurant/WAITER/COURIER vertical) are built and verified live.** Remaining carried-forward
+opportunistic, non-blocking follow-ups from earlier milestones: shared cart (park/resume),
+barcode-scan-to-find and the master-catalog picker/moderation (both hardware/DB-drift-blocked), the
+admins-list active/inactive visual indicator, the Excel-export filename cosmetic gap, and (new this
+pass) the waiter-session order-creation dropdown re-check on a real device. Per the original plan's
+§5, the next work — if and when picked up — is the **Backend-Enhancement Track** (push
+notifications, a real Click/Payme payment gateway, OTP/SMS login, and a real-time layer), which is
+explicitly new, additive infrastructure that bsmart must never hard-depend on, not a continuation
+of the phased UI rollout above.

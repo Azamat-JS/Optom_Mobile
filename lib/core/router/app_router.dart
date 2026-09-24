@@ -29,6 +29,12 @@ import 'package:bsmart/features/categories/presentation/screens/categories_admin
 import 'package:bsmart/features/master_catalog/presentation/screens/master_catalog_admin_list_screen.dart';
 import 'package:bsmart/features/platform_dashboard/presentation/screens/super_admin_home_screen.dart';
 import 'package:bsmart/features/platform_users/presentation/screens/platform_users_list_screen.dart';
+import 'package:bsmart/features/courier/presentation/screens/couriers_list_screen.dart';
+import 'package:bsmart/features/restaurant_orders/presentation/screens/courier_home_screen.dart';
+import 'package:bsmart/features/restaurant_orders/presentation/screens/restaurant_orders_board_screen.dart';
+import 'package:bsmart/features/restaurant_orders/presentation/screens/waiter_home_screen.dart';
+import 'package:bsmart/features/restaurant_staff/presentation/screens/waiters_list_screen.dart';
+import 'package:bsmart/features/restaurant_tables/presentation/screens/restaurant_tables_list_screen.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/presentation/screens/product_detail_screen.dart';
 import 'package:bsmart/features/products/presentation/screens/product_form_screen.dart';
@@ -182,6 +188,30 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.superAdminCatalog,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const MasterCatalogAdminListScreen()),
       ),
+      GoRoute(
+        path: RouteNames.waiterHome,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const WaiterHomeScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.courierHome,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const CourierHomeScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.restaurantTables,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const RestaurantTablesListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.restaurantOrders,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const RestaurantOrdersBoardScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.waiters,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const WaitersListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.couriers,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const CouriersListScreen()),
+      ),
     ],
   );
 });
@@ -234,6 +264,8 @@ String? _redirect(Ref ref, GoRouterState state) {
   final role = session?.session?.role;
   final isCustomer = role == UserRole.customer;
   final isSuperAdmin = role == UserRole.superAdmin;
+  final isWaiter = role == UserRole.waiter;
+  final isCourier = role == UserRole.courier;
 
   if (!loggedIn) {
     if (isSplash) return RouteNames.customerHome;
@@ -242,6 +274,8 @@ String? _redirect(Ref ref, GoRouterState state) {
 
   if (isAuthScreen || isSplash) {
     if (isSuperAdmin) return RouteNames.superAdminHome;
+    if (isWaiter) return RouteNames.waiterHome;
+    if (isCourier) return RouteNames.courierHome;
     return isCustomer ? RouteNames.customerHome : RouteNames.home;
   }
 

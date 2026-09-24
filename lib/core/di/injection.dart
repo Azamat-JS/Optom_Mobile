@@ -82,6 +82,40 @@ import 'package:bsmart/features/platform_users/domain/usecases/delete_platform_u
 import 'package:bsmart/features/platform_users/domain/usecases/list_platform_users_usecase.dart';
 import 'package:bsmart/features/platform_users/domain/usecases/set_platform_user_active_usecase.dart';
 import 'package:bsmart/features/platform_users/domain/usecases/update_platform_user_usecase.dart';
+import 'package:bsmart/features/restaurant_tables/data/datasources/restaurant_tables_remote_data_source.dart';
+import 'package:bsmart/features/restaurant_tables/data/repositories/restaurant_tables_repository_impl.dart';
+import 'package:bsmart/features/restaurant_tables/domain/repositories/restaurant_tables_repository.dart';
+import 'package:bsmart/features/restaurant_tables/domain/usecases/create_restaurant_table_usecase.dart';
+import 'package:bsmart/features/restaurant_tables/domain/usecases/delete_restaurant_table_usecase.dart';
+import 'package:bsmart/features/restaurant_tables/domain/usecases/list_restaurant_tables_usecase.dart';
+import 'package:bsmart/features/restaurant_tables/domain/usecases/update_restaurant_table_usecase.dart';
+import 'package:bsmart/features/restaurant_staff/data/datasources/restaurant_staff_remote_data_source.dart';
+import 'package:bsmart/features/restaurant_staff/data/repositories/restaurant_staff_repository_impl.dart';
+import 'package:bsmart/features/restaurant_staff/domain/repositories/restaurant_staff_repository.dart';
+import 'package:bsmart/features/restaurant_staff/domain/usecases/create_waiter_usecase.dart';
+import 'package:bsmart/features/restaurant_staff/domain/usecases/delete_waiter_usecase.dart';
+import 'package:bsmart/features/restaurant_staff/domain/usecases/list_waiters_usecase.dart';
+import 'package:bsmart/features/restaurant_staff/domain/usecases/set_waiter_active_usecase.dart';
+import 'package:bsmart/features/restaurant_staff/domain/usecases/update_waiter_usecase.dart';
+import 'package:bsmart/features/courier/data/datasources/courier_remote_data_source.dart';
+import 'package:bsmart/features/courier/data/repositories/courier_repository_impl.dart';
+import 'package:bsmart/features/courier/domain/repositories/courier_repository.dart';
+import 'package:bsmart/features/courier/domain/usecases/create_courier_usecase.dart';
+import 'package:bsmart/features/courier/domain/usecases/delete_courier_usecase.dart';
+import 'package:bsmart/features/courier/domain/usecases/list_couriers_usecase.dart';
+import 'package:bsmart/features/courier/domain/usecases/set_courier_active_usecase.dart';
+import 'package:bsmart/features/courier/domain/usecases/update_courier_usecase.dart';
+import 'package:bsmart/features/restaurant_orders/data/datasources/restaurant_orders_remote_data_source.dart';
+import 'package:bsmart/features/restaurant_orders/data/repositories/restaurant_orders_repository_impl.dart';
+import 'package:bsmart/features/restaurant_orders/domain/repositories/restaurant_orders_repository.dart';
+import 'package:bsmart/features/restaurant_orders/domain/usecases/accept_restaurant_order_usecase.dart';
+import 'package:bsmart/features/restaurant_orders/domain/usecases/add_restaurant_order_items_usecase.dart';
+import 'package:bsmart/features/restaurant_orders/domain/usecases/assign_restaurant_order_courier_usecase.dart';
+import 'package:bsmart/features/restaurant_orders/domain/usecases/create_restaurant_order_usecase.dart';
+import 'package:bsmart/features/restaurant_orders/domain/usecases/get_restaurant_order_usecase.dart';
+import 'package:bsmart/features/restaurant_orders/domain/usecases/list_open_restaurant_orders_usecase.dart';
+import 'package:bsmart/features/restaurant_orders/domain/usecases/list_restaurant_order_couriers_usecase.dart';
+import 'package:bsmart/features/restaurant_orders/domain/usecases/update_restaurant_order_status_usecase.dart';
 import 'package:bsmart/features/orders/data/datasources/orders_remote_data_source.dart';
 import 'package:bsmart/features/orders/data/repositories/orders_repository_impl.dart';
 import 'package:bsmart/features/orders/domain/repositories/orders_repository.dart';
@@ -252,6 +286,44 @@ void setupDependencyInjection() {
   getIt.registerLazySingleton<PlatformDashboardRepository>(() => PlatformDashboardRepositoryImpl(getIt()));
   getIt.registerFactory(() => GetPlatformDashboardUseCase(getIt()));
   getIt.registerFactory(() => GetPlatformIncomeDebtChartUseCase(getIt()));
+
+  // --- features/restaurant_tables (Phase 4) ---
+  getIt.registerLazySingleton(() => RestaurantTablesRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<RestaurantTablesRepository>(() => RestaurantTablesRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListRestaurantTablesUseCase(getIt()));
+  getIt.registerFactory(() => CreateRestaurantTableUseCase(getIt()));
+  getIt.registerFactory(() => UpdateRestaurantTableUseCase(getIt()));
+  getIt.registerFactory(() => DeleteRestaurantTableUseCase(getIt()));
+
+  // --- features/restaurant_staff (Phase 4, Waiter accounts) ---
+  getIt.registerLazySingleton(() => RestaurantStaffRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<RestaurantStaffRepository>(() => RestaurantStaffRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListWaitersUseCase(getIt()));
+  getIt.registerFactory(() => CreateWaiterUseCase(getIt()));
+  getIt.registerFactory(() => UpdateWaiterUseCase(getIt()));
+  getIt.registerFactory(() => SetWaiterActiveUseCase(getIt()));
+  getIt.registerFactory(() => DeleteWaiterUseCase(getIt()));
+
+  // --- features/courier (Phase 4, Courier accounts) ---
+  getIt.registerLazySingleton(() => CourierRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<CourierRepository>(() => CourierRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListCouriersUseCase(getIt()));
+  getIt.registerFactory(() => CreateCourierUseCase(getIt()));
+  getIt.registerFactory(() => UpdateCourierUseCase(getIt()));
+  getIt.registerFactory(() => SetCourierActiveUseCase(getIt()));
+  getIt.registerFactory(() => DeleteCourierUseCase(getIt()));
+
+  // --- features/restaurant_orders (Phase 4) ---
+  getIt.registerLazySingleton(() => RestaurantOrdersRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<RestaurantOrdersRepository>(() => RestaurantOrdersRepositoryImpl(getIt()));
+  getIt.registerFactory(() => CreateRestaurantOrderUseCase(getIt()));
+  getIt.registerFactory(() => ListOpenRestaurantOrdersUseCase(getIt()));
+  getIt.registerFactory(() => GetRestaurantOrderUseCase(getIt()));
+  getIt.registerFactory(() => AddRestaurantOrderItemsUseCase(getIt()));
+  getIt.registerFactory(() => UpdateRestaurantOrderStatusUseCase(getIt()));
+  getIt.registerFactory(() => AcceptRestaurantOrderUseCase(getIt()));
+  getIt.registerFactory(() => AssignRestaurantOrderCourierUseCase(getIt()));
+  getIt.registerFactory(() => ListRestaurantOrderCouriersUseCase(getIt()));
 
   // --- features/dashboard ---
   getIt.registerLazySingleton(() => ReportingRemoteDataSource(mainDio));

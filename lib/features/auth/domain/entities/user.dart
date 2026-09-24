@@ -30,6 +30,7 @@ class User {
     required this.canAccessPos,
     this.courierFeatureEnabled = false,
     this.courierLimit = 0,
+    this.waiterLimit = 0,
     this.ownerRole,
     this.managedUserId,
     this.isActive,
@@ -48,6 +49,12 @@ class User {
   final bool canAccessPos;
   final bool courierFeatureEnabled;
   final int courierLimit;
+
+  /// SUPER_ADMIN-editable cap on active WAITER accounts — only meaningful
+  /// for a RESTAURANT-vertical RETAILER owner (no companion enable switch,
+  /// unlike courier — every restaurant owner already has waiters as a
+  /// baseline capability).
+  final int waiterLimit;
   final UserRole? ownerRole;
   final String? managedUserId;
   final bool? isActive;

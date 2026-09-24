@@ -43,4 +43,12 @@ abstract final class RouteNames {
   static const superAdminUsers = '/admin/users';
   static const superAdminCategories = '/admin/categories';
   static const superAdminCatalog = '/admin/catalog';
+
+  // --- Phase 4: WAITER/COURIER + restaurant vertical ---
+  static const waiterHome = '/waiter';
+  static const courierHome = '/courier';
+  static const restaurantTables = '/restaurant-tables';
+  static const restaurantOrders = '/restaurant-orders';
+  static const waiters = '/waiters';
+  static const couriers = '/couriers';
 }

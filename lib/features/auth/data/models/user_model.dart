@@ -21,6 +21,7 @@ User userFromJson(Map<String, dynamic> json) {
     canAccessPos: json['canAccessPos'] as bool? ?? false,
     courierFeatureEnabled: json['courierFeatureEnabled'] as bool? ?? false,
     courierLimit: (json['courierLimit'] as num?)?.toInt() ?? 0,
+    waiterLimit: (json['waiterLimit'] as num?)?.toInt() ?? 0,
     ownerRole: json['ownerRole'] != null ? UserRole.fromWire(json['ownerRole'] as String) : null,
     managedUserId: json['managedUserId'] as String?,
     isActive: json['isActive'] as bool?,
