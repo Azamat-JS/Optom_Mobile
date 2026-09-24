@@ -134,7 +134,19 @@ class _StorefrontCatalogTabState extends ConsumerState<StorefrontCatalogTab> {
         Expanded(
           child: productsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => Center(child: Text('Xatolik: $error')),
+            error: (error, _) => Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Xatolik: $error', textAlign: TextAlign.center),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () => ref.invalidate(storefrontProductsProvider),
+                    child: const Text('Qayta urinish'),
+                  ),
+                ],
+              ),
+            ),
             data: (state) {
               if (state.items.isEmpty) {
                 return RefreshIndicator(

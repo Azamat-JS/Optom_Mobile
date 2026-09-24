@@ -35,7 +35,12 @@ class StorefrontCartTab extends ConsumerWidget {
               final line = cart.lines.values.elementAt(index);
               return ListTile(
                 title: Text(line.product.name),
-                subtitle: Text(CurrencyFormatter.format(line.product.price, line.product.currency)),
+                subtitle: Text(
+                  CurrencyFormatter.format(
+                    line.product.price,
+                    line.product.currency,
+                  ),
+                ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -62,21 +67,32 @@ class StorefrontCartTab extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Jami', style: Theme.of(context).textTheme.titleMedium),
+                    Text(
+                      'Jami',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                     Text(
                       CurrencyFormatter.format(cart.total, currency),
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
                 FilledButton(
                   onPressed: () => context.push(RouteNames.customerCartReview),
-                  style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                      horizontal: 14,
+                    ),
+                  ),
                   child: const Text('Buyurtma berish'),
                 ),
               ],
