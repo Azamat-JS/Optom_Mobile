@@ -183,12 +183,18 @@ import 'package:bsmart/features/stores/domain/usecases/list_stores_usecase.dart'
 import 'package:bsmart/features/stores/domain/usecases/set_store_active_usecase.dart';
 import 'package:bsmart/features/stores/domain/usecases/update_store_usecase.dart';
 import 'package:bsmart/features/sales/data/datasources/sales_remote_data_source.dart';
+import 'package:bsmart/features/sales/data/datasources/shared_cart_remote_data_source.dart';
 import 'package:bsmart/features/sales/data/repositories/sales_repository_impl.dart';
+import 'package:bsmart/features/sales/data/repositories/shared_cart_repository_impl.dart';
 import 'package:bsmart/features/sales/domain/repositories/sales_repository.dart';
+import 'package:bsmart/features/sales/domain/repositories/shared_cart_repository.dart';
 import 'package:bsmart/features/sales/domain/usecases/create_sale_return_usecase.dart';
 import 'package:bsmart/features/sales/domain/usecases/create_sale_usecase.dart';
 import 'package:bsmart/features/sales/domain/usecases/get_sale_usecase.dart';
 import 'package:bsmart/features/sales/domain/usecases/list_sales_usecase.dart';
+import 'package:bsmart/features/sales/domain/usecases/list_shared_carts_usecase.dart';
+import 'package:bsmart/features/sales/domain/usecases/park_cart_usecase.dart';
+import 'package:bsmart/features/sales/domain/usecases/remove_shared_cart_usecase.dart';
 
 const _bareDioInstance = 'bareDio';
 const _mainDioInstance = 'mainDio';
@@ -364,6 +370,13 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => GetSaleUseCase(getIt()));
   getIt.registerFactory(() => CreateSaleUseCase(getIt()));
   getIt.registerFactory(() => CreateSaleReturnUseCase(getIt()));
+
+  // --- features/sales/shared_cart (POS park/resume) ---
+  getIt.registerLazySingleton(() => SharedCartRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<SharedCartRepository>(() => SharedCartRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListSharedCartsUseCase(getIt()));
+  getIt.registerFactory(() => ParkCartUseCase(getIt()));
+  getIt.registerFactory(() => RemoveSharedCartUseCase(getIt()));
 
   // --- features/debts (Debt/SaleDebt + Payment/pay-down) ---
   getIt.registerLazySingleton(() => DebtsRemoteDataSource(mainDio));

@@ -75,8 +75,19 @@ class AdminsListScreen extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final admin = admins[index];
                 return ListTile(
-                  leading: CircleAvatar(child: Text(admin.firstName.characters.first)),
-                  title: Text(admin.fullName),
+                  leading: CircleAvatar(
+                    backgroundColor: admin.isActive ? null : Theme.of(context).disabledColor,
+                    child: Text(admin.firstName.characters.first),
+                  ),
+                  title: Row(
+                    children: [
+                      Flexible(child: Text(admin.fullName)),
+                      if (!admin.isActive) ...[
+                        const SizedBox(width: 6),
+                        const Chip(label: Text('Faolsiz'), visualDensity: VisualDensity.compact),
+                      ],
+                    ],
+                  ),
                   subtitle: Text('${admin.phone} · ${storeNames[admin.storeId] ?? admin.storeId}'),
                   trailing: PopupMenuButton<String>(
                     onSelected: (action) {

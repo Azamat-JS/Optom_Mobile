@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
@@ -13,6 +15,13 @@ import 'package:bsmart/features/reports/domain/usecases/export_debts_xlsx_usecas
 /// bytes are handed to `share_plus` (save/share sheet) rather than written
 /// to a fixed path — matches the original plan's "stream bytes via Dio then
 /// hand off via share_plus" note for Excel exports.
+///
+/// The bytes are written to a real temp file before sharing rather than
+/// passed via `XFile.fromData(..., name: ...)` directly — `cross_file`'s own
+/// IO-platform source states `name` is ignored there, and the file's name
+/// is always derived from `path`; without a real `path`, `share_plus` had to
+/// invent one (a random UUID), which is why the Android share sheet used to
+/// show a UUID filename instead of `qarzlar.xlsx` despite `name:` being set.
 class WorkDayCard extends StatefulWidget {
   const WorkDayCard({super.key, required this.workDay, required this.onStart, required this.onEnd});
 
@@ -33,18 +42,19 @@ class _WorkDayCardState extends State<WorkDayCard> {
     final result = await getIt<ExportDebtsXlsxUseCase>().call();
     if (!mounted) return;
     setState(() => _isExporting = false);
-    result.fold(
-      (bytes) => Share.shareXFiles(
-        [
-          XFile.fromData(
-            bytes,
-            name: 'qarzlar.xlsx',
-            mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          ),
-        ],
-        text: "Qarzlar ro'yxati",
-      ),
-      (failure) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: ${failure.message}'))),
+    await result.fold(
+      (bytes) async {
+        final file = File('${Directory.systemTemp.path}/qarzlar.xlsx');
+        await file.writeAsBytes(bytes);
+        await Share.shareXFiles(
+          [XFile(file.path, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')],
+          text: "Qarzlar ro'yxati",
+        );
+      },
+      (failure) async {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: ${failure.message}')));
+      },
     );
   }
 

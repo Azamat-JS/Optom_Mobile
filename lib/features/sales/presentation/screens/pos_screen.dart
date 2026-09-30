@@ -10,6 +10,7 @@ import 'package:bsmart/features/products/domain/entities/product_query.dart';
 import 'package:bsmart/features/products/domain/usecases/list_products_usecase.dart';
 import 'package:bsmart/features/sales/presentation/providers/pos_cart_notifier.dart';
 import 'package:bsmart/features/sales/presentation/screens/checkout_screen.dart';
+import 'package:bsmart/features/sales/presentation/widgets/shared_cart_sheet.dart';
 import 'package:bsmart/shared/widgets/barcode_scanner_screen.dart';
 
 /// The POS Sell tab — search/scan the tenant's own active inventory
@@ -149,7 +150,14 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Kassa'),
-        actions: [IconButton(icon: const Icon(Icons.qr_code_scanner), onPressed: _scanBarcode)],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.hourglass_empty),
+            tooltip: 'Saqlangan savatlar',
+            onPressed: () => SharedCartSheet.show(context),
+          ),
+          IconButton(icon: const Icon(Icons.qr_code_scanner), onPressed: _scanBarcode),
+        ],
       ),
       body: Column(
         children: [

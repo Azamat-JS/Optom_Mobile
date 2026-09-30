@@ -73,6 +73,19 @@ class PosCartNotifier extends Notifier<PosCartState> {
   void setDiscount(double discount) => state = PosCartState(lines: state.lines, saleDiscount: discount);
 
   void clear() => state = const PosCartState();
+
+  /// Replaces the cart wholesale from a resumed parked cart — bypasses
+  /// [addProduct]'s accumulate/currency-guard logic entirely, since the
+  /// caller (restoring a `SharedCart`) already re-fetched each live
+  /// [Product] and is responsible for having done so for a consistent
+  /// currency set. Any product that no longer exists must be filtered out
+  /// by the caller before calling this (see `SharedCartSheet._restore`).
+  void loadCart(List<PosCartLine> lines, {double saleDiscount = 0}) {
+    state = PosCartState(
+      lines: {for (final line in lines) line.product.id: line},
+      saleDiscount: saleDiscount,
+    );
+  }
 }
 
 final posCartProvider = NotifierProvider<PosCartNotifier, PosCartState>(PosCartNotifier.new);

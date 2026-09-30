@@ -18,7 +18,7 @@ meant to become the real native app that replaces that.
 customers (`CUSTOMER`). **Debt tracking is the core value proposition** — every unpaid sale creates
 a debt record, at either the B2B (wholesaler↔retailer) or B2C (retailer↔customer) hop.
 
-**Reference project — READ-ONLY, NEVER MODIFY:** `../Optom_Savdo` (sibling directory,
+**Reference project — READ-ONLY, NEVER MODIFY (one exception, see below):** `../Optom_Savdo` (sibling directory,
 `/Users/azamatabdullayev/Desktop/optom-mobile/Optom_Savdo`). It is a Next.js + NestJS/Prisma/
 PostgreSQL monorepo that bsmart consumes as its backend API. Its own `CLAUDE.md` (very large,
 ~1300 lines) is the authoritative doc for backend/business-domain details — read it (or spot-check
@@ -26,6 +26,11 @@ its source files directly) whenever a screen needs an exact endpoint path, DTO s
 rule not already captured below. **bsmart's own backend calls must never assume a shape — verify
 against the actual controller/DTO/Prisma schema in that repo, or its Swagger docs at `/api/docs`,
 before writing a data-layer model.**
+
+**Exception (user decision, 2026-09-30):** the Courier Delivery & Live Tracking feature is built as
+new, additive backend modules **inside** `Optom_Savdo/apps/server` (`redis/`, `tracking/`, `maps/`,
+`deliveries/` + additive schema/DTO changes). The web app UI is never touched, and existing web
+flows must keep working unchanged. Everything else in Optom_Savdo stays read-only.
 
 **Rollout strategy (see "Roadmap" below):** phased, **operator-core first**. Build SELLER/RETAILER
 (+ their `_ADMIN` staff) screens before CUSTOMER, SUPER_ADMIN, or the WAITER/COURIER/restaurant
@@ -202,12 +207,16 @@ features/
     domain/{entities,repositories,usecases}/
     presentation/
       providers/       → PosCartNotifier (plain Notifier, mirrors CreateOrderCartNotifier's
-                          single-currency guard), SalesListNotifier (paginated)
+                          single-currency guard; `loadCart()` wholesale-replaces the cart for
+                          shared-cart restore), SalesListNotifier (paginated), SharedCartsNotifier
+                          (park/resume — `/shared-cart`, added as a follow-up after Phase 4)
       screens/          → PosScreen (search/scan + cart), CheckoutScreen (customer picker,
                           PAID/DEBT, discount, payment method), SaleDetailScreen (receipt),
                           SaleReturnScreen, SalesListScreen (history, type filter)
       widgets/          → CustomerPickerSheet (search + quick-create bottom sheet, shared by
-                          checkout), sale_status_badge.dart (SaleStatusBadge/SaleTypeBadge)
+                          checkout), sale_status_badge.dart (SaleStatusBadge/SaleTypeBadge),
+                          SharedCartSheet (park current cart / restore or delete a parked one,
+                          opened from PosScreen's AppBar)
   debts/              → B2B `Debt` + B2C `SaleDebt` hub, plus `/payments` (single + FIFO pay-down)
     data/{datasources,models,repositories}/   → 3 data sources (debts, sale_debts, payments)
                                                  behind one DebtsRepository
@@ -1027,6 +1036,25 @@ swap if the real-time backend track ever lands.
 |---|---|---|
 | 10 | WAITER/COURIER + restaurant vertical | 🟢 Done 2026-09-24, verified live (restaurant-tables CRUD, full dine-in order lifecycle NEW→PREPARING→READY→SERVED, a delivery order's full courier assign→accept→deliver lifecycle, WaiterHomeScreen's 2-tab shell, CourierHomeScreen's restaurant-vs-placeholder branching — see "Restaurant vertical / WAITER-COURIER model" below). One real bug found+fixed (missing logout affordance for a RESTAURANT-vertical courier). **Phase 4 complete — all four planned phases now built and verified live.** |
 
+### Phase 5 — Courier Delivery & Live Tracking (mobile + backend, not web)
+Full plan: `~/.claude/plans/we-should-make-a-golden-bubble.md`. It covers RestaurantOrder DELIVERY
+and B2C storefront Orders, with three map views: the courier's own route, customer tracking with
+ETA, and an owner/admin fleet map. Stack: Socket.IO + Redis + Google Maps/Routes API. Tracking is
+generic (it tracks a *subject*, not a user; a `TrackingSession` is a continuous reporting period,
+not a shift). Bad GPS points are dropped as bad data and never invalidate the courier or session.
+Built one milestone at a time, each verified live before the next.
+
+| # | Milestone | Status |
+|---|---|---|
+| T1 | Redis + Socket.IO adapter + schema/migrations | 🟢 Done 2026-09-30 — Redis running locally (Homebrew), migration `20260930090000_add_courier_delivery_tracking` applied, server boots with `[Redis] Redis connected`, existing REST unaffected |
+| T2 | Tracking gateway, principal/subject resolvers, GPS validator (with re-anchoring), Redis state, persistence, sweeper | ⏳ Next |
+| T3 | Flutter core: socket client, location tracker, tracking status, disclosure/indicator/notification UX, online toggle | ⬜ |
+| T4 | Deliveries backend (B2C + restaurant sync), access policy, authorization-matrix tests | ⬜ |
+| T5 | Flutter courier delivery flow + map + animated marker | ⬜ |
+| T6 | Maps module (Routes API) + ETA loop + polylines | ⬜ |
+| T7 | Customer tracking screen + map pin pickers | ⬜ |
+| T8 | Owner fleet map + B2C assign UI + retention job | ⬜ |
+
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
 priority) a real-time layer — all as **new NestJS + PostgreSQL infrastructure**, never a
@@ -1779,11 +1807,88 @@ repository abstraction in place of any WebSocket layer, since none exists server
 **Phase 4 (WAITER/COURIER + restaurant vertical) is now complete — all four planned phases from
 the original implementation plan (Operator core, CUSTOMER storefront, SUPER_ADMIN panel, and now
 the restaurant/WAITER/COURIER vertical) are built and verified live.** Remaining carried-forward
-opportunistic, non-blocking follow-ups from earlier milestones: shared cart (park/resume),
-barcode-scan-to-find and the master-catalog picker/moderation (both hardware/DB-drift-blocked), the
-admins-list active/inactive visual indicator, the Excel-export filename cosmetic gap, and (new this
-pass) the waiter-session order-creation dropdown re-check on a real device. Per the original plan's
-§5, the next work — if and when picked up — is the **Backend-Enhancement Track** (push
-notifications, a real Click/Payme payment gateway, OTP/SMS login, and a real-time layer), which is
-explicitly new, additive infrastructure that bsmart must never hard-depend on, not a continuation
-of the phased UI rollout above.
+opportunistic, non-blocking follow-ups from earlier milestones: barcode-scan-to-find and the
+master-catalog picker/moderation (both hardware/DB-drift-blocked), and the waiter-session
+order-creation dropdown re-check on a real device. Shared cart (park/resume), the admins-list
+active/inactive visual indicator, and the Excel-export filename gap — see the entries below — were
+all built/fixed and verified live on 2026-09-24. Per the original plan's §5, the next work — if
+and when picked up — is the **Backend-Enhancement Track** (push notifications, a real Click/Payme
+payment gateway, OTP/SMS login, and a real-time layer), which is explicitly new, additive
+infrastructure that bsmart must never hard-depend on, not a continuation of the phased UI rollout
+above.
+
+### 2026-09-24 — Shared cart (park/resume) follow-up
+- Read `shared-cart.controller.ts`/`.service.ts`/`dto/create-shared-cart.dto.ts` and the
+  `SharedCart` Prisma model directly, plus the reference web app's `SharedCartDialog.tsx`, before
+  writing any code — confirmed `POST/GET/DELETE /shared-cart` (no `PATCH`/update), `storeId`
+  derived server-side from the active store (same pattern as `RestaurantTable`), `DELETE` is an
+  atomic pop (deletes and returns the row in one call), no pagination, and no customer identity
+  attached — a parked cart is identified only by time + contents, shared by the owner and every
+  admin under the same tenant while the same store is active.
+- Built into the existing `features/sales` folder (tightly coupled to `PosCartNotifier`/
+  `PosScreen`, so no new top-level feature folder): `SharedCart`/`SharedCartItem` entities,
+  `CreateSharedCartParams`, `SharedCartRepository` + impl, 3 usecases
+  (`ListSharedCartsUseCase`/`ParkCartUseCase`/`RemoveSharedCartUseCase`), `SharedCartsNotifier`
+  (mirrors `StoresListNotifier`'s exact shape), and `SharedCartSheet` — a bottom sheet opened from
+  a new hourglass icon on `PosScreen`'s AppBar. Added `PosCartNotifier.loadCart()` to replace the
+  cart wholesale on restore, bypassing `addProduct()`'s accumulate/currency-guard logic entirely
+  (restore already re-fetches each live `Product` and rebuilds from scratch).
+- `customAmount`/`saleDiscount` are real `Decimal` columns (parsed via `parseDecimal`, same
+  gotcha as everywhere else in this app), but `items` is a raw `Json` column whose own
+  `quantity`/`unitPrice`/`discount` fields round-trip as plain JSON numbers — no decimal parsing
+  needed for those specifically, confirmed by reading the Prisma schema directly rather than
+  assuming the same rule applied uniformly.
+- Restore is error-tolerant per item (mirrors the reference web app's `Promise.allSettled`): each
+  parked item's `productId` is re-fetched live via the existing `GetProductUseCase`, and a
+  since-deleted product is silently skipped (with a summary SnackBar) rather than failing the
+  whole restore.
+- `flutter analyze`/`flutter test`/`flutter build apk --debug`: all clean.
+- **Verified live, all four operations**, against a real running backend with a seeded throwaway
+  SELLER (`+998900000060`) + 2 products: parked a cart (2× "Suv") → confirmed via direct DB query
+  the row matched exactly (`items`, `customAmount: "0"`, `saleDiscount: "0"`) and the current cart
+  cleared → restored it with an empty current cart → confirmed the cart rebuilt correctly
+  (2× "Suv", 6 000 so'm) and the row was atomically deleted (confirmed gone via DB query) → parked
+  again, this time deliberately tested restore *while the current cart was non-empty* (1× "Suv")
+  → confirmed the guard correctly blocked it (parked row still present in the list and in the DB,
+  current cart unchanged, no overwrite) — this required a careful re-test with a screenshot after
+  every single action, since an earlier looser attempt gave an ambiguous result due to a mistimed
+  tap sequence, not an actual bug → tested delete (confirm dialog → row removed from both the UI
+  list and the DB).
+- All seed data (the SELLER + its store/products + any shared carts) removed afterward via a
+  companion cleanup script. Backend dev server and `flutter run` were both found stopped at the
+  start of this pass (from a previous session) and were restarted to allow live verification.
+
+### 2026-09-24 — Admins-list active/inactive visual indicator (follow-up)
+- `AdminsListScreen`'s row had no visible cue for a deactivated admin — deactivating one only
+  showed through the popup menu's own action label flipping from "Faolsizlantirish" to
+  "Faollashtirish", unlike `StoresListScreen`'s greyed-out icon + "Asosiy" chip pattern for stores.
+  Fixed by mirroring that exact pattern: the `CircleAvatar` now uses `Theme.of(context)
+  .disabledColor` as its background when `!admin.isActive`, and a compact "Faolsiz" `Chip` appears
+  next to the name (title wrapped in a `Row`, same as `StoresListScreen`'s "Asosiy" chip).
+- `flutter analyze`/`flutter test`: clean.
+- **Verified live** against a real running backend with a seeded throwaway SELLER
+  (`+998900000070`) + one `SELLER_ADMIN` (`+998900000071`): deactivated the admin via the popup
+  menu → avatar correctly greyed out and a "Faolsiz" chip appeared next to the name → reactivated
+  → both reverted correctly (colored avatar, chip gone). Seed data removed afterward via a
+  companion cleanup script.
+
+### 2026-09-24 — Excel-export filename fix (follow-up)
+- **Found the actual root cause, not just a package quirk to shrug off**: `cross_file`'s own
+  IO-platform source (`lib/src/types/io.dart`) states outright that `name` is ignored by
+  `XFile.fromData` on IO platforms — `name` always derives from `path` (`_file.path.split
+  (Platform.pathSeparator).last`). `WorkDayCard._exportDebts()` called `XFile.fromData(bytes, name:
+  'qarzlar.xlsx', ...)` with no `path:` argument, so `share_plus` had nothing real to derive a name
+  from and generated a random UUID filename when it staged the bytes to a temp file for the OS
+  share sheet — exactly the cosmetic gap documented since Milestone 7, now understood precisely
+  rather than shrugged off as "the package doesn't consistently honor `name`."
+- **Fixed** by writing the exported bytes to a real temp file first
+  (`File('${Directory.systemTemp.path}/qarzlar.xlsx')`, no new dependency — `dart:io`'s
+  `Directory.systemTemp` is already available) and sharing that file's real `path` via a plain
+  `XFile(path, mimeType: ...)` instead of `XFile.fromData(..., name: ...)` — since the name is now
+  genuinely derived from a real file path, it's honored correctly everywhere, not just "most of the
+  time."
+- `flutter analyze`/`flutter test`: clean.
+- **Verified live** against a real running backend with a seeded throwaway SELLER: tapped "Qarzlar
+  (Excel)" on the Reports screen's Ish kuni card → the Android share sheet correctly showed
+  **`qarzlar.xlsx`** as the filename (screenshot-confirmed), not a UUID. Seed data removed
+  afterward via a companion cleanup script.
