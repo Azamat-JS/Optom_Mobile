@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:bsmart/core/network/auth_event_bus.dart';
+import 'package:bsmart/core/location/location_tracker.dart';
 import 'package:bsmart/core/network/dio_client.dart';
+import 'package:bsmart/core/realtime/tracking_socket.dart';
 import 'package:bsmart/core/storage/active_store_storage.dart';
 import 'package:bsmart/core/storage/secure_token_storage.dart';
 import 'package:bsmart/features/auth/data/datasources/auth_local_data_source.dart';
@@ -195,6 +197,7 @@ import 'package:bsmart/features/sales/domain/usecases/list_sales_usecase.dart';
 import 'package:bsmart/features/sales/domain/usecases/list_shared_carts_usecase.dart';
 import 'package:bsmart/features/sales/domain/usecases/park_cart_usecase.dart';
 import 'package:bsmart/features/sales/domain/usecases/remove_shared_cart_usecase.dart';
+import 'package:bsmart/features/tracking/data/tracking_disclosure_storage.dart';
 
 const _bareDioInstance = 'bareDio';
 const _mainDioInstance = 'mainDio';
@@ -227,6 +230,17 @@ void setupDependencyInjection() {
   );
 
   // --- features/auth ---
+  // Live courier tracking — see "Courier Delivery & Live Tracking" in CLAUDE.md.
+  getIt.registerLazySingleton(
+    () => TrackingSocket(
+      tokenStorage: getIt<SecureTokenStorage>(),
+      activeStoreStorage: getIt<ActiveStoreStorage>(),
+      mainDio: getIt<Dio>(instanceName: _mainDioInstance),
+    ),
+  );
+  getIt.registerLazySingleton(() => LocationTracker());
+  getIt.registerLazySingleton(() => TrackingDisclosureStorage());
+
   getIt.registerLazySingleton(() => AuthRemoteDataSource(getIt<Dio>(instanceName: _mainDioInstance)));
   getIt.registerLazySingleton(() => AuthLocalDataSource(getIt<SecureTokenStorage>()));
   getIt.registerLazySingleton<AuthRepository>(

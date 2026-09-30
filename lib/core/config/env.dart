@@ -14,4 +14,15 @@ abstract final class Env {
     }
     return value;
   }
+
+  /// Socket.IO URL of the live-tracking namespace. Defaults to the API
+  /// server's origin (API_BASE_URL minus its `/api` path) + `/tracking`;
+  /// `SOCKET_URL` in `.env` overrides it if the socket is ever served from a
+  /// different host. See Optom_Savdo CLAUDE.md "Tracking socket contract".
+  static String get trackingSocketUrl {
+    final override = dotenv.env['SOCKET_URL'];
+    if (override != null && override.isNotEmpty) return override;
+    final api = Uri.parse(apiBaseUrl);
+    return '${api.origin}/tracking';
+  }
 }

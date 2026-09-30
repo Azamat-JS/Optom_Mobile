@@ -1047,13 +1047,62 @@ Built one milestone at a time, each verified live before the next.
 | # | Milestone | Status |
 |---|---|---|
 | T1 | Redis + Socket.IO adapter + schema/migrations | 🟢 Done 2026-09-30 — Redis running locally (Homebrew), migration `20260930090000_add_courier_delivery_tracking` applied, server boots with `[Redis] Redis connected`, existing REST unaffected |
-| T2 | Tracking gateway, principal/subject resolvers, GPS validator (with re-anchoring), Redis state, persistence, sweeper | ⏳ Next |
-| T3 | Flutter core: socket client, location tracker, tracking status, disclosure/indicator/notification UX, online toggle | ⬜ |
-| T4 | Deliveries backend (B2C + restaurant sync), access policy, authorization-matrix tests | ⬜ |
+| T2 | Tracking gateway, principal/subject resolvers, GPS validator (with re-anchoring), Redis state, persistence, sweeper | 🟢 Done 2026-09-30 — 22 validator unit tests + 62-check live socket script all green; socket event contract documented in Optom_Savdo `CLAUDE.md` "Tracking socket contract" (the source of truth for T3's Flutter client) |
+| T3 | Flutter core: socket client, location tracker, tracking status, disclosure/indicator/notification UX, online toggle | 🟢 Done 2026-09-30 — verified live on the Android emulator (see "Tracking client (T3)" below) |
+| T4 | Deliveries backend (B2C + restaurant sync), access policy, authorization-matrix tests | ⏳ Next |
 | T5 | Flutter courier delivery flow + map + animated marker | ⬜ |
 | T6 | Maps module (Routes API) + ETA loop + polylines | ⬜ |
 | T7 | Customer tracking screen + map pin pickers | ⬜ |
 | T8 | Owner fleet map + B2C assign UI + retention job | ⬜ |
+
+#### Tracking client (T3) — how it's built and what was learned
+- **Layers:** `core/realtime/tracking_socket.dart` (plain Dart, get_it singleton — one Socket.IO
+  connection to `/tracking`, explicit `connect()`, `request()` = emit-with-ack + timeout → null),
+  `core/location/location_tracker.dart` (geolocator + permissions), `core/location/location_fix.dart`
+  (`LocationSendPolicy`: moving → every 3 s or 15 m, stationary → every 20 s, never < 1 s; unit
+  tested), `features/tracking/presentation/providers/tracking_notifier.dart` (the orchestrator +
+  `TrackingPhase` state behind all the UI), `features/tracking/presentation/{screens,widgets}`
+  (disclosure, status pill, details sheet, online card with fix-it banner). Mounted in
+  `CourierHomeScreen` for **every** vertical (the restaurant board and the placeholder both sit
+  under the online card now).
+- **Socket URL** = `API_BASE_URL`'s origin + `/tracking` (optional `SOCKET_URL` override in `.env`).
+  **Socket auth** reads the current token on every (re)connect (`setAuthFn`); on `auth_error
+  invalid_token` it does one `GET /auth/me` through the main Dio so the existing
+  `RefreshInterceptor` refreshes, then retries once — token refresh logic stays in one place.
+- **Session semantics:** going online opens a fresh session (`tracking:start {resume:false}`);
+  every later reconnect sends `resume:true` → the **same** session continues (verified by killing
+  the backend mid-stream). `no_session` acks trigger a re-start. Tracking stops on the toggle, the
+  sheet's "To'xtatish", GPS being switched off (`servicesDisabled` banner), and logout (a
+  `ref.listen` on `sessionNotifierProvider`). It **never** starts on its own — after an app restart
+  the courier is offline until they toggle.
+- **"While in use" permission only — deliberate.** A geolocator stream started in the foreground
+  keeps running in the background: Android via its location foreground service (persistent
+  "bsmart joylashuvingizni ulashmoqda" notification; manifest has `FOREGROUND_SERVICE_LOCATION`,
+  no `ACCESS_BACKGROUND_LOCATION`), iOS via `allowBackgroundLocationUpdates` + the blue indicator
+  (`UIBackgroundModes: location`). Less invasive and avoids Play's background-location review.
+  Android 13+ notification permission is requested so the notification is actually visible.
+- **Gotcha — fused provider "service disabled" while GPS is on:** with Android's "Google Location
+  Accuracy" off (the default on this emulator; also possible on real phones) geolocator's fused
+  path emits `LocationServiceDisabledException` even though location is on. `LocationTracker.watch`
+  catches that **stream error event** (note: inside an `async*`, `yield*` forwards error events —
+  a `try/catch` around it never fires; it needs an explicit `StreamController`) and falls back to
+  `forceLocationManager: true` (plain GPS provider).
+- **Gotcha — `permission_handler` pinned to `^12.0.1`:** 13.x pulls `permission_handler_android`
+  14.1, whose Kotlin-DSL build script fails to compile against this project's Android Gradle setup.
+- **Pre-existing fix:** `android/app/src/main/AndroidManifest.xml` had no `INTERNET` permission
+  (only the debug/profile manifests did) — a release build couldn't have reached the API. Added.
+- **Verified live (Android emulator, Pixel 9a, real backend):** disclosure → "Hozir emas" stays
+  offline with no OS prompt; accept → OS prompt; deny → red pill + "Qayta urinish" banner; grant →
+  notification prompt → green "hozirgina" pill; simulated drive (`adb emu geo fix` every 2 s) lands
+  in Redis + throttled `location_points`; **home + screen off → points keep flowing** (foreground
+  notification present); backend killed → amber "Qayta ulanmoqda…" → recovers on the same session;
+  details sheet; GPS off → session `STOPPED` + "GPS ni yoqish" banner; "To'xtatish" confirm →
+  `STOPPED` + notification gone; logout while online → `STOPPED`; owner's `GET /tracking/fleet`
+  shows the courier online with live coordinates. **Not live-verifiable on the emulator:** the
+  amber `noGpsFix` state (the emulator GPS keeps emitting the last fix, so it exercised the 20 s
+  stationary cadence instead) — worth a real-device check indoors.
+- **Test-seed gotcha:** the app's login validator needs `+998` + 9 digits; the backend accepts
+  shorter numbers, so seed scripts must use valid-length phones or the app can't log in.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

@@ -26,6 +26,14 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Kuryer sifatida onlayn bo'lganingizda yoki yetkazish paytida joylashuvingiz biznes egangiz va buyurtma mijoziga ko'rsatiladi.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Kuryer sifatida onlayn bo'lganingizda yoki yetkazish paytida joylashuvingiz biznes egangiz va buyurtma mijoziga ko'rsatiladi.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Mahsulot shtrix-kodini skanerlash va mahsulot rasmini olish uchun kamera kerak.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
