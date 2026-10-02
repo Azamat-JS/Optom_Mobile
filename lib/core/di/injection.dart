@@ -198,6 +198,14 @@ import 'package:bsmart/features/sales/domain/usecases/list_shared_carts_usecase.
 import 'package:bsmart/features/sales/domain/usecases/park_cart_usecase.dart';
 import 'package:bsmart/features/sales/domain/usecases/remove_shared_cart_usecase.dart';
 import 'package:bsmart/features/tracking/data/tracking_disclosure_storage.dart';
+import 'package:bsmart/features/deliveries/data/datasources/deliveries_remote_data_source.dart';
+import 'package:bsmart/features/deliveries/data/repositories/deliveries_repository_impl.dart';
+import 'package:bsmart/features/deliveries/domain/repositories/deliveries_repository.dart';
+import 'package:bsmart/features/deliveries/domain/usecases/advance_delivery_usecase.dart';
+import 'package:bsmart/features/deliveries/domain/usecases/get_delivery_route_usecase.dart';
+import 'package:bsmart/features/deliveries/domain/usecases/get_delivery_usecase.dart';
+import 'package:bsmart/features/deliveries/domain/usecases/get_order_delivery_usecase.dart';
+import 'package:bsmart/features/deliveries/domain/usecases/list_deliveries_usecase.dart';
 
 const _bareDioInstance = 'bareDio';
 const _mainDioInstance = 'mainDio';
@@ -240,6 +248,13 @@ void setupDependencyInjection() {
   );
   getIt.registerLazySingleton(() => LocationTracker());
   getIt.registerLazySingleton(() => TrackingDisclosureStorage());
+  getIt.registerLazySingleton(() => DeliveriesRemoteDataSource(getIt<Dio>(instanceName: _mainDioInstance)));
+  getIt.registerLazySingleton<DeliveriesRepository>(() => DeliveriesRepositoryImpl(getIt<DeliveriesRemoteDataSource>()));
+  getIt.registerLazySingleton(() => ListDeliveriesUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => GetDeliveryUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => AdvanceDeliveryUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => GetDeliveryRouteUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => GetOrderDeliveryUseCase(getIt<DeliveriesRepository>()));
 
   getIt.registerLazySingleton(() => AuthRemoteDataSource(getIt<Dio>(instanceName: _mainDioInstance)));
   getIt.registerLazySingleton(() => AuthLocalDataSource(getIt<SecureTokenStorage>()));

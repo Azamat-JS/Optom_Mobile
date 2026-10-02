@@ -5,6 +5,7 @@ import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/order_status.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/features/deliveries/presentation/widgets/order_delivery_card.dart';
 import 'package:bsmart/features/orders/domain/entities/order.dart';
 import 'package:bsmart/features/orders/domain/entities/order_write_params.dart';
 import 'package:bsmart/features/orders/domain/usecases/get_order_usecase.dart';
@@ -168,6 +169,9 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                       _buildItemsCard(order),
                       const SizedBox(height: 16),
                       _buildTotalsCard(order),
+                      // Courier delivery (only approved/delivered orders can have one).
+                      if (order.status == OrderStatus.approved || order.status == OrderStatus.delivered)
+                        OrderDeliveryCard(orderId: order.id),
                       if (order.notes != null || order.deliveryAddress != null) ...[
                         const SizedBox(height: 16),
                         _buildNotesCard(order),

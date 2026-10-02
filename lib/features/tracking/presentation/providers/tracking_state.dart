@@ -25,6 +25,8 @@ class TrackingState {
     this.phase = TrackingPhase.off,
     this.lastSentAt,
     this.notificationsDenied = false,
+    this.activeDeliveryLabel,
+    this.customerWatches = false,
   });
 
   final TrackingPhase phase;
@@ -32,6 +34,22 @@ class TrackingState {
 
   /// Android 13+: the foreground notification can't be shown.
   final bool notificationsDenied;
+
+  /// Set while the courier has an accepted, unfinished delivery (e.g. "#ORD-123" or "2 ta
+  /// yetkazish") — drives the notification text and the "who sees me" wording.
+  final String? activeDeliveryLabel;
+
+  /// True when a B2C customer can currently watch this courier (restaurant customers have no
+  /// account, so they can't in v1).
+  final bool customerWatches;
+
+  String get watchersLabel {
+    if (!isOnline) return 'Hech kim — joylashuv yuborilmayapti';
+    if (activeDeliveryLabel != null && customerWatches) {
+      return 'Biznes egangiz, administratorlar va mijoz ($activeDeliveryLabel)';
+    }
+    return 'Biznes egangiz va administratorlar';
+  }
 
   /// The courier currently wants to be online (location may still be
   /// temporarily unavailable — see [phase]).
@@ -53,5 +71,15 @@ class TrackingState {
         phase: phase ?? this.phase,
         lastSentAt: lastSentAt ?? this.lastSentAt,
         notificationsDenied: notificationsDenied ?? this.notificationsDenied,
+        activeDeliveryLabel: activeDeliveryLabel,
+        customerWatches: customerWatches,
+      );
+
+  TrackingState withActiveDelivery(String? label, {required bool customerWatches}) => TrackingState(
+        phase: phase,
+        lastSentAt: lastSentAt,
+        notificationsDenied: notificationsDenied,
+        activeDeliveryLabel: label,
+        customerWatches: customerWatches,
       );
 }

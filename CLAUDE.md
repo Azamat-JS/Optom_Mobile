@@ -74,7 +74,9 @@ notifications, real payment gateway, OTP login — see "Backend-Enhancement Trac
   extension (push, payments, OTP) stays on the **same self-hosted NestJS + PostgreSQL stack**, as a
   new sibling service, not a Firebase dependency. See "Backend-Enhancement Track" below.
 - **API base URL / config:** `flutter_dotenv`, reading `.env` (gitignored; copy from `.env.example`
-  — currently just `API_BASE_URL`). Declared as a Flutter asset in `pubspec.yaml` — **if you ever
+  — `API_BASE_URL`, `MAPS_API_KEY`, optional `SOCKET_URL`). **`MAPS_API_KEY` is also read natively
+  at build/launch time** (Android Gradle → manifest placeholder; iOS `AppDelegate` reads the bundled
+  `.env` asset) — so after changing it, do a full rebuild, not a hot restart. Declared as a Flutter asset in `pubspec.yaml` — **if you ever
   rewrite `pubspec.yaml` wholesale, do not drop the `flutter: assets: - .env` section**; doing so
   once already caused a runtime `FileNotFoundError` on app launch (caught by actually running the
   app on an emulator, not by `flutter analyze`).
@@ -1049,11 +1051,11 @@ Built one milestone at a time, each verified live before the next.
 | T1 | Redis + Socket.IO adapter + schema/migrations | 🟢 Done 2026-09-30 — Redis running locally (Homebrew), migration `20260930090000_add_courier_delivery_tracking` applied, server boots with `[Redis] Redis connected`, existing REST unaffected |
 | T2 | Tracking gateway, principal/subject resolvers, GPS validator (with re-anchoring), Redis state, persistence, sweeper | 🟢 Done 2026-09-30 — 22 validator unit tests + 62-check live socket script all green; socket event contract documented in Optom_Savdo `CLAUDE.md` "Tracking socket contract" (the source of truth for T3's Flutter client) |
 | T3 | Flutter core: socket client, location tracker, tracking status, disclosure/indicator/notification UX, online toggle | 🟢 Done 2026-09-30 — verified live on the Android emulator (see "Tracking client (T3)" below) |
-| T4 | Deliveries backend (B2C + restaurant sync), access policy, authorization-matrix tests | ⏳ Next |
-| T5 | Flutter courier delivery flow + map + animated marker | ⬜ |
-| T6 | Maps module (Routes API) + ETA loop + polylines | ⬜ |
-| T7 | Customer tracking screen + map pin pickers | ⬜ |
-| T8 | Owner fleet map + B2C assign UI + retention job | ⬜ |
+| T4 | Deliveries backend (B2C + restaurant sync), access policy, authorization-matrix tests | 🟢 Done 2026-09-30 — 18 access-rule unit tests + 90-check live REST/socket e2e green; API + events documented in Optom_Savdo `CLAUDE.md` "Deliveries — T4" (source of truth for T5's client) |
+| T5 | Flutter courier delivery flow + map + animated marker | 🟢 Done 2026-10-02 — verified live on the Android emulator with real Google Maps tiles (see "Courier delivery UI (T5)" below) |
+| T6 | Maps module (Routes API) + ETA loop + polylines | 🟢 Done 2026-10-02 — 18-check live e2e against the real Routes API + emulator verification of the road route and ETA row (see "Route & ETA in the app (T6)" below) |
+| T7 | Customer tracking screen + map pin pickers | 🟢 Done 2026-10-02 — verified live on the emulator (see "Customer tracking + pin pickers (T7)" below) |
+| T8 | Owner fleet map + B2C assign UI + retention job | ⏳ Next |
 
 #### Tracking client (T3) — how it's built and what was learned
 - **Layers:** `core/realtime/tracking_socket.dart` (plain Dart, get_it singleton — one Socket.IO
@@ -1103,6 +1105,108 @@ Built one milestone at a time, each verified live before the next.
   stationary cadence instead) — worth a real-device check indoors.
 - **Test-seed gotcha:** the app's login validator needs `+998` + 9 digits; the backend accepts
   shorter numbers, so seed scripts must use valid-length phones or the app can't log in.
+
+#### Courier delivery UI (T5) — how it's built and what was learned
+- **Feature `features/deliveries/`** (data/domain/presentation, `Result<T>` repository over
+  `/deliveries`): `CourierDeliveriesNotifier` (open deliveries = own active + offers; refreshes on
+  every `delivery:status` socket event and every 30 s as an offline fallback; each fetch pushes the
+  active-delivery label into `TrackingNotifier.setActiveDelivery`), `DeliveryDetailNotifier`
+  (autoDispose family, refreshed by `delivery:status` for its id), `CourierDeliveriesTab` (Faol /
+  Yangi takliflar sections + offline "go online" banner), `CourierDeliveryScreen` (Google Map:
+  orange pickup pin, green drop-off pin, the courier's own animated arrow marker from the live GPS
+  stream, a dashed guide line to the next stop — **T6 replaces it with the real road route** —
+  plus a bottom panel with call / "Navigator" (Google Maps directions deep link) / step buttons
+  Qabul qilish → Buyurtmani oldim → Yetib keldim → Topshirdim with a confirm dialog).
+  `CourierHomeScreen`: every courier gets the deliveries list; a restaurant courier gets two tabs
+  (Yetkazishlar + the unchanged Buyurtmalar board — restaurant deliveries are accepted on the board
+  and appear under Yetkazishlar; switching back to that tab refreshes it).
+- **Reusable map primitives (`core/maps/`):** `AnimatedPosition` (glides between fixes over 1.5 s
+  from wherever the marker currently is, shortest-angle bearing interpolation; unit tested) and
+  `MapIcons.courier()` (arrow badge drawn in code, no assets; use with `flat: true`,
+  `anchor (0.5, 0.5)`, `rotation: bearing`). T7/T8 reuse both.
+- **Tracking context in the UI:** accepting while offline runs the normal consent flow and goes
+  online first; the persistent notification switches to "Faol yetkazish: #… — mijoz va biznes
+  egangiz ko'radi"; the online card, details sheet and offline-confirm dialog all derive "who sees
+  me" from `TrackingState.watchersLabel` — and only mention the customer for **B2C** deliveries
+  (restaurant customers have no account, so can't watch in v1).
+- **Maps key wiring:** the user's key lives in `bsmart/.env` as `MAPS_API_KEY` (renamed from an
+  initial ambiguous `API_KEY`). Android: `android/app/build.gradle.kts` parses `../.env` into
+  `manifestPlaceholders["mapsApiKey"]` → `<meta-data com.google.android.geo.API_KEY>` (confirmed in
+  the merged manifest). iOS: `AppDelegate.swift` reads the bundled Flutter `.env` asset and calls
+  `GMSServices.provideAPIKey` (not live-verified — iOS simulator can't run this app, see Known
+  Toolchain Deviations).
+- **Real bugs found live and fixed:**
+  1. **Stale deliveries across accounts** — `courierDeliveriesProvider` is app-global, so after
+     logout → login as a *different* courier, the previous courier's deliveries stayed on screen
+     until the next poll. Fixed: the notifier `ref.watch`es the session's `userId` (rebuilds on
+     account change), and `TrackingNotifier` fully resets its state on logout. **Any new global
+     provider holding per-user data must do the same.**
+  2. **Map didn't open after "Qabul qilish" on a list card** — accepting moves the card from the
+     offers section to the active section, disposing it, so `context` was dead when the `await`
+     returned. Fixed by capturing `Navigator.of(context)` *before* awaiting. Watch for this pattern
+     wherever an action changes which list section an item lives in.
+  3. Offline banner wording claimed the customer could see a restaurant courier; drop-off pin hid
+     under the offline banner (fixed with a top map padding).
+- **Verified live (Android emulator, real backend, real Google Maps tiles):** courier list showed
+  an assigned delivery + an open offer → "Qabul qilish" while offline auto-went online and accepted
+  → map with both pins + rotating courier marker moving along a simulated drive → a socket listener
+  logged in as the B2C buyer received the app's live `delivery:location` points (no PII) and every
+  `delivery:status` → Buyurtmani oldim / Yetib keldim / Topshirdim → DB: delivery DELIVERED with
+  all timestamps **and the real order DELIVERED**, tracking context tag cleared → notification text
+  named the active delivery → "Navigator" opened Google Maps directions to the pickup →
+  offline-with-active-delivery warning → restaurant courier: accept on the board → appears under
+  Yetkazishlar → its map renders. Account-switch bug reproduced, fixed, re-verified.
+
+#### Route & ETA in the app (T6)
+- `deliveryRouteProvider` (autoDispose family): initial `GET /deliveries/:id/route`, then every
+  `delivery:route` push, re-fetch on `delivery:status`. **It subscribes to the delivery's socket room
+  while a screen shows it — that subscription is what makes the backend's viewer-gated (billed) ETA
+  loop run**, and it's released on dispose. `TrackingSocket.subscribe/unsubscribe` now remembers
+  subscriptions and re-sends them after every reconnect (the server forgets rooms on drop) — T7's
+  customer screen relies on this too.
+- `core/maps/polyline_codec.dart` decodes the encoded polyline (tested against Google's reference
+  vector). `CourierDeliveryScreen` draws the road route (primary colour over a white casing; decoded
+  once per polyline, not per animation frame) and an ETA row — "Do'kongacha ~7 daq · Mijozgacha ~24
+  daq · 7,3 km" — counting down locally from `computedAt` between pushes, shown only when the route
+  starts at the courier's live position. Without routing (no server key) it keeps the dashed
+  straight guide line and shows no ETA.
+- Verified on the emulator: two-leg route + ETA after accepting, immediate switch to the
+  courier → customer route on "Buyurtmani oldim", and the dashed fallback with the server restarted
+  without a key.
+
+#### Customer tracking + pin pickers (T7)
+- **`TrackingSocket` is reference-counted** (`hold(owner)` / `release(owner)`, unit tested):
+  `TrackingNotifier` holds it while sharing location, viewer screens hold it while open, and it only
+  disconnects when nobody holds it — so one screen closing never cuts off another's live stream.
+  `connect()/disconnect()` are now `@visibleForTesting`; always go through hold/release.
+- **Customer side:** `OrderDeliveryCard` on `OrderDetailScreen` (only fetched for APPROVED/DELIVERED
+  orders via `GET /deliveries/by-order/:orderId`, 404 → renders nothing) shows the delivery headline
+  ("Kuryer do'konga bormoqda" / "Kuryer yo'lda" / "Kuryer yetib keldi!" / "Buyurtma topshirildi"),
+  the courier's first name and "Kuryerni kuzatish" while active. `DeliveryTrackingScreen`: road route
+  (blue) + green home pin + store pin until pickup + the courier's animated marker driven by
+  `delivery:location` (placed at the route's origin before the first live point), "~N daqiqada yetib
+  keladi" countdown, courier name + call button (hidden once finished), and a "Kuryer joylashuvi
+  yangilanmoqda…" hint if no point for 60 s. Uses the customer audience view (no internal fields).
+- **Pin pickers:** `shared/widgets/map_pin_picker_screen.dart` (drag the map under a fixed centre pin
+  that lifts while moving, "Mening joylashuvim", "Shu joyni tanlash") + `location_picker_field.dart`
+  (form row with set/change/clear). Wired into storefront checkout (`deliveryLat/Lng`), restaurant
+  DELIVERY order creation, and the store create/edit dialog (pickup point). Domain params use the new
+  SDK-free `core/entities/geo_point.dart`.
+- **Gotcha — one-shot location on Android:** `getCurrentPosition` through Play Services' fused
+  provider pops Google's "turn on Location Accuracy" dialog on *every* call when that setting is off
+  (the stream in T3 failed silently instead). `LocationTracker.currentPosition()` therefore goes
+  straight to the plain GPS provider (`forceLocationManager`), returning a < 2 min last-known fix
+  instantly when available.
+- **Real bug caught live (backend side):** the store pin was saved but never came back from
+  `GET /stores` (`STORE_SELECT` omitted the new columns), so the edit form showed "unset" and saving
+  it again would have cleared the location. Fixed server-side; re-verified that an unchanged save keeps
+  the pin. Note `StoresListNotifier` is app-global — after a server change, pull-to-refresh.
+- **Verified live (emulator = customer, scripted socket courier):** checkout with a pin → order row has
+  `deliveryLat/Lng` → owner approves + assigns → customer's order detail shows the delivery card →
+  tracking screen: route via the store with "~20 daqiqada", marker moving with the simulated drive,
+  auto-switch to "Kuryer yo'lda · ~16 daqiqada" on pickup, "Kuryer yetib keldi!", "Buyurtma
+  topshirildi" (marker + call button gone). Store pin set/loaded/preserved; restaurant delivery order
+  saved with its pin.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

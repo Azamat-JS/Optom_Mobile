@@ -23,12 +23,17 @@ abstract final class TrackingActions {
   }
 
   static Future<void> goOffline(BuildContext context, WidgetRef ref) async {
+    final tracking = ref.read(trackingNotifierProvider);
+    final active = tracking.activeDeliveryLabel;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Oflayn bo'lish"),
-        content: const Text(
-          "Joylashuvingizni ulashish to'xtatiladi — biznes egangiz sizni xaritada ko'rmaydi.",
+        content: Text(
+          active == null
+              ? "Joylashuvingizni ulashish to'xtatiladi — biznes egangiz sizni xaritada ko'rmaydi."
+              : "Sizda faol yetkazish bor ($active). Joylashuv ulashish to'xtatilsa, "
+                  "${tracking.customerWatches ? 'mijoz va ' : ''}biznes egangiz sizni xaritada ko'rmay qoladi.",
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Bekor qilish')),

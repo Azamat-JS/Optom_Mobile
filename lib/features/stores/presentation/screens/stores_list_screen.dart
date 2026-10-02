@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/core/entities/geo_point.dart';
 import 'package:bsmart/features/stores/domain/entities/store.dart';
 import 'package:bsmart/features/stores/domain/entities/store_write_params.dart';
 import 'package:bsmart/features/stores/domain/usecases/create_store_usecase.dart';
@@ -9,6 +10,7 @@ import 'package:bsmart/features/stores/domain/usecases/delete_store_usecase.dart
 import 'package:bsmart/features/stores/domain/usecases/set_store_active_usecase.dart';
 import 'package:bsmart/features/stores/domain/usecases/update_store_usecase.dart';
 import 'package:bsmart/features/stores/presentation/providers/stores_list_notifier.dart';
+import 'package:bsmart/shared/widgets/location_picker_field.dart';
 
 /// Owner-only store/branch roster — create, rename, activate/deactivate,
 /// delete. The backend refuses to deactivate/delete the sole active/only
@@ -132,6 +134,7 @@ class _StoreFormDialogState extends State<_StoreFormDialog> {
   final _formKey = GlobalKey<FormState>();
   late final _nameController = TextEditingController(text: widget.editing?.name);
   late final _addressController = TextEditingController(text: widget.editing?.address);
+  late GeoPoint? _location = widget.editing?.location;
   bool _isSaving = false;
   String? _errorMessage;
 
@@ -154,12 +157,17 @@ class _StoreFormDialogState extends State<_StoreFormDialog> {
     final result = _isEditing
         ? await getIt<UpdateStoreUseCase>().call(
             widget.editing!.id,
-            UpdateStoreParams(name: _nameController.text.trim(), address: _addressController.text.trim()),
+            UpdateStoreParams(
+              name: _nameController.text.trim(),
+              address: _addressController.text.trim(),
+              location: _location,
+            ),
           )
         : await getIt<CreateStoreUseCase>().call(
             CreateStoreParams(
               name: _nameController.text.trim(),
               address: _addressController.text.trim().isEmpty ? null : _addressController.text.trim(),
+              location: _location,
             ),
           );
     if (!mounted) return;
@@ -190,6 +198,14 @@ class _StoreFormDialogState extends State<_StoreFormDialog> {
             TextFormField(
               controller: _addressController,
               decoration: const InputDecoration(labelText: 'Manzil'),
+            ),
+            const SizedBox(height: 12),
+            LocationPickerField(
+              value: _location,
+              onChanged: (p) => setState(() => _location = p),
+              label: 'Xaritadagi joyi',
+              pickerTitle: "Do'kon joylashuvi",
+              helper: 'Kuryerlar buyurtmani shu yerdan oladi',
             ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 8),

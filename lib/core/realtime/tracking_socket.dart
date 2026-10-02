@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:logger/logger.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
@@ -22,8 +23,11 @@ class TrackingSocketEvent {
 /// The app's one connection to the backend's `/tracking` Socket.IO namespace
 /// (contract: Optom_Savdo CLAUDE.md "Tracking socket contract").
 ///
-/// Plain Dart, owned by get_it like the Dio instances. Connection is
-/// explicit: nothing connects until a feature calls [connect].
+/// Plain Dart, owned by get_it like the Dio instances. The connection is
+/// reference-counted: each user ([TrackingNotifier] while sharing location, a
+/// screen watching a delivery or the fleet) calls [hold] / [release], and the
+/// socket stays up while anyone holds it — one screen closing never cuts off
+/// another's live updates.
 ///
 /// Auth: the handshake reads the *current* access token on every (re)connect.
 /// If the server rejects it as `invalid_token` (expired), one authenticated
@@ -47,6 +51,23 @@ class TrackingSocket {
   io.Socket? _socket;
   bool _refreshAttempted = false;
 
+  /// Channel subscriptions (`subscribe {channel, id}`) to restore after every
+  /// reconnect — the server forgets rooms when a socket drops.
+  final _subscriptions = <(String, String)>{};
+  final _holders = <Object>{};
+
+  /// Keeps the connection open on behalf of [holder] (idempotent per holder).
+  void hold(Object holder) {
+    _holders.add(holder);
+    connect();
+  }
+
+  /// Drops [holder]'s claim; disconnects once nobody holds the socket.
+  void release(Object holder) {
+    if (!_holders.remove(holder)) return;
+    if (_holders.isEmpty) disconnect();
+  }
+
   final _stateController = StreamController<TrackingSocketState>.broadcast();
   final _eventsController = StreamController<TrackingSocketEvent>.broadcast();
   TrackingSocketState _state = TrackingSocketState.disconnected;
@@ -62,6 +83,7 @@ class TrackingSocket {
     if (!_stateController.isClosed) _stateController.add(next);
   }
 
+  @visibleForTesting
   void connect() {
     final existing = _socket;
     if (existing != null) {
@@ -90,6 +112,9 @@ class TrackingSocket {
     socket.on('ready', (_) {
       _refreshAttempted = false;
       _setState(TrackingSocketState.connected);
+      for (final (channel, id) in _subscriptions) {
+        request('subscribe', {'channel': channel, 'id': id});
+      }
     });
     socket.on('auth_error', (data) => _onAuthError(data));
     socket.onDisconnect((reason) {
@@ -143,6 +168,20 @@ class TrackingSocket {
     return completer.future.timeout(timeout, onTimeout: () => null);
   }
 
+  /// Watches a channel (e.g. `delivery`) while connected, and again after every
+  /// reconnect, until [unsubscribe]. The server enforces who may watch what.
+  Future<bool> subscribe(String channel, String id) async {
+    _subscriptions.add((channel, id));
+    final ack = await request('subscribe', {'channel': channel, 'id': id});
+    return ack?['ok'] == true;
+  }
+
+  void unsubscribe(String channel, String id) {
+    _subscriptions.remove((channel, id));
+    request('unsubscribe', {'channel': channel, 'id': id});
+  }
+
+  @visibleForTesting
   void disconnect() {
     _socket?.dispose();
     _socket = null;

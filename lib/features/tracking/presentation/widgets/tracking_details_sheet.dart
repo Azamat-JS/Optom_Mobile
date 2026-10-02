@@ -51,7 +51,7 @@ class TrackingDetailsSheet extends ConsumerWidget {
             _Row(
               icon: Icons.visibility_outlined,
               title: "Hozir kim ko'radi",
-              value: tracking.isOnline ? 'Biznes egangiz va administratorlar' : 'Hech kim — joylashuv yuborilmayapti',
+              value: tracking.watchersLabel,
             ),
             if (tracking.notificationsDenied)
               const _Row(

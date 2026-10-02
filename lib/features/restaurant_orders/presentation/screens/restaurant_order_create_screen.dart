@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/core/entities/geo_point.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/restaurant_order_enums.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
@@ -12,6 +13,7 @@ import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_ord
 import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_order_write_params.dart';
 import 'package:bsmart/features/restaurant_orders/domain/usecases/create_restaurant_order_usecase.dart';
 import 'package:bsmart/features/restaurant_tables/presentation/providers/restaurant_tables_list_notifier.dart';
+import 'package:bsmart/shared/widgets/location_picker_field.dart';
 
 class _CartLine {
   _CartLine({required this.productId, required this.productName, required this.unitPrice}) : quantity = 1;
@@ -41,6 +43,7 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
   final _customerNameController = TextEditingController();
   final _customerPhoneController = TextEditingController();
   final _deliveryAddressController = TextEditingController();
+  GeoPoint? _dropoff;
   final _notesController = TextEditingController();
   final _discountController = TextEditingController(text: '0');
   final List<_CartLine> _cart = [];
@@ -102,6 +105,7 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
         customerName: _customerNameController.text.trim(),
         customerPhone: _customerPhoneController.text.trim(),
         deliveryAddress: _type == RestaurantOrderType.delivery ? _deliveryAddressController.text.trim() : null,
+        deliveryPoint: _type == RestaurantOrderType.delivery ? _dropoff : null,
         notes: _notesController.text.trim(),
         items: [
           for (final line in _cart)
@@ -153,6 +157,12 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
             TextFormField(
               controller: _deliveryAddressController,
               decoration: const InputDecoration(labelText: 'Manzil *', border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 8),
+            LocationPickerField(
+              value: _dropoff,
+              onChanged: (p) => setState(() => _dropoff = p),
+              pickerTitle: 'Yetkazib berish joyi',
             ),
             const SizedBox(height: 12),
           ],

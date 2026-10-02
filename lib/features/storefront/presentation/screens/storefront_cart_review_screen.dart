@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/core/entities/geo_point.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/orders/domain/entities/order_write_params.dart';
 import 'package:bsmart/features/orders/domain/usecases/create_order_usecase.dart';
 import 'package:bsmart/features/orders/presentation/providers/orders_list_notifier.dart';
 import 'package:bsmart/features/storefront/presentation/providers/storefront_cart_notifier.dart';
+import 'package:bsmart/shared/widgets/location_picker_field.dart';
 
 /// `POST /orders` reused as-is from `features/orders` (the DTO is already
 /// generic across every buyer role — see `order.service.ts`) — only the
@@ -24,6 +26,7 @@ class StorefrontCartReviewScreen extends ConsumerStatefulWidget {
 
 class _StorefrontCartReviewScreenState extends ConsumerState<StorefrontCartReviewScreen> {
   final _addressController = TextEditingController();
+  GeoPoint? _dropoff;
   final _notesController = TextEditingController();
   bool _isSubmitting = false;
   String? _errorMessage;
@@ -53,6 +56,7 @@ class _StorefrontCartReviewScreenState extends ConsumerState<StorefrontCartRevie
         ],
         notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
         deliveryAddress: _addressController.text.trim().isEmpty ? null : _addressController.text.trim(),
+        deliveryPoint: _dropoff,
       ),
     );
 
@@ -103,6 +107,12 @@ class _StorefrontCartReviewScreenState extends ConsumerState<StorefrontCartRevie
           TextField(
             controller: _addressController,
             decoration: const InputDecoration(labelText: 'Yetkazib berish manzili', border: OutlineInputBorder()),
+          ),
+          const SizedBox(height: 8),
+          LocationPickerField(
+            value: _dropoff,
+            onChanged: (p) => setState(() => _dropoff = p),
+            pickerTitle: 'Yetkazib berish joyi',
           ),
           const SizedBox(height: 12),
           TextField(

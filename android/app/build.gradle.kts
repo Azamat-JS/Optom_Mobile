@@ -1,3 +1,13 @@
+// Google Maps key comes from bsmart/.env (MAPS_API_KEY) — the same file Flutter loads at runtime —
+// so there's one place to set it. Read at build time: rebuild after changing it.
+val mapsApiKey: String = rootProject.file("../.env").takeIf { it.exists() }
+    ?.readLines()
+    ?.map { it.trim() }
+    ?.firstOrNull { it.startsWith("MAPS_API_KEY=") }
+    ?.substringAfter("=")
+    ?.trim()
+    ?: ""
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -28,6 +38,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["mapsApiKey"] = mapsApiKey
     }
 
     buildTypes {

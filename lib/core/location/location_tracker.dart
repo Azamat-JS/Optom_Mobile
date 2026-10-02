@@ -41,6 +41,36 @@ class LocationTracker {
     return status.isGranted;
   }
 
+  /// One-shot current position for map pickers ("Mening joylashuvim").
+  /// Returns null if location is off/denied or no fix arrives in time.
+  ///
+  /// Android goes straight to the plain GPS provider (`forceLocationManager`):
+  /// a one-shot request through Play Services' fused provider pops Google's
+  /// "turn on Location Accuracy" dialog on *every* call when that setting is
+  /// off — fine precision isn't worth that for dropping a map pin. A recent
+  /// last-known fix is returned instantly.
+  Future<LocationFix?> currentPosition() async {
+    if (await ensureAccess() != LocationAccess.granted) return null;
+    LocationFix fromPosition(Position p) =>
+        LocationFix(lat: p.latitude, lng: p.longitude, accuracy: p.accuracy, timestamp: p.timestamp);
+    try {
+      if (Platform.isAndroid) {
+        final last = await Geolocator.getLastKnownPosition(forceAndroidLocationManager: true);
+        if (last != null && DateTime.now().difference(last.timestamp) < const Duration(minutes: 2)) {
+          return fromPosition(last);
+        }
+      }
+      final p = await Geolocator.getCurrentPosition(
+        locationSettings: Platform.isAndroid
+            ? AndroidSettings(accuracy: LocationAccuracy.high, forceLocationManager: true)
+            : const LocationSettings(accuracy: LocationAccuracy.high),
+      ).timeout(const Duration(seconds: 12));
+      return fromPosition(p);
+    } catch (_) {
+      return null;
+    }
+  }
+
   Stream<ServiceStatus> get serviceStatusChanges => Geolocator.getServiceStatusStream();
 
   Future<void> openAppSettings() => Geolocator.openAppSettings();

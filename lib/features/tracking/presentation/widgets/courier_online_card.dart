@@ -44,9 +44,7 @@ class CourierOnlineCard extends ConsumerWidget {
                 style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
               ),
               subtitle: Text(
-                tracking.isOnline
-                    ? "Joylashuvingiz biznes egangizga ko'rinadi"
-                    : 'Ishni boshlash uchun onlayn bo\'ling',
+                tracking.isOnline ? "Ko'radi: ${tracking.watchersLabel}" : "Ishni boshlash uchun onlayn bo'ling",
               ),
             ),
           ),

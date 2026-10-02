@@ -1,3 +1,4 @@
+import 'package:bsmart/core/entities/geo_point.dart';
 import 'package:bsmart/core/enums/order_status.dart';
 
 /// Mirrors `OrderItemDto`.
@@ -29,6 +30,7 @@ class CreateOrderParams {
     required this.items,
     this.notes,
     this.deliveryAddress,
+    this.deliveryPoint,
   });
 
   final String sellerId;
@@ -36,11 +38,16 @@ class CreateOrderParams {
   final String? notes;
   final String? deliveryAddress;
 
+  /// Optional drop-off pin for courier delivery (backend `deliveryLat/deliveryLng`).
+  final GeoPoint? deliveryPoint;
+
   Map<String, dynamic> toRequestBody() => {
         'sellerId': sellerId,
         'items': items.map((e) => e.toRequestBody()).toList(),
         if (notes != null && notes!.isNotEmpty) 'notes': notes,
         if (deliveryAddress != null && deliveryAddress!.isNotEmpty) 'deliveryAddress': deliveryAddress,
+        if (deliveryPoint != null) 'deliveryLat': deliveryPoint!.lat,
+        if (deliveryPoint != null) 'deliveryLng': deliveryPoint!.lng,
       };
 }
 

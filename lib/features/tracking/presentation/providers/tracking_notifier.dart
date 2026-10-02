@@ -33,6 +33,8 @@ class TrackingNotifier extends Notifier<TrackingState> {
   StreamSubscription<ServiceStatus>? _serviceStatus;
   Timer? _heartbeat;
 
+  final _fixesController = StreamController<LocationFix>.broadcast();
+  LocationFix? _lastFix;
   LocationFix? _lastSent;
   DateTime? _lastFixAt;
   bool _sessionActive = false;
@@ -42,9 +44,15 @@ class TrackingNotifier extends Notifier<TrackingState> {
   @override
   TrackingState build() {
     ref.listen(sessionNotifierProvider, (_, next) {
-      if (next.valueOrNull?.isAuthenticated != true && state.isOnline) goOffline();
+      if (next.valueOrNull?.isAuthenticated == true) return;
+      // Logged out: stop sharing and forget everything tied to the previous account.
+      final reset = state.isOnline ? goOffline() : Future<void>.value();
+      reset.then((_) => state = const TrackingState());
     });
-    ref.onDispose(_teardown);
+    ref.onDispose(() {
+      _teardown();
+      _fixesController.close();
+    });
     return const TrackingState();
   }
 
@@ -72,15 +80,10 @@ class TrackingNotifier extends Notifier<TrackingState> {
     _lastFixAt = DateTime.now();
 
     _socketStates = _socket.states.listen(_onSocketState);
-    _socket.connect();
+    _socket.hold(this);
     if (_socket.isConnected) unawaited(_startSession());
 
-    _fixes = _tracker
-        .watch(
-          notificationTitle: 'bsmart joylashuvingizni ulashmoqda',
-          notificationText: "Onlayn — joylashuvingiz biznes egasiga ko'rinadi",
-        )
-        .listen(_onFix, onError: _onGpsError);
+    _startFixes();
     _serviceStatus = _tracker.serviceStatusChanges.listen((s) async {
       // Re-check: some devices emit transient provider changes.
       if (s == ServiceStatus.disabled && !await Geolocator.isLocationServiceEnabled()) {
@@ -90,12 +93,49 @@ class TrackingNotifier extends Notifier<TrackingState> {
     _heartbeat = Timer.periodic(_heartbeatEvery, (_) => _tick());
   }
 
+  /// Every GPS fix while online (before the send policy) — for the courier's own map marker.
+  Stream<LocationFix> get fixes => _fixesController.stream;
+
+  /// The most recent GPS fix, if online.
+  LocationFix? get lastFix => _lastFix;
+
+  /// Called by the deliveries feature whenever the courier's set of accepted, unfinished
+  /// deliveries changes. Restarts the GPS stream (cheap) so the persistent notification names the
+  /// delivery — the courier always sees *why* they're being tracked.
+  void setActiveDelivery(String? label, {bool customerWatches = false}) {
+    if (label == state.activeDeliveryLabel && customerWatches == state.customerWatches) return;
+    state = state.withActiveDelivery(label, customerWatches: customerWatches);
+    if (_fixes != null) {
+      _fixes?.cancel();
+      _startFixes();
+    }
+  }
+
+  void _startFixes() {
+    final label = state.activeDeliveryLabel;
+    _fixes = _tracker
+        .watch(
+          notificationTitle: 'bsmart joylashuvingizni ulashmoqda',
+          notificationText: label != null
+              ? (state.customerWatches
+                  ? "Faol yetkazish: $label — mijoz va biznes egangiz ko'radi"
+                  : "Faol yetkazish: $label — biznes egangiz ko'radi")
+              : "Onlayn — joylashuvingiz biznes egasiga ko'rinadi",
+        )
+        .listen(_onFix, onError: _onGpsError);
+  }
+
   Future<void> goOffline() async {
     final wasSession = _sessionActive;
     _teardown();
-    state = TrackingState(notificationsDenied: state.notificationsDenied);
+    _lastFix = null;
+    state = TrackingState(
+      notificationsDenied: state.notificationsDenied,
+      activeDeliveryLabel: state.activeDeliveryLabel,
+      customerWatches: state.customerWatches,
+    );
     if (wasSession) await _socket.request('tracking:stop');
-    _socket.disconnect();
+    _socket.release(this);
   }
 
   void _onGpsError(Object error) {
@@ -145,6 +185,8 @@ class TrackingNotifier extends Notifier<TrackingState> {
 
   Future<void> _onFix(LocationFix fix) async {
     _lastFixAt = DateTime.now();
+    _lastFix = fix;
+    if (!_fixesController.isClosed) _fixesController.add(fix);
     if (!_sessionActive || _sending) return;
     if (!LocationSendPolicy.shouldSend(lastSent: _lastSent, fix: fix)) return;
     _sending = true;

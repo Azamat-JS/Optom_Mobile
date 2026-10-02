@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/enums/business_type.dart';
 import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/features/deliveries/presentation/providers/courier_deliveries_notifier.dart';
+import 'package:bsmart/features/deliveries/presentation/screens/courier_deliveries_tab.dart';
 import 'package:bsmart/features/restaurant_orders/presentation/screens/restaurant_orders_board_screen.dart';
 import 'package:bsmart/features/tracking/presentation/widgets/courier_online_card.dart';
 import 'package:bsmart/features/tracking/presentation/widgets/tracking_status_pill.dart';
@@ -19,8 +21,13 @@ import 'package:bsmart/features/tracking/presentation/widgets/tracking_status_pi
 /// online/offline [CourierOnlineCard] on top and the AppBar
 /// [TrackingStatusPill] (see CLAUDE.md "Courier Delivery & Live Tracking").
 ///
-/// For every other vertical, no delivery/order-assignment concept exists yet
-/// on the backend at all — matching the reference web app's own explicit,
+/// Deliveries (`/deliveries`, see CLAUDE.md "Courier Delivery & Live Tracking")
+/// are the courier's main list for every vertical; a restaurant courier also
+/// keeps the existing order board as a second tab (restaurant deliveries are
+/// accepted there and then show up under "Yetkazishlar").
+///
+/// Historical note: for every other vertical, no delivery/order-assignment
+/// concept existed on the backend at all before Phase 5 — matching the reference web app's own explicit,
 /// documented scope decision (`CLAUDE.md` "Courier Feature (Cross-Vertical)":
 /// "account management only... courier-home is a static placeholder"), this
 /// shows the equivalent placeholder rather than an empty/broken board.
@@ -48,22 +55,54 @@ class CourierHomeScreen extends ConsumerWidget {
       body: Column(
         children: [
           const CourierOnlineCard(),
-          Expanded(
-            child: isRestaurantCourier
-                ? const RestaurantOrdersBoardScreen(showAppBar: false)
-                : const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(24),
-                      child: Text(
-                        'Sizga hali topshiriq biriktirilmagan',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-          ),
+          Expanded(child: isRestaurantCourier ? const _RestaurantCourierTabs() : const CourierDeliveriesTab()),
         ],
       ),
+    );
+  }
+}
+
+/// Restaurant couriers: Yetkazishlar + the existing order board. Restaurant
+/// deliveries are accepted on the board and then appear under Yetkazishlar, so
+/// switching back to that tab refreshes it.
+class _RestaurantCourierTabs extends ConsumerStatefulWidget {
+  const _RestaurantCourierTabs();
+
+  @override
+  ConsumerState<_RestaurantCourierTabs> createState() => _RestaurantCourierTabsState();
+}
+
+class _RestaurantCourierTabsState extends ConsumerState<_RestaurantCourierTabs> with SingleTickerProviderStateMixin {
+  late final _tabs = TabController(length: 2, vsync: this)..addListener(_onTab);
+
+  void _onTab() {
+    if (!_tabs.indexIsChanging && _tabs.index == 0) ref.read(courierDeliveriesProvider.notifier).refresh();
+  }
+
+  @override
+  void dispose() {
+    _tabs.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TabBar(
+          controller: _tabs,
+          tabs: const [
+            Tab(text: 'Yetkazishlar'),
+            Tab(text: 'Buyurtmalar'),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabs,
+            children: const [CourierDeliveriesTab(), RestaurantOrdersBoardScreen(showAppBar: false)],
+          ),
+        ),
+      ],
     );
   }
 }
