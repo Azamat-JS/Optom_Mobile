@@ -1,6 +1,7 @@
 import 'package:bsmart/core/network/result.dart';
 import 'package:bsmart/features/deliveries/domain/entities/assignable_courier.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery.dart';
+import 'package:bsmart/features/deliveries/domain/entities/delivery_tracking_link.dart';
 import 'package:bsmart/features/deliveries/domain/repositories/deliveries_repository.dart';
 
 // Owner/admin delivery management for B2C orders (one use case per repository method).
@@ -36,4 +37,13 @@ class CancelDeliveryUseCase {
   final DeliveriesRepository _repository;
 
   Future<Result<Delivery>> call(String id) => _repository.cancel(id);
+}
+
+class CreateTrackingLinkUseCase {
+  CreateTrackingLinkUseCase(this._repository);
+
+  final DeliveriesRepository _repository;
+
+  Future<Result<DeliveryTrackingLink>> call({required String restaurantOrderId}) =>
+      _repository.createTrackingLink(restaurantOrderId: restaurantOrderId);
 }

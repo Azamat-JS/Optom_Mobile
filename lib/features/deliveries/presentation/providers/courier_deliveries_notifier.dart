@@ -45,7 +45,11 @@ class CourierDeliveriesNotifier extends AsyncNotifier<List<Delivery>> {
     final active = items.where((d) => d.status.isActive).toList();
     ref.read(trackingNotifierProvider.notifier).setActiveDelivery(
           active.isEmpty ? null : (active.length == 1 ? active.first.label : '${active.length} ta yetkazish'),
-          customerWatches: active.any((d) => d.source == DeliverySource.order),
+          // B2C buyers always can; since Phase 6 V5 so can restaurant customers whose (verified)
+          // app account matches the phone staff entered — any restaurant delivery with a phone.
+          customerWatches: active.any(
+            (d) => d.source == DeliverySource.order || (d.customerPhone?.trim().isNotEmpty ?? false),
+          ),
         );
   }
 

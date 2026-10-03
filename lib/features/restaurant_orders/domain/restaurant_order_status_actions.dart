@@ -62,6 +62,16 @@ bool canAssignCourier(RestaurantOrder order, UserRole role) {
   return order.courierAcceptedAt == null;
 }
 
+/// Phase 6 V6: owner/admin may share a public tracking link once the courier
+/// has accepted a delivery order (that's when the backend's Delivery exists)
+/// and until it is finished.
+bool canShareTrackingLink(RestaurantOrder order, UserRole role) {
+  if (role != UserRole.retailer && role != UserRole.retailerAdmin) return false;
+  if (order.type != RestaurantOrderType.delivery) return false;
+  if (order.status.isTerminal) return false;
+  return order.courier != null && order.courierAcceptedAt != null;
+}
+
 /// A table/customer can always order more food while the order is still
 /// open — owner/admin and waiter only, never courier.
 bool canAddItems(RestaurantOrder order, UserRole role) {

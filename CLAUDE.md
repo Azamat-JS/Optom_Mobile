@@ -1256,10 +1256,74 @@ bot. Optom_Savdo auth/bot code and the Next.js app may be changed for this (user
 |---|---|---|
 | V1 | Security fixes: bot link wizards accept only the sender's own shared contact; `POST /auth/tg-phone` requires Telegram's signed contact response; Mini App `initData` login gets a freshness check | 🟢 Done 2026-10-03 — 3 takeover holes closed, 55 unit tests + 12-check live e2e green; also added `TELEGRAM_BOT_POLLING=false` for local runs (see Optom_Savdo CLAUDE.md "Telegram phone-linking security") |
 | V2 | Verification backend + verify bot: `PhoneVerification` table, start/status/complete endpoints, client secret, match checks, expiry, rate limits, `User.phoneVerifiedAt`, passwordless register/login | 🟢 Done 2026-10-03 — `POST /auth/telegram/start` + `/poll`, verify bot, one-time session, new accounts CUSTOMER only; 66 unit tests + 30-check e2e green (see Optom_Savdo CLAUDE.md "Telegram phone verification") |
-| V3 | bsmart: phone → Telegram handoff → auto-finishing wait screen (register + login) | ⏳ Next |
-| V4 | Next.js web + Mini App: same flow; load the Mini App SDK; Mini App uses `requestContact` | ⬜ |
-| V5 | Verified-phone gating + in-app tracking of phone-ordered restaurant deliveries | ⬜ |
-| V6 | Public tracking link page for customers without the app (backend-served page) | ⬜ |
+| V3 | bsmart: phone → Telegram handoff → auto-finishing wait screen (register + login) | 🟢 Done 2026-10-03 — see "Phase 6 V3 notes" below; 6 notifier unit tests + live emulator run (sign-up, mismatch → retry, existing-account login, stack reset) |
+| V4 | Next.js web + Mini App: same flow; load the Mini App SDK; Mini App uses `requestContact` | 🟢 Done 2026-10-03 — web Telegram-first login/sign-up + Mini App SDK actually loaded, verified sign-up via `requestContact`, no more phoneless `tg_` accounts (see Optom_Savdo CLAUDE.md "Telegram phone verification") |
+| V5 | Verified-phone gating + in-app tracking of phone-ordered restaurant deliveries | 🟢 Done 2026-10-03 — see "Phase 6 V5 notes" below; backend 19-check e2e + 7-check web Playwright + live emulator run (unverified sees nothing → verify in place → restaurant phone order listed → T7 tracking screen) |
+| V6 | Public tracking link page for customers without the app (backend-served page) | 🟢 Done 2026-10-03 — backend `/t/:token` live-map page + staff link API (32-check e2e, 13-check live browser run with a scripted courier); bsmart "Kuzatish havolasi" share button (see "Phase 6 V6 notes") |
+
+**Phase 6 V6 notes (bsmart, 2026-10-03):** staff share a public live-tracking link with a
+restaurant customer who has no app. The page is served by the API; see Optom_Savdo CLAUDE.md
+"Telegram phone verification" → V6.
+- `RestaurantOrderDetailScreen` → courier card → **"Kuzatish havolasi"**:
+  - Shown when `canShareTrackingLink` holds: RETAILER/RETAILER_ADMIN, a DELIVERY order, the courier
+    has **accepted** (that's when the backend Delivery exists), and the order is not finished.
+  - It calls `CreateTrackingLinkUseCase` (`POST /deliveries/tracking-links {restaurantOrderId}`)
+    and hands "<order> buyurtmangizni xaritada kuzating: <url>" to the share sheet (`share_plus`).
+  - Each tap creates a new link, because the backend only ever shows a URL once. A 404 shows
+    "Kuryer buyurtmani hali qabul qilmagan."
+- Revoking links has an API (`DELETE /deliveries/:id/tracking-links`) but no app button yet.
+
+**Phase 6 V5 notes (bsmart, 2026-10-03):** the backend only shows phone-matched data (restaurant
+deliveries staff entered for the number, debts) to a CUSTOMER with a **verified** phone. See
+Optom_Savdo CLAUDE.md "Telegram phone verification" → V5.
+- **`User.phoneVerified`** (from `/auth/me` and login). `needsPhoneVerification` = CUSTOMER and not
+  verified.
+- **`VerifyPhoneBanner(reason:)`** renders nothing once verified. It appears on Profil, Yetkazishlarim
+  and Qarzlarim, and opens `/customer/verify-phone`: the same `TelegramVerifyScreen` in
+  **`verifyCurrentAccount`** mode.
+  - The phone is the account's own, normalized to +998.
+  - The secondary action is "Bekor qilish", and the step text fits verifying rather than logging in.
+  - On success it adopts the fresh same-user session and pops itself.
+  - Qarzlarim refetches when `phoneVerified` flips; Yetkazishlarim watches it.
+- **Yetkazishlarim** (`/customer/deliveries`, `CustomerDeliveriesScreen` +
+  `customerDeliveriesProvider`): `GET /deliveries` returns storefront deliveries plus phone-matched
+  restaurant ones (store name + "Restoran buyurtmasi"). Active ones come first, with a 30 s refresh
+  and pull-to-refresh. A tap opens the T7 `DeliveryTrackingScreen`.
+- **Courier visibility disclosure:** `customerWatches` is now also true for an active restaurant
+  delivery that has a customer phone (such customers can watch now).
+- **Router fix #2:** `_RouterRefreshNotifier` now fires only when `(isLoading, userId, role)` change.
+  A same-user session swap (fresh tokens after verifying) used to trigger a refresh. That
+  re-applied the last *pushed* location and re-opened the just-popped verify screen, which started
+  a second verification. The duplicate was seen live; the fix is verified (one row, CONSUMED).
+
+**Phase 6 V3 notes (bsmart, 2026-10-03):**
+- **Screens.** `LoginScreen`: phone + primary "Telegram orqali davom etish" (existing account of any
+  role → logged in; unknown number → new CUSTOMER); phone + password stays behind "Parol bilan
+  kirish". `RegisterScreen`: phone only → "Telegram orqali ro'yxatdan o'tish"; the name comes from the
+  Telegram profile. **Password sign-up was removed from the app** (`AuthRepository.register`,
+  `RegisterUseCase`, `SessionNotifier.register` deleted) because it can't prove phone ownership, and V5
+  relies on that. The backend `POST /auth/register` is untouched.
+- **Wait screen** `TelegramVerifyScreen` (`/auth/telegram?phone=`, guest-allowed, treated as an auth
+  screen). On open it starts the verification and launches the `t.me` deep link (external app; Chrome
+  shows the bot page when Telegram isn't installed). It shows steps that match the bot's button text, a
+  10-min countdown, "Telegramni ochish" again, and "Raqamni o'zgartirish". Terminal states (mismatch /
+  expired / consumed / 404) show "Qayta urinish", which starts a fresh verification.
+- **`TelegramVerifyNotifier`** (auto-dispose) polls `/auth/telegram/poll` every 3 s (the endpoint is
+  throttled at 60/min per IP; 3 s leaves room for carrier NAT) and also polls immediately on
+  `AppLifecycleState.resumed` (coming back from Telegram). Network errors keep it waiting; a stale
+  answer from a restarted attempt is ignored. On VERIFIED the repository saves the tokens and the
+  notifier calls `SessionNotifier.adoptAuthResult`. The `clientSecret` only ever lives in memory.
+- **Router fix (affects every pushed auth screen).** go_router 14 keeps a pushed stack's base URI, and
+  a `refreshListenable` refresh re-pushes the redirect target onto the old stack instead of replacing
+  it. So a login from a *pushed* auth screen (storefront Profil → Kirish → wait screen) left the user
+  stuck on that screen. Neither top-level nor route-level redirects can fix this. `appRouterProvider`
+  now listens for a logged-out → logged-in transition and calls `router.go(RouteNames.splash)`;
+  `_redirect` then routes to the role's home. Back then exits the app instead of returning to the
+  auth screens. This also covers password login from the pushed login screen.
+- **Live verification without Telegram on the emulator:** run the API with `VERIFY_BOT_POLLING=false`
+  and play the bot's part by flipping the newest `phone_verifications` row to `VERIFIED` / `MISMATCH`
+  with a Prisma script. The bot side itself is covered by the V2 e2e. A real Telegram round trip needs
+  a device with Telegram.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

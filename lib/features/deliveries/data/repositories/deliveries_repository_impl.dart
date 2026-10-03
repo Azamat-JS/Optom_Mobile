@@ -5,6 +5,7 @@ import 'package:bsmart/core/network/result.dart';
 import 'package:bsmart/features/deliveries/data/datasources/deliveries_remote_data_source.dart';
 import 'package:bsmart/features/deliveries/domain/entities/assignable_courier.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery.dart';
+import 'package:bsmart/features/deliveries/domain/entities/delivery_tracking_link.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery_route.dart';
 import 'package:bsmart/features/deliveries/domain/repositories/deliveries_repository.dart';
 
@@ -46,6 +47,10 @@ class DeliveriesRepositoryImpl implements DeliveriesRepository {
 
   @override
   Future<Result<Delivery>> cancel(String id) => _guard(() => _remote.cancel(id));
+
+  @override
+  Future<Result<DeliveryTrackingLink>> createTrackingLink({required String restaurantOrderId}) =>
+      _guard(() => _remote.createTrackingLink(restaurantOrderId: restaurantOrderId));
 
   @override
   Future<Result<Delivery>> advance(String id, DeliveryAction action) => _guard(() => _remote.advance(id, action));

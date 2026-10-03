@@ -35,6 +35,7 @@ class User {
     this.managedUserId,
     this.isActive,
     this.owner,
+    this.phoneVerified = false,
   });
 
   final String id;
@@ -62,6 +63,14 @@ class User {
   /// Non-null for `_ADMIN`/`WAITER`/`COURIER` — their owner's basic info.
   final OwnerRef? owner;
 
+  /// Phase 6: the phone was proven via Telegram. Phone-matched features
+  /// (restaurant deliveries staff entered for this number, debts) only work
+  /// once it's true — see [VerifyPhoneBanner].
+  final bool phoneVerified;
+
   String get fullName => '$firstName $lastName';
   bool get isStaff => managedUserId != null;
+
+  /// A CUSTOMER who still has to confirm their number for phone-matched features.
+  bool get needsPhoneVerification => role == UserRole.customer && !phoneVerified;
 }

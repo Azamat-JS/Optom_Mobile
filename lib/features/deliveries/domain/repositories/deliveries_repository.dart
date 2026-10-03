@@ -1,6 +1,7 @@
 import 'package:bsmart/core/network/result.dart';
 import 'package:bsmart/features/deliveries/domain/entities/assignable_courier.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery.dart';
+import 'package:bsmart/features/deliveries/domain/entities/delivery_tracking_link.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery_route.dart';
 
 /// Courier step endpoints: `PATCH /deliveries/:id/{accept|pickup|arrive|complete}`.
@@ -37,4 +38,8 @@ abstract interface class DeliveriesRepository {
   Future<Result<Delivery>> reassign(String id, {String? courierId});
 
   Future<Result<Delivery>> cancel(String id);
+
+  // ─── Restaurant staff (Phase 6 V6) ───
+  /// Public tracking link for a phone/walk-in restaurant customer without the app.
+  Future<Result<DeliveryTrackingLink>> createTrackingLink({required String restaurantOrderId});
 }

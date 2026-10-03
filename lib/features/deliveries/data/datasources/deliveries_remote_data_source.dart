@@ -4,6 +4,7 @@ import 'package:bsmart/features/deliveries/data/models/delivery_model.dart';
 import 'package:bsmart/features/deliveries/data/models/delivery_route_model.dart';
 import 'package:bsmart/features/deliveries/domain/entities/assignable_courier.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery.dart';
+import 'package:bsmart/features/deliveries/domain/entities/delivery_tracking_link.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery_route.dart';
 import 'package:bsmart/features/deliveries/domain/repositories/deliveries_repository.dart';
 
@@ -81,5 +82,19 @@ class DeliveriesRemoteDataSource {
   Future<Delivery> advance(String id, DeliveryAction action) async {
     final response = await _dio.patch<Map<String, dynamic>>('/deliveries/$id/${action.path}');
     return deliveryFromJson(response.data!);
+  }
+
+  /// `POST /deliveries/tracking-links` — owner/admin only; 404 until a courier
+  /// has accepted the restaurant order (that's when its Delivery exists).
+  Future<DeliveryTrackingLink> createTrackingLink({required String restaurantOrderId}) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/deliveries/tracking-links',
+      data: {'restaurantOrderId': restaurantOrderId},
+    );
+    final data = response.data!;
+    return DeliveryTrackingLink(
+      url: data['url'] as String,
+      expiresAt: DateTime.parse(data['expiresAt'] as String).toLocal(),
+    );
   }
 }

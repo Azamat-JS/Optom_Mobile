@@ -10,12 +10,15 @@ import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 /// One login screen for every role — SELLER/RETAILER (+ their `_ADMIN`
-/// staff) sign in here exactly as in Phase 1, and a `CUSTOMER` lands here
-/// too whenever the storefront's guest checkout flow requires signing in
-/// (see `app_router.dart`'s redirect). The "Ro'yxatdan o'tish" link below
-/// only ever creates a `CUSTOMER` account (`POST /auth/register` — see
-/// `auth.service.ts`); SELLER/RETAILER accounts stay SUPER_ADMIN-provisioned
-/// only, never self-service.
+/// staff) and `CUSTOMER`s alike (the storefront's guest flow lands here
+/// whenever signing in is required — see `app_router.dart`'s redirect).
+///
+/// The primary action is "Telegram orqali davom etish" (Phase 6): the phone
+/// is confirmed by sharing the user's own Telegram contact with the verify
+/// bot — an existing account (any role) is logged in, an unknown number gets
+/// a new `CUSTOMER` account. Phone + password stays as an optional fallback
+/// behind "Parol bilan kirish"; SELLER/RETAILER accounts are still only
+/// provisioned by SUPER_ADMIN, never self-service.
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -25,19 +28,26 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _form = FormGroup({
-    'phone': FormControl<String>(
-      value: '+998',
-      validators: [Validators.required, Validators.pattern(r'^\+998\d{9}$')],
-    ),
+    'phone': FormControl<String>(value: '+998', validators: [Validators.required, Validators.pattern(r'^\+998\d{9}$')]),
     'password': FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
   });
 
   bool _obscurePassword = true;
+  bool _showPassword = false;
 
   @override
   void dispose() {
     _form.dispose();
     super.dispose();
+  }
+
+  void _continueWithTelegram() {
+    final phone = _form.control('phone');
+    if (phone.invalid) {
+      phone.markAsTouched();
+      return;
+    }
+    context.push(RouteNames.telegramVerifyFor(phone.value as String));
   }
 
   void _submit() {
@@ -76,9 +86,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 children: [
                   Text(
                     'bsmart',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ).animate().fadeIn(duration: AppMotion.slow).slideY(begin: 0.1, end: 0),
                   const SizedBox(height: 8),
@@ -103,41 +111,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     },
                   ).animate().fadeIn(delay: AppMotion.standard),
                   const SizedBox(height: 16),
-                  ReactiveTextField<String>(
-                    formControlName: 'password',
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      labelText: 'Parol',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        icon: Icon(_obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                      ),
-                    ),
-                    validationMessages: {
-                      ValidationMessage.required: (_) => 'Parol kiritilishi shart',
-                      ValidationMessage.minLength: (_) => 'Kamida 6 ta belgi',
-                    },
-                    onSubmitted: (_) => _submit(),
-                  ).animate().fadeIn(delay: AppMotion.standard + AppMotion.fast),
-                  const SizedBox(height: 24),
-                  FilledButton(
-                    onPressed: isLoading ? null : _submit,
+                  FilledButton.icon(
+                    onPressed: isLoading ? null : _continueWithTelegram,
+                    icon: const Icon(Icons.telegram),
+                    label: const Text('Telegram orqali davom etish'),
                     style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                          )
-                        : const Text('Kirish'),
-                  ).animate().fadeIn(delay: AppMotion.slow),
-                  const SizedBox(height: 12),
-                  TextButton(
-                    onPressed: () => context.go(RouteNames.register),
-                    child: const Text("Mijozmisiz? Ro'yxatdan o'ting"),
+                  ).animate().fadeIn(delay: AppMotion.standard + AppMotion.fast),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Hisobingiz bo'lmasa, avtomatik yaratiladi",
+                    style: Theme.of(context).textTheme.bodySmall,
+                    textAlign: TextAlign.center,
                   ),
+                  const SizedBox(height: 16),
+                  if (!_showPassword)
+                    TextButton(
+                      onPressed: () => setState(() => _showPassword = true),
+                      child: const Text('Parol bilan kirish'),
+                    )
+                  else
+                    ..._passwordFields(isLoading),
                 ],
               ),
             ),
@@ -145,5 +138,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
       ),
     );
+  }
+
+  List<Widget> _passwordFields(bool isLoading) {
+    return [
+      ReactiveTextField<String>(
+        formControlName: 'password',
+        obscureText: _obscurePassword,
+        decoration: InputDecoration(
+          labelText: 'Parol',
+          prefixIcon: const Icon(Icons.lock_outline),
+          border: const OutlineInputBorder(),
+          suffixIcon: IconButton(
+            icon: Icon(_obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+          ),
+        ),
+        validationMessages: {
+          ValidationMessage.required: (_) => 'Parol kiritilishi shart',
+          ValidationMessage.minLength: (_) => 'Kamida 6 ta belgi',
+        },
+        onSubmitted: (_) => _submit(),
+      ).animate().fadeIn(duration: AppMotion.standard),
+      const SizedBox(height: 16),
+      OutlinedButton(
+        onPressed: isLoading ? null : _submit,
+        style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+        child: isLoading
+            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+            : const Text('Kirish'),
+      ).animate().fadeIn(duration: AppMotion.standard),
+    ];
   }
 }

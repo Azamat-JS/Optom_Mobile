@@ -3,13 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/network/auth_event_bus.dart';
 import 'package:bsmart/core/storage/active_store_storage.dart';
+import 'package:bsmart/features/auth/domain/entities/auth_result.dart';
 import 'package:bsmart/features/auth/domain/entities/session.dart';
 import 'package:bsmart/features/auth/domain/entities/user.dart';
 import 'package:bsmart/features/auth/domain/repositories/auth_repository.dart';
 import 'package:bsmart/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/login_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/logout_usecase.dart';
-import 'package:bsmart/features/auth/domain/usecases/register_usecase.dart';
 
 /// The authenticated app's whole auth state: `null`/`null` means logged out.
 class AuthState {
@@ -58,23 +58,11 @@ class SessionNotifier extends AsyncNotifier<AuthState> {
     );
   }
 
-  Future<void> register({
-    required String firstName,
-    required String lastName,
-    required String phone,
-    required String password,
-  }) async {
-    state = const AsyncLoading();
-    final result = await getIt<RegisterUseCase>().call(
-      firstName: firstName,
-      lastName: lastName,
-      phone: phone,
-      password: password,
-    );
-    state = result.fold(
-      (authResult) => AsyncData(AuthState(session: authResult.session, user: authResult.user)),
-      (failure) => AsyncError(failure, StackTrace.current),
-    );
+  /// Adopts a session obtained outside [login] — the Telegram
+  /// verification flow, whose repository call has already saved the tokens.
+  /// go_router's redirect then moves the user off the auth screens.
+  void adoptAuthResult(AuthResult authResult) {
+    state = AsyncData(AuthState(session: authResult.session, user: authResult.user));
   }
 
   Future<void> logout() async {

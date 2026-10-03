@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/restaurant_order_enums.dart';
 import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
+import 'package:bsmart/core/network/api_exception.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/features/deliveries/domain/usecases/manage_delivery_usecases.dart';
 import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_order.dart';
 import 'package:bsmart/features/restaurant_orders/domain/restaurant_order_status_actions.dart';
 import 'package:bsmart/features/restaurant_orders/domain/usecases/accept_restaurant_order_usecase.dart';
@@ -69,6 +72,25 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
     result.fold(
       (order) => setState(() => _order = order),
       (failure) => _showError(failure.message),
+    );
+  }
+
+  /// Phase 6 V6: a public tracking URL for a phone/walk-in customer without
+  /// the app, handed to the share sheet (SMS, Telegram, …). The backend shows
+  /// each URL only once, so a new one is created per share.
+  Future<void> _shareTrackingLink(RestaurantOrder order) async {
+    setState(() => _isBusy = true);
+    final result = await getIt<CreateTrackingLinkUseCase>().call(restaurantOrderId: order.id);
+    if (!mounted) return;
+    setState(() => _isBusy = false);
+    await result.fold(
+      (link) => Share.share(
+        '${order.orderNumber} buyurtmangizni xaritada kuzating: ${link.url}',
+        subject: 'Buyurtmani kuzatish',
+      ),
+      (failure) async => _showError(
+        failure is NotFoundApiException ? 'Kuryer buyurtmani hali qabul qilmagan.' : failure.message,
+      ),
     );
   }
 
@@ -272,6 +294,12 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
             ),
             if (role != null && canAssignCourier(order, role) && !_isBusy)
               TextButton(onPressed: _assignCourier, child: const Text('Tayinlash')),
+            if (role != null && canShareTrackingLink(order, role))
+              TextButton.icon(
+                onPressed: _isBusy ? null : () => _shareTrackingLink(order),
+                icon: const Icon(Icons.share_location_outlined),
+                label: const Text('Kuzatish havolasi'),
+              ),
           ],
         ),
       ),

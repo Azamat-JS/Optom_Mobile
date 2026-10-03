@@ -2,6 +2,15 @@ abstract final class RouteNames {
   static const splash = '/splash';
   static const login = '/login';
   static const register = '/register';
+
+  /// Telegram verification wait screen; takes the phone as `?phone=`.
+  static const telegramVerify = '/auth/telegram';
+
+  /// Logged-in CUSTOMER confirming their own number (not an auth screen).
+  static const customerVerifyPhone = '/customer/verify-phone';
+  static const customerDeliveries = '/customer/deliveries';
+
+  static String telegramVerifyFor(String phone) => Uri(path: telegramVerify, queryParameters: {'phone': phone}).toString();
   static const home = '/home';
 
   // --- Phase 2: CUSTOMER storefront (guest-eligible — see app_router.dart's

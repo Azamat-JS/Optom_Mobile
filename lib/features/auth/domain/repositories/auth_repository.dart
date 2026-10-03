@@ -1,6 +1,7 @@
 import 'package:bsmart/core/network/result.dart';
 import 'package:bsmart/features/auth/domain/entities/auth_result.dart';
 import 'package:bsmart/features/auth/domain/entities/session.dart';
+import 'package:bsmart/features/auth/domain/entities/telegram_verification.dart';
 import 'package:bsmart/features/auth/domain/entities/user.dart';
 
 /// Presentation and other domain layers depend on this abstraction, never on
@@ -9,16 +10,14 @@ import 'package:bsmart/features/auth/domain/entities/user.dart';
 abstract class AuthRepository {
   Future<Result<AuthResult>> login({required String phone, required String password});
 
-  /// `POST /auth/register` always creates a `CUSTOMER` account server-side
-  /// (see `auth.service.ts`) — SELLER/RETAILER accounts are still only
-  /// provisioned by SUPER_ADMIN, never self-registered. Only reachable from
-  /// the Phase 2 storefront's register screen.
-  Future<Result<AuthResult>> register({
-    required String firstName,
-    required String lastName,
-    required String phone,
-    required String password,
-  });
+  /// Passwordless register + login in one flow: the user confirms [phone] by
+  /// sharing their own Telegram contact with the verify bot. An existing
+  /// account is logged in; otherwise a new `CUSTOMER` account is created.
+  Future<Result<TelegramVerification>> startTelegramVerification(String phone);
+
+  /// One poll of a started verification. On [TelegramVerified] the session
+  /// has already been saved to secure storage.
+  Future<Result<TelegramVerificationStatus>> pollTelegramVerification(TelegramVerification verification);
 
   /// Restores a session from secure storage on app cold-start, if a valid
   /// (non-expired, by claim) access token exists. Does not hit the network.

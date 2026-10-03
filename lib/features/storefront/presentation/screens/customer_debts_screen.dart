@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/debts/domain/entities/debt.dart';
 import 'package:bsmart/features/debts/presentation/providers/sale_debts_list_notifier.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/features/auth/presentation/widgets/verify_phone_banner.dart';
 import 'package:bsmart/features/debts/presentation/widgets/debt_status_badge.dart';
 
 /// "Qarzlarim" — a `CUSTOMER`'s own B2C debts. Reuses `features/debts`'
@@ -20,35 +22,51 @@ class CustomerDebtsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final debtsAsync = ref.watch(saleDebtsListProvider);
+    // Verifying the phone (VerifyPhoneBanner) unlocks phone-matched debts server-side — refetch.
+    ref.listen(sessionNotifierProvider.select((s) => s.valueOrNull?.user?.phoneVerified), (previous, next) {
+      if (previous == false && next == true) ref.invalidate(saleDebtsListProvider);
+    });
 
     return Scaffold(
       appBar: AppBar(title: const Text('Qarzlarim')),
-      body: debtsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Xatolik: $error')),
-        data: (debts) {
-          if (debts.isEmpty) {
-            return RefreshIndicator(
-              onRefresh: () => ref.read(saleDebtsListProvider.notifier).refresh(),
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: const [
-                  Padding(padding: EdgeInsets.only(top: 96), child: Center(child: Text('Qarzlar topilmadi'))),
-                ],
-              ),
-            );
-          }
+      body: Column(
+        children: [
+          const VerifyPhoneBanner(reason: "Do'konlardagi qarzlaringizni ko'rish uchun"),
+          Expanded(child: _body(ref, debtsAsync)),
+        ],
+      ),
+    );
+  }
+
+  Widget _body(WidgetRef ref, AsyncValue<List<SaleDebt>> debtsAsync) {
+    return debtsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(child: Text('Xatolik: $error')),
+      data: (debts) {
+        if (debts.isEmpty) {
           return RefreshIndicator(
             onRefresh: () => ref.read(saleDebtsListProvider.notifier).refresh(),
-            child: ListView.separated(
+            child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: debts.length,
-              separatorBuilder: (_, _) => const Divider(height: 1),
-              itemBuilder: (context, index) => _DebtTile(debt: debts[index]),
+              children: const [
+                Padding(
+                  padding: EdgeInsets.only(top: 96),
+                  child: Center(child: Text('Qarzlar topilmadi')),
+                ),
+              ],
             ),
           );
-        },
-      ),
+        }
+        return RefreshIndicator(
+          onRefresh: () => ref.read(saleDebtsListProvider.notifier).refresh(),
+          child: ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: debts.length,
+            separatorBuilder: (_, _) => const Divider(height: 1),
+            itemBuilder: (context, index) => _DebtTile(debt: debts[index]),
+          ),
+        );
+      },
     );
   }
 }
@@ -68,7 +86,10 @@ class _DebtTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(CurrencyFormatter.format(debt.balance, debt.currency), style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            CurrencyFormatter.format(debt.balance, debt.currency),
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 4),
           DebtStatusBadge(status: debt.status),
         ],

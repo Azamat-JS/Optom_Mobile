@@ -9,6 +9,8 @@ import 'package:bsmart/features/auth/presentation/providers/session_notifier.dar
 import 'package:bsmart/features/auth/presentation/screens/login_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/register_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/splash_screen.dart';
+import 'package:bsmart/features/auth/presentation/screens/telegram_verify_screen.dart';
+import 'package:bsmart/features/deliveries/presentation/screens/customer_deliveries_screen.dart';
 import 'package:bsmart/features/customers/presentation/screens/customers_list_screen.dart';
 import 'package:bsmart/features/dashboard/presentation/screens/home_screen.dart';
 import 'package:bsmart/features/debts/presentation/screens/debts_list_screen.dart';
@@ -46,9 +48,20 @@ import 'package:bsmart/features/sales/presentation/screens/sales_list_screen.dar
 /// Notifies [GoRouter] to re-run its `redirect` whenever auth state changes,
 /// so e.g. a forced logout (refresh-token failure) immediately routes back
 /// to `/login` without the user having to trigger navigation themselves.
+///
+/// Only routing-relevant changes (loading, who is signed in, their role)
+/// trigger it. A same-user session update — e.g. Phase 6's "Raqamni
+/// tasdiqlash", which swaps in fresh tokens for the same account — must not:
+/// a go_router refresh re-applies the last *pushed* location, which re-opened
+/// the just-closed verify screen (and started a second verification).
 class _RouterRefreshNotifier extends ChangeNotifier {
   _RouterRefreshNotifier(Ref ref) {
-    ref.listen(sessionNotifierProvider, (_, _) => notifyListeners());
+    ref.listen(
+      sessionNotifierProvider.select(
+        (s) => (s.isLoading, s.valueOrNull?.session?.userId, s.valueOrNull?.session?.role),
+      ),
+      (_, _) => notifyListeners(),
+    );
   }
 }
 
@@ -56,7 +69,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = _RouterRefreshNotifier(ref);
   ref.onDispose(refreshNotifier.dispose);
 
-  return GoRouter(
+  final router = GoRouter(
     initialLocation: RouteNames.splash,
     refreshListenable: refreshNotifier,
     redirect: (context, state) => _redirect(ref, state),
@@ -74,6 +87,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const RegisterScreen()),
       ),
       GoRoute(
+        path: RouteNames.telegramVerify,
+        pageBuilder: (context, state) => fadeThroughPage(
+          state: state,
+          child: TelegramVerifyScreen(phone: state.uri.queryParameters['phone'] ?? ''),
+        ),
+      ),
+      GoRoute(
         path: RouteNames.customerHome,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const CustomerHomeScreen()),
       ),
@@ -87,6 +107,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.customerCartReview,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const StorefrontCartReviewScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.customerDeliveries,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const CustomerDeliveriesScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.customerVerifyPhone,
+        pageBuilder: (context, state) {
+          final phone = ref.read(sessionNotifierProvider).valueOrNull?.user?.phone ?? '';
+          return fadeThroughPage(
+            state: state,
+            child: TelegramVerifyScreen(phone: _plus998(phone), verifyCurrentAccount: true),
+          );
+        },
       ),
       GoRoute(
         path: RouteNames.customerDebts,
@@ -219,6 +253,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+
+  // Logging in from a *pushed* auth screen (storefront Profil → Kirish →
+  // Telegram wait screen) can't be resolved by [_redirect] alone: on refresh
+  // go_router re-pushes the redirect target onto the old stack instead of
+  // replacing it, leaving the user on the auth screen. So on a logged-out →
+  // logged-in transition, reset the stack via splash; [_redirect] then sends
+  // the user to their role's home. Screens still never navigate themselves.
+  var wasLoggedIn = false;
+  ref.listen(sessionNotifierProvider, (previous, next) {
+    if (!next.hasValue) return;
+    final isLoggedIn = next.value!.isAuthenticated;
+    if (isLoggedIn && !wasLoggedIn) router.go(RouteNames.splash);
+    wasLoggedIn = isLoggedIn;
+  });
+
+  return router;
 });
 
 /// Guest-eligible routes — reachable with no session at all. Everything
@@ -230,7 +280,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 /// `.customerDebts` are absent on purpose). Splash is deliberately not in
 /// this set — see [_redirect]'s doc comment for why it needs its own branch.
 bool _isGuestAllowed(String location) {
-  const allowed = {RouteNames.login, RouteNames.register, RouteNames.customerHome};
+  const allowed = {RouteNames.login, RouteNames.register, RouteNames.telegramVerify, RouteNames.customerHome};
   if (allowed.contains(location)) return true;
   return location.startsWith('/customer/products/');
 }
@@ -258,7 +308,9 @@ String? _redirect(Ref ref, GoRouterState state) {
   final authState = ref.read(sessionNotifierProvider);
   final location = state.matchedLocation;
   final isSplash = location == RouteNames.splash;
-  final isAuthScreen = location == RouteNames.login || location == RouteNames.register;
+  final isAuthScreen = location == RouteNames.login ||
+      location == RouteNames.register ||
+      location == RouteNames.telegramVerify;
 
   if (authState.isLoading) {
     return isSplash ? null : RouteNames.splash;
@@ -267,22 +319,27 @@ String? _redirect(Ref ref, GoRouterState state) {
   final session = authState.valueOrNull;
   final loggedIn = session?.isAuthenticated ?? false;
   final role = session?.session?.role;
-  final isCustomer = role == UserRole.customer;
-  final isSuperAdmin = role == UserRole.superAdmin;
-  final isWaiter = role == UserRole.waiter;
-  final isCourier = role == UserRole.courier;
 
   if (!loggedIn) {
     if (isSplash) return RouteNames.customerHome;
     return _isGuestAllowed(location) ? null : RouteNames.login;
   }
 
-  if (isAuthScreen || isSplash) {
-    if (isSuperAdmin) return RouteNames.superAdminHome;
-    if (isWaiter) return RouteNames.waiterHome;
-    if (isCourier) return RouteNames.courierHome;
-    return isCustomer ? RouteNames.customerHome : RouteNames.home;
-  }
+  if (isAuthScreen || isSplash) return _homeFor(role);
 
   return null;
+}
+
+/// Account phones exist in legacy formats ("998901234567", "901234567"); the
+/// verify endpoint wants "+998XXXXXXXXX".
+String _plus998(String phone) {
+  final digits = phone.replaceAll(RegExp(r'\D'), '');
+  return digits.length >= 9 ? '+998${digits.substring(digits.length - 9)}' : phone;
+}
+
+String _homeFor(UserRole? role) {
+  if (role == UserRole.superAdmin) return RouteNames.superAdminHome;
+  if (role == UserRole.waiter) return RouteNames.waiterHome;
+  if (role == UserRole.courier) return RouteNames.courierHome;
+  return role == UserRole.customer ? RouteNames.customerHome : RouteNames.home;
 }

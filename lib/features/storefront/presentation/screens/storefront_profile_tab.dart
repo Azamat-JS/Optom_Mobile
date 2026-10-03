@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/features/auth/presentation/widgets/verify_phone_banner.dart';
 
 /// The "Profil" tab — a guest sees login/register entry points; a logged-in
 /// `CUSTOMER` sees their own orders/debts (both reused as-is from their
@@ -47,13 +48,26 @@ class StorefrontProfileTab extends ConsumerWidget {
           leading: const CircleAvatar(child: Icon(Icons.person)),
           title: Text(user.fullName),
           subtitle: Text(user.phone),
+          trailing: user.phoneVerified
+              ? Tooltip(
+                  message: 'Raqam tasdiqlangan',
+                  child: Icon(Icons.verified, color: Theme.of(context).colorScheme.primary),
+                )
+              : null,
         ),
+        const VerifyPhoneBanner(reason: "Restoran yetkazishlarini kuzatish va qarzlaringizni ko'rish uchun"),
         const Divider(),
         ListTile(
           leading: const Icon(Icons.receipt_long_outlined),
           title: const Text('Buyurtmalarim'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.push(RouteNames.orders),
+        ),
+        ListTile(
+          leading: const Icon(Icons.delivery_dining_outlined),
+          title: const Text('Yetkazishlarim'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push(RouteNames.customerDeliveries),
         ),
         ListTile(
           leading: const Icon(Icons.account_balance_wallet_outlined),

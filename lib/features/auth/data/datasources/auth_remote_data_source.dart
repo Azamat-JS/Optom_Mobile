@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import 'package:bsmart/features/auth/data/models/user_model.dart';
+import 'package:bsmart/features/auth/domain/entities/telegram_verification.dart';
 import 'package:bsmart/features/auth/domain/entities/user.dart';
 
 /// Raw calls against `/auth/*`. Returns plain JSON maps / tokens — mapping
@@ -24,27 +25,32 @@ class AuthRemoteDataSource {
     );
   }
 
-  /// `POST /auth/register` always creates a `CUSTOMER` account server-side
-  /// (see `auth.service.ts`) — this is only ever reached from the Phase 2
-  /// storefront's register screen, never from the operator login screen.
-  /// Same response shape as login (tokens minted immediately, no separate
-  /// verification step), so the same tuple return type is reused.
-  Future<(String, String, User)> register({
-    required String firstName,
-    required String lastName,
-    required String phone,
-    required String password,
+  /// `POST /auth/telegram/start` — opens a verification for [phone] and
+  /// returns the bot deep link plus the client secret needed to poll it.
+  Future<TelegramVerification> startTelegramVerification(String phone) async {
+    final response = await _dio.post<Map<String, dynamic>>('/auth/telegram/start', data: {'phone': phone});
+    final data = response.data!;
+    return TelegramVerification(
+      verificationId: data['verificationId'] as String,
+      clientSecret: data['clientSecret'] as String,
+      botUrl: data['botUrl'] as String,
+      botUsername: data['botUsername'] as String,
+      expiresAt: DateTime.parse(data['expiresAt'] as String),
+    );
+  }
+
+  /// `POST /auth/telegram/poll` — returns the raw body: `{status}` and, for
+  /// `VERIFIED` only (exactly once), the same token/user payload as login
+  /// plus `isNewUser`.
+  Future<Map<String, dynamic>> pollTelegramVerification({
+    required String verificationId,
+    required String clientSecret,
   }) async {
     final response = await _dio.post<Map<String, dynamic>>(
-      '/auth/register',
-      data: {'firstName': firstName, 'lastName': lastName, 'phone': phone, 'password': password},
+      '/auth/telegram/poll',
+      data: {'verificationId': verificationId, 'clientSecret': clientSecret},
     );
-    final data = response.data!;
-    return (
-      data['accessToken'] as String,
-      data['refreshToken'] as String,
-      userFromJson(data['user'] as Map<String, dynamic>),
-    );
+    return response.data!;
   }
 
   Future<User> getMe() async {

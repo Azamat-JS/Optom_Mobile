@@ -14,7 +14,7 @@ import 'package:bsmart/features/auth/domain/repositories/auth_repository.dart';
 import 'package:bsmart/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/login_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/logout_usecase.dart';
-import 'package:bsmart/features/auth/domain/usecases/register_usecase.dart';
+import 'package:bsmart/features/auth/domain/usecases/telegram_verification_usecases.dart';
 import 'package:bsmart/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/verify_password_usecase.dart';
 import 'package:bsmart/features/categories/data/datasources/categories_remote_data_source.dart';
@@ -262,6 +262,7 @@ void setupDependencyInjection() {
   getIt.registerLazySingleton(() => CreateDeliveryUseCase(getIt<DeliveriesRepository>()));
   getIt.registerLazySingleton(() => ReassignDeliveryUseCase(getIt<DeliveriesRepository>()));
   getIt.registerLazySingleton(() => CancelDeliveryUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => CreateTrackingLinkUseCase(getIt<DeliveriesRepository>()));
   getIt.registerLazySingleton<FleetRepository>(() => FleetRepositoryImpl(getIt<Dio>(instanceName: _mainDioInstance)));
   getIt.registerLazySingleton(() => GetFleetUseCase(getIt<FleetRepository>()));
 
@@ -271,7 +272,8 @@ void setupDependencyInjection() {
     () => AuthRepositoryImpl(remote: getIt(), local: getIt()),
   );
   getIt.registerFactory(() => LoginUseCase(getIt()));
-  getIt.registerFactory(() => RegisterUseCase(getIt()));
+  getIt.registerFactory(() => StartTelegramVerificationUseCase(getIt()));
+  getIt.registerFactory(() => PollTelegramVerificationUseCase(getIt()));
   getIt.registerFactory(() => LogoutUseCase(getIt()));
   getIt.registerFactory(() => GetCurrentUserUseCase(getIt()));
   getIt.registerFactory(() => UpdateProfileUseCase(getIt()));

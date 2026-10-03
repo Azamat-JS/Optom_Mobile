@@ -25,6 +25,7 @@ User userFromJson(Map<String, dynamic> json) {
     ownerRole: json['ownerRole'] != null ? UserRole.fromWire(json['ownerRole'] as String) : null,
     managedUserId: json['managedUserId'] as String?,
     isActive: json['isActive'] as bool?,
+    phoneVerified: json['phoneVerified'] == true,
     owner: managedUser == null
         ? null
         : OwnerRef(
