@@ -1245,6 +1245,22 @@ tokenized tracking links for restaurant customers (designed for — see Optom_Sa
 `noGpsFix` state and iOS (background location, Maps key from `.env`) need a real-device check, and the
 production key split.
 
+### Phase 6 — Telegram phone verification + customer self-registration (mobile + web + Mini App)
+Decided 2026-10-03: **one passwordless flow for register and login** — enter phone → "Telegram orqali
+davom etish" → open the dedicated verify bot (`VERFIY_BOT_TOKEN`) → Start → share contact → backend
+checks the shared contact is the sender's own **and** matches the typed phone → account created
+(CUSTOMER only) or logged in. Mini App: Telegram's `requestContact()` signed response instead of the
+bot. Optom_Savdo auth/bot code and the Next.js app may be changed for this (user-approved exception).
+
+| # | Milestone | Status |
+|---|---|---|
+| V1 | Security fixes: bot link wizards accept only the sender's own shared contact; `POST /auth/tg-phone` requires Telegram's signed contact response; Mini App `initData` login gets a freshness check | 🟢 Done 2026-10-03 — 3 takeover holes closed, 55 unit tests + 12-check live e2e green; also added `TELEGRAM_BOT_POLLING=false` for local runs (see Optom_Savdo CLAUDE.md "Telegram phone-linking security") |
+| V2 | Verification backend + verify bot: `PhoneVerification` table, start/status/complete endpoints, client secret, match checks, expiry, rate limits, `User.phoneVerifiedAt`, passwordless register/login | 🟢 Done 2026-10-03 — `POST /auth/telegram/start` + `/poll`, verify bot, one-time session, new accounts CUSTOMER only; 66 unit tests + 30-check e2e green (see Optom_Savdo CLAUDE.md "Telegram phone verification") |
+| V3 | bsmart: phone → Telegram handoff → auto-finishing wait screen (register + login) | ⏳ Next |
+| V4 | Next.js web + Mini App: same flow; load the Mini App SDK; Mini App uses `requestContact` | ⬜ |
+| V5 | Verified-phone gating + in-app tracking of phone-ordered restaurant deliveries | ⬜ |
+| V6 | Public tracking link page for customers without the app (backend-served page) | ⬜ |
+
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
 priority) a real-time layer — all as **new NestJS + PostgreSQL infrastructure**, never a
