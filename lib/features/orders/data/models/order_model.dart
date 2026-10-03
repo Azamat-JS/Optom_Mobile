@@ -57,6 +57,7 @@ Order orderFromJson(Map<String, dynamic> json) {
     balance: parseDecimal(json['balance'] ?? 0),
     notes: json['notes'] as String?,
     deliveryAddress: json['deliveryAddress'] as String?,
+    type: json['type'] is String ? OrderType.fromWire(json['type'] as String) : null,
     rejectionReason: json['rejectionReason'] as String?,
     approvedAt: json['approvedAt'] != null ? DateTime.parse(json['approvedAt'] as String) : null,
     rejectedAt: json['rejectedAt'] != null ? DateTime.parse(json['rejectedAt'] as String) : null,

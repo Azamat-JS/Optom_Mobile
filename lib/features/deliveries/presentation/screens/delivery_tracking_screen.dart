@@ -7,11 +7,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/core/maps/animated_position.dart';
 import 'package:bsmart/core/maps/map_icons.dart';
 import 'package:bsmart/core/maps/polyline_codec.dart';
 import 'package:bsmart/core/realtime/tracking_socket.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery_route.dart';
 import 'package:bsmart/features/deliveries/presentation/delivery_actions.dart';
@@ -56,15 +58,15 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
     _events = _socket.events
         .where((e) => e.name == 'delivery:location' && e.data['deliveryId'] == widget.deliveryId)
         .listen((e) {
-      final speed = (e.data['speed'] as num?)?.toDouble() ?? 0;
-      _courier.moveTo(
-        LatLng((e.data['lat'] as num).toDouble(), (e.data['lng'] as num).toDouble()),
-        heading: speed > 1 ? (e.data['heading'] as num?)?.toDouble() : null,
-      );
-      final first = _lastPointAt == null;
-      setState(() => _lastPointAt = DateTime.now());
-      if (first) _fit();
-    });
+          final speed = (e.data['speed'] as num?)?.toDouble() ?? 0;
+          _courier.moveTo(
+            LatLng((e.data['lat'] as num).toDouble(), (e.data['lng'] as num).toDouble()),
+            heading: speed > 1 ? (e.data['heading'] as num?)?.toDouble() : null,
+          );
+          final first = _lastPointAt == null;
+          setState(() => _lastPointAt = DateTime.now());
+          if (first) _fit();
+        });
     _tick = Timer.periodic(const Duration(seconds: 15), (_) {
       if (mounted) setState(() {}); // ETA countdown + stale check
     });
@@ -176,7 +178,12 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
                   },
                   polylines: {
                     if (route != null && _routePoints.length > 1 && d.status.isActive) ...[
-                      Polyline(polylineId: const PolylineId('casing'), points: _routePoints, color: Colors.white, width: 9),
+                      Polyline(
+                        polylineId: const PolylineId('casing'),
+                        points: _routePoints,
+                        color: Colors.white,
+                        width: 9,
+                      ),
                       Polyline(
                         polylineId: const PolylineId('route'),
                         points: _routePoints,
@@ -203,10 +210,16 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
               left: 0,
               right: 0,
               bottom: 0,
-              child: _InfoPanel(delivery: d, route: route, lastPointAt: _lastPointAt)
-                  .animate()
-                  .slideY(begin: 0.3, duration: AppMotion.standard, curve: AppMotion.emphasized)
-                  .fadeIn(duration: AppMotion.standard),
+              child:
+                  _InfoPanel(
+                        delivery: d,
+                        route: route,
+                        lastPointAt: _lastPointAt,
+                        isCustomer: ref.watch(sessionNotifierProvider).valueOrNull?.session?.role == UserRole.customer,
+                      )
+                      .animate()
+                      .slideY(begin: 0.3, duration: AppMotion.standard, curve: AppMotion.emphasized)
+                      .fadeIn(duration: AppMotion.standard),
             ),
           ],
         ),
@@ -216,19 +229,25 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
 }
 
 class _InfoPanel extends StatelessWidget {
-  const _InfoPanel({required this.delivery, required this.route, required this.lastPointAt});
+  const _InfoPanel({required this.delivery, required this.route, required this.lastPointAt, required this.isCustomer});
 
   final Delivery delivery;
   final DeliveryRoute? route;
   final DateTime? lastPointAt;
+
+  /// Wording: "Sizning kuryeringiz" for the customer, plain "Kuryer" for staff viewers.
+  final bool isCustomer;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final d = delivery;
     final now = DateTime.now();
-    final eta = d.status.isActive && d.status != DeliveryStatus.arrived ? route?.remaining(RouteStopKind.dropoff, now) : null;
-    final stale = d.status.isActive &&
+    final eta = d.status.isActive && d.status != DeliveryStatus.arrived
+        ? route?.remaining(RouteStopKind.dropoff, now)
+        : null;
+    final stale =
+        d.status.isActive &&
         (lastPointAt == null || now.difference(lastPointAt!) > _DeliveryTrackingScreenState._staleAfter);
 
     return Material(
@@ -278,7 +297,7 @@ class _InfoPanel extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(d.courier?.firstName ?? 'Kuryer', style: theme.textTheme.titleMedium),
-                        Text('Sizning kuryeringiz', style: theme.textTheme.bodySmall),
+                        Text(isCustomer ? 'Sizning kuryeringiz' : 'Kuryer', style: theme.textTheme.bodySmall),
                       ],
                     ),
                   ),

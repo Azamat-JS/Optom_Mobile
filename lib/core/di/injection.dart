@@ -206,6 +206,9 @@ import 'package:bsmart/features/deliveries/domain/usecases/get_delivery_route_us
 import 'package:bsmart/features/deliveries/domain/usecases/get_delivery_usecase.dart';
 import 'package:bsmart/features/deliveries/domain/usecases/get_order_delivery_usecase.dart';
 import 'package:bsmart/features/deliveries/domain/usecases/list_deliveries_usecase.dart';
+import 'package:bsmart/features/deliveries/domain/usecases/manage_delivery_usecases.dart';
+import 'package:bsmart/features/fleet/data/fleet_repository_impl.dart';
+import 'package:bsmart/features/fleet/domain/fleet_repository.dart';
 
 const _bareDioInstance = 'bareDio';
 const _mainDioInstance = 'mainDio';
@@ -255,6 +258,12 @@ void setupDependencyInjection() {
   getIt.registerLazySingleton(() => AdvanceDeliveryUseCase(getIt<DeliveriesRepository>()));
   getIt.registerLazySingleton(() => GetDeliveryRouteUseCase(getIt<DeliveriesRepository>()));
   getIt.registerLazySingleton(() => GetOrderDeliveryUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => ListAssignableCouriersUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => CreateDeliveryUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => ReassignDeliveryUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => CancelDeliveryUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton<FleetRepository>(() => FleetRepositoryImpl(getIt<Dio>(instanceName: _mainDioInstance)));
+  getIt.registerLazySingleton(() => GetFleetUseCase(getIt<FleetRepository>()));
 
   getIt.registerLazySingleton(() => AuthRemoteDataSource(getIt<Dio>(instanceName: _mainDioInstance)));
   getIt.registerLazySingleton(() => AuthLocalDataSource(getIt<SecureTokenStorage>()));

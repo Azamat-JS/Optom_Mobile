@@ -19,6 +19,7 @@ class Order {
     required this.total,
     required this.paid,
     required this.balance,
+    this.type,
     this.notes,
     this.deliveryAddress,
     this.rejectionReason,
@@ -45,6 +46,9 @@ class Order {
   final double balance;
   final String? notes;
   final String? deliveryAddress;
+
+  /// B2B (wholesaler sells) or B2C (retailer sells) — courier deliveries are B2C-only.
+  final OrderType? type;
   final String? rejectionReason;
   final DateTime? approvedAt;
   final DateTime? rejectedAt;

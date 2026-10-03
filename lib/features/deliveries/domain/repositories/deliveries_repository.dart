@@ -1,4 +1,5 @@
 import 'package:bsmart/core/network/result.dart';
+import 'package:bsmart/features/deliveries/domain/entities/assignable_courier.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery_route.dart';
 
@@ -25,4 +26,15 @@ abstract interface class DeliveriesRepository {
   Future<Result<Delivery>> advance(String id, DeliveryAction action);
 
   Future<Result<DeliveryRoute?>> route(String id);
+
+  // ─── Owner/admin (B2C orders) ───
+  Future<Result<List<AssignableCourier>>> assignableCouriers();
+
+  /// [courierId] null = offer to all couriers. Reopens a cancelled delivery.
+  Future<Result<Delivery>> create(String orderId, {String? courierId});
+
+  /// Only before acceptance; null clears back to an open offer.
+  Future<Result<Delivery>> reassign(String id, {String? courierId});
+
+  Future<Result<Delivery>> cancel(String id);
 }

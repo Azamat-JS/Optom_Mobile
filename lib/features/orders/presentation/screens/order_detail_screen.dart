@@ -138,6 +138,11 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     // action from a RETAILER fulfilling a storefront order).
     final currentUserId = ref.watch(sessionNotifierProvider).valueOrNull?.session?.userId;
     final isSeller = order != null && currentUserId != null && order.seller?.id == currentUserId;
+    // Courier delivery management is allowed for the seller's staff too (backend: RETAILER with
+    // admin inheritance), so it compares the *tenant* (owner id), not the logged-in user.
+    final session = ref.watch(sessionNotifierProvider).valueOrNull?.session;
+    final tenantId = session?.managedUserId ?? session?.userId;
+    final isSellerTenant = order != null && tenantId != null && order.seller?.id == tenantId;
 
     return Scaffold(
       appBar: AppBar(title: Text(order?.orderNumber ?? 'Buyurtma')),
@@ -171,7 +176,11 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                       _buildTotalsCard(order),
                       // Courier delivery (only approved/delivered orders can have one).
                       if (order.status == OrderStatus.approved || order.status == OrderStatus.delivered)
-                        OrderDeliveryCard(orderId: order.id),
+                        OrderDeliveryCard(
+                          orderId: order.id,
+                          canManage: isSellerTenant && order.type == OrderType.b2c,
+                          canAssign: order.status == OrderStatus.approved,
+                        ),
                       if (order.notes != null || order.deliveryAddress != null) ...[
                         const SizedBox(height: 16),
                         _buildNotesCard(order),

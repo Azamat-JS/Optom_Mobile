@@ -1055,7 +1055,7 @@ Built one milestone at a time, each verified live before the next.
 | T5 | Flutter courier delivery flow + map + animated marker | 🟢 Done 2026-10-02 — verified live on the Android emulator with real Google Maps tiles (see "Courier delivery UI (T5)" below) |
 | T6 | Maps module (Routes API) + ETA loop + polylines | 🟢 Done 2026-10-02 — 18-check live e2e against the real Routes API + emulator verification of the road route and ETA row (see "Route & ETA in the app (T6)" below) |
 | T7 | Customer tracking screen + map pin pickers | 🟢 Done 2026-10-02 — verified live on the emulator (see "Customer tracking + pin pickers (T7)" below) |
-| T8 | Owner fleet map + B2C assign UI + retention job | ⏳ Next |
+| T8 | Owner fleet map + B2C assign UI + retention job | 🟢 Done 2026-10-02 — verified live (see "Fleet map + assigning couriers (T8)" below). **Phase 5 complete.** |
 
 #### Tracking client (T3) — how it's built and what was learned
 - **Layers:** `core/realtime/tracking_socket.dart` (plain Dart, get_it singleton — one Socket.IO
@@ -1207,6 +1207,43 @@ Built one milestone at a time, each verified live before the next.
   auto-switch to "Kuryer yo'lda · ~16 daqiqada" on pickup, "Kuryer yetib keldi!", "Buyurtma
   topshirildi" (marker + call button gone). Store pin set/loaded/preserved; restaurant delivery order
   saved with its pin.
+
+#### Fleet map + assigning couriers (T8)
+- **Assigning (order detail, B2C only):** `Order` now parses `type`; `OrderDeliveryCard` takes
+  `canManage` (viewer's *tenant* — `managedUserId ?? userId` — is the order's seller, so store admins
+  qualify; deliberately not the existing per-user `isSeller`, which only matches the owner) and
+  `canAssign` (order APPROVED). States: no delivery → "Kuryerga berish"; offer (PENDING/ASSIGNED) →
+  "Kuryerni o'zgartirish" + "Bekor qilish" (confirm); CANCELLED → "Qayta kuryerga berish" (reopens
+  the same row); active → "Kuryerni kuzatish". `AssignCourierSheet`: "Barcha kuryerlarga taklif
+  qilish" + couriers from `GET /deliveries/couriers`, online first, green/grey presence dot,
+  "N ta faol yetkazish".
+- **Fleet map (`features/fleet/`, route `/fleet-map`, menu "Kuryerlar xaritasi"):** owners with
+  `courierFeatureEnabled`, and store admins (their session doesn't carry the owner's flag — an empty
+  map says "Hozircha onlayn kuryer yo'q"). Holds the socket; the server auto-joins owner/admin sockets
+  to the fleet room, so `location` glides markers in place and `presence`/`delivery:status` refetch
+  `GET /tracking/fleet` (debounced). Green = free, blue = on a delivery, grey = stale (no point 60 s);
+  summary chips ("2 onlayn · 1 yetkazishda · 1 aloqasiz"), auto-fit, and a bottom **courier strip**
+  (tap → centre + details sheet with call and "Yetkazishni ko'rish" → `DeliveryTrackingScreen`, which
+  now says "Kuryer" instead of "Sizning kuryeringiz" for staff viewers).
+- **Gotcha — Google Maps marker taps on Android:** a marker being re-rendered every frame (mid-glide)
+  drops taps, and `flat: true` + centre anchor made hit-testing worse. Fleet markers are non-flat
+  (rotation is identical on an untilted map) and glide for 0.8 s instead of 1.5 s so they're still
+  most of the time between 2–3 s points — a moving marker then opened its sheet on the first try. The
+  courier strip remains the guaranteed way in.
+- **Verified live:** assign C1 (online dot correct) → change to open offer (DB PENDING, no courier) →
+  cancel (DB CANCELLED) → re-assign (same row reopened) → simulated C1 accepts and drives, C2 idles:
+  fleet shows blue C1 + green C2; C2's simulator ends → grey + "aloqasiz" after 60 s; marker tap and
+  strip tap both open the sheet; "Yetkazishni ko'rish" shows the live route + ETA to the owner.
+- **Tooling note:** this emulator sometimes boots with a full-height on-screen keyboard that moves the
+  login fields — the scratch `login.sh` then mis-taps and its BACK press exits the app. Re-measure
+  positions with `uiautomator dump` when a scripted login suddenly lands on the home screen.
+
+**Phase 5 summary:** couriers share live location (background, visible status, consent, while-in-use
+only), run B2C and restaurant deliveries on a live Google map with real road routes/ETAs; customers
+track their courier; owners/admins assign couriers and watch the fleet. Open follow-ups: public
+tokenized tracking links for restaurant customers (designed for — see Optom_Savdo CLAUDE.md), the
+`noGpsFix` state and iOS (background location, Maps key from `.env`) need a real-device check, and the
+production key split.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

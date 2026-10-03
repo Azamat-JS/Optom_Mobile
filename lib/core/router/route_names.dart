@@ -51,4 +51,5 @@ abstract final class RouteNames {
   static const restaurantOrders = '/restaurant-orders';
   static const waiters = '/waiters';
   static const couriers = '/couriers';
+  static const fleetMap = '/fleet-map';
 }

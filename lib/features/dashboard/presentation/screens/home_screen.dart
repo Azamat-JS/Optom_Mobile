@@ -88,6 +88,13 @@ class HomeScreen extends ConsumerWidget {
                 value: RouteNames.reports,
                 child: ListTile(leading: Icon(Icons.bar_chart_outlined), title: Text('Hisobotlar')),
               ),
+              // Live courier map: owners once SUPER_ADMIN enabled couriers; store admins always
+              // (their session doesn't carry the owner's flag — an empty map just says so).
+              if (!isOwner || courierFeatureEnabled)
+                const PopupMenuItem(
+                  value: RouteNames.fleetMap,
+                  child: ListTile(leading: Icon(Icons.map_outlined), title: Text('Kuryerlar xaritasi')),
+                ),
               if (isRestaurant) ...[
                 const PopupMenuItem(
                   value: RouteNames.restaurantOrders,
