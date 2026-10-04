@@ -1,0 +1,7 @@
+# Copy to android/key.properties (git-ignored) for release builds — Phase 7 N6.
+# storeFile is relative to bsmart/android/. Keep the keystore and passwords backed up:
+# losing the upload key means you can't ship updates under the same Play listing without a reset.
+storeFile=../keys/bsmart-upload.jks
+storePassword=
+keyAlias=bsmart-upload
+keyPassword=

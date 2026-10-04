@@ -46,3 +46,9 @@ app.*.map.json
 
 # Environment config (per-developer/per-environment API base URL; see .env.example)
 .env
+
+# Release signing (Phase 7 N6) — never commit the upload keystore
+keys/
+*.jks
+*.keystore
+.env.production

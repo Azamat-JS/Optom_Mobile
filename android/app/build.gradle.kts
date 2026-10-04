@@ -1,3 +1,5 @@
+import java.util.Properties
+
 // Google Maps key comes from bsmart/.env (MAPS_API_KEY) — the same file Flutter loads at runtime —
 // so there's one place to set it. Read at build time: rebuild after changing it.
 val mapsApiKey: String = rootProject.file("../.env").takeIf { it.exists() }
@@ -7,6 +9,14 @@ val mapsApiKey: String = rootProject.file("../.env").takeIf { it.exists() }
     ?.substringAfter("=")
     ?.trim()
     ?: ""
+
+// Release signing (Phase 7 N6): android/key.properties (git-ignored) points at the upload keystore —
+// storeFile, storePassword, keyAlias, keyPassword. Without it a release build falls back to the
+// debug key (fine for local testing, rejected by Google Play) and says so in the build log.
+val keystoreProperties = Properties().apply {
+    rootProject.file("key.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}
+val hasReleaseKey = keystoreProperties.getProperty("storeFile") != null
 
 plugins {
     id("com.android.application")
@@ -41,11 +51,25 @@ android {
         manifestPlaceholders["mapsApiKey"] = mapsApiKey
     }
 
+    signingConfigs {
+        if (hasReleaseKey) {
+            create("release") {
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (hasReleaseKey) {
+                signingConfigs.getByName("release")
+            } else {
+                logger.warn("bsmart: android/key.properties not found — release build signed with the DEBUG key (not uploadable to Google Play)")
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }
