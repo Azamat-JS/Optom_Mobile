@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import 'package:bsmart/features/auth/data/models/user_model.dart';
+import 'package:bsmart/features/auth/domain/entities/telegram_notification_settings.dart';
 import 'package:bsmart/features/auth/domain/entities/telegram_verification.dart';
 import 'package:bsmart/features/auth/domain/entities/user.dart';
 
@@ -86,5 +87,18 @@ class AuthRemoteDataSource {
 
   Future<void> logout(String refreshToken) {
     return _dio.post<void>('/auth/logout', data: {'refreshToken': refreshToken});
+  }
+
+  /// `GET|PATCH /auth/telegram/notifications` (Phase 7 N3). PATCH → 409 when no chat is linked.
+  Future<TelegramNotificationSettings> telegramNotifications({bool? enabled}) async {
+    final response = enabled == null
+        ? await _dio.get<Map<String, dynamic>>('/auth/telegram/notifications')
+        : await _dio.patch<Map<String, dynamic>>('/auth/telegram/notifications', data: {'enabled': enabled});
+    final data = response.data!;
+    return TelegramNotificationSettings(
+      linked: data['linked'] as bool? ?? false,
+      enabled: data['enabled'] as bool? ?? false,
+      botUrl: data['botUrl'] as String?,
+    );
   }
 }

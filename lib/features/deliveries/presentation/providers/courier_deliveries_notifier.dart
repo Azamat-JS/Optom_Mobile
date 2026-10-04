@@ -60,6 +60,20 @@ class CourierDeliveriesNotifier extends AsyncNotifier<List<Delivery>> {
     state = next;
   }
 
+  /// Hand over, with the customer's code when one is pending (Phase 7 N2).
+  Future<ApiException?> complete(String id, {String? code}) async {
+    final result = await getIt<CompleteDeliveryUseCase>().call(id, code: code);
+    await refresh();
+    return result.fold((_) => null, (failure) => failure);
+  }
+
+  /// "Yetkazib bo'lmadi".
+  Future<ApiException?> fail(String id, DeliveryFailReason reason, {String? note}) async {
+    final result = await getIt<FailDeliveryUseCase>().call(id, reason, note: note);
+    await refresh();
+    return result.fold((_) => null, (failure) => failure);
+  }
+
   /// Runs a courier step; returns the failure (for a SnackBar) or null.
   Future<ApiException?> advance(String id, DeliveryAction action) async {
     final result = await getIt<AdvanceDeliveryUseCase>().call(id, action);

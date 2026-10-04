@@ -13,6 +13,7 @@ class DeliveryStatusBadge extends StatelessWidget {
         DeliveryStatus.pickedUp || DeliveryStatus.arrived => const Color(0xFF1565C0),
         DeliveryStatus.delivered => const Color(0xFF2E7D32),
         DeliveryStatus.cancelled => scheme.error,
+        DeliveryStatus.failed => const Color(0xFFE65100),
       };
 
   @override

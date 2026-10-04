@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/entities/geo_point.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 import 'package:bsmart/features/stores/domain/entities/store.dart';
 import 'package:bsmart/features/stores/domain/entities/store_write_params.dart';
 import 'package:bsmart/features/stores/domain/usecases/create_store_usecase.dart';
@@ -24,7 +25,11 @@ class StoresListScreen extends ConsumerWidget {
   Future<void> _openForm(BuildContext context, WidgetRef ref, {Store? editing}) async {
     final saved = await showDialog<bool>(
       context: context,
-      builder: (context) => _StoreFormDialog(editing: editing),
+      builder: (context) => _StoreFormDialog(
+        editing: editing,
+        // The handover-code switch only matters to an owner with couriers.
+        showHandoverSetting: ref.read(sessionNotifierProvider).valueOrNull?.user?.courierFeatureEnabled ?? false,
+      ),
     );
     if (saved == true) ref.read(storesListProvider.notifier).refresh();
   }
@@ -122,9 +127,10 @@ class StoresListScreen extends ConsumerWidget {
 }
 
 class _StoreFormDialog extends StatefulWidget {
-  const _StoreFormDialog({this.editing});
+  const _StoreFormDialog({this.editing, this.showHandoverSetting = false});
 
   final Store? editing;
+  final bool showHandoverSetting;
 
   @override
   State<_StoreFormDialog> createState() => _StoreFormDialogState();
@@ -135,6 +141,7 @@ class _StoreFormDialogState extends State<_StoreFormDialog> {
   late final _nameController = TextEditingController(text: widget.editing?.name);
   late final _addressController = TextEditingController(text: widget.editing?.address);
   late GeoPoint? _location = widget.editing?.location;
+  late bool _requireHandoverCode = widget.editing?.requireHandoverCode ?? false;
   bool _isSaving = false;
   String? _errorMessage;
 
@@ -161,6 +168,7 @@ class _StoreFormDialogState extends State<_StoreFormDialog> {
               name: _nameController.text.trim(),
               address: _addressController.text.trim(),
               location: _location,
+              requireHandoverCode: widget.showHandoverSetting ? _requireHandoverCode : null,
             ),
           )
         : await getIt<CreateStoreUseCase>().call(
@@ -183,6 +191,7 @@ class _StoreFormDialogState extends State<_StoreFormDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      scrollable: true,
       title: Text(_isEditing ? "Do'konni tahrirlash" : "Yangi do'kon"),
       content: Form(
         key: _formKey,
@@ -207,6 +216,18 @@ class _StoreFormDialogState extends State<_StoreFormDialog> {
               pickerTitle: "Do'kon joylashuvi",
               helper: 'Kuryerlar buyurtmani shu yerdan oladi',
             ),
+            // Only on edit: the backend sets it via UpdateStoreDto (new stores start with it off).
+            if (_isEditing && widget.showHandoverSetting)
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                value: _requireHandoverCode,
+                onChanged: (v) => setState(() => _requireHandoverCode = v),
+                title: const Text('Topshirish kodi'),
+                subtitle: const Text(
+                  "Kuryer buyurtmani topshirishda mijozdan 4 xonali kodni so'raydi. "
+                  "Ilovasi yoki tasdiqlangan raqami bo'lmagan mijozdan kod so'ralmaydi.",
+                ),
+              ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 8),
               Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),

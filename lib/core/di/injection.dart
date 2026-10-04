@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:bsmart/core/network/auth_event_bus.dart';
+import 'package:bsmart/core/location/location_outbox.dart';
 import 'package:bsmart/core/location/location_tracker.dart';
 import 'package:bsmart/core/network/dio_client.dart';
 import 'package:bsmart/core/realtime/tracking_socket.dart';
@@ -250,6 +251,7 @@ void setupDependencyInjection() {
     ),
   );
   getIt.registerLazySingleton(() => LocationTracker());
+  getIt.registerLazySingleton(() => LocationOutbox(HiveOutboxStore()));
   getIt.registerLazySingleton(() => TrackingDisclosureStorage());
   getIt.registerLazySingleton(() => DeliveriesRemoteDataSource(getIt<Dio>(instanceName: _mainDioInstance)));
   getIt.registerLazySingleton<DeliveriesRepository>(() => DeliveriesRepositoryImpl(getIt<DeliveriesRemoteDataSource>()));
@@ -263,6 +265,11 @@ void setupDependencyInjection() {
   getIt.registerLazySingleton(() => ReassignDeliveryUseCase(getIt<DeliveriesRepository>()));
   getIt.registerLazySingleton(() => CancelDeliveryUseCase(getIt<DeliveriesRepository>()));
   getIt.registerLazySingleton(() => CreateTrackingLinkUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => CompleteDeliveryUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => FailDeliveryUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => WaiveHandoverUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => RevokeTrackingLinksUseCase(getIt<DeliveriesRepository>()));
+  getIt.registerLazySingleton(() => GetRestaurantOrderDeliveryUseCase(getIt<DeliveriesRepository>()));
   getIt.registerLazySingleton<FleetRepository>(() => FleetRepositoryImpl(getIt<Dio>(instanceName: _mainDioInstance)));
   getIt.registerLazySingleton(() => GetFleetUseCase(getIt<FleetRepository>()));
 
@@ -274,6 +281,7 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => LoginUseCase(getIt()));
   getIt.registerFactory(() => StartTelegramVerificationUseCase(getIt()));
   getIt.registerFactory(() => PollTelegramVerificationUseCase(getIt()));
+  getIt.registerFactory(() => TelegramNotificationsUseCase(getIt()));
   getIt.registerFactory(() => LogoutUseCase(getIt()));
   getIt.registerFactory(() => GetCurrentUserUseCase(getIt()));
   getIt.registerFactory(() => UpdateProfileUseCase(getIt()));

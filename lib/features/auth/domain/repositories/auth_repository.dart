@@ -1,6 +1,7 @@
 import 'package:bsmart/core/network/result.dart';
 import 'package:bsmart/features/auth/domain/entities/auth_result.dart';
 import 'package:bsmart/features/auth/domain/entities/session.dart';
+import 'package:bsmart/features/auth/domain/entities/telegram_notification_settings.dart';
 import 'package:bsmart/features/auth/domain/entities/telegram_verification.dart';
 import 'package:bsmart/features/auth/domain/entities/user.dart';
 
@@ -18,6 +19,9 @@ abstract class AuthRepository {
   /// One poll of a started verification. On [TelegramVerified] the session
   /// has already been saved to secure storage.
   Future<Result<TelegramVerificationStatus>> pollTelegramVerification(TelegramVerification verification);
+
+  /// Delivery notifications via the verify bot; [enabled] null = just read.
+  Future<Result<TelegramNotificationSettings>> telegramNotifications({bool? enabled});
 
   /// Restores a session from secure storage on app cold-start, if a valid
   /// (non-expired, by claim) access token exists. Does not hit the network.

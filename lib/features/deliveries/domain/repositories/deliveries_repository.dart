@@ -26,6 +26,15 @@ abstract interface class DeliveriesRepository {
 
   Future<Result<Delivery>> advance(String id, DeliveryAction action);
 
+  // ─── Courier outcomes (Phase 7 N2/N3) ───
+  /// [code] is required while `handover.pending`.
+  Future<Result<Delivery>> complete(String id, {String? code});
+
+  Future<Result<Delivery>> fail(String id, DeliveryFailReason reason, {String? note});
+
+  /// The delivery of a restaurant order, or null before a courier accepts it.
+  Future<Result<Delivery?>> byRestaurantOrder(String restaurantOrderId);
+
   Future<Result<DeliveryRoute?>> route(String id);
 
   // ─── Owner/admin (B2C orders) ───
@@ -37,7 +46,11 @@ abstract interface class DeliveriesRepository {
   /// Only before acceptance; null clears back to an open offer.
   Future<Result<Delivery>> reassign(String id, {String? courierId});
 
-  Future<Result<Delivery>> cancel(String id);
+  Future<Result<Delivery>> cancel(String id, {String? reason});
+
+  Future<Result<Delivery>> waiveHandover(String id);
+
+  Future<Result<int>> revokeTrackingLinks(String id);
 
   // ─── Restaurant staff (Phase 6 V6) ───
   /// Public tracking link for a phone/walk-in restaurant customer without the app.

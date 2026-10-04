@@ -14,7 +14,8 @@ class DeliveryDetailNotifier extends AutoDisposeFamilyAsyncNotifier<Delivery, St
   Future<Delivery> build(String id) async {
     final events = getIt<TrackingSocket>()
         .events
-        .where((e) => e.name == 'delivery:status' && e.data['deliveryId'] == id)
+        // `delivery:handover` = staff waived the code (Phase 7 N2): the courier's prompt goes away.
+        .where((e) => (e.name == 'delivery:status' || e.name == 'delivery:handover') && e.data['deliveryId'] == id)
         .listen((_) => refresh());
     ref.onDispose(events.cancel);
     return _fetch(id);
@@ -29,6 +30,18 @@ class DeliveryDetailNotifier extends AutoDisposeFamilyAsyncNotifier<Delivery, St
     final next = await AsyncValue.guard(() => _fetch(arg));
     if (next.hasError && state.hasValue) return;
     state = next;
+  }
+
+  Future<ApiException?> complete({String? code}) async {
+    final failure = await ref.read(courierDeliveriesProvider.notifier).complete(arg, code: code);
+    await refresh();
+    return failure;
+  }
+
+  Future<ApiException?> fail(DeliveryFailReason reason, {String? note}) async {
+    final failure = await ref.read(courierDeliveriesProvider.notifier).fail(arg, reason, note: note);
+    await refresh();
+    return failure;
   }
 
   /// Runs a courier step through the list notifier (so the list and the

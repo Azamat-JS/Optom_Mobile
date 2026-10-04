@@ -9,6 +9,31 @@ LatLngPoint? _point(Object? json) {
 
 DateTime? _date(Object? v) => v is String ? DateTime.parse(v).toLocal() : null;
 
+DeliveryHandover _handover(Object? json) {
+  if (json is! Map<String, dynamic>) return DeliveryHandover.none;
+  final code = json['code'] as String?;
+  return DeliveryHandover(
+    required: json['required'] as bool? ?? false,
+    // The customer view has no `pending`: a code being shown means it's pending.
+    pending: json['pending'] as bool? ?? code != null,
+    attemptsLeft: (json['attemptsLeft'] as num?)?.toInt() ?? 5,
+    locked: json['locked'] as bool? ?? false,
+    waived: json['waivedAt'] != null,
+    code: code,
+  );
+}
+
+DeliveryOutcomeLocation? _outcome(Object? json) {
+  final point = _point(json);
+  if (point == null) return null;
+  final map = json! as Map<String, dynamic>;
+  return DeliveryOutcomeLocation(
+    point: point,
+    at: _date(map['at']),
+    distanceToDropoffMeters: (map['distanceToDropoffMeters'] as num?)?.toInt(),
+  );
+}
+
 Delivery deliveryFromJson(Map<String, dynamic> json) {
   final courier = json['courier'] as Map<String, dynamic>?;
   final eta = json['eta'] as Map<String, dynamic>?;
@@ -41,5 +66,11 @@ Delivery deliveryFromJson(Map<String, dynamic> json) {
     pickedUpAt: _date(json['pickedUpAt']),
     arrivedAt: _date(json['arrivedAt']),
     deliveredAt: _date(json['deliveredAt']),
+    failedAt: _date(json['failedAt']),
+    failReason: DeliveryFailReason.fromWire(json['failReason']),
+    failNote: json['failNote'] as String?,
+    cancelReason: json['cancelReason'] as String?,
+    handover: _handover(json['handover']),
+    outcomeLocation: _outcome(json['outcomeLocation']),
   );
 }

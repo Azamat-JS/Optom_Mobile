@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/features/auth/presentation/widgets/telegram_notifications_tile.dart';
 import 'package:bsmart/features/auth/presentation/widgets/verify_phone_banner.dart';
 
 /// The "Profil" tab — a guest sees login/register entry points; a logged-in
@@ -75,6 +76,8 @@ class StorefrontProfileTab extends ConsumerWidget {
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.push(RouteNames.customerDebts),
         ),
+        const Divider(),
+        const TelegramNotificationsTile(),
         const Divider(),
         ListTile(
           leading: const Icon(Icons.logout),

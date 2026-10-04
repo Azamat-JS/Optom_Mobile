@@ -1325,6 +1325,89 @@ Optom_Savdo CLAUDE.md "Telegram phone verification" → V5.
   with a Prisma script. The bot side itself is covered by the V2 e2e. A real Telegram round trip needs
   a device with Telegram.
 
+### Phase 7 — Delivery notifications, handover code, reliability (mobile + backend, not web)
+Decided 2026-10-04. Full plan: `~/.claude/plans/phase-7-delivery-notifications.md`. The verify bot
+(which every Telegram-verified customer has started) becomes the notification channel, so no push
+SDK is needed. The backend changes stay additive inside Optom_Savdo's `deliveries/`,
+`delivery-sync/`, `tracking/` and `phone-verification/`.
+
+| # | Milestone | Status |
+|---|---|---|
+| N1 | Customer Telegram status notifications via the verify bot (accepted → picked up → arrived → delivered/cancelled, live-map link button, opt-out, de-dup log) | 🟢 Done 2026-10-04 (backend only, no app change): 8 unit tests + 10-check in-process e2e with Telegram stubbed. A real Telegram round trip on a phone is still pending. See Optom_Savdo CLAUDE.md "Delivery notifications (Phase 7 N1)" |
+| N2 | Delivery outcomes: `FAILED` + reasons, cancel reason, 4-digit handover code (sent via N1, required to complete when enabled) | 🟢 Done 2026-10-04 (backend only): 11-check e2e + unit tests. The store setting defaults off, so the current app is unaffected. See Optom_Savdo CLAUDE.md "Delivery outcomes + handover code (Phase 7 N2)". **N3 must:** add `failed('FAILED', …)` to `DeliveryStatus` (unknown values currently fall back to `pending` and `isTerminal` misses it); send `{code}` on complete and branch on 400/422/423; add the fail action (`PATCH :id/fail`); listen for `delivery:handover`; show the customer's `handover.code`; add the store `requireHandoverCode` toggle and the staff waive button |
+| N3 | bsmart UI: courier code entry + "Yetkazib bo'lmadi", customer sees code + notification toggle, owner sees reasons + revoke-link button | 🟢 Done 2026-10-04: verified live on the Android emulator against the real API (see "Phase 7 N3 notes") + 6 model tests (28 flutter tests total) |
+| N4 | Courier Telegram alerts for new assignments/offers (courier links Telegram from the app) | 🟢 Done 2026-10-04: courier AppBar bell (`CourierAlertsButton`) links Telegram through the existing verify flow; backend 10-check e2e; emulator: unlinked → Ulash → verify → linked → switch on (see Optom_Savdo CLAUDE.md "Courier Telegram alerts (Phase 7 N4)") |
+| N5 | GPS offline buffer (Flutter queue + backend accepts late points) | 🟢 Done 2026-10-04: `LocationOutbox` (Hive, ≤ 1000 fixes, ≤ 29 min) + `location:batch`; emulator airplane-mode run showed no gap in the route history (see Optom_Savdo CLAUDE.md "Offline GPS backlog (Phase 7 N5)") |
+| N6 | Release readiness on real devices (user-run): Maps key restrictions, iOS background location, OEM battery killers, `noGpsFix`, prod tracking URL + nginx `/t/` | ⬜ |
+
+**Phase 7 N3 notes (bsmart, 2026-10-04):**
+- **Model:**
+  - `DeliveryStatus.failed` (terminal). `isWithCourier` = PICKED_UP/ARRIVED.
+  - `DeliveryFailReason` enum with Uzbek labels.
+  - `Delivery` gained `failedAt/failReason/failNote/cancelReason`, `handover` (a
+    `DeliveryHandover`: staff/courier get `pending/attemptsLeft/locked/waived`; the customer gets
+    `code`) and `outcomeLocation`.
+  - `Store.requireHandoverCode`.
+  - Unknown statuses still fall back to `pending`, and old payloads parse.
+- **Courier (`CourierDeliveryScreen`):**
+  - "Topshirdim" opens `HandoverCodeSheet` when `handover.pending`; otherwise the old confirm.
+  - The sheet watches the delivery itself, so tries left and locked come from the server.
+  - It also **holds the tracking socket** while open and refreshes on open, so a staff waiver
+    (`delivery:handover`) arrives even when the courier is offline. This was a real gap found
+    live: without the hold, an offline courier never saw the waiver.
+  - When locked the sheet offers "Qayta tekshirish".
+  - "Yetkazib bo'lmadi" (PICKED_UP/ARRIVED) opens `FailDeliverySheet` (reason radio + note,
+    required for OTHER).
+- **Customer:**
+  - `HandoverCodeCard` appears on `DeliveryTrackingScreen` and on `OrderDeliveryCard`.
+  - A failed delivery shows its reason.
+  - Profil → `TelegramNotificationsTile`: a switch when linked; when not linked, "Ulash" opens the
+    verify-phone flow, which links the chat.
+- **Owner/admin:**
+  - The shared `DeliveryOutcomeSection` shows the fail reason, note, distance from the drop-off,
+    cancel reason, and code status, with "Kodsiz topshirishga ruxsat" (waive).
+  - It's used on `OrderDeliveryCard` (B2C; FAILED offers reopen and cancel; the cancel dialog takes
+    an optional reason) and on `RestaurantOrderDetailScreen`. That screen now loads its delivery
+    via `by-restaurant-order` and adds "Kuzatish havolalarini bekor qilish" (revoke links).
+  - The store edit dialog has a "Topshirish kodi" switch (owners with couriers; edit only) and is
+    now `scrollable`.
+- **Verified live on the emulator** (Pixel_9a, real API, Telegram sending off):
+  - Courier: code hint; wrong code → "Yana 4 ta urinish qoldi"; API waiver arrives live in the
+    open sheet → "Ha, topshirdim" → DELIVERED; right code (3913) → DELIVERED with
+    `handoverVerifiedAt`; fail with OTHER + note → FAILED in the DB.
+  - Customer: the tile toggles `telegramNotifyOffAt` both ways; the list shows "Yetkazib
+    bo'lmadi"; the tracking screen shows the code, which matches the DB.
+  - Owner: the card shows the reason, note and waiver with reopen and cancel; cancel with a reason
+    is stored and shown; the store switch saves without clearing the pickup pin.
+  - **Not exercised live:** the restaurant screen's outcome section and the revoke button. The same
+    widget was live-tested on the B2C card, and the endpoints are covered by e2e.
+- **N4 (courier alerts):**
+  - `CourierAlertsButton` sits in `CourierHomeScreen`'s AppBar. The icon shows not linked / on /
+    off. It opens `TelegramNotificationsTile` (courier wording, via the tile's new `enabledText` /
+    `linkText`) in a sheet and re-reads the setting each time it opens.
+  - The tile's "Ulash" now invalidates the provider when the verify screen closes. An
+    already-verified account doesn't change `phoneVerified`, so nothing else would notice the new
+    link.
+- **N5 (offline GPS backlog):**
+  - `core/location/location_outbox.dart`: `LocationOutbox` over an `OutboxStore`, with Hive box
+    `bsmart.location_outbox` in the app and memory in tests.
+    - Fixes are kept in order. A fix that isn't newer is ignored.
+    - Bounded to 1000 fixes (oldest dropped) and 29 min, matching the server's 30-min window.
+    - It persists across an app restart.
+  - `TrackingNotifier._onFix`: the send policy now compares against `_lastPiped` (last sent *or*
+    queued). With no session, or while the backlog is non-empty, a fix is queued, so points stay
+    in order. A live send that times out is queued too.
+  - `_flush()` runs after every successful `tracking:start`. It sends acked batches of 100 with
+    600 ms spacing (the server's rate limit). Points are removed only once acked; a malformed
+    batch is dropped, and `no_session` restarts the session.
+  - `goOffline` (and so logout) **clears** the backlog: nothing from a sharing period is sent after
+    the courier switched off. This matches the disclosure text "Oflayn paytida joylashuvingiz
+    yuborilmaydi".
+  - Tests: 7 outbox unit tests (35 flutter tests).
+- **Emulator tip:** `adb install` failed once with `INSUFFICIENT_STORAGE`. `adb shell pm trim-caches
+  9999G` fixes it. Escape (keyevent 111) dismisses Flutter bottom sheets, so don't use it to hide
+  the keyboard there.
+
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
 priority) a real-time layer — all as **new NestJS + PostgreSQL infrastructure**, never a

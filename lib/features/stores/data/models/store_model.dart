@@ -12,5 +12,6 @@ Store storeFromJson(Map<String, dynamic> json) => Store(
           : null,
       isActive: json['isActive'] as bool? ?? true,
       isDefault: json['isDefault'] as bool? ?? false,
+      requireHandoverCode: json['requireHandoverCode'] as bool? ?? false,
       createdAt: DateTime.parse(json['createdAt'] as String),
     );

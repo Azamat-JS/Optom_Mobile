@@ -22,7 +22,7 @@ class CreateStoreParams {
 /// convention already used by `UpdateCustomerParams` elsewhere in this app —
 /// so an empty string here is sent as `null` to actually clear it.
 class UpdateStoreParams {
-  const UpdateStoreParams({this.name, this.address, this.location});
+  const UpdateStoreParams({this.name, this.address, this.location, this.requireHandoverCode});
 
   final String? name;
   final String? address;
@@ -30,8 +30,12 @@ class UpdateStoreParams {
   /// Resubmitted like [address]: null clears the pickup pin.
   final GeoPoint? location;
 
+  /// Omitted (unchanged) when null.
+  final bool? requireHandoverCode;
+
   Map<String, dynamic> toRequestBody() => {
         if (name != null) 'name': name,
+        'requireHandoverCode': ?requireHandoverCode,
         'address': (address == null || address!.isEmpty) ? null : address,
         'latitude': location?.lat,
         'longitude': location?.lng,

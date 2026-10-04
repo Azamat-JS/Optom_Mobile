@@ -7,7 +7,9 @@ enum DeliveryStatus {
   pickedUp('PICKED_UP', 'Yo\'lda'),
   arrived('ARRIVED', 'Yetib keldi'),
   delivered('DELIVERED', 'Topshirildi'),
-  cancelled('CANCELLED', 'Bekor qilingan');
+  cancelled('CANCELLED', 'Bekor qilingan'),
+  // Phase 7 N2: the courier tried and couldn't hand it over (see [Delivery.failReason]).
+  failed('FAILED', "Yetkazib bo'lmadi");
 
   const DeliveryStatus(this.wire, this.label);
 
@@ -22,7 +24,63 @@ enum DeliveryStatus {
   /// Courier's location is streamed to viewers only in these states.
   bool get isActive => this == accepted || this == pickedUp || this == arrived;
 
-  bool get isTerminal => this == delivered || this == cancelled;
+  bool get isTerminal => this == delivered || this == cancelled || this == failed;
+
+  /// Courier still has the order: it can be completed or failed from here.
+  bool get isWithCourier => this == pickedUp || this == arrived;
+}
+
+/// Why the courier couldn't hand it over (`PATCH /deliveries/:id/fail`).
+enum DeliveryFailReason {
+  notHome('NOT_HOME', "Mijoz manzilda yo'q"),
+  refused('REFUSED', 'Mijoz qabul qilmadi'),
+  wrongAddress('WRONG_ADDRESS', "Manzil noto'g'ri"),
+  other('OTHER', 'Boshqa sabab');
+
+  const DeliveryFailReason(this.wire, this.label);
+
+  final String wire;
+  final String label;
+
+  static DeliveryFailReason? fromWire(Object? value) =>
+      values.where((r) => r.wire == value).firstOrNull;
+}
+
+/// The customer's 4-digit handover code (Phase 7 N2). Staff and the courier get the status only;
+/// the customer gets [code] — and only while the courier has the order.
+class DeliveryHandover {
+  const DeliveryHandover({
+    this.required = false,
+    this.pending = false,
+    this.attemptsLeft = 5,
+    this.locked = false,
+    this.waived = false,
+    this.code,
+  });
+
+  final bool required;
+
+  /// Completing still needs the code (required, not entered, not waived).
+  final bool pending;
+  final int attemptsLeft;
+
+  /// Too many wrong tries — only a staff waiver unlocks it.
+  final bool locked;
+  final bool waived;
+
+  /// Customer view only.
+  final String? code;
+
+  static const none = DeliveryHandover();
+}
+
+/// Where the courier was when they completed / failed it (staff view).
+class DeliveryOutcomeLocation {
+  const DeliveryOutcomeLocation({required this.point, this.at, this.distanceToDropoffMeters});
+
+  final LatLngPoint point;
+  final DateTime? at;
+  final int? distanceToDropoffMeters;
 }
 
 enum DeliverySource { order, restaurantOrder }
@@ -73,6 +131,12 @@ class Delivery {
     this.pickedUpAt,
     this.arrivedAt,
     this.deliveredAt,
+    this.failedAt,
+    this.failReason,
+    this.failNote,
+    this.cancelReason,
+    this.handover = DeliveryHandover.none,
+    this.outcomeLocation,
   });
 
   final String id;
@@ -93,6 +157,16 @@ class Delivery {
   final DateTime? pickedUpAt;
   final DateTime? arrivedAt;
   final DateTime? deliveredAt;
+  final DateTime? failedAt;
+  final DeliveryFailReason? failReason;
+
+  /// Courier's own words — staff/courier view only.
+  final String? failNote;
+
+  /// Staff-only.
+  final String? cancelReason;
+  final DeliveryHandover handover;
+  final DeliveryOutcomeLocation? outcomeLocation;
 
   /// Short label for notifications/sheets: "#ORD-123".
   String get label => orderNumber != null ? '#$orderNumber' : 'Yetkazish';

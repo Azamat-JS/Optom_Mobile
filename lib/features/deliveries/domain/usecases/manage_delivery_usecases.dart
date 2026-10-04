@@ -36,7 +36,31 @@ class CancelDeliveryUseCase {
 
   final DeliveriesRepository _repository;
 
-  Future<Result<Delivery>> call(String id) => _repository.cancel(id);
+  Future<Result<Delivery>> call(String id, {String? reason}) => _repository.cancel(id, reason: reason);
+}
+
+class WaiveHandoverUseCase {
+  WaiveHandoverUseCase(this._repository);
+
+  final DeliveriesRepository _repository;
+
+  Future<Result<Delivery>> call(String id) => _repository.waiveHandover(id);
+}
+
+class RevokeTrackingLinksUseCase {
+  RevokeTrackingLinksUseCase(this._repository);
+
+  final DeliveriesRepository _repository;
+
+  Future<Result<int>> call(String id) => _repository.revokeTrackingLinks(id);
+}
+
+class GetRestaurantOrderDeliveryUseCase {
+  GetRestaurantOrderDeliveryUseCase(this._repository);
+
+  final DeliveriesRepository _repository;
+
+  Future<Result<Delivery?>> call(String restaurantOrderId) => _repository.byRestaurantOrder(restaurantOrderId);
 }
 
 class CreateTrackingLinkUseCase {

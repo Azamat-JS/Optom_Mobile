@@ -38,6 +38,17 @@ class DeliveriesRemoteDataSource {
     }
   }
 
+  /// 404 → null: a restaurant order has a delivery only once a courier accepts it.
+  Future<Delivery?> byRestaurantOrder(String restaurantOrderId) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>('/deliveries/by-restaurant-order/$restaurantOrderId');
+      return deliveryFromJson(response.data!);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return null;
+      rethrow;
+    }
+  }
+
   Future<DeliveryRoute?> route(String id) async {
     final response = await _dio.get<Map<String, dynamic>>('/deliveries/$id/route');
     final route = response.data!['route'];
@@ -74,9 +85,42 @@ class DeliveriesRemoteDataSource {
     return deliveryFromJson(response.data!);
   }
 
-  Future<Delivery> cancel(String id) async {
-    final response = await _dio.patch<Map<String, dynamic>>('/deliveries/$id/cancel');
+  Future<Delivery> cancel(String id, {String? reason}) async {
+    final response = await _dio.patch<Map<String, dynamic>>(
+      '/deliveries/$id/cancel',
+      data: {if (reason != null && reason.trim().isNotEmpty) 'reason': reason.trim()},
+    );
     return deliveryFromJson(response.data!);
+  }
+
+  /// [code] — the customer's handover code when `handover.pending`.
+  /// 400 missing / 422 wrong (message says how many tries are left) / 423 locked.
+  Future<Delivery> complete(String id, {String? code}) async {
+    final response = await _dio.patch<Map<String, dynamic>>(
+      '/deliveries/$id/complete',
+      data: {'code': ?code},
+    );
+    return deliveryFromJson(response.data!);
+  }
+
+  Future<Delivery> fail(String id, DeliveryFailReason reason, {String? note}) async {
+    final response = await _dio.patch<Map<String, dynamic>>(
+      '/deliveries/$id/fail',
+      data: {'reason': reason.wire, if (note != null && note.trim().isNotEmpty) 'note': note.trim()},
+    );
+    return deliveryFromJson(response.data!);
+  }
+
+  /// Owner/admin: let the courier finish without the customer's code.
+  Future<Delivery> waiveHandover(String id) async {
+    final response = await _dio.patch<Map<String, dynamic>>('/deliveries/$id/handover/waive');
+    return deliveryFromJson(response.data!);
+  }
+
+  /// Owner/admin: every shared public link of the delivery stops working.
+  Future<int> revokeTrackingLinks(String id) async {
+    final response = await _dio.delete<Map<String, dynamic>>('/deliveries/$id/tracking-links');
+    return (response.data?['revoked'] as num?)?.toInt() ?? 0;
   }
 
   Future<Delivery> advance(String id, DeliveryAction action) async {

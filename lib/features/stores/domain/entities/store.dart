@@ -11,6 +11,7 @@ class Store {
     this.location,
     required this.isActive,
     required this.isDefault,
+    this.requireHandoverCode = false,
     required this.createdAt,
   });
 
@@ -22,5 +23,8 @@ class Store {
   final GeoPoint? location;
   final bool isActive;
   final bool isDefault;
+
+  /// Couriers must enter the customer's 4-digit code to complete a delivery (Phase 7 N2).
+  final bool requireHandoverCode;
   final DateTime createdAt;
 }

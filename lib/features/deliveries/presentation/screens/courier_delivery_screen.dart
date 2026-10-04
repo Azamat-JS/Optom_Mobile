@@ -17,6 +17,7 @@ import 'package:bsmart/features/deliveries/domain/repositories/deliveries_reposi
 import 'package:bsmart/features/deliveries/presentation/delivery_actions.dart';
 import 'package:bsmart/features/deliveries/presentation/providers/delivery_detail_notifier.dart';
 import 'package:bsmart/features/deliveries/presentation/providers/delivery_route_notifier.dart';
+import 'package:bsmart/features/deliveries/presentation/widgets/courier_outcome_sheets.dart';
 import 'package:bsmart/features/deliveries/presentation/widgets/delivery_status_badge.dart';
 import 'package:bsmart/features/tracking/presentation/providers/tracking_notifier.dart';
 import 'package:bsmart/features/tracking/presentation/tracking_actions.dart';
@@ -97,16 +98,62 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
   }
 
   Future<void> _run(DeliveryAction action) async {
+    if (action == DeliveryAction.complete) return _complete();
     setState(() => _busy = true);
     final failure = await ref.read(deliveryDetailProvider(widget.deliveryId).notifier).advance(action);
     if (!mounted) return;
     setState(() => _busy = false);
+    if (failure != null) DeliveryActions.showError(context, failure.message);
+  }
+
+  /// With a pending handover code the code sheet does the completing (it shows tries left / locked
+  /// / a staff waiver live); otherwise the usual confirm (Phase 7 N2).
+  Future<void> _complete() async {
+    final d = ref.read(deliveryDetailProvider(widget.deliveryId)).valueOrNull;
+    if (d == null) return;
+    bool done;
+    if (d.handover.pending) {
+      done = await HandoverCodeSheet.show(context, d.id);
+    } else {
+      if (!await DeliveryActions.confirmComplete(context, d) || !mounted) return;
+      setState(() => _busy = true);
+      final failure = await ref.read(deliveryDetailProvider(widget.deliveryId).notifier).complete();
+      if (!mounted) return;
+      setState(() => _busy = false);
+      if (failure != null) {
+        // The store may have just switched the code on — reopen as the code prompt.
+        final fresh = ref.read(deliveryDetailProvider(widget.deliveryId)).valueOrNull;
+        if (fresh != null && fresh.handover.pending && mounted) {
+          done = await HandoverCodeSheet.show(context, fresh.id);
+        } else {
+          DeliveryActions.showError(context, failure.message);
+          return;
+        }
+      } else {
+        done = true;
+      }
+    }
+    if (!done || !mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Yetkazish yakunlandi')));
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _fail() async {
+    final choice = await FailDeliverySheet.show(context);
+    if (choice == null || !mounted) return;
+    setState(() => _busy = true);
+    final failure =
+        await ref.read(deliveryDetailProvider(widget.deliveryId).notifier).fail(choice.$1, note: choice.$2);
+    if (!mounted) return;
+    setState(() => _busy = false);
     if (failure != null) {
       DeliveryActions.showError(context, failure.message);
-    } else if (action == DeliveryAction.complete) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Yetkazish yakunlandi')));
-      Navigator.of(context).pop();
+      return;
     }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Belgilandi: yetkazib bo'lmadi. Buyurtmani do'konga qaytaring.")),
+    );
+    Navigator.of(context).pop();
   }
 
   @override
@@ -162,7 +209,7 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
                 left: 0,
                 right: 0,
                 bottom: 0,
-                child: _BottomPanel(delivery: d, route: route, busy: _busy, onAction: _run)
+                child: _BottomPanel(delivery: d, route: route, busy: _busy, onAction: _run, onFail: _fail)
                     .animate()
                     .slideY(begin: 0.3, duration: AppMotion.standard, curve: AppMotion.emphasized)
                     .fadeIn(duration: AppMotion.standard),
@@ -276,7 +323,13 @@ class _OfflineBanner extends ConsumerWidget {
 }
 
 class _BottomPanel extends ConsumerWidget {
-  const _BottomPanel({required this.delivery, required this.route, required this.busy, required this.onAction});
+  const _BottomPanel({
+    required this.delivery,
+    required this.route,
+    required this.busy,
+    required this.onAction,
+    required this.onFail,
+  });
 
   static const estimatedHeight = 280.0;
 
@@ -284,6 +337,14 @@ class _BottomPanel extends ConsumerWidget {
   final DeliveryRoute? route;
   final bool busy;
   final Future<void> Function(DeliveryAction action) onAction;
+  final Future<void> Function() onFail;
+
+  static String _title(Delivery d, bool toPickup) => switch (d.status) {
+        DeliveryStatus.failed => "Yetkazib bo'lmadi",
+        DeliveryStatus.cancelled => 'Yetkazish bekor qilindi',
+        _ when d.status.isTerminal => 'Yetkazish yakunlangan',
+        _ => toPickup ? "Do'konga boring" : 'Mijozga yetkazing',
+      };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -308,7 +369,7 @@ class _BottomPanel extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      d.status.isTerminal ? 'Yetkazish yakunlangan' : (toPickup ? "Do'konga boring" : 'Mijozga yetkazing'),
+                      _title(d, toPickup),
                       style: theme.textTheme.titleMedium,
                     ),
                   ),
@@ -316,6 +377,32 @@ class _BottomPanel extends ConsumerWidget {
                 ],
               ),
               if (route != null && !d.status.isTerminal) _EtaRow(route: route!),
+              if (d.status == DeliveryStatus.failed && d.failReason != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    [d.failReason!.label, if (d.failNote?.isNotEmpty ?? false) d.failNote!].join(' — '),
+                    style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error),
+                  ),
+                ),
+              if (d.handover.pending && d.status.isWithCourier)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Row(
+                    children: [
+                      Icon(Icons.pin_outlined, size: 18, color: theme.colorScheme.tertiary),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          d.handover.locked
+                              ? "Kod bloklangan — do'konga qo'ng'iroq qiling"
+                              : "Topshirishda mijozdan 4 xonali kodni so'rang",
+                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.tertiary),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               const SizedBox(height: 10),
               _Stop(
                 icon: Icons.storefront_outlined,
@@ -352,13 +439,22 @@ class _BottomPanel extends ConsumerWidget {
                     Expanded(child: _primary(context, ref)),
                   ],
                 ),
-                if (d.status == DeliveryStatus.pickedUp)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: busy ? null : () => _complete(context),
-                      child: const Text('Topshirdim'),
-                    ),
+                if (d.status.isWithCourier)
+                  Row(
+                    children: [
+                      TextButton.icon(
+                        style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
+                        onPressed: busy ? null : onFail,
+                        icon: const Icon(Icons.report_outlined, size: 18),
+                        label: const Text("Yetkazib bo'lmadi"),
+                      ),
+                      const Spacer(),
+                      if (d.status == DeliveryStatus.pickedUp)
+                        TextButton(
+                          onPressed: busy ? null : () => onAction(DeliveryAction.complete),
+                          child: const Text('Topshirdim'),
+                        ),
+                    ],
                   ),
               ],
             ],
@@ -366,10 +462,6 @@ class _BottomPanel extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _complete(BuildContext context) async {
-    if (await DeliveryActions.confirmComplete(context, delivery)) await onAction(DeliveryAction.complete);
   }
 
   Widget _primary(BuildContext context, WidgetRef ref) {
@@ -381,7 +473,7 @@ class _BottomPanel extends ConsumerWidget {
         ),
       DeliveryStatus.accepted => ('Buyurtmani oldim', Icons.shopping_bag_outlined, () => onAction(DeliveryAction.pickup)),
       DeliveryStatus.pickedUp => ('Yetib keldim', Icons.flag_outlined, () => onAction(DeliveryAction.arrive)),
-      _ => ('Topshirdim', Icons.task_alt, () => _complete(context)),
+      _ => ('Topshirdim', Icons.task_alt, () => onAction(DeliveryAction.complete)),
     };
     return FilledButton.icon(
       onPressed: busy ? null : run,

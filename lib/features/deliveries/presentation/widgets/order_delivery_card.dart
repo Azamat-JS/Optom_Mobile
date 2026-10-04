@@ -11,7 +11,9 @@ import 'package:bsmart/features/deliveries/presentation/delivery_actions.dart';
 import 'package:bsmart/features/deliveries/presentation/providers/order_delivery_notifier.dart';
 import 'package:bsmart/features/deliveries/presentation/screens/delivery_tracking_screen.dart';
 import 'package:bsmart/features/deliveries/presentation/widgets/assign_courier_sheet.dart';
+import 'package:bsmart/features/deliveries/presentation/widgets/delivery_outcome_section.dart';
 import 'package:bsmart/features/deliveries/presentation/widgets/delivery_status_badge.dart';
+import 'package:bsmart/features/deliveries/presentation/widgets/handover_code_card.dart';
 
 /// Courier-delivery summary on an order's detail screen, with "Kuryerni
 /// kuzatish" while the courier is on the way.
@@ -39,6 +41,7 @@ class OrderDeliveryCard extends ConsumerWidget {
         DeliveryStatus.arrived => 'Kuryer yetib keldi!',
         DeliveryStatus.delivered => 'Buyurtma topshirildi',
         DeliveryStatus.cancelled => 'Yetkazish bekor qilindi',
+        DeliveryStatus.failed => "Yetkazib bo'lmadi",
       };
 
   @override
@@ -84,6 +87,24 @@ class OrderDeliveryCard extends ConsumerWidget {
                 const SizedBox(height: 6),
                 Text('Kuryer: ${delivery.courier!.firstName}', style: theme.textTheme.bodyMedium),
               ],
+              if (canManage)
+                DeliveryOutcomeSection(
+                  delivery: delivery,
+                  onChanged: () => ref.invalidate(orderDeliveryProvider(orderId)),
+                )
+              else ...[
+                if (delivery.handover.code != null) ...[
+                  const SizedBox(height: 10),
+                  HandoverCodeCard(code: delivery.handover.code!),
+                ],
+                if (delivery.status == DeliveryStatus.failed) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    "${delivery.failReason?.label ?? 'Topshirib bo\'lmadi'}. Do'kon siz bilan bog'lanadi.",
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ],
+              ],
               if (canManage && delivery.status.isOffer) ...[
                 const SizedBox(height: 10),
                 Row(
@@ -99,12 +120,26 @@ class OrderDeliveryCard extends ConsumerWidget {
                   ],
                 ),
               ],
-              if (canManage && canAssign && delivery.status == DeliveryStatus.cancelled) ...[
+              // Reopen after a cancel or a failed attempt (Phase 7 N2); a failed one can also be
+              // given up on.
+              if (canManage &&
+                  canAssign &&
+                  (delivery.status == DeliveryStatus.cancelled || delivery.status == DeliveryStatus.failed)) ...[
                 const SizedBox(height: 10),
-                FilledButton.tonalIcon(
-                  onPressed: () => _assign(context, ref, null),
-                  icon: const Icon(Icons.replay),
-                  label: const Text('Qayta kuryerga berish'),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton.tonalIcon(
+                        onPressed: () => _assign(context, ref, null),
+                        icon: const Icon(Icons.replay),
+                        label: const Text('Qayta kuryerga berish'),
+                      ),
+                    ),
+                    if (delivery.status == DeliveryStatus.failed) ...[
+                      const SizedBox(width: 8),
+                      TextButton(onPressed: () => _cancel(context, ref, delivery), child: const Text('Bekor qilish')),
+                    ],
+                  ],
                 ),
               ],
               if (trackable) ...[
@@ -150,21 +185,52 @@ class OrderDeliveryCard extends ConsumerWidget {
   }
 
   Future<void> _cancel(BuildContext context, WidgetRef ref, Delivery delivery) async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Yetkazishni bekor qilish?'),
-        content: const Text('Kuryer bu buyurtmani endi ko\'rmaydi. Keyin qayta berishingiz mumkin.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Yo'q")),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Bekor qilish')),
-        ],
-      ),
-    );
-    if (ok != true) return;
-    final result = await getIt<CancelDeliveryUseCase>().call(delivery.id);
+    final reason = await showDialog<String>(context: context, builder: (_) => const _CancelReasonDialog());
+    if (reason == null) return;
+    final result = await getIt<CancelDeliveryUseCase>().call(delivery.id, reason: reason);
     ref.invalidate(orderDeliveryProvider(orderId));
     if (!context.mounted) return;
     result.fold((_) => null, (failure) => DeliveryActions.showError(context, failure.message));
   }
+}
+
+/// Cancel confirmation with an optional reason (staff-only, Phase 7 N2). Pops the reason ('' when
+/// left empty) or null when dismissed.
+class _CancelReasonDialog extends StatefulWidget {
+  const _CancelReasonDialog();
+
+  @override
+  State<_CancelReasonDialog> createState() => _CancelReasonDialogState();
+}
+
+class _CancelReasonDialogState extends State<_CancelReasonDialog> {
+  final _reason = TextEditingController();
+
+  @override
+  void dispose() {
+    _reason.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        title: const Text('Yetkazishni bekor qilish?'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Kuryer bu buyurtmani endi ko'rmaydi. Keyin qayta berishingiz mumkin."),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _reason,
+              maxLength: 300,
+              decoration: const InputDecoration(labelText: 'Sabab (ixtiyoriy)', border: OutlineInputBorder()),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Yo'q")),
+          FilledButton(onPressed: () => Navigator.pop(context, _reason.text.trim()), child: const Text('Bekor qilish')),
+        ],
+      );
 }

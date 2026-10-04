@@ -19,6 +19,7 @@ import 'package:bsmart/features/deliveries/domain/entities/delivery_route.dart';
 import 'package:bsmart/features/deliveries/presentation/delivery_actions.dart';
 import 'package:bsmart/features/deliveries/presentation/providers/delivery_detail_notifier.dart';
 import 'package:bsmart/features/deliveries/presentation/providers/delivery_route_notifier.dart';
+import 'package:bsmart/features/deliveries/presentation/widgets/handover_code_card.dart';
 import 'package:bsmart/features/deliveries/presentation/widgets/order_delivery_card.dart';
 
 /// "Where is my courier?" — the viewer's live map of one delivery (customer,
@@ -274,6 +275,18 @@ class _InfoPanel extends StatelessWidget {
                       )
                     : const SizedBox.shrink(),
               ),
+              if (d.status == DeliveryStatus.failed) ...[
+                const SizedBox(height: 4),
+                Text(
+                  "${d.failReason?.label ?? "Topshirib bo'lmadi"}. Do'kon siz bilan bog'lanadi.",
+                  style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error),
+                ),
+              ],
+              // Only the customer's view carries the code (Phase 7 N2).
+              if (d.handover.code != null) ...[
+                const SizedBox(height: 12),
+                HandoverCodeCard(code: d.handover.code!),
+              ],
               if (stale) ...[
                 const SizedBox(height: 4),
                 Row(

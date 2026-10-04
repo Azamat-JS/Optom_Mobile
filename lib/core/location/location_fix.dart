@@ -22,6 +22,15 @@ class LocationFix {
   /// Device fix time.
   final DateTime timestamp;
 
+  factory LocationFix.fromJson(Map<String, dynamic> json) => LocationFix(
+        lat: (json['lat'] as num).toDouble(),
+        lng: (json['lng'] as num).toDouble(),
+        accuracy: (json['accuracy'] as num?)?.toDouble(),
+        speed: (json['speed'] as num?)?.toDouble(),
+        heading: (json['heading'] as num?)?.toDouble(),
+        timestamp: DateTime.fromMillisecondsSinceEpoch((json['timestamp'] as num).toInt()),
+      );
+
   Map<String, dynamic> toJson() => {
         'lat': lat,
         'lng': lng,

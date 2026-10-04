@@ -9,6 +9,7 @@ import 'package:bsmart/features/auth/data/models/session_model.dart';
 import 'package:bsmart/features/auth/data/models/user_model.dart';
 import 'package:bsmart/features/auth/domain/entities/auth_result.dart';
 import 'package:bsmart/features/auth/domain/entities/session.dart';
+import 'package:bsmart/features/auth/domain/entities/telegram_notification_settings.dart';
 import 'package:bsmart/features/auth/domain/entities/telegram_verification.dart';
 import 'package:bsmart/features/auth/domain/entities/user.dart';
 import 'package:bsmart/features/auth/domain/repositories/auth_repository.dart';
@@ -30,6 +31,15 @@ class AuthRepositoryImpl implements AuthRepository {
       final session = sessionFromTokens(accessToken: accessToken, refreshToken: refreshToken);
       await _local.saveSession(session);
       return Result.ok(AuthResult(session: session, user: user));
+    } on DioException catch (e) {
+      return Result.err(mapDioException(e));
+    }
+  }
+
+  @override
+  Future<Result<TelegramNotificationSettings>> telegramNotifications({bool? enabled}) async {
+    try {
+      return Result.ok(await _remote.telegramNotifications(enabled: enabled));
     } on DioException catch (e) {
       return Result.err(mapDioException(e));
     }

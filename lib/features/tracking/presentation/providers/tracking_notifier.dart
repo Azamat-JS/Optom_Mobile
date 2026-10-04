@@ -7,6 +7,7 @@ import 'package:logger/logger.dart';
 
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/location/location_fix.dart';
+import 'package:bsmart/core/location/location_outbox.dart';
 import 'package:bsmart/core/location/location_tracker.dart';
 import 'package:bsmart/core/realtime/tracking_socket.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
@@ -27,6 +28,7 @@ class TrackingNotifier extends Notifier<TrackingState> {
 
   TrackingSocket get _socket => getIt<TrackingSocket>();
   LocationTracker get _tracker => getIt<LocationTracker>();
+  LocationOutbox get _outbox => getIt<LocationOutbox>();
 
   StreamSubscription<LocationFix>? _fixes;
   StreamSubscription<TrackingSocketState>? _socketStates;
@@ -35,11 +37,14 @@ class TrackingNotifier extends Notifier<TrackingState> {
 
   final _fixesController = StreamController<LocationFix>.broadcast();
   LocationFix? _lastFix;
-  LocationFix? _lastSent;
   DateTime? _lastFixAt;
   bool _sessionActive = false;
   bool _startedOnce = false;
   bool _sending = false;
+  bool _flushing = false;
+
+  /// Last fix that entered the pipeline (sent or queued) — what the send policy compares against.
+  LocationFix? _lastPiped;
 
   @override
   TrackingState build() {
@@ -76,7 +81,7 @@ class TrackingNotifier extends Notifier<TrackingState> {
 
     _startedOnce = false;
     _sessionActive = false;
-    _lastSent = null;
+    _lastPiped = null;
     _lastFixAt = DateTime.now();
 
     _socketStates = _socket.states.listen(_onSocketState);
@@ -128,6 +133,8 @@ class TrackingNotifier extends Notifier<TrackingState> {
   Future<void> goOffline() async {
     final wasSession = _sessionActive;
     _teardown();
+    // The courier stopped sharing: nothing from before may be sent later (consent).
+    _outbox.clear();
     _lastFix = null;
     state = TrackingState(
       notificationsDenied: state.notificationsDenied,
@@ -181,20 +188,68 @@ class TrackingNotifier extends Notifier<TrackingState> {
     if (state.phase == TrackingPhase.starting || state.phase == TrackingPhase.reconnecting) {
       state = state.copyWith(phase: TrackingPhase.noGpsFix);
     }
+    unawaited(_flush());
+  }
+
+  /// Phase 7 N5: sends the offline backlog oldest-first, one acked `location:batch` at a time,
+  /// until it's empty or the connection drops again. Live sends wait while it's non-empty so the
+  /// server sees every point in order.
+  Future<void> _flush() async {
+    if (_flushing) return;
+    _flushing = true;
+    try {
+      while (_sessionActive && state.isOnline && _outbox.isNotEmpty) {
+        final batch = _outbox.nextBatch();
+        final ack = await _socket.request(
+          'location:batch',
+          {'points': batch.map((f) => f.toJson()).toList()},
+          const Duration(seconds: 15),
+        );
+        if (ack == null) return; // no connection — try again on the next (re)connect
+        if (ack['ok'] == true) {
+          // Rejected points were bad data (too old, jump) — dropped server-side, same as live.
+          _outbox.removeFirst(batch.length);
+          if (ack['live'] == true) {
+            state = state.copyWith(phase: TrackingPhase.sharing, lastSentAt: DateTime.now());
+          }
+        } else if (ack['reason'] == 'no_session') {
+          _sessionActive = false;
+          unawaited(_startSession());
+          return;
+        } else if (ack['reason'] != 'rate_limited') {
+          _outbox.removeFirst(batch.length); // can never succeed (malformed) — don't loop on it
+        }
+        // Shares the server's per-subject rate limit with live points (one message / 500 ms).
+        await Future<void>.delayed(const Duration(milliseconds: 600));
+      }
+    } finally {
+      _flushing = false;
+    }
   }
 
   Future<void> _onFix(LocationFix fix) async {
     _lastFixAt = DateTime.now();
     _lastFix = fix;
     if (!_fixesController.isClosed) _fixesController.add(fix);
-    if (!_sessionActive || _sending) return;
-    if (!LocationSendPolicy.shouldSend(lastSent: _lastSent, fix: fix)) return;
+    if (!state.isOnline || _sending) return;
+    if (!LocationSendPolicy.shouldSend(lastSent: _lastPiped, fix: fix)) return;
+    // No session (socket down / reconnecting) or a backlog still draining: queue it, in order.
+    if (!_sessionActive || _outbox.isNotEmpty) {
+      _outbox.add(fix);
+      _lastPiped = fix;
+      if (_sessionActive) unawaited(_flush());
+      return;
+    }
     _sending = true;
+    _lastPiped = fix;
     try {
       final ack = await _socket.request('location', fix.toJson());
-      if (ack == null || !state.isOnline) return;
+      if (!state.isOnline) return;
+      if (ack == null) {
+        _outbox.add(fix); // timed out / dropped mid-flight — keep it for the backlog
+        return;
+      }
       if (ack['accepted'] == true) {
-        _lastSent = fix;
         state = state.copyWith(phase: TrackingPhase.sharing, lastSentAt: DateTime.now());
       } else if (ack['reason'] == 'no_session') {
         _sessionActive = false;

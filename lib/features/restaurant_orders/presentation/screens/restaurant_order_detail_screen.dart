@@ -9,7 +9,10 @@ import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/core/network/api_exception.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/features/deliveries/domain/entities/delivery.dart';
 import 'package:bsmart/features/deliveries/domain/usecases/manage_delivery_usecases.dart';
+import 'package:bsmart/features/deliveries/presentation/widgets/delivery_outcome_section.dart';
+import 'package:bsmart/features/deliveries/presentation/widgets/delivery_status_badge.dart';
 import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_order.dart';
 import 'package:bsmart/features/restaurant_orders/domain/restaurant_order_status_actions.dart';
 import 'package:bsmart/features/restaurant_orders/domain/usecases/accept_restaurant_order_usecase.dart';
@@ -31,6 +34,10 @@ class RestaurantOrderDetailScreen extends ConsumerStatefulWidget {
 
 class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDetailScreen> {
   RestaurantOrder? _order;
+
+  /// The courier delivery behind a DELIVERY order, for staff (Phase 7 N3) — exists once a courier
+  /// has accepted; shows a failed attempt's reason, the handover-code state and link revocation.
+  Delivery? _delivery;
   String? _errorMessage;
   bool _isBusy = false;
 
@@ -51,6 +58,52 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
       _isBusy = false;
       result.fold((order) => _order = order, (failure) => _errorMessage = failure.message);
     });
+    await _loadDelivery();
+  }
+
+  bool get _isStaff {
+    final role = ref.read(sessionNotifierProvider).valueOrNull?.session?.role;
+    return role == UserRole.retailer || role == UserRole.retailerAdmin;
+  }
+
+  Future<void> _loadDelivery() async {
+    final order = _order;
+    if (order == null ||
+        order.type != RestaurantOrderType.delivery ||
+        order.courierAcceptedAt == null ||
+        !_isStaff) {
+      return;
+    }
+    final result = await getIt<GetRestaurantOrderDeliveryUseCase>().call(order.id);
+    if (!mounted) return;
+    result.fold((d) => setState(() => _delivery = d), (_) {});
+  }
+
+  Future<void> _revokeTrackingLinks(Delivery delivery) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Kuzatish havolalarini bekor qilish?'),
+        content: const Text(
+          "Mijozga yuborilgan barcha havolalar ishlamay qoladi, ochiq sahifalar ham uziladi. Kerak bo'lsa yangisini yuborishingiz mumkin.",
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text("Yo'q")),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Bekor qilish')),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    setState(() => _isBusy = true);
+    final result = await getIt<RevokeTrackingLinksUseCase>().call(delivery.id);
+    if (!mounted) return;
+    setState(() => _isBusy = false);
+    result.fold(
+      (count) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(count == 0 ? "Faol havola yo'q edi" : '$count ta havola bekor qilindi')),
+      ),
+      (failure) => _showError(failure.message),
+    );
   }
 
   Future<void> _updateStatus(RestaurantOrderStatus status) async {
@@ -62,6 +115,7 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
       (order) => setState(() => _order = order),
       (failure) => _showError(failure.message),
     );
+    await _loadDelivery();
   }
 
   Future<void> _accept() async {
@@ -73,6 +127,7 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
       (order) => setState(() => _order = order),
       (failure) => _showError(failure.message),
     );
+    await _loadDelivery();
   }
 
   /// Phase 6 V6: a public tracking URL for a phone/walk-in customer without
@@ -128,6 +183,7 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
       (order) => setState(() => _order = order),
       (failure) => _showError(failure.message),
     );
+    await _loadDelivery();
   }
 
   void _showError(String message) {
@@ -278,10 +334,40 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
   }
 
   Widget _buildCourierCard(BuildContext context, RestaurantOrder order, UserRole? role) {
+    final delivery = _delivery;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _courierRow(order, role),
+            if (delivery != null) ...[
+              const Divider(height: 20),
+              Row(
+                children: [
+                  const Expanded(child: Text('Yetkazish holati')),
+                  DeliveryStatusBadge(status: delivery.status),
+                ],
+              ),
+              DeliveryOutcomeSection(delivery: delivery, onChanged: _loadDelivery),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: _isBusy ? null : () => _revokeTrackingLinks(delivery),
+                  icon: const Icon(Icons.link_off, size: 18),
+                  label: const Text('Kuzatish havolalarini bekor qilish'),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _courierRow(RestaurantOrder order, UserRole? role) {
+    return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
@@ -301,9 +387,7 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
                 label: const Text('Kuzatish havolasi'),
               ),
           ],
-        ),
-      ),
-    );
+        );
   }
 
   Widget _buildActions(RestaurantOrder order, UserRole role, String userId) {

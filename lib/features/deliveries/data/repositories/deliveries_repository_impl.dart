@@ -46,7 +46,24 @@ class DeliveriesRepositoryImpl implements DeliveriesRepository {
       _guard(() => _remote.reassign(id, courierId: courierId));
 
   @override
-  Future<Result<Delivery>> cancel(String id) => _guard(() => _remote.cancel(id));
+  Future<Result<Delivery>> cancel(String id, {String? reason}) => _guard(() => _remote.cancel(id, reason: reason));
+
+  @override
+  Future<Result<Delivery>> complete(String id, {String? code}) => _guard(() => _remote.complete(id, code: code));
+
+  @override
+  Future<Result<Delivery>> fail(String id, DeliveryFailReason reason, {String? note}) =>
+      _guard(() => _remote.fail(id, reason, note: note));
+
+  @override
+  Future<Result<Delivery?>> byRestaurantOrder(String restaurantOrderId) =>
+      _guard(() => _remote.byRestaurantOrder(restaurantOrderId));
+
+  @override
+  Future<Result<Delivery>> waiveHandover(String id) => _guard(() => _remote.waiveHandover(id));
+
+  @override
+  Future<Result<int>> revokeTrackingLinks(String id) => _guard(() => _remote.revokeTrackingLinks(id));
 
   @override
   Future<Result<DeliveryTrackingLink>> createTrackingLink({required String restaurantOrderId}) =>

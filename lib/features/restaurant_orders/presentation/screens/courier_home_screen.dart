@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/enums/business_type.dart';
 import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/features/auth/presentation/widgets/telegram_notifications_tile.dart';
 import 'package:bsmart/features/deliveries/presentation/providers/courier_deliveries_notifier.dart';
 import 'package:bsmart/features/deliveries/presentation/screens/courier_deliveries_tab.dart';
 import 'package:bsmart/features/restaurant_orders/presentation/screens/restaurant_orders_board_screen.dart';
@@ -45,6 +46,7 @@ class CourierHomeScreen extends ConsumerWidget {
         title: const Text('Kuryer'),
         actions: [
           const TrackingStatusPill(),
+          const CourierAlertsButton(),
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Chiqish',
