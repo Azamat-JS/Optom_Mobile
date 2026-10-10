@@ -5,6 +5,8 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/shared/widgets/language_picker.dart';
 
 /// Customer self-registration (Phase 6) — phone only; the number is confirmed
 /// through the Telegram verify bot ([RouteNames.telegramVerify]) and the new
@@ -47,8 +49,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: const Text("Ro'yxatdan o'tish")),
+      appBar: AppBar(title: Text(l10n.commonRegister), actions: const [LanguagePickerButton()]),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -64,7 +67,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ).animate().fadeIn(duration: AppMotion.slow).slideY(begin: 0.1, end: 0),
                 const SizedBox(height: 8),
                 Text(
-                  'Yangi mijoz hisobi yaratish',
+                  l10n.registerSubtitle,
                   style: theme.textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ).animate().fadeIn(delay: AppMotion.fast, duration: AppMotion.slow),
@@ -72,35 +75,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ReactiveTextField<String>(
                   formControlName: 'phone',
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    labelText: 'Telefon raqam',
+                  decoration: InputDecoration(
+                    labelText: l10n.authPhoneLabel,
                     hintText: '+998901234567',
                     prefixIcon: Icon(Icons.phone_outlined),
                     border: OutlineInputBorder(),
                   ),
                   validationMessages: {
-                    ValidationMessage.required: (_) => 'Telefon raqam kiritilishi shart',
-                    ValidationMessage.pattern: (_) => 'Format: +998XXXXXXXXX',
+                    ValidationMessage.required: (_) => l10n.authPhoneRequired,
+                    ValidationMessage.pattern: (_) => l10n.authPhoneFormat,
                   },
                   onSubmitted: (_) => _submit(),
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  'Raqamingiz Telegram orqali tasdiqlanadi. Ism-familiyangiz Telegram profilingizdan olinadi — '
-                  "keyin profilda o'zgartirishingiz mumkin.",
-                  style: theme.textTheme.bodySmall,
-                ),
+                Text(l10n.registerHint, style: theme.textTheme.bodySmall),
                 const SizedBox(height: 24),
                 FilledButton.icon(
                   onPressed: _submit,
                   icon: const Icon(Icons.telegram),
-                  label: const Text("Telegram orqali ro'yxatdan o'tish"),
+                  label: Text(l10n.registerWithTelegram),
                   style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
                 ),
                 const SizedBox(height: 12),
                 TextButton(
                   onPressed: () => context.go(RouteNames.login),
-                  child: const Text('Hisobingiz bormi? Kirish'),
+                  child: Text(l10n.registerHaveAccount),
                 ),
               ],
             ),

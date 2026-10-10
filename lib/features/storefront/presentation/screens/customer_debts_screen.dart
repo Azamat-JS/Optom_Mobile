@@ -7,6 +7,7 @@ import 'package:bsmart/features/debts/presentation/providers/sale_debts_list_not
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 import 'package:bsmart/features/auth/presentation/widgets/verify_phone_banner.dart';
 import 'package:bsmart/features/debts/presentation/widgets/debt_status_badge.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
 
 /// "Qarzlarim" — a `CUSTOMER`'s own B2C debts. Reuses `features/debts`'
 /// existing `saleDebtsListProvider` (`GET /sale-debts`, already scoped to
@@ -31,7 +32,7 @@ class CustomerDebtsScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('Qarzlarim')),
       body: Column(
         children: [
-          const VerifyPhoneBanner(reason: "Do'konlardagi qarzlaringizni ko'rish uchun"),
+          VerifyPhoneBanner(message: context.l10n.verifyBannerDebts),
           Expanded(child: _body(ref, debtsAsync)),
         ],
       ),

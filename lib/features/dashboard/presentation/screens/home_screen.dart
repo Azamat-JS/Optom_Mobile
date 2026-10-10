@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:bsmart/core/enums/business_type.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/user_role.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
@@ -15,6 +16,7 @@ import 'package:bsmart/features/dashboard/presentation/widgets/kpi_card.dart';
 import 'package:bsmart/features/dashboard/presentation/widgets/payment_breakdown_chart.dart';
 import 'package:bsmart/features/dashboard/presentation/widgets/sales_trend_chart.dart';
 import 'package:bsmart/features/stores/presentation/widgets/store_switcher.dart';
+import 'package:bsmart/shared/widgets/settings_action_button.dart';
 
 /// The Milestone 1 role-aware dashboard (SELLER/RETAILER + their `_ADMIN`
 /// staff) — KPI cards, sales-trend/payment-breakdown/income-debt charts, all
@@ -30,10 +32,11 @@ class HomeScreen extends ConsumerWidget {
     final role = authState?.session?.role;
     final dashboardAsync = ref.watch(dashboardProvider);
     final currency = ref.watch(selectedDashboardCurrencyProvider);
+    final l10n = context.l10n;
 
     final roleLabel = switch (role) {
-      UserRole.seller || UserRole.sellerAdmin => 'Optomchi',
-      UserRole.retailer || UserRole.retailerAdmin => "Do'konchi",
+      UserRole.seller || UserRole.sellerAdmin => UserRole.seller.localizedLabel(l10n),
+      UserRole.retailer || UserRole.retailerAdmin => UserRole.retailer.localizedLabel(l10n),
       _ => '',
     };
     // Stores/staff management is owner-only server-side (`assertIsOwner` in
@@ -54,86 +57,87 @@ class HomeScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.point_of_sale_outlined),
-            tooltip: 'Kassa',
+            tooltip: l10n.navPos,
             onPressed: () => context.push(RouteNames.pos),
           ),
           IconButton(
             icon: const Icon(Icons.receipt_long_outlined),
-            tooltip: 'Buyurtmalar',
+            tooltip: l10n.navOrders,
             onPressed: () => context.push(RouteNames.orders),
           ),
           PopupMenuButton<String>(
             onSelected: (route) => context.push(route),
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: RouteNames.products,
-                child: ListTile(leading: Icon(Icons.inventory_2_outlined), title: Text('Mahsulotlar')),
+                child: ListTile(leading: const Icon(Icons.inventory_2_outlined), title: Text(l10n.navProducts)),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: RouteNames.customers,
-                child: ListTile(leading: Icon(Icons.groups_outlined), title: Text('Mijozlar')),
+                child: ListTile(leading: const Icon(Icons.groups_outlined), title: Text(l10n.navCustomers)),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: RouteNames.sales,
-                child: ListTile(leading: Icon(Icons.history), title: Text('Sotuvlar tarixi')),
+                child: ListTile(leading: const Icon(Icons.history), title: Text(l10n.navSalesHistory)),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: RouteNames.debts,
-                child: ListTile(leading: Icon(Icons.receipt_long), title: Text('Qarzlar')),
+                child: ListTile(leading: const Icon(Icons.receipt_long), title: Text(l10n.navDebts)),
               ),
               // Reports/work-day are @Roles(SELLER, RETAILER) with RolesGuard's
               // admin-inherits-parent-role logic — staff see this too, unlike
               // Expenditures below (owner-only, enforced server-side).
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: RouteNames.reports,
-                child: ListTile(leading: Icon(Icons.bar_chart_outlined), title: Text('Hisobotlar')),
+                child: ListTile(leading: const Icon(Icons.bar_chart_outlined), title: Text(l10n.navReports)),
               ),
               // Live courier map: owners once SUPER_ADMIN enabled couriers; store admins always
               // (their session doesn't carry the owner's flag — an empty map just says so).
               if (!isOwner || courierFeatureEnabled)
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: RouteNames.fleetMap,
-                  child: ListTile(leading: Icon(Icons.map_outlined), title: Text('Kuryerlar xaritasi')),
+                  child: ListTile(leading: const Icon(Icons.map_outlined), title: Text(l10n.navFleetMap)),
                 ),
               if (isRestaurant) ...[
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: RouteNames.restaurantOrders,
-                  child: ListTile(leading: Icon(Icons.dining_outlined), title: Text('Restoran buyurtmalari')),
+                  child: ListTile(leading: const Icon(Icons.dining_outlined), title: Text(l10n.navRestaurantOrders)),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: RouteNames.restaurantTables,
-                  child: ListTile(leading: Icon(Icons.table_restaurant_outlined), title: Text('Stollar')),
+                  child: ListTile(leading: const Icon(Icons.table_restaurant_outlined), title: Text(l10n.navTables)),
                 ),
               ],
               if (isOwner) ...[
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: RouteNames.stores,
-                  child: ListTile(leading: Icon(Icons.storefront_outlined), title: Text("Do'konlar")),
+                  child: ListTile(leading: const Icon(Icons.storefront_outlined), title: Text(l10n.navStores)),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: RouteNames.admins,
-                  child: ListTile(leading: Icon(Icons.badge_outlined), title: Text('Xodimlar')),
+                  child: ListTile(leading: const Icon(Icons.badge_outlined), title: Text(l10n.navStaff)),
                 ),
                 if (isRestaurant)
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: RouteNames.waiters,
-                    child: ListTile(leading: Icon(Icons.room_service_outlined), title: Text('Ofitsiantlar')),
+                    child: ListTile(leading: const Icon(Icons.room_service_outlined), title: Text(l10n.navWaiters)),
                   ),
                 if (courierFeatureEnabled)
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: RouteNames.couriers,
-                    child: ListTile(leading: Icon(Icons.moped_outlined), title: Text('Kuryerlar')),
+                    child: ListTile(leading: const Icon(Icons.moped_outlined), title: Text(l10n.navCouriers)),
                   ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: RouteNames.expenditures,
-                  child: ListTile(leading: Icon(Icons.account_balance_wallet_outlined), title: Text('Harajatlarim')),
+                  child: ListTile(leading: const Icon(Icons.account_balance_wallet_outlined), title: Text(l10n.navExpenditures)),
                 ),
               ],
             ],
           ),
+          const SettingsActionButton(),
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: 'Chiqish',
+            tooltip: l10n.commonLogout,
             onPressed: () => ref.read(sessionNotifierProvider.notifier).logout(),
           ),
         ],
@@ -149,7 +153,7 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Xush kelibsiz, ${user?.fullName ?? ''}',
+                    l10n.homeWelcome(user?.fullName ?? ''),
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
@@ -167,7 +171,7 @@ class HomeScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Statistika', style: Theme.of(context).textTheme.titleMedium),
+                Text(l10n.homeStatistics, style: Theme.of(context).textTheme.titleMedium),
                 const CurrencyToggle(),
               ],
             ),
@@ -183,11 +187,11 @@ class HomeScreen extends ConsumerWidget {
                   children: [
                     const Icon(Icons.error_outline, size: 40),
                     const SizedBox(height: 8),
-                    const Text('Statistikani yuklab bo\'lmadi'),
+                    Text(l10n.homeStatsLoadFailed),
                     const SizedBox(height: 12),
                     OutlinedButton(
                       onPressed: () => ref.invalidate(dashboardProvider),
-                      child: const Text('Qayta urinish'),
+                      child: Text(l10n.commonRetry),
                     ),
                   ],
                 ),
@@ -209,6 +213,7 @@ class _DashboardBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final todaySales = currency == Currency.uzs ? data.todaySales.uzs : data.todaySales.usd;
     final totalSales = currency == Currency.uzs ? data.totalSales.uzs : data.totalSales.usd;
     final paymentBreakdown = currency == Currency.uzs ? data.paymentBreakdown.uzs : data.paymentBreakdown.usd;
@@ -230,20 +235,20 @@ class _DashboardBody extends StatelessWidget {
           childAspectRatio: 1.5,
           children: [
             KpiCard(
-              label: 'Bugungi savdo',
+              label: l10n.homeTodaySales,
               value: CurrencyFormatter.format(todaySales.amount, currency),
-              subtitle: '${todaySales.count} ta savdo',
+              subtitle: l10n.homeSalesCount(todaySales.count),
               icon: Icons.today_outlined,
             ),
             KpiCard(
-              label: 'Jami savdo',
+              label: l10n.homeTotalSales,
               value: CurrencyFormatter.format(totalSales.amount, currency),
-              subtitle: '${totalSales.count} ta savdo',
+              subtitle: l10n.homeSalesCount(totalSales.count),
               icon: Icons.bar_chart_outlined,
             ),
             if (wholesaler != null) ...[
               KpiCard(
-                label: 'Qarzdorlik',
+                label: l10n.homeOutstandingDebt,
                 value: CurrencyFormatter.format(
                   currency == Currency.uzs
                       ? wholesaler.outstandingDebts.uzs.balance
@@ -254,7 +259,7 @@ class _DashboardBody extends StatelessWidget {
                 color: Theme.of(context).colorScheme.error,
               ),
               KpiCard(
-                label: "Qabul qilingan to'lovlar",
+                label: l10n.homeReceivedPayments,
                 value: CurrencyFormatter.format(
                   currency == Currency.uzs
                       ? wholesaler.receivedPayments.allTime.uzs.amount
@@ -266,7 +271,7 @@ class _DashboardBody extends StatelessWidget {
             ],
             if (retailer != null) ...[
               KpiCard(
-                label: 'Mijoz qarzlari',
+                label: l10n.homeCustomerDebts,
                 value: CurrencyFormatter.format(
                   currency == Currency.uzs ? retailer.customerDebts.uzs.balance : retailer.customerDebts.usd.balance,
                   currency,
@@ -275,7 +280,7 @@ class _DashboardBody extends StatelessWidget {
                 color: Theme.of(context).colorScheme.error,
               ),
               KpiCard(
-                label: 'Optomchi qarzlari',
+                label: l10n.homeWholesalerDebts,
                 value: CurrencyFormatter.format(
                   currency == Currency.uzs
                       ? retailer.wholesalerDebts.uzs.balance

@@ -13,6 +13,9 @@ abstract final class RouteNames {
   static String telegramVerifyFor(String phone) => Uri(path: telegramVerify, queryParameters: {'phone': phone}).toString();
   static const home = '/home';
 
+  /// App settings (language, logout) — guest-eligible.
+  static const settings = '/settings';
+
   // --- Phase 2: CUSTOMER storefront (guest-eligible — see app_router.dart's
   // redirect allowlist) ---
   static const customerHome = '/customer';

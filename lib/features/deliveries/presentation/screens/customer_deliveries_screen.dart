@@ -6,6 +6,7 @@ import 'package:bsmart/features/deliveries/domain/entities/delivery.dart';
 import 'package:bsmart/features/deliveries/presentation/providers/customer_deliveries_notifier.dart';
 import 'package:bsmart/features/deliveries/presentation/screens/delivery_tracking_screen.dart';
 import 'package:bsmart/features/deliveries/presentation/widgets/delivery_status_badge.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
 
 /// CUSTOMER "Yetkazishlarim" (Phase 6 V5): storefront deliveries plus
 /// restaurant deliveries ordered by phone/in person for the user's verified
@@ -25,7 +26,7 @@ class CustomerDeliveriesScreen extends ConsumerWidget {
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
-            const VerifyPhoneBanner(reason: 'Restoranga telefon orqali bergan buyurtmalaringizni kuzatish uchun'),
+            VerifyPhoneBanner(message: context.l10n.verifyBannerDeliveries),
             ...deliveries.when(
               loading: () => const [
                 Padding(

@@ -44,6 +44,7 @@ import 'package:bsmart/features/products/presentation/screens/product_form_scree
 import 'package:bsmart/features/products/presentation/screens/products_list_screen.dart';
 import 'package:bsmart/features/sales/presentation/screens/pos_screen.dart';
 import 'package:bsmart/features/sales/presentation/screens/sales_list_screen.dart';
+import 'package:bsmart/features/settings/presentation/screens/settings_screen.dart';
 
 /// Notifies [GoRouter] to re-run its `redirect` whenever auth state changes,
 /// so e.g. a forced logout (refresh-token failure) immediately routes back
@@ -125,6 +126,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.customerDebts,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const CustomerDebtsScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.settings,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const SettingsScreen()),
       ),
       GoRoute(
         path: RouteNames.home,
@@ -280,7 +285,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 /// `.customerDebts` are absent on purpose). Splash is deliberately not in
 /// this set — see [_redirect]'s doc comment for why it needs its own branch.
 bool _isGuestAllowed(String location) {
-  const allowed = {RouteNames.login, RouteNames.register, RouteNames.telegramVerify, RouteNames.customerHome};
+  const allowed = {
+    RouteNames.login,
+    RouteNames.register,
+    RouteNames.telegramVerify,
+    RouteNames.customerHome,
+    RouteNames.settings,
+  };
   if (allowed.contains(location)) return true;
   return location.startsWith('/customer/products/');
 }

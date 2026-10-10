@@ -10,6 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # i18n: uz (default) / ru / en via gen-l10n — ARB files in lib/l10n, see l10n.yaml
+  flutter_localizations:
+    sdk: flutter
 
   # State management (hand-written Notifier/AsyncNotifier — see the note in
   # analysis_options.yaml on why riverpod_generator's code-gen is disabled
@@ -49,7 +52,7 @@ dependencies:
   shimmer: ^3.0.0
 
   # Utilities
-  intl: ^0.19.0
+  intl: ^0.20.2
   cached_network_image: ^3.4.1
   image_picker: ^1.1.2
   shared_preferences: ^2.3.3
@@ -73,6 +76,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # Generates lib/l10n/app_localizations*.dart from the ARB files on every
+  # `flutter pub get` / build (no build_runner involved).
+  generate: true
 
   assets:
     - .env

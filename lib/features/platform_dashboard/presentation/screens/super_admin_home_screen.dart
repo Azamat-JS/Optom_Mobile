@@ -11,6 +11,9 @@ import 'package:bsmart/features/dashboard/presentation/widgets/kpi_card.dart';
 import 'package:bsmart/features/dashboard/presentation/widgets/payment_breakdown_chart.dart';
 import 'package:bsmart/features/dashboard/presentation/widgets/sales_trend_chart.dart';
 import 'package:bsmart/features/platform_dashboard/presentation/providers/platform_dashboard_notifier.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/shared/widgets/settings_action_button.dart';
+import 'package:bsmart/core/enums/user_role.dart';
 
 /// Not fetched from the backend — pure UI state for the UZS/USD toggle,
 /// deliberately a separate provider from the operator dashboard's
@@ -33,28 +36,32 @@ class SuperAdminHomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Super Admin'),
+        title: Text(UserRole.superAdmin.localizedLabel(context.l10n)),
         actions: [
           PopupMenuButton<String>(
             onSelected: (route) => context.push(route),
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: RouteNames.superAdminUsers,
-                child: ListTile(leading: Icon(Icons.groups_outlined), title: Text('Foydalanuvchilar')),
+                child: ListTile(leading: const Icon(Icons.groups_outlined), title: Text(context.l10n.navUsers)),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: RouteNames.superAdminCategories,
-                child: ListTile(leading: Icon(Icons.category_outlined), title: Text('Kategoriyalar')),
+                child: ListTile(leading: const Icon(Icons.category_outlined), title: Text(context.l10n.navCategories)),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: RouteNames.superAdminCatalog,
-                child: ListTile(leading: Icon(Icons.inventory_2_outlined), title: Text('Katalog nazorati')),
+                child: ListTile(
+                  leading: const Icon(Icons.inventory_2_outlined),
+                  title: Text(context.l10n.navCatalogModeration),
+                ),
               ),
             ],
           ),
+          const SettingsActionButton(),
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: 'Chiqish',
+            tooltip: context.l10n.commonLogout,
             onPressed: () => ref.read(sessionNotifierProvider.notifier).logout(),
           ),
         ],

@@ -1,0 +1,150 @@
+{
+  "@@locale": "uz",
+  "commonCancel": "Bekor qilish",
+  "commonRetry": "Qayta urinish",
+  "commonLogout": "Chiqish",
+  "commonLogin": "Kirish",
+  "commonRegister": "Ro'yxatdan o'tish",
+  "commonSettings": "Sozlamalar",
+  "commonUnknownError": "Noma'lum xatolik yuz berdi.",
+  "roleLabel": "{role, select, superAdmin{Super Admin} seller{Optomchi} sellerAdmin{Optomchi xodimi} retailer{Do'konchi} retailerAdmin{Do'konchi xodimi} customer{Mijoz} waiter{Ofitsiant} courier{Kuryer} other{}}",
+  "@roleLabel": {
+    "description": "Display name of a user role (UserRole enum name).",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "languageTitle": "Til",
+  "languageHint": "Interfeys tilini tanlang",
+  "languageChange": "Tilni o'zgartirish",
+  "settingsTitle": "Sozlamalar",
+  "settingsAccount": "Hisob",
+  "authPhoneLabel": "Telefon raqam",
+  "authPhoneRequired": "Telefon raqam kiritilishi shart",
+  "authPhoneFormat": "Format: +998XXXXXXXXX",
+  "loginSubtitle": "Optom Savdo tizimiga kirish",
+  "loginContinueWithTelegram": "Telegram orqali davom etish",
+  "loginAccountAutoCreated": "Hisobingiz bo'lmasa, avtomatik yaratiladi",
+  "loginWithPassword": "Parol bilan kirish",
+  "loginPasswordLabel": "Parol",
+  "loginPasswordRequired": "Parol kiritilishi shart",
+  "loginPasswordMinLength": "Kamida 6 ta belgi",
+  "registerSubtitle": "Yangi mijoz hisobi yaratish",
+  "registerHint": "Raqamingiz Telegram orqali tasdiqlanadi. Ism-familiyangiz Telegram profilingizdan olinadi — keyin profilda o'zgartirishingiz mumkin.",
+  "registerWithTelegram": "Telegram orqali ro'yxatdan o'tish",
+  "registerHaveAccount": "Hisobingiz bormi? Kirish",
+  "splashError": "Ilovani ishga tushirishda xatolik yuz berdi.",
+  "tgTitle": "Telegram orqali tasdiqlash",
+  "tgOpenFailed": "Telegramni ochib bo'lmadi. Ilova o'rnatilganini tekshiring.",
+  "tgPhoneVerified": "Raqamingiz tasdiqlandi ✅",
+  "tgWelcomeNew": "Xush kelibsiz! Hisobingiz yaratildi.",
+  "tgWelcome": "Xush kelibsiz!",
+  "tgChangePhone": "Raqamni o'zgartirish",
+  "tgPreparing": "Tayyorlanmoqda…",
+  "tgVerified": "Tasdiqlandi",
+  "tgVerifiedLoggingIn": "Tasdiqlandi, kirilmoqda…",
+  "tgFinishStepVerify": "Ilovaga qayting — tasdiqlash avtomatik yakunlanadi",
+  "tgFinishStepLogin": "Ilovaga qayting — kirish avtomatik bajariladi",
+  "tgMismatchTitle": "Raqam mos kelmadi",
+  "tgMismatchOwn": "Telegram akkauntingizdagi raqam hisobingizdagi {phone} raqamiga mos emas. Shu raqam ulangan Telegram akkauntidan foydalaning.",
+  "@tgMismatchOwn": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "tgMismatch": "Telegram akkauntingizdagi raqam {phone} raqamiga mos emas. Shu raqam ulangan Telegram akkauntidan foydalaning yoki raqamni o'zgartiring.",
+  "@tgMismatch": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "tgExpiredTitle": "Tasdiqlash muddati tugadi",
+  "tgExpiredMessage": "10 daqiqa ichida raqam tasdiqlanmadi. Qaytadan urinib ko'ring.",
+  "tgFailedTitle": "Tasdiqlab bo'lmadi",
+  "tgConfirmInTelegram": "Telegramda tasdiqlang",
+  "tgStep1": "Telegramda bsmart tasdiqlash boti ochiladi",
+  "tgStep2": "«Start» tugmasini bosing",
+  "tgStep3": "«📱 Raqamni tasdiqlash» tugmasini bosing",
+  "tgWaiting": "Tasdiqlash kutilmoqda · {countdown}",
+  "@tgWaiting": {
+    "placeholders": {
+      "countdown": {
+        "type": "String"
+      }
+    }
+  },
+  "tgOpenTelegram": "Telegramni ochish",
+  "verifyBannerAction": "Raqamni tasdiqlash",
+  "verifyBannerProfile": "Restoran yetkazishlarini kuzatish va qarzlaringizni ko'rish uchun telefon raqamingizni Telegram orqali tasdiqlang.",
+  "verifyBannerDebts": "Do'konlardagi qarzlaringizni ko'rish uchun telefon raqamingizni Telegram orqali tasdiqlang.",
+  "verifyBannerDeliveries": "Restoranga telefon orqali bergan buyurtmalaringizni kuzatish uchun telefon raqamingizni Telegram orqali tasdiqlang.",
+  "tgNotifTitle": "Telegram bildirishnomalari",
+  "tgNotifConnect": "Ulash",
+  "tgNotifOff": "O'chirilgan",
+  "tgNotifCustomerEnabled": "Kuryer buyurtmani olganda, yetib kelganda va topshirganda xabar keladi",
+  "tgNotifCustomerLink": "Buyurtmangiz yo'lga chiqqanda xabar olish uchun raqamingizni Telegram orqali tasdiqlang",
+  "tgNotifCourierEnabled": "Sizga yetkazish biriktirilsa, taklif qilinsa yoki bekor qilinsa xabar keladi",
+  "tgNotifCourierLink": "Yangi yetkazishlar haqida Telegram'da xabar olish uchun raqamingizni tasdiqlang",
+  "tgNotifLinkTelegram": "Telegramni ulash",
+  "tgNotifEnabled": "Bildirishnomalar yoqilgan",
+  "tgNotifDisabled": "Bildirishnomalar o'chirilgan",
+  "navCatalog": "Katalog",
+  "navCart": "Savat",
+  "navFavorites": "Sevimlilar",
+  "navProfile": "Profil",
+  "navMenu": "Menyu",
+  "navDeliveries": "Yetkazishlar",
+  "navPos": "Kassa",
+  "navOrders": "Buyurtmalar",
+  "navProducts": "Mahsulotlar",
+  "navCustomers": "Mijozlar",
+  "navSalesHistory": "Sotuvlar tarixi",
+  "navDebts": "Qarzlar",
+  "navReports": "Hisobotlar",
+  "navFleetMap": "Kuryerlar xaritasi",
+  "navRestaurantOrders": "Restoran buyurtmalari",
+  "navTables": "Stollar",
+  "navStores": "Do'konlar",
+  "navStaff": "Xodimlar",
+  "navWaiters": "Ofitsiantlar",
+  "navCouriers": "Kuryerlar",
+  "navExpenditures": "Harajatlarim",
+  "navUsers": "Foydalanuvchilar",
+  "navCategories": "Kategoriyalar",
+  "navCatalogModeration": "Katalog nazorati",
+  "profileLoginPrompt": "Profilni koʻrish uchun tizimga kiring",
+  "profilePhoneVerified": "Raqam tasdiqlangan",
+  "profileMyOrders": "Buyurtmalarim",
+  "profileMyDeliveries": "Yetkazishlarim",
+  "profileMyDebts": "Qarzlarim",
+  "homeWelcome": "Xush kelibsiz, {name}",
+  "@homeWelcome": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeStatistics": "Statistika",
+  "homeStatsLoadFailed": "Statistikani yuklab bo'lmadi",
+  "homeTodaySales": "Bugungi savdo",
+  "homeTotalSales": "Jami savdo",
+  "homeSalesCount": "{count} ta savdo",
+  "@homeSalesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeOutstandingDebt": "Qarzdorlik",
+  "homeReceivedPayments": "Qabul qilingan to'lovlar",
+  "homeCustomerDebts": "Mijoz qarzlari",
+  "homeWholesalerDebts": "Optomchi qarzlari"
+}

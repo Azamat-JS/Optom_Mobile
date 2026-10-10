@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
 
 /// Shown while [sessionNotifierProvider] resolves the restored session on
 /// cold start. Navigation itself is entirely driven by `app_router.dart`'s
@@ -24,11 +25,11 @@ class SplashScreen extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 48),
               const SizedBox(height: 12),
-              const Text('Ilovani ishga tushirishda xatolik yuz berdi.'),
+              Text(context.l10n.splashError),
               const SizedBox(height: 12),
               FilledButton(
                 onPressed: () => ref.invalidate(sessionNotifierProvider),
-                child: const Text('Qayta urinish'),
+                child: Text(context.l10n.commonRetry),
               ),
             ],
           ),

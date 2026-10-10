@@ -6,6 +6,7 @@ import 'package:bsmart/features/storefront/presentation/providers/storefront_car
 import 'package:bsmart/features/storefront/presentation/screens/storefront_cart_tab.dart';
 import 'package:bsmart/features/storefront/presentation/screens/storefront_catalog_tab.dart';
 import 'package:bsmart/features/storefront/presentation/screens/storefront_profile_tab.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
 
 /// The guest-eligible storefront shell — Katalog/Savat/Sevimlilar/Profil as
 /// an `IndexedStack` inside one route (`RouteNames.customerHome`) rather
@@ -25,14 +26,14 @@ class CustomerHomeScreen extends ConsumerStatefulWidget {
 class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
   int _tabIndex = 0;
 
-  static const _titles = ['Katalog', 'Savat', 'Sevimlilar', 'Profil'];
-
   @override
   Widget build(BuildContext context) {
     final cartItemCount = ref.watch(storefrontCartProvider).itemCount;
+    final l10n = context.l10n;
+    final titles = [l10n.navCatalog, l10n.navCart, l10n.navFavorites, l10n.navProfile];
 
     return Scaffold(
-      appBar: AppBar(title: Text(_titles[_tabIndex])),
+      appBar: AppBar(title: Text(titles[_tabIndex])),
       body: IndexedStack(
         index: _tabIndex,
         children: const [
@@ -46,17 +47,17 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
         selectedIndex: _tabIndex,
         onDestinationSelected: (index) => setState(() => _tabIndex = index),
         destinations: [
-          const NavigationDestination(icon: Icon(Icons.storefront_outlined), label: 'Katalog'),
+          NavigationDestination(icon: const Icon(Icons.storefront_outlined), label: titles[0]),
           NavigationDestination(
             icon: Badge(
               label: Text('$cartItemCount'),
               isLabelVisible: cartItemCount > 0,
               child: const Icon(Icons.shopping_cart_outlined),
             ),
-            label: 'Savat',
+            label: titles[1],
           ),
-          const NavigationDestination(icon: Icon(Icons.favorite_border), label: 'Sevimlilar'),
-          const NavigationDestination(icon: Icon(Icons.person_outline), label: 'Profil'),
+          NavigationDestination(icon: const Icon(Icons.favorite_border), label: titles[2]),
+          NavigationDestination(icon: const Icon(Icons.person_outline), label: titles[3]),
         ],
       ),
     );

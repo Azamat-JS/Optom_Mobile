@@ -1408,6 +1408,57 @@ SDK is needed. The backend changes stay additive inside Optom_Savdo's `deliverie
   9999G` fixes it. Escape (keyevent 111) dismisses Flutter bottom sheets, so don't use it to hide
   the keyboard there.
 
+### Phase 8 — Multi-language UI: Uzbek / Russian / English (web + mobile)
+Decided 2026-10-10 (user request). Languages are **uz (default) / ru / en**. The **web app is
+in scope** here, an explicit exception to "web untouched". Web uses **next-intl** with the locale
+in the `NEXT_LOCALE` cookie (no URL prefix; see Optom_Savdo CLAUDE.md "Internationalization").
+Mobile uses Flutter's official **gen-l10n** (ARB + `flutter_localizations`, no build_runner).
+Switcher placement: web = every header (landing + dashboard) + Settings → App settings; mobile =
+Settings + the registration/login flow. Backend error messages and Telegram bot texts stay Uzbek
+(out of scope unless asked).
+
+| # | Milestone | Status |
+|---|---|---|
+| I1 | Web foundation: next-intl, cookie locale, `messages/{uz,ru,en}.json`, `LanguageSwitcher` in landing + dashboard header, working selector in /settings/app; app shell translated (landing header, sidebar nav, role labels, settings layout, logout dialog, store switcher) | 🟢 Done 2026-10-10: `tsc` clean, `pnpm i18n:check` parity OK, SSR verified per cookie and Accept-Language |
+| I2 | Mobile foundation: gen-l10n + `localeProvider` (shared_preferences), `MaterialApp` locale/delegates, switcher in Settings + registration/login; shell translated (auth, settings, bottom nav/drawer, role labels) | 🟢 Done 2026-10-10: `flutter analyze` clean, 42 tests (7 new l10n tests). Verified on the emulator: first launch follows the device language (EN), Profil → Sozlamalar → Русский, register/login AppBar picker → UZ/EN, and the choice survives a force-stop. The logged-in home shells (operator/waiter/courier/super-admin) were not run live (no test account this session). See "Phase 8 I2 notes" |
+| I3 | Web public pages: landing sections, about/features/pricing/contact, login/register/tg-auth, cart, product detail, shop, profile settings | ⚪ |
+| I4 | Web shared components: `src/components/common` + `src/components/domain/*` (dialogs, drawers, tables, zod messages, toasts), enum label maps, date/number formatting | ⚪ |
+| I5 | Web role pages: wholesaler + retailer (incl. restaurant/POS) | ⚪ |
+| I6 | Web role pages: customer + super-admin + courier; leftover-string sweep | ⚪ |
+| I7 | Mobile features batch 1: operator core (products, categories, orders, sales/POS, customers, debts, stores/admins, expenditures, reports, dashboard) | ⚪ |
+| I8 | Mobile features batch 2: customer storefront/favorites, super-admin, restaurant, courier/deliveries/tracking; leftover-string sweep | ⚪ |
+
+**Phase 8 I2 notes (bsmart, 2026-10-10):**
+- **Setup:**
+  - ARB files are in `lib/l10n/app_{uz,ru,en}.arb`. `app_uz.arb` is the template, and only it
+    carries `@key` metadata.
+  - `l10n.yaml` + `flutter: generate: true` generate `lib/l10n/app_localizations*.dart` on
+    `flutter pub get`, so there's no build_runner.
+  - Adding `flutter_localizations` **forced `intl` ^0.19 → ^0.20.2**, the version the SDK pins.
+- **Usage:**
+  - `context.l10n.key` comes from `core/l10n/l10n.dart`.
+  - Role names use `role.localizedLabel(l10n)` (an ARB `select`). The old Uzbek `UserRole.label`
+    stays until the super-admin screens are migrated (I8).
+  - Write whole sentences, not fragments: `VerifyPhoneBanner` now takes a full `message`, and
+    `TelegramNotificationsTile` takes `forCourier`.
+- **Locale state:**
+  - `localeProvider` (`core/l10n/locale_provider.dart`) holds the active locale.
+  - `bootstrap()` reads the saved code before `runApp`, so the first frame is already in the right
+    language.
+  - When nothing is saved, the device language is used if supported, else `uz`.
+  - The choice is persisted under SharedPreferences `bsmart.locale`.
+- **UI:**
+  - `/settings` (`SettingsScreen`) is guest-eligible and holds the language radio list plus logout.
+  - It's reached from `SettingsActionButton` in every home AppBar and from the Profil tab (guest
+    and logged in).
+  - `LanguagePickerButton` (globe + code) is on login, register and the sign-in Telegram verify
+    screen.
+- **Bot texts stay Uzbek:** tgStep3 quotes the bot's Uzbek button label in every language.
+- **Emulator tip:** the Pixel_9a `/data` has only ~400 MB free, and the universal debug APK
+  (133 MB) fails with `INSUFFICIENT_STORAGE` even after `pm trim-caches`. Build
+  `flutter build apk --debug --target-platform android-arm64 --split-per-abi` (100 MB) and
+  `adb install` that instead (uninstall the old build first).
+
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
 priority) a real-time layer — all as **new NestJS + PostgreSQL infrastructure**, never a

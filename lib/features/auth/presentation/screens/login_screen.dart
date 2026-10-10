@@ -8,6 +8,8 @@ import 'package:bsmart/core/network/api_exception.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/shared/widgets/language_picker.dart';
 
 /// One login screen for every role — SELLER/RETAILER (+ their `_ADMIN`
 /// staff) and `CUSTOMER`s alike (the storefront's guest flow lands here
@@ -72,8 +74,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     final isLoading = ref.watch(sessionNotifierProvider).isLoading;
+    final l10n = context.l10n;
 
     return Scaffold(
+      // Language is picked right here: a signed-out user can't reach Settings.
+      appBar: AppBar(actions: const [LanguagePickerButton()]),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -91,7 +96,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ).animate().fadeIn(duration: AppMotion.slow).slideY(begin: 0.1, end: 0),
                   const SizedBox(height: 8),
                   Text(
-                    'Optom Savdo tizimiga kirish',
+                    l10n.loginSubtitle,
                     style: Theme.of(context).textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ).animate().fadeIn(delay: AppMotion.fast, duration: AppMotion.slow),
@@ -99,27 +104,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ReactiveTextField<String>(
                     formControlName: 'phone',
                     keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      labelText: 'Telefon raqam',
+                    decoration: InputDecoration(
+                      labelText: l10n.authPhoneLabel,
                       hintText: '+998901234567',
                       prefixIcon: Icon(Icons.phone_outlined),
                       border: OutlineInputBorder(),
                     ),
                     validationMessages: {
-                      ValidationMessage.required: (_) => 'Telefon raqam kiritilishi shart',
-                      ValidationMessage.pattern: (_) => 'Format: +998XXXXXXXXX',
+                      ValidationMessage.required: (_) => l10n.authPhoneRequired,
+                      ValidationMessage.pattern: (_) => l10n.authPhoneFormat,
                     },
                   ).animate().fadeIn(delay: AppMotion.standard),
                   const SizedBox(height: 16),
                   FilledButton.icon(
                     onPressed: isLoading ? null : _continueWithTelegram,
                     icon: const Icon(Icons.telegram),
-                    label: const Text('Telegram orqali davom etish'),
+                    label: Text(l10n.loginContinueWithTelegram),
                     style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
                   ).animate().fadeIn(delay: AppMotion.standard + AppMotion.fast),
                   const SizedBox(height: 8),
                   Text(
-                    "Hisobingiz bo'lmasa, avtomatik yaratiladi",
+                    l10n.loginAccountAutoCreated,
                     style: Theme.of(context).textTheme.bodySmall,
                     textAlign: TextAlign.center,
                   ),
@@ -127,7 +132,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   if (!_showPassword)
                     TextButton(
                       onPressed: () => setState(() => _showPassword = true),
-                      child: const Text('Parol bilan kirish'),
+                      child: Text(l10n.loginWithPassword),
                     )
                   else
                     ..._passwordFields(isLoading),
@@ -141,12 +146,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   List<Widget> _passwordFields(bool isLoading) {
+    final l10n = context.l10n;
     return [
       ReactiveTextField<String>(
         formControlName: 'password',
         obscureText: _obscurePassword,
         decoration: InputDecoration(
-          labelText: 'Parol',
+          labelText: l10n.loginPasswordLabel,
           prefixIcon: const Icon(Icons.lock_outline),
           border: const OutlineInputBorder(),
           suffixIcon: IconButton(
@@ -155,8 +161,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
         ),
         validationMessages: {
-          ValidationMessage.required: (_) => 'Parol kiritilishi shart',
-          ValidationMessage.minLength: (_) => 'Kamida 6 ta belgi',
+          ValidationMessage.required: (_) => l10n.loginPasswordRequired,
+          ValidationMessage.minLength: (_) => l10n.loginPasswordMinLength,
         },
         onSubmitted: (_) => _submit(),
       ).animate().fadeIn(duration: AppMotion.standard),
@@ -166,7 +172,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
         child: isLoading
             ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-            : const Text('Kirish'),
+            : Text(l10n.commonLogin),
       ).animate().fadeIn(duration: AppMotion.standard),
     ];
   }

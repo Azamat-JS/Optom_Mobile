@@ -7,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/features/auth/presentation/providers/telegram_verify_notifier.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/shared/widgets/language_picker.dart';
 
 /// "Telegram orqali davom etish" wait screen — one flow for both register and
 /// login. Starts a verification for [phone], opens the verify bot in Telegram,
@@ -68,7 +70,7 @@ class _TelegramVerifyScreenState extends ConsumerState<TelegramVerifyScreen> wit
     if (!opened && mounted) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text("Telegramni ochib bo'lmadi. Ilova o'rnatilganini tekshiring.")));
+        ..showSnackBar(SnackBar(content: Text(context.l10n.tgOpenFailed)));
     }
   }
 
@@ -76,9 +78,10 @@ class _TelegramVerifyScreenState extends ConsumerState<TelegramVerifyScreen> wit
   Widget build(BuildContext context) {
     ref.listen(telegramVerifyProvider, (previous, next) {
       if (next.phase == TelegramVerifyPhase.done && previous?.phase != TelegramVerifyPhase.done) {
+        final l10n = context.l10n;
         final message = widget.verifyCurrentAccount
-            ? 'Raqamingiz tasdiqlandi ✅'
-            : (next.isNewUser ? 'Xush kelibsiz! Hisobingiz yaratildi.' : 'Xush kelibsiz!');
+            ? l10n.tgPhoneVerified
+            : (next.isNewUser ? l10n.tgWelcomeNew : l10n.tgWelcome);
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(content: Text(message)));
@@ -87,10 +90,15 @@ class _TelegramVerifyScreenState extends ConsumerState<TelegramVerifyScreen> wit
     });
 
     final state = ref.watch(telegramVerifyProvider);
-    final backLabel = widget.verifyCurrentAccount ? 'Bekor qilish' : "Raqamni o'zgartirish";
+    final l10n = context.l10n;
+    final backLabel = widget.verifyCurrentAccount ? l10n.commonCancel : l10n.tgChangePhone;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Telegram orqali tasdiqlash')),
+      appBar: AppBar(
+        title: Text(l10n.tgTitle),
+        // Part of sign-up/login for a new user — keep the language switch reachable.
+        actions: [if (!widget.verifyCurrentAccount) const LanguagePickerButton()],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -101,8 +109,8 @@ class _TelegramVerifyScreenState extends ConsumerState<TelegramVerifyScreen> wit
               child: switch (state.phase) {
                 TelegramVerifyPhase.starting || TelegramVerifyPhase.done => _Busy(
                     label: state.phase != TelegramVerifyPhase.done
-                        ? 'Tayyorlanmoqda…'
-                        : (widget.verifyCurrentAccount ? 'Tasdiqlandi' : 'Tasdiqlandi, kirilmoqda…'),
+                        ? l10n.tgPreparing
+                        : (widget.verifyCurrentAccount ? l10n.tgVerified : l10n.tgVerifiedLoggingIn),
                   ),
                 TelegramVerifyPhase.waiting => _Waiting(
                     phone: widget.phone,
@@ -110,32 +118,28 @@ class _TelegramVerifyScreenState extends ConsumerState<TelegramVerifyScreen> wit
                     onOpenTelegram: () => _openTelegram(state.verification!.botUrl),
                     onChangePhone: () => Navigator.of(context).maybePop(),
                     backLabel: backLabel,
-                    finishStep: widget.verifyCurrentAccount
-                        ? 'Ilovaga qayting — tasdiqlash avtomatik yakunlanadi'
-                        : 'Ilovaga qayting — kirish avtomatik bajariladi',
+                    finishStep: widget.verifyCurrentAccount ? l10n.tgFinishStepVerify : l10n.tgFinishStepLogin,
                   ),
                 TelegramVerifyPhase.mismatch => _Problem(
                     icon: Icons.phonelink_erase_outlined,
-                    title: 'Raqam mos kelmadi',
+                    title: l10n.tgMismatchTitle,
                     message: widget.verifyCurrentAccount
-                        ? 'Telegram akkauntingizdagi raqam hisobingizdagi ${widget.phone} raqamiga mos emas. '
-                            'Shu raqam ulangan Telegram akkauntidan foydalaning.'
-                        : 'Telegram akkauntingizdagi raqam ${widget.phone} raqamiga mos emas. '
-                            "Shu raqam ulangan Telegram akkauntidan foydalaning yoki raqamni o'zgartiring.",
+                        ? l10n.tgMismatchOwn(widget.phone)
+                        : l10n.tgMismatch(widget.phone),
                     onRetry: _start,
                     backLabel: backLabel,
                   ),
                 TelegramVerifyPhase.expired => _Problem(
                     icon: Icons.timer_off_outlined,
-                    title: 'Tasdiqlash muddati tugadi',
-                    message: "10 daqiqa ichida raqam tasdiqlanmadi. Qaytadan urinib ko'ring.",
+                    title: l10n.tgExpiredTitle,
+                    message: l10n.tgExpiredMessage,
                     onRetry: _start,
                     backLabel: backLabel,
                   ),
                 TelegramVerifyPhase.failed => _Problem(
                     icon: Icons.error_outline,
-                    title: "Tasdiqlab bo'lmadi",
-                    message: state.errorMessage ?? "Noma'lum xatolik yuz berdi.",
+                    title: l10n.tgFailedTitle,
+                    message: state.errorMessage ?? l10n.commonUnknownError,
                     onRetry: _start,
                     backLabel: backLabel,
                   ),
@@ -192,6 +196,7 @@ class _Waiting extends StatelessWidget {
     final theme = Theme.of(context);
     final left = remaining.isNegative ? Duration.zero : remaining;
     final countdown = '${left.inMinutes}:${(left.inSeconds % 60).toString().padLeft(2, '0')}';
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -201,16 +206,16 @@ class _Waiting extends StatelessWidget {
             .scale(begin: const Offset(0.8, 0.8), duration: AppMotion.slow, curve: AppMotion.emphasized),
         const SizedBox(height: 16),
         Text(
-          'Telegramda tasdiqlang',
+          l10n.tgConfirmInTelegram,
           style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
         Text(phone, style: theme.textTheme.titleMedium, textAlign: TextAlign.center),
         const SizedBox(height: 24),
-        const _Step(number: 1, text: 'Telegramda bsmart tasdiqlash boti ochiladi'),
-        const _Step(number: 2, text: '«Start» tugmasini bosing'),
-        const _Step(number: 3, text: '«📱 Raqamni tasdiqlash» tugmasini bosing'),
+        _Step(number: 1, text: l10n.tgStep1),
+        _Step(number: 2, text: l10n.tgStep2),
+        _Step(number: 3, text: l10n.tgStep3),
         _Step(number: 4, text: finishStep),
         const SizedBox(height: 24),
         Row(
@@ -218,14 +223,14 @@ class _Waiting extends StatelessWidget {
           children: [
             const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
             const SizedBox(width: 12),
-            Text('Tasdiqlash kutilmoqda · $countdown', style: theme.textTheme.bodyMedium),
+            Text(l10n.tgWaiting(countdown), style: theme.textTheme.bodyMedium),
           ],
         ),
         const SizedBox(height: 24),
         FilledButton.icon(
           onPressed: onOpenTelegram,
           icon: const Icon(Icons.telegram),
-          label: const Text('Telegramni ochish'),
+          label: Text(l10n.tgOpenTelegram),
           style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
         ),
         const SizedBox(height: 8),
@@ -296,7 +301,7 @@ class _Problem extends StatelessWidget {
         FilledButton(
           onPressed: onRetry,
           style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-          child: const Text('Qayta urinish'),
+          child: Text(context.l10n.commonRetry),
         ),
         const SizedBox(height: 8),
         TextButton(

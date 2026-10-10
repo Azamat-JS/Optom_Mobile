@@ -10,6 +10,8 @@ import 'package:bsmart/features/deliveries/presentation/screens/courier_deliveri
 import 'package:bsmart/features/restaurant_orders/presentation/screens/restaurant_orders_board_screen.dart';
 import 'package:bsmart/features/tracking/presentation/widgets/courier_online_card.dart';
 import 'package:bsmart/features/tracking/presentation/widgets/tracking_status_pill.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/shared/widgets/settings_action_button.dart';
 
 /// A courier's own home. For a RESTAURANT-vertical owner's courier, this is
 /// the real, working delivery-claiming flow — the same order board every
@@ -43,13 +45,14 @@ class CourierHomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kuryer'),
+        title: Text(UserRole.courier.localizedLabel(context.l10n)),
         actions: [
           const TrackingStatusPill(),
           const CourierAlertsButton(),
+          const SettingsActionButton(),
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: 'Chiqish',
+            tooltip: context.l10n.commonLogout,
             onPressed: () => ref.read(sessionNotifierProvider.notifier).logout(),
           ),
         ],
@@ -93,9 +96,9 @@ class _RestaurantCourierTabsState extends ConsumerState<_RestaurantCourierTabs> 
       children: [
         TabBar(
           controller: _tabs,
-          tabs: const [
-            Tab(text: 'Yetkazishlar'),
-            Tab(text: 'Buyurtmalar'),
+          tabs: [
+            Tab(text: context.l10n.navDeliveries),
+            Tab(text: context.l10n.navOrders),
           ],
         ),
         Expanded(

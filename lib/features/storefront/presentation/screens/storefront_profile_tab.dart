@@ -6,6 +6,7 @@ import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 import 'package:bsmart/features/auth/presentation/widgets/telegram_notifications_tile.dart';
 import 'package:bsmart/features/auth/presentation/widgets/verify_phone_banner.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
 
 /// The "Profil" tab — a guest sees login/register entry points; a logged-in
 /// `CUSTOMER` sees their own orders/debts (both reused as-is from their
@@ -18,6 +19,13 @@ class StorefrontProfileTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(sessionNotifierProvider).valueOrNull;
     final user = authState?.user;
+    final l10n = context.l10n;
+    final settingsTile = ListTile(
+      leading: const Icon(Icons.settings_outlined),
+      title: Text(l10n.commonSettings),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () => context.push(RouteNames.settings),
+    );
 
     if (user == null) {
       return Center(
@@ -28,13 +36,19 @@ class StorefrontProfileTab extends ConsumerWidget {
             children: [
               const Icon(Icons.account_circle_outlined, size: 56),
               const SizedBox(height: 12),
-              const Text('Profilni koʻrish uchun tizimga kiring', textAlign: TextAlign.center),
+              Text(l10n.profileLoginPrompt, textAlign: TextAlign.center),
               const SizedBox(height: 16),
-              FilledButton(onPressed: () => context.push(RouteNames.login), child: const Text('Kirish')),
+              FilledButton(onPressed: () => context.push(RouteNames.login), child: Text(l10n.commonLogin)),
               const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: () => context.push(RouteNames.register),
-                child: const Text("Ro'yxatdan o'tish"),
+                child: Text(l10n.commonRegister),
+              ),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: () => context.push(RouteNames.settings),
+                icon: const Icon(Icons.settings_outlined),
+                label: Text(l10n.commonSettings),
               ),
             ],
           ),
@@ -51,37 +65,38 @@ class StorefrontProfileTab extends ConsumerWidget {
           subtitle: Text(user.phone),
           trailing: user.phoneVerified
               ? Tooltip(
-                  message: 'Raqam tasdiqlangan',
+                  message: l10n.profilePhoneVerified,
                   child: Icon(Icons.verified, color: Theme.of(context).colorScheme.primary),
                 )
               : null,
         ),
-        const VerifyPhoneBanner(reason: "Restoran yetkazishlarini kuzatish va qarzlaringizni ko'rish uchun"),
+        VerifyPhoneBanner(message: l10n.verifyBannerProfile),
         const Divider(),
         ListTile(
           leading: const Icon(Icons.receipt_long_outlined),
-          title: const Text('Buyurtmalarim'),
+          title: Text(l10n.profileMyOrders),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.push(RouteNames.orders),
         ),
         ListTile(
           leading: const Icon(Icons.delivery_dining_outlined),
-          title: const Text('Yetkazishlarim'),
+          title: Text(l10n.profileMyDeliveries),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.push(RouteNames.customerDeliveries),
         ),
         ListTile(
           leading: const Icon(Icons.account_balance_wallet_outlined),
-          title: const Text('Qarzlarim'),
+          title: Text(l10n.profileMyDebts),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.push(RouteNames.customerDebts),
         ),
         const Divider(),
         const TelegramNotificationsTile(),
+        settingsTile,
         const Divider(),
         ListTile(
           leading: const Icon(Icons.logout),
-          title: const Text('Chiqish'),
+          title: Text(l10n.commonLogout),
           onTap: () => ref.read(sessionNotifierProvider.notifier).logout(),
         ),
       ],
