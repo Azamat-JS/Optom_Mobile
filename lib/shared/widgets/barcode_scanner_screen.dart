@@ -8,9 +8,9 @@ import 'package:bsmart/core/l10n/l10n.dart';
 /// action now, and by POS (Milestone 4) later — this is the direct native
 /// replacement for the reference web app's ZXing-WASM camera workaround.
 ///
-/// Not available on Apple-Silicon iOS Simulators — see `CLAUDE.md`'s "Known
-/// Toolchain Deviations" (a `mobile_scanner`/MLKit limitation, not a bug
-/// here). Verify on a real device or Android instead.
+/// Builds and runs on the iOS Simulator since `mobile_scanner` 7.x (Apple
+/// Vision instead of ML Kit), but the simulator has no camera — verify actual
+/// scanning on a real device.
 class BarcodeScannerScreen extends StatefulWidget {
   const BarcodeScannerScreen({super.key, this.title});
 

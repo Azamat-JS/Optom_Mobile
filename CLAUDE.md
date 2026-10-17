@@ -64,7 +64,7 @@ notifications, real payment gateway, OTP login — see "Backend-Enhancement Trac
 - **Local storage:** `flutter_secure_storage` for JWT tokens (sensitive); `shared_preferences` for
   the non-sensitive active-store selection; `hive_ce`/`hive_ce_flutter` reserved for **read-cache
   only** (see "Offline Strategy" below) — not yet wired into any feature as of this writing.
-- **Forms:** `reactive_forms`. **Barcode scanning:** `mobile_scanner` (native camera, ML Kit —
+- **Forms:** `reactive_forms`. **Barcode scanning:** `mobile_scanner` (native camera; Apple Vision on iOS, ML Kit on Android —
   replaces the web app's ZXing-WASM workaround; see its iOS simulator caveat below). **Charts:**
   `fl_chart`. **Animation:** `flutter_animate`, `lottie`, `shimmer` — animations are a first-class
   requirement per the user's explicit ask, not decoration; see `core/theme/app_motion.dart` for the
@@ -106,14 +106,13 @@ fixed** (try `dart run build_runner build --delete-conflicting-outputs` in a scr
 fails at "Compiling the build script" citing `analyzer_plugin`/`Element2`, it's still broken).
 `analysis_options.yaml` has a comment recording this too.
 
-**Second toolchain gotcha (device-specific, not fixable):** `mobile_scanner`'s iOS podspec
-(`GoogleMLKit/BarcodeScanning`) excludes `arm64` for the `iphonesimulator` SDK
-(`EXCLUDED_ARCHS[sdk=iphonesimulator*] = 'i386 armv7 arm64'`) — Google's MLKit XCFrameworks don't
-ship an arm64-simulator slice. **This means the app cannot run on an Apple-Silicon iOS Simulator
-at all** (fails with "Module 'mobile_scanner' not found") as long as `mobile_scanner` is a
-dependency. It works fine on: real iOS devices, and Android (emulator or device) — verification
-during development should default to the **Android emulator** for this reason. Confirmed via an
-actual `flutter run` attempt, not a hypothetical — see Progress Log 2026-09-22.
+**Second toolchain gotcha (resolved 2026-10-17):** `mobile_scanner` 6.x used Google ML Kit on iOS,
+whose XCFrameworks ship no arm64-simulator slice, so the app could not run on an Apple-Silicon iOS
+Simulator (iOS 26+ simulators require arm64: "Unable to find a destination matching the provided
+destination specifier"). **Fixed by upgrading to `mobile_scanner` ^7.x**, which uses Apple's Vision
+framework on iOS (no ML Kit pods). Verified: `flutter build ios --simulator` and
+`flutter build apk --debug` both succeed. Do not downgrade below 7.x. The simulator still has no
+camera, so actual barcode scanning needs a real device.
 
 ---
 
@@ -1133,8 +1132,8 @@ Built one milestone at a time, each verified live before the next.
   initial ambiguous `API_KEY`). Android: `android/app/build.gradle.kts` parses `../.env` into
   `manifestPlaceholders["mapsApiKey"]` → `<meta-data com.google.android.geo.API_KEY>` (confirmed in
   the merged manifest). iOS: `AppDelegate.swift` reads the bundled Flutter `.env` asset and calls
-  `GMSServices.provideAPIKey` (not live-verified — iOS simulator can't run this app, see Known
-  Toolchain Deviations).
+  `GMSServices.provideAPIKey` (not live-verified — iOS simulator couldn't run this app until the
+  2026-10-17 `mobile_scanner` 7.x upgrade, see Known Toolchain Deviations).
 - **Real bugs found live and fixed:**
   1. **Stale deliveries across accounts** — `courierDeliveriesProvider` is app-global, so after
      logout → login as a *different* courier, the previous courier's deliveries stayed on screen
@@ -1626,8 +1625,8 @@ Every milestone should be verified against the **real, running** Optom Savdo bac
   testing on Android instead, real device needed for iOS verification going forward; (2) an
   accidentally-dropped `flutter: assets: - .env` section in `pubspec.yaml` caused a
   `FileNotFoundError` crash on launch.
-- iOS Simulator run is expected to fail as long as `mobile_scanner` is a dependency — this is
-  expected/known, not a regression to chase.
+- iOS Simulator run was expected to fail with `mobile_scanner` 6.x — resolved 2026-10-17 by
+  upgrading to 7.x (see "Known Toolchain Deviations").
 
 **Next up:** Milestone 1's actual dashboard (reporting endpoints + charts + UZS/USD toggle), then
 Milestone 2 (Products/Categories/Master-Catalog).

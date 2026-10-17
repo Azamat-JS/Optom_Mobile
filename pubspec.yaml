@@ -41,7 +41,7 @@ dependencies:
   reactive_forms: ^17.0.0
 
   # Native barcode scanning
-  mobile_scanner: ^6.0.2
+  mobile_scanner: ^7.4.2
 
   # Charts (dashboards/reports)
   fl_chart: ^0.69.0
