@@ -1,3 +1,5 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
+
 /// Mirrors the backend's Prisma `SaleType` enum.
 enum SaleType {
   paid,
@@ -14,10 +16,7 @@ enum SaleType {
         SaleType.debt => 'DEBT',
       };
 
-  String get label => switch (this) {
-        SaleType.paid => "To'langan",
-        SaleType.debt => 'Qarzga',
-      };
+  String get label => appL10n.enumSaleType(name);
 }
 
 /// Mirrors the backend's Prisma `SaleStatus` enum.
@@ -35,12 +34,7 @@ enum SaleStatus {
         _ => throw ArgumentError('Unknown SaleStatus from backend: $value'),
       };
 
-  String get label => switch (this) {
-        SaleStatus.completed => 'Yakunlangan',
-        SaleStatus.cancelled => 'Bekor qilingan',
-        SaleStatus.partiallyReturned => 'Qisman qaytarilgan',
-        SaleStatus.returned => 'Qaytarilgan',
-      };
+  String get label => appL10n.enumSaleStatus(name);
 }
 
 /// Mirrors the backend's Prisma `DebtStatus` enum (shared by `Debt` and
@@ -61,11 +55,5 @@ enum DebtStatus {
         _ => throw ArgumentError('Unknown DebtStatus from backend: $value'),
       };
 
-  String get label => switch (this) {
-        DebtStatus.active => 'Faol',
-        DebtStatus.partial => 'Qisman to\'langan',
-        DebtStatus.settled => "To'langan",
-        DebtStatus.overdue => 'Muddati o\'tgan',
-        DebtStatus.writtenOff => 'Bekor qilingan',
-      };
+  String get label => appL10n.enumDebtStatus(name);
 }

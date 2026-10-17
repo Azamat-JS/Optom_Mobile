@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/reports/domain/entities/work_day.dart';
 import 'package:bsmart/features/reports/domain/usecases/export_debts_xlsx_usecase.dart';
@@ -38,6 +39,7 @@ class _WorkDayCardState extends State<WorkDayCard> {
   static final _dateFormat = DateFormat('dd.MM.yyyy HH:mm');
 
   Future<void> _exportDebts() async {
+    final shareText = context.l10n.workDayDebtsShareText;
     setState(() => _isExporting = true);
     final result = await getIt<ExportDebtsXlsxUseCase>().call();
     if (!mounted) return;
@@ -48,12 +50,12 @@ class _WorkDayCardState extends State<WorkDayCard> {
         await file.writeAsBytes(bytes);
         await Share.shareXFiles(
           [XFile(file.path, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')],
-          text: "Qarzlar ro'yxati",
+          text: shareText,
         );
       },
       (failure) async {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: ${failure.message}')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.commonErrorWith(failure.message))));
       },
     );
   }
@@ -72,10 +74,10 @@ class _WorkDayCardState extends State<WorkDayCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Ish kuni', style: Theme.of(context).textTheme.titleMedium),
+                Text(context.l10n.workDayTitle, style: Theme.of(context).textTheme.titleMedium),
                 if (workDay != null)
                   Chip(
-                    label: Text(isOpen ? 'Ochiq' : 'Yopilgan'),
+                    label: Text(isOpen ? context.l10n.workDayOpen : context.l10n.workDayClosed),
                     visualDensity: VisualDensity.compact,
                     backgroundColor: isOpen
                         ? Theme.of(context).colorScheme.primaryContainer
@@ -85,10 +87,10 @@ class _WorkDayCardState extends State<WorkDayCard> {
             ),
             const SizedBox(height: 8),
             if (workDay == null)
-              const Text('Hali ish kuni boshlanmagan')
+              Text(context.l10n.workDayNotStarted)
             else ...[
-              Text('Boshlangan: ${_dateFormat.format(workDay.startedAt.toLocal())}'),
-              if (workDay.endedAt != null) Text('Tugagan: ${_dateFormat.format(workDay.endedAt!.toLocal())}'),
+              Text(context.l10n.workDayStartedAt(_dateFormat.format(workDay.startedAt.toLocal()))),
+              if (workDay.endedAt != null) Text(context.l10n.workDayEndedAt(_dateFormat.format(workDay.endedAt!.toLocal()))),
             ],
             const SizedBox(height: 12),
             Wrap(
@@ -99,20 +101,20 @@ class _WorkDayCardState extends State<WorkDayCard> {
                   FilledButton.icon(
                     onPressed: widget.onStart,
                     icon: const Icon(Icons.play_arrow_outlined),
-                    label: const Text('Ish kunini boshlash'),
+                    label: Text(context.l10n.workDayStart),
                   )
                 else
                   FilledButton.tonalIcon(
                     onPressed: widget.onEnd,
                     icon: const Icon(Icons.stop_circle_outlined),
-                    label: const Text('Ish kunini yakunlash'),
+                    label: Text(context.l10n.workDayEnd),
                   ),
                 OutlinedButton.icon(
                   onPressed: _isExporting ? null : _exportDebts,
                   icon: _isExporting
                       ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2))
                       : const Icon(Icons.download_outlined),
-                  label: const Text('Qarzlar (Excel)'),
+                  label: Text(context.l10n.workDayExportDebts),
                 ),
               ],
             ),

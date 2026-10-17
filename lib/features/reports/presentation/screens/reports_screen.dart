@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/dashboard/presentation/widgets/kpi_card.dart';
@@ -28,7 +29,7 @@ class ReportsScreen extends ConsumerWidget {
     final bestSellingAsync = ref.watch(bestSellingProductsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Hisobotlar')),
+      appBar: AppBar(title: Text(context.l10n.reportsTitle)),
       body: RefreshIndicator(
         onRefresh: () async {
           await Future.wait([
@@ -55,7 +56,7 @@ class ReportsScreen extends ConsumerWidget {
               ),
               error: (error, _) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 32),
-                child: Center(child: Text('Xatolik: $error')),
+                child: Center(child: Text(context.l10n.commonErrorWith('$error'))),
               ),
               data: (data) => _ReportsBody(data: data, currency: currency),
             ),
@@ -63,7 +64,7 @@ class ReportsScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Eng ko\'p sotilgan mahsulotlar', style: Theme.of(context).textTheme.titleMedium),
+                Text(context.l10n.reportsTopProducts, style: Theme.of(context).textTheme.titleMedium),
               ],
             ),
             const SizedBox(height: 8),
@@ -72,9 +73,9 @@ class ReportsScreen extends ConsumerWidget {
                 padding: EdgeInsets.symmetric(vertical: 16),
                 child: Center(child: CircularProgressIndicator()),
               ),
-              error: (error, _) => Text('Xatolik: $error'),
+              error: (error, _) => Text(context.l10n.commonErrorWith('$error')),
               data: (products) => products.isEmpty
-                  ? const Padding(padding: EdgeInsets.symmetric(vertical: 8), child: Text("Ma'lumot yo'q"))
+                  ? Padding(padding: EdgeInsets.symmetric(vertical: 8), child: Text(context.l10n.commonNoData))
                   : Card(
                       child: Column(
                         children: [
@@ -84,7 +85,7 @@ class ReportsScreen extends ConsumerWidget {
                               leading: const Icon(Icons.inventory_2_outlined),
                               title: Text(product.name),
                               trailing: Text(CurrencyFormatter.format(product.price, product.currency)),
-                              subtitle: Text('Zaxira: ${product.stock.toStringAsFixed(0)}'),
+                              subtitle: Text(context.l10n.reportsStockWith(product.stock.toStringAsFixed(0))),
                             ),
                         ],
                       ),
@@ -98,7 +99,7 @@ class ReportsScreen extends ConsumerWidget {
                   await ref.read(workDayProvider.notifier).start();
                 } catch (e) {
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.commonErrorWith('$e'))));
                   }
                 }
               },
@@ -107,7 +108,7 @@ class ReportsScreen extends ConsumerWidget {
                   await ref.read(workDayProvider.notifier).end();
                 } catch (e) {
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.commonErrorWith('$e'))));
                   }
                 }
               },
@@ -141,7 +142,7 @@ class _ReportsBody extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Statistika', style: Theme.of(context).textTheme.titleMedium),
+            Text(context.l10n.reportsStatistics, style: Theme.of(context).textTheme.titleMedium),
             SegmentedButton<Currency>(
               segments: const [
                 ButtonSegment(value: Currency.uzs, label: Text('UZS')),
@@ -163,27 +164,27 @@ class _ReportsBody extends ConsumerWidget {
           childAspectRatio: 1.6,
           children: [
             KpiCard(
-              label: 'Tushum',
+              label: context.l10n.reportsRevenue,
               value: CurrencyFormatter.format(revenue, currency),
               icon: Icons.trending_up,
             ),
             KpiCard(
-              label: 'Yangi qarzlar',
+              label: context.l10n.reportsNewDebts,
               value: CurrencyFormatter.format(newDebts.amount, currency),
-              subtitle: '${newDebts.count} ta',
+              subtitle: context.l10n.commonPieces('${newDebts.count}'),
               icon: Icons.receipt_long_outlined,
               color: Theme.of(context).colorScheme.error,
             ),
             KpiCard(
-              label: "Qarz to'lovlari",
+              label: context.l10n.reportsDebtPayments,
               value: CurrencyFormatter.format(collected.amount, currency),
-              subtitle: '${collected.count} ta',
+              subtitle: context.l10n.commonPieces('${collected.count}'),
               icon: Icons.payments_outlined,
             ),
             KpiCard(
-              label: 'Qoldiq qarzdorlik',
+              label: context.l10n.reportsOutstanding,
               value: CurrencyFormatter.format(outstanding.balance, currency),
-              subtitle: '${outstanding.count} ta',
+              subtitle: context.l10n.commonPieces('${outstanding.count}'),
               icon: Icons.account_balance_wallet_outlined,
               color: Theme.of(context).colorScheme.error,
             ),
@@ -196,7 +197,7 @@ class _ReportsBody extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Savdo grafigi', style: Theme.of(context).textTheme.titleMedium),
+                Text(context.l10n.reportsSalesChart, style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 16),
                 SalesAmountChart(points: salesChart),
               ],

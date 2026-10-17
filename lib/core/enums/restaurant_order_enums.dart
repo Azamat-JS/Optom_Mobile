@@ -1,3 +1,5 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
+
 /// Mirrors the backend's `RestaurantOrderType` enum.
 enum RestaurantOrderType {
   dineIn,
@@ -14,10 +16,7 @@ enum RestaurantOrderType {
         RestaurantOrderType.delivery => 'DELIVERY',
       };
 
-  String get label => switch (this) {
-        RestaurantOrderType.dineIn => 'Zalda',
-        RestaurantOrderType.delivery => 'Yetkazib berish',
-      };
+  String get label => appL10n.enumRestaurantOrderType(name);
 }
 
 /// Mirrors the backend's `RestaurantOrderStatus` enum. Flow:
@@ -53,14 +52,7 @@ enum RestaurantOrderStatus {
         RestaurantOrderStatus.cancelled => 'CANCELLED',
       };
 
-  String get label => switch (this) {
-        RestaurantOrderStatus.newOrder => 'Yangi',
-        RestaurantOrderStatus.preparing => 'Tayyorlanmoqda',
-        RestaurantOrderStatus.ready => 'Tayyor',
-        RestaurantOrderStatus.served => 'Berildi',
-        RestaurantOrderStatus.delivered => 'Yetkazildi',
-        RestaurantOrderStatus.cancelled => 'Bekor qilindi',
-      };
+  String get label => appL10n.enumRestaurantOrderStatus(name);
 
   bool get isTerminal =>
       this == RestaurantOrderStatus.served ||

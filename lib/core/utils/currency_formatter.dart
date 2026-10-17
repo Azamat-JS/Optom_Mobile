@@ -1,3 +1,4 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
 import 'package:intl/intl.dart';
 
 import 'package:bsmart/core/enums/currency.dart';
@@ -12,7 +13,7 @@ class CurrencyFormatter {
   static final _usdFormat = NumberFormat('#,##0.##', 'en_US');
 
   static String format(double amount, Currency currency) => switch (currency) {
-        Currency.uzs => "${_uzsFormat.format(amount)} so'm",
+        Currency.uzs => '${_uzsFormat.format(amount)} ${appL10n.currencySom}',
         Currency.usd => '\$${_usdFormat.format(amount)}',
       };
 }

@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/features/reports/domain/entities/sales_chart_result.dart';
 
 /// Day-by-day revenue line for the Reports hub's selectable-period
@@ -21,7 +22,7 @@ class SalesAmountChart extends StatelessWidget {
     return SizedBox(
       height: 180,
       child: points.isEmpty || points.every((p) => p.amount == 0)
-          ? Center(child: Text("Ma'lumot yo'q", style: TextStyle(color: Theme.of(context).hintColor)))
+          ? Center(child: Text(context.l10n.commonNoData, style: TextStyle(color: Theme.of(context).hintColor)))
           : LineChart(
               LineChartData(
                 minY: 0,

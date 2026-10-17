@@ -355,4 +355,1056 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get homeWholesalerDebts => 'Optomchi qarzlari';
+
+  @override
+  String enumOrderStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'newOrder': 'Yangi',
+      'approved': 'Tasdiqlangan',
+      'rejected': 'Rad etilgan',
+      'delivered': 'Yetkazilgan',
+      'debtRecorded': 'Qarzga yozilgan',
+      'paid': 'To\'langan',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumPaymentMethod(String method) {
+    String _temp0 = intl.Intl.selectLogic(method, {
+      'cash': 'Naqd',
+      'card': 'Karta',
+      'bankTransfer': 'Bank o\'tkazmasi',
+      'click': 'Click',
+      'payme': 'Payme',
+      'debt': 'Qarzga',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumBusinessType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'general': 'Do\'kon',
+      'restaurant': 'Restoran',
+      'applianceStore': 'Maishiy texnika',
+      'constructionTools': 'Qurilish mollari',
+      'toyStore': 'O\'yinchoqlar',
+      'autoParts': 'Avto ehtiyot qismlar',
+      'pharmacy': 'Dorixona',
+      'clothingStore': 'Kiyim-kechak',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumExpenditureType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'electricity': 'Elektr energiyasi',
+      'gas': 'Gaz',
+      'water': 'Suv',
+      'taxes': 'Soliqlar',
+      'renting': 'Ijara',
+      'other': 'Boshqa',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumProductUnit(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'dona': 'Dona',
+      'metr': 'Metr',
+      'litr': 'Litr',
+      'kilogram': 'Kilogramm',
+      'gram': 'Gramm',
+      'blok': 'Blok',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumRestaurantOrderType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'dineIn': 'Zalda',
+      'delivery': 'Yetkazib berish',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumRestaurantOrderStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'newOrder': 'Yangi',
+      'preparing': 'Tayyorlanmoqda',
+      'ready': 'Tayyor',
+      'served': 'Berildi',
+      'delivered': 'Yetkazildi',
+      'cancelled': 'Bekor qilindi',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumSaleType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'paid': 'To\'langan',
+      'debt': 'Qarzga',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumSaleStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'completed': 'Yakunlangan',
+      'cancelled': 'Bekor qilingan',
+      'partiallyReturned': 'Qisman qaytarilgan',
+      'returned': 'Qaytarilgan',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumDebtStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'active': 'Faol',
+      'partial': 'Qisman to\'langan',
+      'settled': 'To\'langan',
+      'overdue': 'Muddati o\'tgan',
+      'writtenOff': 'Bekor qilingan',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get currencySom => 'so\'m';
+
+  @override
+  String get errorSessionExpired => 'Sessiya tugagan, qayta kiring.';
+
+  @override
+  String get errorForbidden => 'Bu amalni bajarishga ruxsat yo\'q.';
+
+  @override
+  String get errorNotFound => 'Topilmadi.';
+
+  @override
+  String get errorConflict => 'Amalni bajarib bo\'lmadi, ziddiyat mavjud.';
+
+  @override
+  String get errorNoInternet => 'Internet aloqasi yo\'q.';
+
+  @override
+  String get errorInvalidData => 'Ma\'lumotlar noto\'g\'ri kiritildi.';
+
+  @override
+  String get tgTooManyAttempts =>
+      'Bu raqam uchun urinishlar juda ko\'p. Birozdan so\'ng qayta urinib ko\'ring.';
+
+  @override
+  String get tgUnavailable =>
+      'Telegram orqali tasdiqlash vaqtincha ishlamayapti. Keyinroq urinib ko\'ring.';
+
+  @override
+  String get tgInvalidPhone =>
+      'Telefon raqam noto\'g\'ri. Format: +998XXXXXXXXX';
+
+  @override
+  String get commonSave => 'Saqlash';
+
+  @override
+  String get commonDelete => 'O\'chirish';
+
+  @override
+  String get commonAdd => 'Qo\'shish';
+
+  @override
+  String get commonEdit => 'Tahrirlash';
+
+  @override
+  String get commonActive => 'Faol';
+
+  @override
+  String get commonInactive => 'Faol emas';
+
+  @override
+  String get commonAll => 'Barchasi';
+
+  @override
+  String get commonNone => 'Yo\'q';
+
+  @override
+  String get commonNotSelected => 'Tanlanmagan';
+
+  @override
+  String get commonNotSelectedDash => '— Tanlanmagan —';
+
+  @override
+  String commonErrorWith(String error) {
+    return 'Xatolik: $error';
+  }
+
+  @override
+  String get commonNothingFound => 'Hech narsa topilmadi';
+
+  @override
+  String get commonReject => 'Rad etish';
+
+  @override
+  String get commonReasonOptional => 'Sababi (ixtiyoriy)';
+
+  @override
+  String get commonName => 'Nomi';
+
+  @override
+  String get commonNameRequired => 'Nomi *';
+
+  @override
+  String get commonNameMissing => 'Nomini kiriting';
+
+  @override
+  String get commonDescription => 'Tavsif';
+
+  @override
+  String get commonCategory => 'Kategoriya';
+
+  @override
+  String get commonBrand => 'Brend';
+
+  @override
+  String get commonBarcode => 'Shtrix-kod';
+
+  @override
+  String get commonPrice => 'Narx';
+
+  @override
+  String get commonPriceRequired => 'Narx *';
+
+  @override
+  String get commonCostPrice => 'Tannarx';
+
+  @override
+  String get commonStock => 'Zaxira';
+
+  @override
+  String get commonUnit => 'O\'lchov birligi';
+
+  @override
+  String get commonCurrency => 'Valyuta';
+
+  @override
+  String get commonCurrencyRequired => 'Valyuta *';
+
+  @override
+  String get currencyUzsLong => 'So\'m (UZS)';
+
+  @override
+  String get currencyUsdLong => 'Dollar (USD)';
+
+  @override
+  String get commonQuantityRequired => 'Miqdor kiritilishi shart';
+
+  @override
+  String get productsTitle => 'Mahsulotlar';
+
+  @override
+  String get productsProduct => 'Mahsulot';
+
+  @override
+  String get productsSentToCatalog =>
+      'Ko\'rib chiqish uchun katalogga yuborildi';
+
+  @override
+  String get productsDeleteTitle => 'Mahsulotni o\'chirish';
+
+  @override
+  String get productsDeleteConfirm =>
+      'Bu mahsulotni o\'chirishni tasdiqlaysizmi?';
+
+  @override
+  String productsCostPriceWith(String price) {
+    return 'Tannarx: $price';
+  }
+
+  @override
+  String get productsAddStock => 'Zaxira qo\'shish';
+
+  @override
+  String get productsCreateBarcode => 'Barkod yaratish';
+
+  @override
+  String get productsShareToCatalog => 'Katalogga ulashish';
+
+  @override
+  String get productsNameOrCatalog =>
+      'Mahsulot nomini kiriting yoki katalogdan tanlang';
+
+  @override
+  String get productsPriceInvalid => 'Narx noto\'g\'ri kiritildi';
+
+  @override
+  String get productsEditTitle => 'Mahsulotni tahrirlash';
+
+  @override
+  String get productsNewTitle => 'Yangi mahsulot';
+
+  @override
+  String get productsPriceRequired => 'Narx kiritilishi shart';
+
+  @override
+  String get productsInitialStock => 'Boshlang\'ich zaxira';
+
+  @override
+  String productsStockEditHint(String stock) {
+    return '$stock — o\'zgartirish uchun mahsulot sahifasidagi \"Zaxira qo\'shish\" tugmasini ishlating';
+  }
+
+  @override
+  String get productsPluSuggest => 'Taklif';
+
+  @override
+  String get productsExpiryOptional => 'Yaroqlilik muddati (ixtiyoriy)';
+
+  @override
+  String get productsPickFromCatalog => 'Katalogdan tanlash';
+
+  @override
+  String get productsNameRequired => 'Mahsulot nomi *';
+
+  @override
+  String get productsFindTitle => 'Mahsulotni topish';
+
+  @override
+  String get productsSearchHint => 'Nomi yoki shtrix-kod bo\'yicha qidirish...';
+
+  @override
+  String get productsNotFound => 'Mahsulotlar topilmadi';
+
+  @override
+  String productsCurrentStock(String stock) {
+    return 'Joriy zaxira: $stock';
+  }
+
+  @override
+  String get productsAddQuantity => 'Qo\'shiladigan miqdor';
+
+  @override
+  String get productsCorrectionOptional => 'Qo\'shimcha tuzatish (ixtiyoriy)';
+
+  @override
+  String get productsCorrectionHint => 'Manfiy son ham kiritish mumkin';
+
+  @override
+  String get commonConfirm => 'Tasdiqlash';
+
+  @override
+  String get commonDone => 'Tayyor';
+
+  @override
+  String get commonSearchHint => 'Qidirish...';
+
+  @override
+  String get commonInactiveShort => 'Faolsiz';
+
+  @override
+  String commonDeleteWithDependentsConfirm(String name) {
+    return '$name o\'chirilsinmi? Unga bog\'liq mahsulotlar bo\'lsa, xatolik qaytadi.';
+  }
+
+  @override
+  String get masterStatusPending => 'Kutilmoqda';
+
+  @override
+  String get masterStatusApproved => 'Tasdiqlangan';
+
+  @override
+  String get masterStatusRejected => 'Rad etilgan';
+
+  @override
+  String get masterDeleteTitle => 'Katalog yozuvini o\'chirish';
+
+  @override
+  String get masterReviewTitle => 'Katalog nazorati';
+
+  @override
+  String get masterEditTitle => 'Katalog yozuvini tahrirlash';
+
+  @override
+  String get masterNewTitle => 'Yangi katalog yozuvi';
+
+  @override
+  String get masterActiveVisible => 'Faol (katalogda ko\'rinadi)';
+
+  @override
+  String get masterSearchHint => 'Katalogdan qidirish...';
+
+  @override
+  String get categoriesDeleteTitle => 'Kategoriyani o\'chirish';
+
+  @override
+  String get categoriesTitle => 'Kategoriyalar';
+
+  @override
+  String get categoriesNotFound => 'Kategoriyalar topilmadi';
+
+  @override
+  String get categoriesEditTitle => 'Kategoriyani tahrirlash';
+
+  @override
+  String get categoriesNewTitle => 'Yangi kategoriya';
+
+  @override
+  String get categoriesParent => 'Ota kategoriya';
+
+  @override
+  String get categoriesNoParent => '— Yo\'q (asosiy kategoriya) —';
+
+  @override
+  String get categoriesSortOrder => 'Tartib raqami';
+
+  @override
+  String get categoriesPickerNotFound => 'Kategoriya topilmadi';
+
+  @override
+  String get commonDeactivate => 'Faolsizlantirish';
+
+  @override
+  String get commonFirstNameRequired => 'Ism *';
+
+  @override
+  String get commonFirstNameMissing => 'Ismni kiriting';
+
+  @override
+  String get commonLastNameRequired => 'Familiya *';
+
+  @override
+  String get commonLastNameMissing => 'Familiyani kiriting';
+
+  @override
+  String get commonPhoneRequired => 'Telefon *';
+
+  @override
+  String get commonPhoneMissing => 'Telefon raqamini kiriting';
+
+  @override
+  String get commonInvalidFormat => 'Noto\'g\'ri format';
+
+  @override
+  String get commonAddress => 'Manzil';
+
+  @override
+  String get commonNote => 'Izoh';
+
+  @override
+  String get commonTotal => 'Jami';
+
+  @override
+  String get commonSubtotal => 'Oraliq summa';
+
+  @override
+  String get commonDiscount => 'Chegirma';
+
+  @override
+  String commonPieces(String count) {
+    return '$count ta';
+  }
+
+  @override
+  String commonProductCount(int count) {
+    return '$count ta mahsulot';
+  }
+
+  @override
+  String get commonProducts => 'Mahsulotlar';
+
+  @override
+  String get commonDeliveryAddress => 'Yetkazib berish manzili';
+
+  @override
+  String get customersDeactivateTitle => 'Mijozni faolsizlantirish';
+
+  @override
+  String customersDeactivateConfirm(String name) {
+    return '$name faolsizlantirilsinmi?';
+  }
+
+  @override
+  String get customersTitle => 'Mijozlar';
+
+  @override
+  String get customersSearchHint => 'Ism yoki telefon bo\'yicha qidirish...';
+
+  @override
+  String get customersNotFound => 'Mijozlar topilmadi';
+
+  @override
+  String get customersEditTitle => 'Mijozni tahrirlash';
+
+  @override
+  String get customersNewTitle => 'Yangi mijoz';
+
+  @override
+  String get ordersSingleCurrency =>
+      'Bitta buyurtmada faqat bitta valyutadagi mahsulotlar bo\'lishi mumkin';
+
+  @override
+  String ordersAddedToCart(String name) {
+    return '$name savatga qo\'shildi';
+  }
+
+  @override
+  String get ordersSearchProduct => 'Mahsulot qidirish...';
+
+  @override
+  String get ordersAllBranches => 'Barcha filiallar';
+
+  @override
+  String ordersCartSummary(int count, String total) {
+    return '$count ta mahsulot — $total';
+  }
+
+  @override
+  String get ordersPickWholesaler => 'Optomchini tanlang';
+
+  @override
+  String get ordersNoWholesalers => 'Optomchilar topilmadi';
+
+  @override
+  String get ordersIncomingTitle => 'Kelgan buyurtmalar';
+
+  @override
+  String get ordersMineTitle => 'Buyurtmalarim';
+
+  @override
+  String get ordersTabOutgoing => 'Chiqarilgan';
+
+  @override
+  String get ordersTabIncoming => 'Kelgan';
+
+  @override
+  String get ordersNotFound => 'Buyurtmalar topilmadi';
+
+  @override
+  String get ordersReviewTitle => 'Buyurtmani ko\'rib chiqish';
+
+  @override
+  String get ordersPlace => 'Buyurtma berish';
+
+  @override
+  String get ordersApproveTitle => 'Buyurtmani tasdiqlash';
+
+  @override
+  String get ordersApproveConfirm =>
+      'Bu buyurtmani tasdiqlaysizmi? Mahsulot zaxirasi kamayadi.';
+
+  @override
+  String get ordersRejectTitle => 'Buyurtmani rad etish';
+
+  @override
+  String get ordersDeliveredTitle => 'Yetkazib berildi deb belgilash';
+
+  @override
+  String get ordersDeliveredConfirm =>
+      'Bu buyurtma yetkazib berilganini tasdiqlaysizmi?';
+
+  @override
+  String get ordersOrder => 'Buyurtma';
+
+  @override
+  String ordersRejectionReason(String reason) {
+    return 'Rad etilish sababi: $reason';
+  }
+
+  @override
+  String get ordersSeller => 'Sotuvchi';
+
+  @override
+  String get ordersBuyer => 'Xaridor';
+
+  @override
+  String get ordersHistory => 'Tarix';
+
+  @override
+  String get ordersDelivered => 'Yetkazildi';
+
+  @override
+  String get commonUnknownPerson => 'Noma\'lum';
+
+  @override
+  String get commonAmount => 'Summa';
+
+  @override
+  String get commonPaymentMethod => 'To\'lov usuli';
+
+  @override
+  String get commonNoteOptional => 'Izoh (ixtiyoriy)';
+
+  @override
+  String get commonClose => 'Yopish';
+
+  @override
+  String get commonDateRequired => 'Sana *';
+
+  @override
+  String commonTotalWith(String amount) {
+    return 'Jami: $amount';
+  }
+
+  @override
+  String commonBalanceWith(String amount) {
+    return 'Qoldiq: $amount';
+  }
+
+  @override
+  String commonDueWith(String date) {
+    return 'Muddat: $date';
+  }
+
+  @override
+  String get expensesEditTitle => 'Harajatni tahrirlash';
+
+  @override
+  String get expensesNewTitle => 'Yangi harajat';
+
+  @override
+  String get expensesTypeRequired => 'Turi *';
+
+  @override
+  String get expensesAmountRequired => 'Summasi (so\'m) *';
+
+  @override
+  String get expensesAmountMissing => 'Summani kiriting';
+
+  @override
+  String get expensesAmountInvalid => 'Noto\'g\'ri summa';
+
+  @override
+  String get expensesDeleteTitle => 'Harajatni o\'chirish';
+
+  @override
+  String expensesDeleteConfirm(String expense) {
+    return '$expense butunlay o\'chirilsinmi?';
+  }
+
+  @override
+  String get expensesTitle => 'Harajatlarim';
+
+  @override
+  String get expensesFilterByType => 'Turi bo\'yicha filtr';
+
+  @override
+  String get expensesTotal => 'Jami xarajat';
+
+  @override
+  String get expensesNotFound => 'Harajatlar topilmadi';
+
+  @override
+  String debtsPaymentsApplied(int count) {
+    return '$count ta qarzga to\'lov qo\'llanildi';
+  }
+
+  @override
+  String get debtsCloseTitle => 'Qarzni yopish';
+
+  @override
+  String debtsCloseConfirm(String amount) {
+    return 'Qolgan $amount to\'liq to\'langan deb belgilansinmi?';
+  }
+
+  @override
+  String debtsTotalBalance(String amount) {
+    return 'Jami qoldiq: $amount';
+  }
+
+  @override
+  String get debtsPayDownTitle => 'Umumiy to\'lov (FIFO)';
+
+  @override
+  String get debtsPayDownHint =>
+      'Eng eski qarzdan boshlab avtomatik taqsimlanadi';
+
+  @override
+  String get debtsAllocation => 'Taqsimlanishi:';
+
+  @override
+  String get debtsWillClose => '(yopiladi)';
+
+  @override
+  String get debtsExceedsTotal => 'Summa jami qoldiqdan oshib ketmoqda';
+
+  @override
+  String get debtsConfirmPayment => 'To\'lovni tasdiqlash';
+
+  @override
+  String get debtsTitle => 'Qarzlar';
+
+  @override
+  String get debtsPayment => 'To\'lov';
+
+  @override
+  String get debtsTabCustomers => 'Mijozlar';
+
+  @override
+  String get debtsTabOwedToMe => 'Menga';
+
+  @override
+  String get debtsTabMine => 'Mening qarzim';
+
+  @override
+  String get debtsNotFound => 'Qarzlar topilmadi';
+
+  @override
+  String get debtsCustomerNotFound => 'Mijoz qarzlari topilmadi';
+
+  @override
+  String debtsActiveCount(int count) {
+    return '$count ta faol qarz';
+  }
+
+  @override
+  String get debtsEnterValidAmount => 'To\'g\'ri summa kiriting';
+
+  @override
+  String debtsAmountExceedsBalance(String balance) {
+    return 'Summa qoldiqdan ($balance) oshmasligi kerak';
+  }
+
+  @override
+  String get debtsMakePayment => 'To\'lov qilish';
+
+  @override
+  String get commonActivate => 'Faollashtirish';
+
+  @override
+  String commonDeletePermanentlyConfirm(String name) {
+    return '$name butunlay o\'chirilsinmi?';
+  }
+
+  @override
+  String get commonPasswordRequired => 'Parol *';
+
+  @override
+  String get staffDeleteTitle => 'Xodimni o\'chirish';
+
+  @override
+  String get staffTitle => 'Xodimlar';
+
+  @override
+  String get staffNotFound => 'Xodimlar topilmadi';
+
+  @override
+  String get staffStoreRequired => 'Do\'kon tanlanishi shart';
+
+  @override
+  String get staffEditTitle => 'Xodimni tahrirlash';
+
+  @override
+  String get staffNewTitle => 'Yangi xodim';
+
+  @override
+  String get staffStoreLabel => 'Do\'kon *';
+
+  @override
+  String get storesDeleteTitle => 'Do\'konni o\'chirish';
+
+  @override
+  String get storesTitle => 'Do\'konlar';
+
+  @override
+  String get storesDefault => 'Asosiy';
+
+  @override
+  String get storesEditTitle => 'Do\'konni tahrirlash';
+
+  @override
+  String get storesNewTitle => 'Yangi do\'kon';
+
+  @override
+  String get storesMapLocation => 'Xaritadagi joyi';
+
+  @override
+  String get storesLocationTitle => 'Do\'kon joylashuvi';
+
+  @override
+  String get storesLocationHint => 'Kuryerlar buyurtmani shu yerdan oladi';
+
+  @override
+  String get storesHandoverCode => 'Topshirish kodi';
+
+  @override
+  String get storesHandoverCodeHint =>
+      'Kuryer buyurtmani topshirishda mijozdan 4 xonali kodni so\'raydi. Ilovasi yoki tasdiqlangan raqami bo\'lmagan mijozdan kod so\'ralmaydi.';
+
+  @override
+  String get commonBalance => 'Qoldiq';
+
+  @override
+  String get commonPaid => 'To\'langan';
+
+  @override
+  String get commonOnCredit => 'Qarzga';
+
+  @override
+  String get commonPickCustomer => 'Mijozni tanlang';
+
+  @override
+  String get commonNew => 'Yangi';
+
+  @override
+  String get posScanProduct => 'Mahsulotni skanerlash';
+
+  @override
+  String get posBarcodeNotFound => 'Bu shtrix-kod bo\'yicha mahsulot topilmadi';
+
+  @override
+  String get posSingleCurrency =>
+      'Bitta sotuvda faqat bitta valyutadagi mahsulotlar bo\'lishi mumkin';
+
+  @override
+  String get posTitle => 'Kassa';
+
+  @override
+  String get posSavedCarts => 'Saqlangan savatlar';
+
+  @override
+  String posPriceAndStock(String price, String stock) {
+    return '$price · Qoldiq: $stock';
+  }
+
+  @override
+  String get salesPickReturnItem => 'Qaytariladigan mahsulotni tanlang';
+
+  @override
+  String get salesReturn => 'Qaytarish';
+
+  @override
+  String salesReturnableLeft(String count) {
+    return 'Qoldi: $count';
+  }
+
+  @override
+  String get salesRefundMethod => 'Pulni qaytarish usuli';
+
+  @override
+  String salesReturnAmount(String amount) {
+    return 'Qaytariladigan summa: $amount';
+  }
+
+  @override
+  String get salesConfirmReturn => 'Qaytarishni tasdiqlash';
+
+  @override
+  String get salesPayment => 'To\'lov';
+
+  @override
+  String get salesPaidNow => 'To\'landi';
+
+  @override
+  String get salesDownPaymentOptional => 'Oldindan to\'lov (ixtiyoriy)';
+
+  @override
+  String salesConfirmWithTotal(String total) {
+    return 'Tasdiqlash — $total';
+  }
+
+  @override
+  String get salesHistoryTitle => 'Sotuvlar tarixi';
+
+  @override
+  String get salesNotFound => 'Sotuvlar topilmadi';
+
+  @override
+  String get salesSale => 'Sotuv';
+
+  @override
+  String get salesCreated => 'Sotuv yaratildi';
+
+  @override
+  String salesReturnedQty(String count) {
+    return 'qaytarilgan: $count';
+  }
+
+  @override
+  String get salesDebt => 'Qarz';
+
+  @override
+  String get salesPayments => 'To\'lovlar';
+
+  @override
+  String get salesCustomerSearchHint => 'Ism yoki telefon...';
+
+  @override
+  String get salesCustomerNotFound => 'Mijoz topilmadi';
+
+  @override
+  String get cartsSaved => 'Savat saqlandi';
+
+  @override
+  String get cartsSaveOrClearFirst =>
+      'Avval joriy savatni saqlang yoki tozalang';
+
+  @override
+  String cartsSkipped(int count) {
+    return '$count ta mahsulot topilmadi, savatga qo\'shilmadi';
+  }
+
+  @override
+  String get cartsDeleteTitle => 'Saqlangan savatni o\'chirish';
+
+  @override
+  String get cartsDeleteConfirm =>
+      'Bu amalni ortga qaytarib bo\'lmaydi. Davom etasizmi?';
+
+  @override
+  String get cartsCurrentEmpty => 'Joriy savat bo\'sh';
+
+  @override
+  String cartsSaveCurrent(int count) {
+    return 'Joriy savatni saqlash ($count ta)';
+  }
+
+  @override
+  String get cartsNone => 'Saqlangan savatlar yo\'q';
+
+  @override
+  String cartsMore(int count) {
+    return '+$count ta';
+  }
+
+  @override
+  String get cartsRestore => 'Qaytarib olish';
+
+  @override
+  String get commonNoData => 'Ma\'lumot yo\'q';
+
+  @override
+  String get reportsTitle => 'Hisobotlar';
+
+  @override
+  String get reportsTopProducts => 'Eng ko\'p sotilgan mahsulotlar';
+
+  @override
+  String reportsStockWith(String stock) {
+    return 'Zaxira: $stock';
+  }
+
+  @override
+  String get reportsStatistics => 'Statistika';
+
+  @override
+  String get reportsRevenue => 'Tushum';
+
+  @override
+  String get reportsNewDebts => 'Yangi qarzlar';
+
+  @override
+  String get reportsDebtPayments => 'Qarz to\'lovlari';
+
+  @override
+  String get reportsOutstanding => 'Qoldiq qarzdorlik';
+
+  @override
+  String get reportsSalesChart => 'Savdo grafigi';
+
+  @override
+  String get reportsLast30 => 'So\'nggi 30 kun';
+
+  @override
+  String get reportsThisMonth => 'Bu oy';
+
+  @override
+  String get workDayDebtsShareText => 'Qarzlar ro\'yxati';
+
+  @override
+  String get workDayTitle => 'Ish kuni';
+
+  @override
+  String get workDayOpen => 'Ochiq';
+
+  @override
+  String get workDayClosed => 'Yopilgan';
+
+  @override
+  String get workDayNotStarted => 'Hali ish kuni boshlanmagan';
+
+  @override
+  String workDayStartedAt(String time) {
+    return 'Boshlangan: $time';
+  }
+
+  @override
+  String workDayEndedAt(String time) {
+    return 'Tugagan: $time';
+  }
+
+  @override
+  String get workDayStart => 'Ish kunini boshlash';
+
+  @override
+  String get workDayEnd => 'Ish kunini yakunlash';
+
+  @override
+  String get workDayExportDebts => 'Qarzlar (Excel)';
+
+  @override
+  String get dashPaymentCash => 'Naqd';
+
+  @override
+  String get dashPaymentCard => 'Karta';
+
+  @override
+  String get dashPaymentBank => 'Bank';
+
+  @override
+  String get dashPaymentDebt => 'Qarz';
+
+  @override
+  String get dashPaymentTypes => 'To\'lov turlari';
+
+  @override
+  String get dashIncomeDebt6m => 'Daromad va qarz (6 oy)';
+
+  @override
+  String get dashIncome => 'Daromad';
+
+  @override
+  String get dashSalesTrend14d => 'Savdo dinamikasi (14 kun)';
+
+  @override
+  String get scannerTitle => 'Shtrix-kodni skanerlang';
+
+  @override
+  String get locationMarkOnMap => 'Xaritada belgilash';
+
+  @override
+  String get locationPickTitle => 'Joyni belgilang';
+
+  @override
+  String get locationMarked => 'Xaritada belgilangan';
+
+  @override
+  String get locationCourierHint => 'Kuryer aniq joyni topishi uchun';
+
+  @override
+  String get locationRemove => 'Olib tashlash';
+
+  @override
+  String get locationDetectFailed =>
+      'Joylashuvni aniqlab bo\'lmadi — GPS va ruxsatni tekshiring';
+
+  @override
+  String get locationMyLocation => 'Mening joylashuvim';
+
+  @override
+  String get locationChooseHere => 'Shu joyni tanlash';
 }

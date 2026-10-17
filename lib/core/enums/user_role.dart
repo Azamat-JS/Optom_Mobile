@@ -1,3 +1,5 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
+
 /// Mirrors the backend's Prisma `UserRole` enum exactly (`Optom_Savdo/apps/server/prisma/schema.prisma`).
 ///
 /// `sellerAdmin`/`retailerAdmin` inherit their owner's data via `managedUserId`
@@ -40,17 +42,8 @@ enum UserRole {
   bool get isRetailerFamily => this == UserRole.retailer || this == UserRole.retailerAdmin;
   bool get isStaff => this == UserRole.sellerAdmin || this == UserRole.retailerAdmin;
 
-  /// Uzbek display label — used by the SUPER_ADMIN user-management screens
+  /// Display label in the active UI language — used by the SUPER_ADMIN user-management screens
   /// (Phase 3), which are the first place this app shows a raw role list to
   /// a human rather than branching behavior on it.
-  String get label => switch (this) {
-        UserRole.superAdmin => 'Super Admin',
-        UserRole.seller => 'Optomchi',
-        UserRole.sellerAdmin => 'Optomchi xodimi',
-        UserRole.retailer => "Do'konchi",
-        UserRole.retailerAdmin => "Do'konchi xodimi",
-        UserRole.customer => 'Mijoz',
-        UserRole.waiter => 'Ofitsiant',
-        UserRole.courier => 'Kuryer',
-      };
+  String get label => appL10n.roleLabel(name);
 }

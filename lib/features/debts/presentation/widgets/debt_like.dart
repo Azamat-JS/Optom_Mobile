@@ -1,3 +1,4 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/sale_enums.dart';
 import 'package:bsmart/features/debts/domain/entities/debt.dart';
@@ -126,7 +127,7 @@ List<DebtGroup> groupDebts(List<Debt> debts, {required String currentUserId}) {
       kind: DebtKind.b2b,
       personId: otherParty?.id,
       personNotesKey: otherParty == null ? first.notes : null,
-      personName: otherParty?.fullName ?? (first.notes?.split(' — ').first ?? 'Noma\'lum'),
+      personName: otherParty?.fullName ?? (first.notes?.split(' — ').first ?? appL10n.commonUnknownPerson),
       personPhone: otherParty?.phone ?? (first.notes?.split(' — ').elementAtOrNull(1)),
       currency: first.currency,
       items: group.map(DebtLike.fromDebt).toList()..sort((a, b) => a.createdAt.compareTo(b.createdAt)),
@@ -147,7 +148,7 @@ List<DebtGroup> groupSaleDebts(List<SaleDebt> saleDebts) {
     return DebtGroup(
       kind: DebtKind.saleDebt,
       personId: first.customer?.id,
-      personName: first.customer?.fullName ?? 'Noma\'lum',
+      personName: first.customer?.fullName ?? appL10n.commonUnknownPerson,
       personPhone: first.customer?.phone,
       currency: first.currency,
       items: group.map(DebtLike.fromSaleDebt).toList()..sort((a, b) => a.createdAt.compareTo(b.createdAt)),

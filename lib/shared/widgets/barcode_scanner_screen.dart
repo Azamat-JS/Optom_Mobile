@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
+
 /// Full-screen camera barcode scanner. Pops with the first detected code, or
 /// `null` if the user cancels. Reused by the product list's "scan to find"
 /// action now, and by POS (Milestone 4) later — this is the direct native
@@ -10,9 +12,10 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 /// Toolchain Deviations" (a `mobile_scanner`/MLKit limitation, not a bug
 /// here). Verify on a real device or Android instead.
 class BarcodeScannerScreen extends StatefulWidget {
-  const BarcodeScannerScreen({super.key, this.title = 'Shtrix-kodni skanerlang'});
+  const BarcodeScannerScreen({super.key, this.title});
 
-  final String title;
+  /// Defaults to the localized "Scan a barcode".
+  final String? title;
 
   @override
   State<BarcodeScannerScreen> createState() => _BarcodeScannerScreenState();
@@ -40,7 +43,7 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title ?? context.l10n.scannerTitle),
         actions: [
           IconButton(
             icon: ValueListenableBuilder(

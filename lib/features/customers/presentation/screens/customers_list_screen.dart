@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/features/customers/domain/entities/customer.dart';
 import 'package:bsmart/features/customers/presentation/providers/customers_list_notifier.dart';
 import 'package:bsmart/features/customers/presentation/screens/customer_form_screen.dart';
@@ -60,11 +61,11 @@ class _CustomersListScreenState extends ConsumerState<CustomersListScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Mijozni faolsizlantirish'),
-        content: Text('${customer.fullName} faolsizlantirilsinmi?'),
+        title: Text(context.l10n.customersDeactivateTitle),
+        content: Text(context.l10n.customersDeactivateConfirm(customer.fullName)),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Faolsizlantirish')),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDeactivate)),
         ],
       ),
     );
@@ -73,7 +74,7 @@ class _CustomersListScreenState extends ConsumerState<CustomersListScreen> {
       await ref.read(customersListProvider.notifier).deactivate(customer.id);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.commonErrorWith('$e'))));
       }
     }
   }
@@ -83,15 +84,15 @@ class _CustomersListScreenState extends ConsumerState<CustomersListScreen> {
     final listState = ref.watch(customersListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Mijozlar')),
+      appBar: AppBar(title: Text(context.l10n.customersTitle)),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: TextField(
               controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Ism yoki telefon bo\'yicha qidirish...',
+              decoration: InputDecoration(
+                hintText: context.l10n.customersSearchHint,
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
                 isDense: true,
@@ -102,10 +103,10 @@ class _CustomersListScreenState extends ConsumerState<CustomersListScreen> {
           Expanded(
             child: listState.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text('Xatolik: $error')),
+              error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
               data: (state) {
                 if (state.items.isEmpty) {
-                  return const Center(child: Text('Mijozlar topilmadi'));
+                  return Center(child: Text(context.l10n.customersNotFound));
                 }
                 return RefreshIndicator(
                   onRefresh: () => ref.read(customersListProvider.notifier).refresh(),
@@ -129,10 +130,10 @@ class _CustomersListScreenState extends ConsumerState<CustomersListScreen> {
                         trailing: customer.isActive
                             ? IconButton(
                                 icon: const Icon(Icons.block_outlined),
-                                tooltip: 'Faolsizlantirish',
+                                tooltip: context.l10n.commonDeactivate,
                                 onPressed: () => _deactivate(customer),
                               )
-                            : const Chip(label: Text('Faol emas'), visualDensity: VisualDensity.compact),
+                            : Chip(label: Text(context.l10n.commonInactive), visualDensity: VisualDensity.compact),
                         onTap: () => _openForm(editing: customer),
                       );
                     },

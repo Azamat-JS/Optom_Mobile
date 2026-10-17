@@ -364,4 +364,1087 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get homeWholesalerDebts => 'Долги оптовикам';
+
+  @override
+  String enumOrderStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'newOrder': 'Новый',
+      'approved': 'Подтверждён',
+      'rejected': 'Отклонён',
+      'delivered': 'Доставлен',
+      'debtRecorded': 'Записан в долг',
+      'paid': 'Оплачен',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumPaymentMethod(String method) {
+    String _temp0 = intl.Intl.selectLogic(method, {
+      'cash': 'Наличные',
+      'card': 'Карта',
+      'bankTransfer': 'Банковский перевод',
+      'click': 'Click',
+      'payme': 'Payme',
+      'debt': 'В долг',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumBusinessType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'general': 'Магазин',
+      'restaurant': 'Ресторан',
+      'applianceStore': 'Бытовая техника',
+      'constructionTools': 'Стройматериалы',
+      'toyStore': 'Игрушки',
+      'autoParts': 'Автозапчасти',
+      'pharmacy': 'Аптека',
+      'clothingStore': 'Одежда',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumExpenditureType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'electricity': 'Электроэнергия',
+      'gas': 'Газ',
+      'water': 'Вода',
+      'taxes': 'Налоги',
+      'renting': 'Аренда',
+      'other': 'Прочее',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumProductUnit(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'dona': 'Шт.',
+      'metr': 'Метр',
+      'litr': 'Литр',
+      'kilogram': 'Килограмм',
+      'gram': 'Грамм',
+      'blok': 'Блок',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumRestaurantOrderType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'dineIn': 'В зале',
+      'delivery': 'Доставка',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumRestaurantOrderStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'newOrder': 'Новый',
+      'preparing': 'Готовится',
+      'ready': 'Готов',
+      'served': 'Подан',
+      'delivered': 'Доставлен',
+      'cancelled': 'Отменён',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumSaleType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'paid': 'Оплачено',
+      'debt': 'В долг',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumSaleStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'completed': 'Завершена',
+      'cancelled': 'Отменена',
+      'partiallyReturned': 'Частично возвращена',
+      'returned': 'Возвращена',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumDebtStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'active': 'Активный',
+      'partial': 'Частично оплачен',
+      'settled': 'Погашен',
+      'overdue': 'Просрочен',
+      'writtenOff': 'Списан',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get currencySom => 'сум';
+
+  @override
+  String get errorSessionExpired => 'Сессия истекла, войдите снова.';
+
+  @override
+  String get errorForbidden => 'У вас нет прав на это действие.';
+
+  @override
+  String get errorNotFound => 'Не найдено.';
+
+  @override
+  String get errorConflict => 'Не удалось выполнить действие: конфликт данных.';
+
+  @override
+  String get errorNoInternet => 'Нет подключения к интернету.';
+
+  @override
+  String get errorInvalidData => 'Данные введены неверно.';
+
+  @override
+  String get tgTooManyAttempts =>
+      'Слишком много попыток для этого номера. Попробуйте чуть позже.';
+
+  @override
+  String get tgUnavailable =>
+      'Подтверждение через Telegram временно недоступно. Попробуйте позже.';
+
+  @override
+  String get tgInvalidPhone => 'Неверный номер телефона. Формат: +998XXXXXXXXX';
+
+  @override
+  String get commonSave => 'Сохранить';
+
+  @override
+  String get commonDelete => 'Удалить';
+
+  @override
+  String get commonAdd => 'Добавить';
+
+  @override
+  String get commonEdit => 'Редактировать';
+
+  @override
+  String get commonActive => 'Активен';
+
+  @override
+  String get commonInactive => 'Неактивен';
+
+  @override
+  String get commonAll => 'Все';
+
+  @override
+  String get commonNone => 'Нет';
+
+  @override
+  String get commonNotSelected => 'Не выбрано';
+
+  @override
+  String get commonNotSelectedDash => '— Не выбрано —';
+
+  @override
+  String commonErrorWith(String error) {
+    return 'Ошибка: $error';
+  }
+
+  @override
+  String get commonNothingFound => 'Ничего не найдено';
+
+  @override
+  String get commonReject => 'Отклонить';
+
+  @override
+  String get commonReasonOptional => 'Причина (необязательно)';
+
+  @override
+  String get commonName => 'Название';
+
+  @override
+  String get commonNameRequired => 'Название *';
+
+  @override
+  String get commonNameMissing => 'Введите название';
+
+  @override
+  String get commonDescription => 'Описание';
+
+  @override
+  String get commonCategory => 'Категория';
+
+  @override
+  String get commonBrand => 'Бренд';
+
+  @override
+  String get commonBarcode => 'Штрихкод';
+
+  @override
+  String get commonPrice => 'Цена';
+
+  @override
+  String get commonPriceRequired => 'Цена *';
+
+  @override
+  String get commonCostPrice => 'Себестоимость';
+
+  @override
+  String get commonStock => 'Остаток';
+
+  @override
+  String get commonUnit => 'Единица измерения';
+
+  @override
+  String get commonCurrency => 'Валюта';
+
+  @override
+  String get commonCurrencyRequired => 'Валюта *';
+
+  @override
+  String get currencyUzsLong => 'Сум (UZS)';
+
+  @override
+  String get currencyUsdLong => 'Доллар (USD)';
+
+  @override
+  String get commonQuantityRequired => 'Укажите количество';
+
+  @override
+  String get productsTitle => 'Товары';
+
+  @override
+  String get productsProduct => 'Товар';
+
+  @override
+  String get productsSentToCatalog => 'Отправлено в каталог на проверку';
+
+  @override
+  String get productsDeleteTitle => 'Удалить товар';
+
+  @override
+  String get productsDeleteConfirm => 'Удалить этот товар?';
+
+  @override
+  String productsCostPriceWith(String price) {
+    return 'Себестоимость: $price';
+  }
+
+  @override
+  String get productsAddStock => 'Пополнить остаток';
+
+  @override
+  String get productsCreateBarcode => 'Создать штрихкод';
+
+  @override
+  String get productsShareToCatalog => 'Поделиться в каталог';
+
+  @override
+  String get productsNameOrCatalog =>
+      'Введите название товара или выберите из каталога';
+
+  @override
+  String get productsPriceInvalid => 'Цена указана неверно';
+
+  @override
+  String get productsEditTitle => 'Редактировать товар';
+
+  @override
+  String get productsNewTitle => 'Новый товар';
+
+  @override
+  String get productsPriceRequired => 'Укажите цену';
+
+  @override
+  String get productsInitialStock => 'Начальный остаток';
+
+  @override
+  String productsStockEditHint(String stock) {
+    return '$stock — чтобы изменить, используйте кнопку «Пополнить остаток» на странице товара';
+  }
+
+  @override
+  String get productsPluSuggest => 'Предложить';
+
+  @override
+  String get productsExpiryOptional => 'Срок годности (необязательно)';
+
+  @override
+  String get productsPickFromCatalog => 'Выбрать из каталога';
+
+  @override
+  String get productsNameRequired => 'Название товара *';
+
+  @override
+  String get productsFindTitle => 'Найти товар';
+
+  @override
+  String get productsSearchHint => 'Поиск по названию или штрихкоду...';
+
+  @override
+  String get productsNotFound => 'Товары не найдены';
+
+  @override
+  String productsCurrentStock(String stock) {
+    return 'Текущий остаток: $stock';
+  }
+
+  @override
+  String get productsAddQuantity => 'Количество к добавлению';
+
+  @override
+  String get productsCorrectionOptional =>
+      'Дополнительная корректировка (необязательно)';
+
+  @override
+  String get productsCorrectionHint => 'Можно ввести и отрицательное число';
+
+  @override
+  String get commonConfirm => 'Подтвердить';
+
+  @override
+  String get commonDone => 'Готово';
+
+  @override
+  String get commonSearchHint => 'Поиск...';
+
+  @override
+  String get commonInactiveShort => 'Неактивна';
+
+  @override
+  String commonDeleteWithDependentsConfirm(String name) {
+    return 'Удалить «$name»? Если к нему привязаны товары, вернётся ошибка.';
+  }
+
+  @override
+  String get masterStatusPending => 'На рассмотрении';
+
+  @override
+  String get masterStatusApproved => 'Одобрен';
+
+  @override
+  String get masterStatusRejected => 'Отклонён';
+
+  @override
+  String get masterDeleteTitle => 'Удалить запись каталога';
+
+  @override
+  String get masterReviewTitle => 'Модерация каталога';
+
+  @override
+  String get masterEditTitle => 'Редактировать запись каталога';
+
+  @override
+  String get masterNewTitle => 'Новая запись каталога';
+
+  @override
+  String get masterActiveVisible => 'Активна (видна в каталоге)';
+
+  @override
+  String get masterSearchHint => 'Поиск в каталоге...';
+
+  @override
+  String get categoriesDeleteTitle => 'Удалить категорию';
+
+  @override
+  String get categoriesTitle => 'Категории';
+
+  @override
+  String get categoriesNotFound => 'Категории не найдены';
+
+  @override
+  String get categoriesEditTitle => 'Редактировать категорию';
+
+  @override
+  String get categoriesNewTitle => 'Новая категория';
+
+  @override
+  String get categoriesParent => 'Родительская категория';
+
+  @override
+  String get categoriesNoParent => '— Нет (основная категория) —';
+
+  @override
+  String get categoriesSortOrder => 'Порядковый номер';
+
+  @override
+  String get categoriesPickerNotFound => 'Категория не найдена';
+
+  @override
+  String get commonDeactivate => 'Деактивировать';
+
+  @override
+  String get commonFirstNameRequired => 'Имя *';
+
+  @override
+  String get commonFirstNameMissing => 'Введите имя';
+
+  @override
+  String get commonLastNameRequired => 'Фамилия *';
+
+  @override
+  String get commonLastNameMissing => 'Введите фамилию';
+
+  @override
+  String get commonPhoneRequired => 'Телефон *';
+
+  @override
+  String get commonPhoneMissing => 'Введите номер телефона';
+
+  @override
+  String get commonInvalidFormat => 'Неверный формат';
+
+  @override
+  String get commonAddress => 'Адрес';
+
+  @override
+  String get commonNote => 'Примечание';
+
+  @override
+  String get commonTotal => 'Итого';
+
+  @override
+  String get commonSubtotal => 'Промежуточная сумма';
+
+  @override
+  String get commonDiscount => 'Скидка';
+
+  @override
+  String commonPieces(String count) {
+    return '$count шт.';
+  }
+
+  @override
+  String commonProductCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count товаров',
+      few: '$count товара',
+      one: '$count товар',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get commonProducts => 'Товары';
+
+  @override
+  String get commonDeliveryAddress => 'Адрес доставки';
+
+  @override
+  String get customersDeactivateTitle => 'Деактивировать клиента';
+
+  @override
+  String customersDeactivateConfirm(String name) {
+    return 'Деактивировать клиента $name?';
+  }
+
+  @override
+  String get customersTitle => 'Клиенты';
+
+  @override
+  String get customersSearchHint => 'Поиск по имени или телефону...';
+
+  @override
+  String get customersNotFound => 'Клиенты не найдены';
+
+  @override
+  String get customersEditTitle => 'Редактировать клиента';
+
+  @override
+  String get customersNewTitle => 'Новый клиент';
+
+  @override
+  String get ordersSingleCurrency =>
+      'В одном заказе могут быть товары только в одной валюте';
+
+  @override
+  String ordersAddedToCart(String name) {
+    return '$name добавлен в корзину';
+  }
+
+  @override
+  String get ordersSearchProduct => 'Поиск товара...';
+
+  @override
+  String get ordersAllBranches => 'Все филиалы';
+
+  @override
+  String ordersCartSummary(int count, String total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count товаров',
+      few: '$count товара',
+      one: '$count товар',
+    );
+    return '$_temp0 — $total';
+  }
+
+  @override
+  String get ordersPickWholesaler => 'Выберите оптовика';
+
+  @override
+  String get ordersNoWholesalers => 'Оптовики не найдены';
+
+  @override
+  String get ordersIncomingTitle => 'Входящие заказы';
+
+  @override
+  String get ordersMineTitle => 'Мои заказы';
+
+  @override
+  String get ordersTabOutgoing => 'Исходящие';
+
+  @override
+  String get ordersTabIncoming => 'Входящие';
+
+  @override
+  String get ordersNotFound => 'Заказы не найдены';
+
+  @override
+  String get ordersReviewTitle => 'Проверка заказа';
+
+  @override
+  String get ordersPlace => 'Оформить заказ';
+
+  @override
+  String get ordersApproveTitle => 'Подтвердить заказ';
+
+  @override
+  String get ordersApproveConfirm =>
+      'Подтвердить этот заказ? Остатки товаров уменьшатся.';
+
+  @override
+  String get ordersRejectTitle => 'Отклонить заказ';
+
+  @override
+  String get ordersDeliveredTitle => 'Отметить как доставленный';
+
+  @override
+  String get ordersDeliveredConfirm => 'Подтвердить, что этот заказ доставлен?';
+
+  @override
+  String get ordersOrder => 'Заказ';
+
+  @override
+  String ordersRejectionReason(String reason) {
+    return 'Причина отклонения: $reason';
+  }
+
+  @override
+  String get ordersSeller => 'Продавец';
+
+  @override
+  String get ordersBuyer => 'Покупатель';
+
+  @override
+  String get ordersHistory => 'История';
+
+  @override
+  String get ordersDelivered => 'Доставлен';
+
+  @override
+  String get commonUnknownPerson => 'Неизвестно';
+
+  @override
+  String get commonAmount => 'Сумма';
+
+  @override
+  String get commonPaymentMethod => 'Способ оплаты';
+
+  @override
+  String get commonNoteOptional => 'Примечание (необязательно)';
+
+  @override
+  String get commonClose => 'Закрыть';
+
+  @override
+  String get commonDateRequired => 'Дата *';
+
+  @override
+  String commonTotalWith(String amount) {
+    return 'Итого: $amount';
+  }
+
+  @override
+  String commonBalanceWith(String amount) {
+    return 'Остаток: $amount';
+  }
+
+  @override
+  String commonDueWith(String date) {
+    return 'Срок: $date';
+  }
+
+  @override
+  String get expensesEditTitle => 'Редактировать расход';
+
+  @override
+  String get expensesNewTitle => 'Новый расход';
+
+  @override
+  String get expensesTypeRequired => 'Тип *';
+
+  @override
+  String get expensesAmountRequired => 'Сумма (сум) *';
+
+  @override
+  String get expensesAmountMissing => 'Введите сумму';
+
+  @override
+  String get expensesAmountInvalid => 'Неверная сумма';
+
+  @override
+  String get expensesDeleteTitle => 'Удалить расход';
+
+  @override
+  String expensesDeleteConfirm(String expense) {
+    return 'Удалить расход «$expense» навсегда?';
+  }
+
+  @override
+  String get expensesTitle => 'Мои расходы';
+
+  @override
+  String get expensesFilterByType => 'Фильтр по типу';
+
+  @override
+  String get expensesTotal => 'Всего расходов';
+
+  @override
+  String get expensesNotFound => 'Расходы не найдены';
+
+  @override
+  String debtsPaymentsApplied(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Платёж распределён на $count долгов',
+      few: 'Платёж распределён на $count долга',
+      one: 'Платёж распределён на $count долг',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get debtsCloseTitle => 'Закрыть долг';
+
+  @override
+  String debtsCloseConfirm(String amount) {
+    return 'Отметить оставшиеся $amount как полностью оплаченные?';
+  }
+
+  @override
+  String debtsTotalBalance(String amount) {
+    return 'Общий остаток: $amount';
+  }
+
+  @override
+  String get debtsPayDownTitle => 'Общий платёж (FIFO)';
+
+  @override
+  String get debtsPayDownHint =>
+      'Распределяется автоматически, начиная с самого старого долга';
+
+  @override
+  String get debtsAllocation => 'Распределение:';
+
+  @override
+  String get debtsWillClose => '(будет закрыт)';
+
+  @override
+  String get debtsExceedsTotal => 'Сумма превышает общий остаток';
+
+  @override
+  String get debtsConfirmPayment => 'Подтвердить платёж';
+
+  @override
+  String get debtsTitle => 'Долги';
+
+  @override
+  String get debtsPayment => 'Платёж';
+
+  @override
+  String get debtsTabCustomers => 'Клиенты';
+
+  @override
+  String get debtsTabOwedToMe => 'Мне должны';
+
+  @override
+  String get debtsTabMine => 'Мои долги';
+
+  @override
+  String get debtsNotFound => 'Долги не найдены';
+
+  @override
+  String get debtsCustomerNotFound => 'Долги клиентов не найдены';
+
+  @override
+  String debtsActiveCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count активных долгов',
+      few: '$count активных долга',
+      one: '$count активный долг',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get debtsEnterValidAmount => 'Введите корректную сумму';
+
+  @override
+  String debtsAmountExceedsBalance(String balance) {
+    return 'Сумма не должна превышать остаток ($balance)';
+  }
+
+  @override
+  String get debtsMakePayment => 'Внести платёж';
+
+  @override
+  String get commonActivate => 'Активировать';
+
+  @override
+  String commonDeletePermanentlyConfirm(String name) {
+    return 'Удалить «$name» навсегда?';
+  }
+
+  @override
+  String get commonPasswordRequired => 'Пароль *';
+
+  @override
+  String get staffDeleteTitle => 'Удалить сотрудника';
+
+  @override
+  String get staffTitle => 'Сотрудники';
+
+  @override
+  String get staffNotFound => 'Сотрудники не найдены';
+
+  @override
+  String get staffStoreRequired => 'Выберите магазин';
+
+  @override
+  String get staffEditTitle => 'Редактировать сотрудника';
+
+  @override
+  String get staffNewTitle => 'Новый сотрудник';
+
+  @override
+  String get staffStoreLabel => 'Магазин *';
+
+  @override
+  String get storesDeleteTitle => 'Удалить магазин';
+
+  @override
+  String get storesTitle => 'Магазины';
+
+  @override
+  String get storesDefault => 'Основной';
+
+  @override
+  String get storesEditTitle => 'Редактировать магазин';
+
+  @override
+  String get storesNewTitle => 'Новый магазин';
+
+  @override
+  String get storesMapLocation => 'Место на карте';
+
+  @override
+  String get storesLocationTitle => 'Расположение магазина';
+
+  @override
+  String get storesLocationHint => 'Курьеры забирают заказы отсюда';
+
+  @override
+  String get storesHandoverCode => 'Код передачи';
+
+  @override
+  String get storesHandoverCodeHint =>
+      'При передаче заказа курьер спрашивает у клиента 4-значный код. У клиентов без приложения или подтверждённого номера код не спрашивается.';
+
+  @override
+  String get commonBalance => 'Остаток';
+
+  @override
+  String get commonPaid => 'Оплачено';
+
+  @override
+  String get commonOnCredit => 'В долг';
+
+  @override
+  String get commonPickCustomer => 'Выберите клиента';
+
+  @override
+  String get commonNew => 'Новый';
+
+  @override
+  String get posScanProduct => 'Сканировать товар';
+
+  @override
+  String get posBarcodeNotFound => 'Товар с таким штрихкодом не найден';
+
+  @override
+  String get posSingleCurrency =>
+      'В одной продаже могут быть товары только в одной валюте';
+
+  @override
+  String get posTitle => 'Касса';
+
+  @override
+  String get posSavedCarts => 'Сохранённые корзины';
+
+  @override
+  String posPriceAndStock(String price, String stock) {
+    return '$price · Остаток: $stock';
+  }
+
+  @override
+  String get salesPickReturnItem => 'Выберите товар для возврата';
+
+  @override
+  String get salesReturn => 'Возврат';
+
+  @override
+  String salesReturnableLeft(String count) {
+    return 'Осталось: $count';
+  }
+
+  @override
+  String get salesRefundMethod => 'Способ возврата денег';
+
+  @override
+  String salesReturnAmount(String amount) {
+    return 'Сумма к возврату: $amount';
+  }
+
+  @override
+  String get salesConfirmReturn => 'Подтвердить возврат';
+
+  @override
+  String get salesPayment => 'Оплата';
+
+  @override
+  String get salesPaidNow => 'Оплачено';
+
+  @override
+  String get salesDownPaymentOptional => 'Предоплата (необязательно)';
+
+  @override
+  String salesConfirmWithTotal(String total) {
+    return 'Подтвердить — $total';
+  }
+
+  @override
+  String get salesHistoryTitle => 'История продаж';
+
+  @override
+  String get salesNotFound => 'Продажи не найдены';
+
+  @override
+  String get salesSale => 'Продажа';
+
+  @override
+  String get salesCreated => 'Продажа создана';
+
+  @override
+  String salesReturnedQty(String count) {
+    return 'возвращено: $count';
+  }
+
+  @override
+  String get salesDebt => 'Долг';
+
+  @override
+  String get salesPayments => 'Платежи';
+
+  @override
+  String get salesCustomerSearchHint => 'Имя или телефон...';
+
+  @override
+  String get salesCustomerNotFound => 'Клиент не найден';
+
+  @override
+  String get cartsSaved => 'Корзина сохранена';
+
+  @override
+  String get cartsSaveOrClearFirst =>
+      'Сначала сохраните или очистите текущую корзину';
+
+  @override
+  String cartsSkipped(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count товаров не найдены и не добавлены',
+      few: '$count товара не найдены и не добавлены',
+      one: '$count товар не найден и не добавлен',
+    );
+    return '$_temp0 в корзину';
+  }
+
+  @override
+  String get cartsDeleteTitle => 'Удалить сохранённую корзину';
+
+  @override
+  String get cartsDeleteConfirm => 'Это действие нельзя отменить. Продолжить?';
+
+  @override
+  String get cartsCurrentEmpty => 'Текущая корзина пуста';
+
+  @override
+  String cartsSaveCurrent(int count) {
+    return 'Сохранить текущую корзину ($count)';
+  }
+
+  @override
+  String get cartsNone => 'Сохранённых корзин нет';
+
+  @override
+  String cartsMore(int count) {
+    return '+$count';
+  }
+
+  @override
+  String get cartsRestore => 'Восстановить';
+
+  @override
+  String get commonNoData => 'Нет данных';
+
+  @override
+  String get reportsTitle => 'Отчёты';
+
+  @override
+  String get reportsTopProducts => 'Самые продаваемые товары';
+
+  @override
+  String reportsStockWith(String stock) {
+    return 'Остаток: $stock';
+  }
+
+  @override
+  String get reportsStatistics => 'Статистика';
+
+  @override
+  String get reportsRevenue => 'Выручка';
+
+  @override
+  String get reportsNewDebts => 'Новые долги';
+
+  @override
+  String get reportsDebtPayments => 'Погашения долгов';
+
+  @override
+  String get reportsOutstanding => 'Остаток задолженности';
+
+  @override
+  String get reportsSalesChart => 'График продаж';
+
+  @override
+  String get reportsLast30 => 'Последние 30 дней';
+
+  @override
+  String get reportsThisMonth => 'Этот месяц';
+
+  @override
+  String get workDayDebtsShareText => 'Список долгов';
+
+  @override
+  String get workDayTitle => 'Рабочий день';
+
+  @override
+  String get workDayOpen => 'Открыт';
+
+  @override
+  String get workDayClosed => 'Закрыт';
+
+  @override
+  String get workDayNotStarted => 'Рабочий день ещё не начат';
+
+  @override
+  String workDayStartedAt(String time) {
+    return 'Начат: $time';
+  }
+
+  @override
+  String workDayEndedAt(String time) {
+    return 'Завершён: $time';
+  }
+
+  @override
+  String get workDayStart => 'Начать рабочий день';
+
+  @override
+  String get workDayEnd => 'Завершить рабочий день';
+
+  @override
+  String get workDayExportDebts => 'Долги (Excel)';
+
+  @override
+  String get dashPaymentCash => 'Наличные';
+
+  @override
+  String get dashPaymentCard => 'Карта';
+
+  @override
+  String get dashPaymentBank => 'Банк';
+
+  @override
+  String get dashPaymentDebt => 'Долг';
+
+  @override
+  String get dashPaymentTypes => 'Способы оплаты';
+
+  @override
+  String get dashIncomeDebt6m => 'Доход и долг (6 мес.)';
+
+  @override
+  String get dashIncome => 'Доход';
+
+  @override
+  String get dashSalesTrend14d => 'Динамика продаж (14 дней)';
+
+  @override
+  String get scannerTitle => 'Отсканируйте штрихкод';
+
+  @override
+  String get locationMarkOnMap => 'Отметить на карте';
+
+  @override
+  String get locationPickTitle => 'Отметьте место';
+
+  @override
+  String get locationMarked => 'Отмечено на карте';
+
+  @override
+  String get locationCourierHint => 'Чтобы курьер нашёл точное место';
+
+  @override
+  String get locationRemove => 'Убрать';
+
+  @override
+  String get locationDetectFailed =>
+      'Не удалось определить местоположение — проверьте GPS и разрешения';
+
+  @override
+  String get locationMyLocation => 'Моё местоположение';
+
+  @override
+  String get locationChooseHere => 'Выбрать это место';
 }

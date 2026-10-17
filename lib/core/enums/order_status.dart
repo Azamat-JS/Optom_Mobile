@@ -1,3 +1,5 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
+
 /// Mirrors the backend's Prisma `OrderStatus` enum. Valid transitions
 /// (enforced server-side, `order.service.ts`'s `VALID_TRANSITIONS`):
 /// `NEW → APPROVED/REJECTED`, `APPROVED → DELIVERED`. `DEBT_RECORDED`/`PAID`
@@ -31,14 +33,7 @@ enum OrderStatus {
         OrderStatus.paid => 'PAID',
       };
 
-  String get label => switch (this) {
-        OrderStatus.newOrder => 'Yangi',
-        OrderStatus.approved => 'Tasdiqlangan',
-        OrderStatus.rejected => 'Rad etilgan',
-        OrderStatus.delivered => 'Yetkazilgan',
-        OrderStatus.debtRecorded => 'Qarzga yozilgan',
-        OrderStatus.paid => "To'langan",
-      };
+  String get label => appL10n.enumOrderStatus(name);
 }
 
 /// `OrderType` describes the transaction from the seller's side (a

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/product_unit.dart';
 import 'package:bsmart/features/categories/presentation/providers/categories_provider.dart';
@@ -169,7 +170,7 @@ class _MasterProductFormScreenState extends ConsumerState<MasterProductFormScree
     final createdButNotEditing = !_isEditing && _current != null;
 
     return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? 'Katalog yozuvini tahrirlash' : 'Yangi katalog yozuvi')),
+      appBar: AppBar(title: Text(_isEditing ? context.l10n.masterEditTitle : context.l10n.masterNewTitle)),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -231,32 +232,32 @@ class _MasterProductFormScreenState extends ConsumerState<MasterProductFormScree
             ],
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Nomi *', border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Nomini kiriting' : null,
+              decoration: InputDecoration(labelText: context.l10n.commonNameRequired, border: OutlineInputBorder()),
+              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonNameMissing : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _brandController,
-              decoration: const InputDecoration(labelText: 'Brend', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.commonBrand, border: OutlineInputBorder()),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Tavsif', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.commonDescription, border: OutlineInputBorder()),
               maxLines: 3,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _barcodeController,
-              decoration: const InputDecoration(labelText: 'Shtrix-kod', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.commonBarcode, border: OutlineInputBorder()),
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String?>(
               initialValue: _categoryId,
               isExpanded: true,
-              decoration: const InputDecoration(labelText: 'Kategoriya', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.commonCategory, border: OutlineInputBorder()),
               items: [
-                const DropdownMenuItem(value: null, child: Text('— Tanlanmagan —')),
+                DropdownMenuItem(value: null, child: Text(context.l10n.commonNotSelectedDash)),
                 for (final c in categories) DropdownMenuItem(value: c.id, child: Text(c.name)),
               ],
               onChanged: (value) => setState(() => _categoryId = value),
@@ -264,9 +265,9 @@ class _MasterProductFormScreenState extends ConsumerState<MasterProductFormScree
             const SizedBox(height: 12),
             DropdownButtonFormField<ProductUnit?>(
               initialValue: _unit,
-              decoration: const InputDecoration(labelText: "O'lchov birligi", border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.commonUnit, border: OutlineInputBorder()),
               items: [
-                const DropdownMenuItem(value: null, child: Text('— Tanlanmagan —')),
+                DropdownMenuItem(value: null, child: Text(context.l10n.commonNotSelectedDash)),
                 for (final u in ProductUnit.values) DropdownMenuItem(value: u, child: Text(u.name)),
               ],
               onChanged: (value) => setState(() => _unit = value),
@@ -274,7 +275,7 @@ class _MasterProductFormScreenState extends ConsumerState<MasterProductFormScree
             const SizedBox(height: 8),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Faol (katalogda ko\'rinadi)'),
+              title: Text(context.l10n.masterActiveVisible),
               value: _isActive,
               onChanged: (value) => setState(() => _isActive = value),
             ),
@@ -289,7 +290,7 @@ class _MasterProductFormScreenState extends ConsumerState<MasterProductFormScree
                   : (createdButNotEditing ? () => Navigator.of(context).pop(true) : _submit),
               child: _isSaving
                   ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text(createdButNotEditing ? 'Tayyor' : 'Saqlash'),
+                  : Text(createdButNotEditing ? context.l10n.commonDone : context.l10n.commonSave),
             ),
           ],
         ),

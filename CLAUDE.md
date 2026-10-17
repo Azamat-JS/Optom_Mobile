@@ -1413,6 +1413,8 @@ Decided 2026-10-10 (user request). Languages are **uz (default) / ru / en**. The
 in scope** here, an explicit exception to "web untouched". Web uses **next-intl** with the locale
 in the `NEXT_LOCALE` cookie (no URL prefix; see Optom_Savdo CLAUDE.md "Internationalization").
 Mobile uses Flutter's official **gen-l10n** (ARB + `flutter_localizations`, no build_runner).
+**Default language is Uzbek** on both (user decision 2026-10-11). Browser `Accept-Language` and the
+device language are ignored; only an explicit choice switches it.
 Switcher placement: web = every header (landing + dashboard) + Settings → App settings; mobile =
 Settings + the registration/login flow. Backend error messages and Telegram bot texts stay Uzbek
 (out of scope unless asked).
@@ -1421,11 +1423,11 @@ Settings + the registration/login flow. Backend error messages and Telegram bot 
 |---|---|---|
 | I1 | Web foundation: next-intl, cookie locale, `messages/{uz,ru,en}.json`, `LanguageSwitcher` in landing + dashboard header, working selector in /settings/app; app shell translated (landing header, sidebar nav, role labels, settings layout, logout dialog, store switcher) | 🟢 Done 2026-10-10: `tsc` clean, `pnpm i18n:check` parity OK, SSR verified per cookie and Accept-Language |
 | I2 | Mobile foundation: gen-l10n + `localeProvider` (shared_preferences), `MaterialApp` locale/delegates, switcher in Settings + registration/login; shell translated (auth, settings, bottom nav/drawer, role labels) | 🟢 Done 2026-10-10: `flutter analyze` clean, 42 tests (7 new l10n tests). Verified on the emulator: first launch follows the device language (EN), Profil → Sozlamalar → Русский, register/login AppBar picker → UZ/EN, and the choice survives a force-stop. The logged-in home shells (operator/waiter/courier/super-admin) were not run live (no test account this session). See "Phase 8 I2 notes" |
-| I3 | Web public pages: landing sections, about/features/pricing/contact, login/register/tg-auth, cart, product detail, shop, profile settings | ⚪ |
-| I4 | Web shared components: `src/components/common` + `src/components/domain/*` (dialogs, drawers, tables, zod messages, toasts), enum label maps, date/number formatting | ⚪ |
-| I5 | Web role pages: wholesaler + retailer (incl. restaurant/POS) | ⚪ |
-| I6 | Web role pages: customer + super-admin + courier; leftover-string sweep | ⚪ |
-| I7 | Mobile features batch 1: operator core (products, categories, orders, sales/POS, customers, debts, stores/admins, expenditures, reports, dashboard) | ⚪ |
+| I3 | Web public pages: landing sections, about/features/pricing/contact, login/register/tg-auth, cart, product detail, shop, profile settings | 🟢 Done 2026-10-10: 523 keys, parity OK, `tsc` clean. Headless crawl of 10 pages × 3 languages found no leftover Uzbek and no next-intl errors. Filled cart plurals and the Mini App profile-tab switcher were checked live. See "Phase 8 I3 notes" |
+| I4 | Web shared components: `src/components/common` + `src/components/domain/*` (dialogs, drawers, tables, zod messages, toasts), enum label maps, date/number formatting | 🟢 Done 2026-10-11: all 23 domain folders + common/charts/data-table converted (1670 keys, parity OK, `tsc` clean). Added `useFormat()` (enum labels, locale-aware `currency`/`dateTime`/`months`/`elapsed`). Plus the user's 2026-10-11 additions, verified in headless Chromium with a temporary SELLER account (since deleted): Uzbek default and the panel Settings page (see "Phase 8 I4 notes") |
+| I5 | Web role pages: wholesaler + retailer (incl. restaurant/POS) | 🟢 Done 2026-10-11: the remaining page files (admins, categories, dashboards, debts, my-debts, payments, orders, products, catalog, customer-orders, customers, restaurant-orders) converted; 1864 keys, parity OK, `tsc` clean. Verified in headless Chromium in ru and en with temporary SELLER and RESTAURANT RETAILER accounts (since deleted): no leftover Uzbek, no next-intl errors (see "Phase 8 I5 notes") |
+| I6 | Web role pages: customer + super-admin + courier; leftover-string sweep | 🟢 Done 2026-10-11: customer (dashboard, catalog, orders, debts) and super-admin (dashboard, users, wholesalers, categories, master products) pages converted; courier screens were already covered by I4 components. A vocabulary-based sweep over `app/` + `src/` found and fixed leftovers in shared POS/product components. Unused `*_LABELS` maps and `formatProductUnit` deleted. 1969 keys, parity OK, `tsc` clean. Verified in headless Chromium in ru and en with temporary CUSTOMER, SUPER_ADMIN, RESTAURANT RETAILER and COURIER accounts (since deleted) (see "Phase 8 I6 notes") |
+| I7 | Mobile features batch 1: operator core (products, categories, orders, sales/POS, customers, debts, stores/admins, expenditures, reports, dashboard) | 🟢 Done 2026-10-11: the operator feature folders plus master catalog and the shared scanner/location widgets converted; core enum labels, `ApiException` fallbacks and the currency suffix are localized through `appL10n`. 395 ARB keys with uz/ru/en parity, `flutter analyze` clean, 46 tests (5 new). Verified on the Pixel_9a emulator with a temporary SELLER account (since deleted) in ru and en: home, all drawer screens, product detail/form, stock sheet, POS → checkout, orders, and the create forms (see "Phase 8 I7 notes") |
 | I8 | Mobile features batch 2: customer storefront/favorites, super-admin, restaurant, courier/deliveries/tracking; leftover-string sweep | ⚪ |
 
 **Phase 8 I2 notes (bsmart, 2026-10-10):**
@@ -1445,7 +1447,8 @@ Settings + the registration/login flow. Backend error messages and Telegram bot 
   - `localeProvider` (`core/l10n/locale_provider.dart`) holds the active locale.
   - `bootstrap()` reads the saved code before `runApp`, so the first frame is already in the right
     language.
-  - When nothing is saved, the device language is used if supported, else `uz`.
+  - When nothing is saved, the app starts in `uz`. The device language is ignored (user decision,
+    2026-10-11).
   - The choice is persisted under SharedPreferences `bsmart.locale`.
 - **UI:**
   - `/settings` (`SettingsScreen`) is guest-eligible and holds the language radio list plus logout.
@@ -1458,6 +1461,104 @@ Settings + the registration/login flow. Backend error messages and Telegram bot 
   (133 MB) fails with `INSUFFICIENT_STORAGE` even after `pm trim-caches`. Build
   `flutter build apk --debug --target-platform android-arm64 --split-per-abi` (100 MB) and
   `adb install` that instead (uninstall the old build first).
+
+**Phase 8 I3 notes (web, 2026-10-10):**
+- **Patterns:**
+  - Zod schemas with messages are built per locale (`makeXSchema(t)` + `useMemo`).
+  - Highlighted headline fragments use `t.rich('key', { hl })` with `<hl>…</hl>` in the message.
+  - Tag lists and flow steps are message arrays read with `t.raw(...) as string[]`.
+  - Config arrays store keys typed as `keyof Messages['ns'][...]` (`src/i18n/messages.ts`).
+  - Russian counts use ICU `plural` (one/few/many).
+- **Telegram Mini App** (`/shop/[retailerId]`, namespace `tma`): it has no header, so the
+  `LanguageSwitcher` sits in its Profile tab bar.
+- **Left as is:**
+  - The recipient line the Mini App writes into order `notes` ("Qabul qiluvchi: …") stays Uzbek,
+    because it's data for the seller.
+  - Unit and currency labels (`formatProductUnit`, "Dona") wait for I4's enum work.
+- **Not translated (dead code):** `HeroSection`, `FeaturesSection` and `PricingSection` in
+  `app/_components` are imported nowhere.
+- **Pre-existing bug (not fixed):** the "Boshlash"/"Get started" CTAs on about/features/pricing/
+  contact link to `/register`, but `app/(auth)/register` has only a `.gitkeep`, so they 404.
+  Sign-up happens on `/login`.
+
+**Phase 8 I4 notes (web, 2026-10-11):**
+- **Panel Settings page** (user request): `/<segment>/settings`, implemented in
+  `src/components/domain/settings/PanelSettingsContent.tsx`. It is reached from a "Sozlamalar" item that
+  `getNavGroups` appends last for every role.
+  - Tabs (in `?tab=`): Language (everyone); Telegram bot and Stores/Branches (SELLER/RETAILER);
+    Barcode (owners and their `_ADMIN`s).
+  - Shtrix-kod, Filiallar/Do'konlar and the Integratsiya→Telegram Bot items were removed from the sidebar.
+  - The old `/stores`, `/telegram-bot` and `/barcode-labels` routes now redirect into the matching tab.
+- **`useFormat()`** (`src/i18n/use-format.ts`) is the translated replacement for the `*_LABELS` maps and
+  `formatCurrency`. The old maps in `enums.ts` were deleted in I6 (only `PRODUCT_UNIT_LABELS` remains, for Excel).
+- **Copy keyed by props instead of glued nouns:**
+  - `BulkDeleteDialog` takes `entity`.
+  - `StoresContent` and `StoreBreakdownSection` take `variant`.
+  - `RetailerListContent` and the retailer create drawers derive copy from `businessType`
+    (`verticals.<BT>.*`).
+  - `TelegramNotificationsTile` takes `forCourier`.
+  - `VerifyPhoneNotice` takes an optional `message`.
+- **Deliberately not translated:** Excel import/export headers stay Uzbek. The importer parses by those
+  header names, so translating them would break re-importing exported files.
+- **Toolkit:** the conversion scripts live in the session scratchpad. Key parity is checked with
+  `pnpm i18n:check`.
+
+**Phase 8 I5 notes (web, 2026-10-11):**
+- Page namespaces: `adminsPage`, `categoriesPage`, `dashboard`, `debtsPage`, `myDebts`, `paymentsPage`,
+  `ordersPage`, `productsPage`, `catalogPage`, `customersPage`, `restaurantOrders.page`.
+  The wholesaler and retailer variants of a page share one namespace.
+- Filter tabs (order status, payment method) now store enum values only. Labels come from
+  `useFormat()` (`f.orderStatus`, `f.paymentMethod`); the filter labels therefore match the badge
+  labels (e.g. "Bank o'tkazmasi", where the payments tab used to say "O'tkazma QR").
+- New `f.unitShort()` (`enums.unitShort.*`: kg / шт / pcs) for compact stock columns. These used to
+  show raw enum codes like `DONA`.
+- Remaining `'uz-UZ'` uses in the two dashboards are for digit grouping only, like `f.number`, and are
+  intentional.
+
+**Phase 8 I6 notes (web, 2026-10-11):**
+- New namespaces: `customerDashboard`, `customerDebts`, `adminDashboard`, `master.*` page keys,
+  and `users` / `wholesalers` list keys. The customer catalog reuses `catalogPage`.
+- The Settings page description follows the visible tabs: language only (customer, super-admin,
+  courier, waiter), language + barcode (`_ADMIN`s), or the full text (owners).
+- **Deliberately left in Uzbek:**
+  - Data sent to the backend: the shop checkout's "Qabul qiluvchi" note and the walk-in customer's
+    name "Mehmon xaridor".
+  - Internal scanner error strings: the UI shows `scanner.errors.<reason>` instead.
+  - The `tarozi-plu.txt` filename.
+  - The unused roll-preset labels: the UI uses `barcode.roll`.
+- **Dead code, not translated:** `app/_components/{Hero,Features,Pricing}Section.tsx` are imported
+  nowhere and still contain Uzbek. Delete them if they stay unused.
+- **Sweep tool:** a scanner that flags string literals and JSX text containing words found only in
+  `uz.json`, never in `en.json`. It lives in the session scratchpad and is not committed.
+
+**Phase 8 I7 notes (bsmart, 2026-10-11):**
+- **`appL10n`** (`core/l10n/app_l10n.dart`) gives the active language's strings to code that has no
+  `BuildContext`. `LocaleNotifier` keeps it in sync, setting it before it publishes a new locale.
+  - Enum `label` getters now read ARB `select` messages (`enumOrderStatus(name)` etc.), so existing
+    `.label` call sites are translated without changes.
+  - `UserRole.label` and `role.localizedLabel(l10n)` both work now.
+  - `Currency.symbol` and `CurrencyFormatter` use `currencySom` ("so'm" / "сум").
+- **`ApiException`:**
+  - It now carries an optional `serverMessage`; `message` falls back to a localized line.
+  - The backend's own text (Uzbek) is still shown as-is.
+  - `ValidationApiException` takes `(String? serverMessage, {fieldErrors})`.
+- **Plurals:** gen-l10n does **not** support ICU `#` inside plural branches. Write `{count}` instead.
+  A test guards this. The web app's next-intl does support `#`, so don't copy web plurals verbatim.
+- **Widgets with default labels:** `CategoryPickerField.labelText`, `BarcodeScannerScreen.title` and
+  `LocationPickerField.label/pickerTitle` are now nullable and default to the localized text at
+  build time.
+- **Deliberately unchanged:**
+  - The `qarzlar.xlsx` export filename.
+  - `location_tracker.dart`'s notification title (courier, I8).
+- **Toolkit:** session-scratchpad scripts, not committed:
+  - `arbadd.py` adds keys to all three ARBs and derives `@key` placeholder types; any language's
+    plural makes the placeholder `int`.
+  - `dtr.py` replaces literals, drops an enclosing `const`, adds the import, and removes `const` made
+    invalid via `flutter analyze`.
+  - `dartuz.py` sweeps for leftover Uzbek words.
+- **Web fix, same day:** switching the web language behind a host-rewriting proxy failed with "This
+  page couldn't load … `@E80`". `useChangeLocale` now writes the cookie client-side and calls
+  `router.refresh()` instead of using a Server Action; see Optom_Savdo/CLAUDE.md i18n.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

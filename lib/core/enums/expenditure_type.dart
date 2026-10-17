@@ -1,3 +1,5 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
+
 /// Mirrors the backend's Prisma `ExpenditureType` enum.
 enum ExpenditureType {
   electricity,
@@ -26,12 +28,5 @@ enum ExpenditureType {
         ExpenditureType.other => 'OTHER',
       };
 
-  String get label => switch (this) {
-        ExpenditureType.electricity => 'Elektr energiyasi',
-        ExpenditureType.gas => 'Gaz',
-        ExpenditureType.water => 'Suv',
-        ExpenditureType.taxes => 'Soliqlar',
-        ExpenditureType.renting => 'Ijara',
-        ExpenditureType.other => 'Boshqa',
-      };
+  String get label => appL10n.enumExpenditureType(name);
 }

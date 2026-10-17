@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
@@ -138,13 +139,13 @@ class _OrderCatalogBrowseScreenState extends ConsumerState<OrderCatalogBrowseScr
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(content: Text("Bitta buyurtmada faqat bitta valyutadagi mahsulotlar bo'lishi mumkin")),
+          SnackBar(content: Text(context.l10n.ordersSingleCurrency)),
         );
       return;
     }
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('${product.name} savatga qo\'shildi'), duration: const Duration(milliseconds: 800)));
+      ..showSnackBar(SnackBar(content: Text(context.l10n.ordersAddedToCart(product.name)), duration: const Duration(milliseconds: 800)));
   }
 
   @override
@@ -159,8 +160,8 @@ class _OrderCatalogBrowseScreenState extends ConsumerState<OrderCatalogBrowseScr
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: TextField(
               controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Mahsulot qidirish...',
+              decoration: InputDecoration(
+                hintText: context.l10n.ordersSearchProduct,
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
                 isDense: true,
@@ -178,7 +179,7 @@ class _OrderCatalogBrowseScreenState extends ConsumerState<OrderCatalogBrowseScr
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: ChoiceChip(
-                      label: const Text('Barcha filiallar'),
+                      label: Text(context.l10n.ordersAllBranches),
                       selected: cart.store == null,
                       onSelected: (_) => _onStoreSelected(null),
                     ),
@@ -207,7 +208,7 @@ class _OrderCatalogBrowseScreenState extends ConsumerState<OrderCatalogBrowseScr
                   onPressed: () => context.push(RouteNames.orderReview),
                   style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
                   child: Text(
-                    '${cart.itemCount} ta mahsulot — ${CurrencyFormatter.format(cart.total, cart.lines.values.first.product.currency)}',
+                    context.l10n.ordersCartSummary(cart.itemCount, CurrencyFormatter.format(cart.total, cart.lines.values.first.product.currency)),
                   ),
                 ),
               ),
@@ -218,7 +219,7 @@ class _OrderCatalogBrowseScreenState extends ConsumerState<OrderCatalogBrowseScr
   Widget _buildProductList(CreateOrderCartState cart) {
     if (_errorMessage != null) return Center(child: Text(_errorMessage!));
     if (_isLoadingProducts) return const Center(child: CircularProgressIndicator());
-    if (_products.isEmpty) return const Center(child: Text('Mahsulotlar topilmadi'));
+    if (_products.isEmpty) return Center(child: Text(context.l10n.productsNotFound));
 
     return ListView.separated(
       controller: _scrollController,
@@ -247,7 +248,7 @@ class _OrderCatalogBrowseScreenState extends ConsumerState<OrderCatalogBrowseScr
           title: Text(product.name, maxLines: 1, overflow: TextOverflow.ellipsis),
           subtitle: Text(CurrencyFormatter.format(product.price, product.currency)),
           trailing: inCart != null
-              ? Chip(label: Text('${inCart.quantity.toStringAsFixed(0)} ta'))
+              ? Chip(label: Text(context.l10n.commonPieces(inCart.quantity.toStringAsFixed(0))))
               : IconButton(
                   icon: const Icon(Icons.add_circle_outline),
                   onPressed: () => _addToCart(product),

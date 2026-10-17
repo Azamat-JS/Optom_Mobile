@@ -1,3 +1,5 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
+
 /// Mirrors the backend's Prisma `BusinessType` enum. Only meaningful for
 /// [UserRole.retailer]/[UserRole.retailerAdmin] — all 8 verticals share
 /// identical RETAILER logic server-side and differ only in nav/copy.
@@ -35,14 +37,5 @@ enum BusinessType {
       };
 
   /// Uzbek display label, matching the reference web app's copy.
-  String get label => switch (this) {
-        BusinessType.general => "Do'kon",
-        BusinessType.restaurant => 'Restoran',
-        BusinessType.applianceStore => 'Maishiy texnika',
-        BusinessType.constructionTools => 'Qurilish mollari',
-        BusinessType.toyStore => "O'yinchoqlar",
-        BusinessType.autoParts => 'Avto ehtiyot qismlar',
-        BusinessType.pharmacy => 'Dorixona',
-        BusinessType.clothingStore => 'Kiyim-kechak',
-      };
+  String get label => appL10n.enumBusinessType(name);
 }

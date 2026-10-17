@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/payment_method.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
@@ -50,11 +51,11 @@ class _RecordPaymentSheetState extends State<RecordPaymentSheet> {
   Future<void> _submit() async {
     final amount = double.tryParse(_amountController.text.trim());
     if (amount == null || amount <= 0) {
-      setState(() => _errorMessage = "To'g'ri summa kiriting");
+      setState(() => _errorMessage = context.l10n.debtsEnterValidAmount);
       return;
     }
     if (amount > widget.debt.balance) {
-      setState(() => _errorMessage = 'Summa qoldiqdan (${CurrencyFormatter.format(widget.debt.balance, widget.debt.currency)}) oshmasligi kerak');
+      setState(() => _errorMessage = context.l10n.debtsAmountExceedsBalance(CurrencyFormatter.format(widget.debt.balance, widget.debt.currency)));
       return;
     }
 
@@ -93,22 +94,22 @@ class _RecordPaymentSheetState extends State<RecordPaymentSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("To'lov qilish", style: Theme.of(context).textTheme.titleLarge),
+              Text(context.l10n.debtsMakePayment, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 4),
               Text(
-                'Qoldiq: ${CurrencyFormatter.format(widget.debt.balance, widget.debt.currency)}',
+                context.l10n.commonBalanceWith(CurrencyFormatter.format(widget.debt.balance, widget.debt.currency)),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: _amountController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Summa', border: OutlineInputBorder(), isDense: true),
+                decoration: InputDecoration(labelText: context.l10n.commonAmount, border: OutlineInputBorder(), isDense: true),
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<PaymentMethod>(
                 initialValue: _method,
-                decoration: const InputDecoration(labelText: "To'lov usuli", border: OutlineInputBorder(), isDense: true),
+                decoration: InputDecoration(labelText: context.l10n.commonPaymentMethod, border: OutlineInputBorder(), isDense: true),
                 items: [
                   for (final method in PaymentMethod.immediateMethods)
                     DropdownMenuItem(value: method, child: Text(method.label)),
@@ -118,7 +119,7 @@ class _RecordPaymentSheetState extends State<RecordPaymentSheet> {
               const SizedBox(height: 12),
               TextField(
                 controller: _notesController,
-                decoration: const InputDecoration(labelText: 'Izoh (ixtiyoriy)', border: OutlineInputBorder(), isDense: true),
+                decoration: InputDecoration(labelText: context.l10n.commonNoteOptional, border: OutlineInputBorder(), isDense: true),
               ),
               if (_errorMessage != null) ...[
                 const SizedBox(height: 12),
@@ -130,7 +131,7 @@ class _RecordPaymentSheetState extends State<RecordPaymentSheet> {
                 style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
                 child: _isSubmitting
                     ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Text('Tasdiqlash'),
+                    : Text(context.l10n.commonConfirm),
               ),
             ],
           ),

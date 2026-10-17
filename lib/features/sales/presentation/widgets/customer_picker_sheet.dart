@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/customers/domain/entities/customer.dart';
 import 'package:bsmart/features/customers/domain/entities/customer_query.dart';
@@ -91,12 +92,12 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text('Mijozni tanlang', style: Theme.of(context).textTheme.titleMedium),
+                        child: Text(context.l10n.commonPickCustomer, style: Theme.of(context).textTheme.titleMedium),
                       ),
                       TextButton.icon(
                         onPressed: _quickCreate,
                         icon: const Icon(Icons.person_add_alt_1, size: 18),
-                        label: const Text('Yangi'),
+                        label: Text(context.l10n.commonNew),
                       ),
                     ],
                   ),
@@ -105,8 +106,8 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: TextField(
                     controller: _searchController,
-                    decoration: const InputDecoration(
-                      hintText: 'Ism yoki telefon...',
+                    decoration: InputDecoration(
+                      hintText: context.l10n.salesCustomerSearchHint,
                       prefixIcon: Icon(Icons.search),
                       border: OutlineInputBorder(),
                       isDense: true,
@@ -119,7 +120,7 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
                   child: _isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : _results.isEmpty
-                          ? const Center(child: Text('Mijoz topilmadi'))
+                          ? Center(child: Text(context.l10n.salesCustomerNotFound))
                           : ListView.builder(
                               controller: scrollController,
                               itemCount: _results.length,
@@ -195,7 +196,7 @@ class _QuickCreateCustomerDialogState extends State<_QuickCreateCustomerDialog> 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Yangi mijoz'),
+      title: Text(context.l10n.customersNewTitle),
       content: Form(
         key: _formKey,
         child: Column(
@@ -203,17 +204,17 @@ class _QuickCreateCustomerDialogState extends State<_QuickCreateCustomerDialog> 
           children: [
             TextFormField(
               controller: _firstNameController,
-              decoration: const InputDecoration(labelText: 'Ism *'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Ismni kiriting' : null,
+              decoration: InputDecoration(labelText: context.l10n.commonFirstNameRequired),
+              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonFirstNameMissing : null,
             ),
             const SizedBox(height: 8),
             TextFormField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(labelText: 'Telefon *', hintText: '+998901234567'),
+              decoration: InputDecoration(labelText: context.l10n.commonPhoneRequired, hintText: '+998901234567'),
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Telefon raqamini kiriting';
-                if (!RegExp(r'^\+?[0-9]{9,15}$').hasMatch(v.trim())) return "Noto'g'ri format";
+                if (v == null || v.trim().isEmpty) return context.l10n.commonPhoneMissing;
+                if (!RegExp(r'^\+?[0-9]{9,15}$').hasMatch(v.trim())) return context.l10n.commonInvalidFormat;
                 return null;
               },
             ),
@@ -225,12 +226,12 @@ class _QuickCreateCustomerDialogState extends State<_QuickCreateCustomerDialog> 
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Bekor qilish')),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(context.l10n.commonCancel)),
         FilledButton(
           onPressed: _isSaving ? null : _submit,
           child: _isSaving
               ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2))
-              : const Text('Saqlash'),
+              : Text(context.l10n.commonSave),
         ),
       ],
     );

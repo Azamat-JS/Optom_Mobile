@@ -1,3 +1,5 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
+
 /// Mirrors the backend's Prisma `ProductUnit` enum exactly.
 enum ProductUnit {
   dona,
@@ -27,14 +29,7 @@ enum ProductUnit {
       };
 
   /// Uzbek display label, matching the reference web app's copy.
-  String get label => switch (this) {
-        ProductUnit.dona => 'Dona',
-        ProductUnit.metr => 'Metr',
-        ProductUnit.litr => 'Litr',
-        ProductUnit.kilogram => 'Kilogramm',
-        ProductUnit.gram => 'Gramm',
-        ProductUnit.blok => 'Blok',
-      };
+  String get label => appL10n.enumProductUnit(name);
 
   /// Quantity input should accept fractional amounts for these units (a
   /// decimal keyboard + kg/g/l label) vs. an integer stepper for the rest —

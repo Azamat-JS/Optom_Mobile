@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/entities/reporting_shared.dart';
 
@@ -24,13 +25,13 @@ class SalesTrendChart extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Savdo dinamikasi (14 kun)', style: Theme.of(context).textTheme.titleMedium),
+            Text(context.l10n.dashSalesTrend14d, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 16),
             SizedBox(
               height: 180,
               child: points.every((p) => p.total == 0)
                   ? Center(
-                      child: Text("Ma'lumot yo'q", style: TextStyle(color: Theme.of(context).hintColor)),
+                      child: Text(context.l10n.commonNoData, style: TextStyle(color: Theme.of(context).hintColor)),
                     )
                   : LineChart(
                       LineChartData(

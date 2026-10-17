@@ -18,10 +18,9 @@ Set<String> _keys(String locale) {
 
 void main() {
   group('resolveInitialLanguage', () {
-    test('saved choice wins', () => expect(resolveInitialLanguage('en', 'ru'), 'en'));
-    test('falls back to a supported device language', () => expect(resolveInitialLanguage(null, 'ru'), 'ru'));
-    test('unsupported device language → Uzbek', () => expect(resolveInitialLanguage(null, 'de'), 'uz'));
-    test('ignores a stale/unknown saved value', () => expect(resolveInitialLanguage('fr', 'en'), 'en'));
+    test('saved choice wins', () => expect(resolveInitialLanguage('en'), 'en'));
+    test('nothing saved → Uzbek (device language ignored)', () => expect(resolveInitialLanguage(null), 'uz'));
+    test('ignores a stale/unknown saved value', () => expect(resolveInitialLanguage('fr'), 'uz'));
   });
 
   test('ru/en ARB files define exactly the keys of the uz template', () {

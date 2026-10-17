@@ -146,5 +146,596 @@
   "homeOutstandingDebt": "Qarzdorlik",
   "homeReceivedPayments": "Qabul qilingan to'lovlar",
   "homeCustomerDebts": "Mijoz qarzlari",
-  "homeWholesalerDebts": "Optomchi qarzlari"
+  "homeWholesalerDebts": "Optomchi qarzlari",
+  "enumOrderStatus": "{status, select, newOrder{Yangi} approved{Tasdiqlangan} rejected{Rad etilgan} delivered{Yetkazilgan} debtRecorded{Qarzga yozilgan} paid{To'langan} other{}}",
+  "@enumOrderStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "enumPaymentMethod": "{method, select, cash{Naqd} card{Karta} bankTransfer{Bank o'tkazmasi} click{Click} payme{Payme} debt{Qarzga} other{}}",
+  "@enumPaymentMethod": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "enumBusinessType": "{type, select, general{Do'kon} restaurant{Restoran} applianceStore{Maishiy texnika} constructionTools{Qurilish mollari} toyStore{O'yinchoqlar} autoParts{Avto ehtiyot qismlar} pharmacy{Dorixona} clothingStore{Kiyim-kechak} other{}}",
+  "@enumBusinessType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "enumExpenditureType": "{type, select, electricity{Elektr energiyasi} gas{Gaz} water{Suv} taxes{Soliqlar} renting{Ijara} other{Boshqa}}",
+  "@enumExpenditureType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "enumProductUnit": "{unit, select, dona{Dona} metr{Metr} litr{Litr} kilogram{Kilogramm} gram{Gramm} blok{Blok} other{}}",
+  "@enumProductUnit": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "enumRestaurantOrderType": "{type, select, dineIn{Zalda} delivery{Yetkazib berish} other{}}",
+  "@enumRestaurantOrderType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "enumRestaurantOrderStatus": "{status, select, newOrder{Yangi} preparing{Tayyorlanmoqda} ready{Tayyor} served{Berildi} delivered{Yetkazildi} cancelled{Bekor qilindi} other{}}",
+  "@enumRestaurantOrderStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "enumSaleType": "{type, select, paid{To'langan} debt{Qarzga} other{}}",
+  "@enumSaleType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "enumSaleStatus": "{status, select, completed{Yakunlangan} cancelled{Bekor qilingan} partiallyReturned{Qisman qaytarilgan} returned{Qaytarilgan} other{}}",
+  "@enumSaleStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "enumDebtStatus": "{status, select, active{Faol} partial{Qisman to'langan} settled{To'langan} overdue{Muddati o'tgan} writtenOff{Bekor qilingan} other{}}",
+  "@enumDebtStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "currencySom": "so'm",
+  "errorSessionExpired": "Sessiya tugagan, qayta kiring.",
+  "errorForbidden": "Bu amalni bajarishga ruxsat yo'q.",
+  "errorNotFound": "Topilmadi.",
+  "errorConflict": "Amalni bajarib bo'lmadi, ziddiyat mavjud.",
+  "errorNoInternet": "Internet aloqasi yo'q.",
+  "errorInvalidData": "Ma'lumotlar noto'g'ri kiritildi.",
+  "tgTooManyAttempts": "Bu raqam uchun urinishlar juda ko'p. Birozdan so'ng qayta urinib ko'ring.",
+  "tgUnavailable": "Telegram orqali tasdiqlash vaqtincha ishlamayapti. Keyinroq urinib ko'ring.",
+  "tgInvalidPhone": "Telefon raqam noto'g'ri. Format: +998XXXXXXXXX",
+  "commonSave": "Saqlash",
+  "commonDelete": "O'chirish",
+  "commonAdd": "Qo'shish",
+  "commonEdit": "Tahrirlash",
+  "commonActive": "Faol",
+  "commonInactive": "Faol emas",
+  "commonAll": "Barchasi",
+  "commonNone": "Yo'q",
+  "commonNotSelected": "Tanlanmagan",
+  "commonNotSelectedDash": "— Tanlanmagan —",
+  "commonErrorWith": "Xatolik: {error}",
+  "@commonErrorWith": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "commonNothingFound": "Hech narsa topilmadi",
+  "commonReject": "Rad etish",
+  "commonReasonOptional": "Sababi (ixtiyoriy)",
+  "commonName": "Nomi",
+  "commonNameRequired": "Nomi *",
+  "commonNameMissing": "Nomini kiriting",
+  "commonDescription": "Tavsif",
+  "commonCategory": "Kategoriya",
+  "commonBrand": "Brend",
+  "commonBarcode": "Shtrix-kod",
+  "commonPrice": "Narx",
+  "commonPriceRequired": "Narx *",
+  "commonCostPrice": "Tannarx",
+  "commonStock": "Zaxira",
+  "commonUnit": "O'lchov birligi",
+  "commonCurrency": "Valyuta",
+  "commonCurrencyRequired": "Valyuta *",
+  "currencyUzsLong": "So'm (UZS)",
+  "currencyUsdLong": "Dollar (USD)",
+  "commonQuantityRequired": "Miqdor kiritilishi shart",
+  "productsTitle": "Mahsulotlar",
+  "productsProduct": "Mahsulot",
+  "productsSentToCatalog": "Ko'rib chiqish uchun katalogga yuborildi",
+  "productsDeleteTitle": "Mahsulotni o'chirish",
+  "productsDeleteConfirm": "Bu mahsulotni o'chirishni tasdiqlaysizmi?",
+  "productsCostPriceWith": "Tannarx: {price}",
+  "@productsCostPriceWith": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "productsAddStock": "Zaxira qo'shish",
+  "productsCreateBarcode": "Barkod yaratish",
+  "productsShareToCatalog": "Katalogga ulashish",
+  "productsNameOrCatalog": "Mahsulot nomini kiriting yoki katalogdan tanlang",
+  "productsPriceInvalid": "Narx noto'g'ri kiritildi",
+  "productsEditTitle": "Mahsulotni tahrirlash",
+  "productsNewTitle": "Yangi mahsulot",
+  "productsPriceRequired": "Narx kiritilishi shart",
+  "productsInitialStock": "Boshlang'ich zaxira",
+  "productsStockEditHint": "{stock} — o'zgartirish uchun mahsulot sahifasidagi \"Zaxira qo'shish\" tugmasini ishlating",
+  "@productsStockEditHint": {
+    "placeholders": {
+      "stock": {
+        "type": "String"
+      }
+    }
+  },
+  "productsPluSuggest": "Taklif",
+  "productsExpiryOptional": "Yaroqlilik muddati (ixtiyoriy)",
+  "productsPickFromCatalog": "Katalogdan tanlash",
+  "productsNameRequired": "Mahsulot nomi *",
+  "productsFindTitle": "Mahsulotni topish",
+  "productsSearchHint": "Nomi yoki shtrix-kod bo'yicha qidirish...",
+  "productsNotFound": "Mahsulotlar topilmadi",
+  "productsCurrentStock": "Joriy zaxira: {stock}",
+  "@productsCurrentStock": {
+    "placeholders": {
+      "stock": {
+        "type": "String"
+      }
+    }
+  },
+  "productsAddQuantity": "Qo'shiladigan miqdor",
+  "productsCorrectionOptional": "Qo'shimcha tuzatish (ixtiyoriy)",
+  "productsCorrectionHint": "Manfiy son ham kiritish mumkin",
+  "commonConfirm": "Tasdiqlash",
+  "commonDone": "Tayyor",
+  "commonSearchHint": "Qidirish...",
+  "commonInactiveShort": "Faolsiz",
+  "commonDeleteWithDependentsConfirm": "{name} o'chirilsinmi? Unga bog'liq mahsulotlar bo'lsa, xatolik qaytadi.",
+  "@commonDeleteWithDependentsConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "masterStatusPending": "Kutilmoqda",
+  "masterStatusApproved": "Tasdiqlangan",
+  "masterStatusRejected": "Rad etilgan",
+  "masterDeleteTitle": "Katalog yozuvini o'chirish",
+  "masterReviewTitle": "Katalog nazorati",
+  "masterEditTitle": "Katalog yozuvini tahrirlash",
+  "masterNewTitle": "Yangi katalog yozuvi",
+  "masterActiveVisible": "Faol (katalogda ko'rinadi)",
+  "masterSearchHint": "Katalogdan qidirish...",
+  "categoriesDeleteTitle": "Kategoriyani o'chirish",
+  "categoriesTitle": "Kategoriyalar",
+  "categoriesNotFound": "Kategoriyalar topilmadi",
+  "categoriesEditTitle": "Kategoriyani tahrirlash",
+  "categoriesNewTitle": "Yangi kategoriya",
+  "categoriesParent": "Ota kategoriya",
+  "categoriesNoParent": "— Yo'q (asosiy kategoriya) —",
+  "categoriesSortOrder": "Tartib raqami",
+  "categoriesPickerNotFound": "Kategoriya topilmadi",
+  "commonDeactivate": "Faolsizlantirish",
+  "commonFirstNameRequired": "Ism *",
+  "commonFirstNameMissing": "Ismni kiriting",
+  "commonLastNameRequired": "Familiya *",
+  "commonLastNameMissing": "Familiyani kiriting",
+  "commonPhoneRequired": "Telefon *",
+  "commonPhoneMissing": "Telefon raqamini kiriting",
+  "commonInvalidFormat": "Noto'g'ri format",
+  "commonAddress": "Manzil",
+  "commonNote": "Izoh",
+  "commonTotal": "Jami",
+  "commonSubtotal": "Oraliq summa",
+  "commonDiscount": "Chegirma",
+  "commonPieces": "{count} ta",
+  "@commonPieces": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "commonProductCount": "{count} ta mahsulot",
+  "@commonProductCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commonProducts": "Mahsulotlar",
+  "commonDeliveryAddress": "Yetkazib berish manzili",
+  "customersDeactivateTitle": "Mijozni faolsizlantirish",
+  "customersDeactivateConfirm": "{name} faolsizlantirilsinmi?",
+  "@customersDeactivateConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "customersTitle": "Mijozlar",
+  "customersSearchHint": "Ism yoki telefon bo'yicha qidirish...",
+  "customersNotFound": "Mijozlar topilmadi",
+  "customersEditTitle": "Mijozni tahrirlash",
+  "customersNewTitle": "Yangi mijoz",
+  "ordersSingleCurrency": "Bitta buyurtmada faqat bitta valyutadagi mahsulotlar bo'lishi mumkin",
+  "ordersAddedToCart": "{name} savatga qo'shildi",
+  "@ordersAddedToCart": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ordersSearchProduct": "Mahsulot qidirish...",
+  "ordersAllBranches": "Barcha filiallar",
+  "ordersCartSummary": "{count} ta mahsulot — {total}",
+  "@ordersCartSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "ordersPickWholesaler": "Optomchini tanlang",
+  "ordersNoWholesalers": "Optomchilar topilmadi",
+  "ordersIncomingTitle": "Kelgan buyurtmalar",
+  "ordersMineTitle": "Buyurtmalarim",
+  "ordersTabOutgoing": "Chiqarilgan",
+  "ordersTabIncoming": "Kelgan",
+  "ordersNotFound": "Buyurtmalar topilmadi",
+  "ordersReviewTitle": "Buyurtmani ko'rib chiqish",
+  "ordersPlace": "Buyurtma berish",
+  "ordersApproveTitle": "Buyurtmani tasdiqlash",
+  "ordersApproveConfirm": "Bu buyurtmani tasdiqlaysizmi? Mahsulot zaxirasi kamayadi.",
+  "ordersRejectTitle": "Buyurtmani rad etish",
+  "ordersDeliveredTitle": "Yetkazib berildi deb belgilash",
+  "ordersDeliveredConfirm": "Bu buyurtma yetkazib berilganini tasdiqlaysizmi?",
+  "ordersOrder": "Buyurtma",
+  "ordersRejectionReason": "Rad etilish sababi: {reason}",
+  "@ordersRejectionReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "ordersSeller": "Sotuvchi",
+  "ordersBuyer": "Xaridor",
+  "ordersHistory": "Tarix",
+  "ordersDelivered": "Yetkazildi",
+  "commonUnknownPerson": "Noma'lum",
+  "commonAmount": "Summa",
+  "commonPaymentMethod": "To'lov usuli",
+  "commonNoteOptional": "Izoh (ixtiyoriy)",
+  "commonClose": "Yopish",
+  "commonDateRequired": "Sana *",
+  "commonTotalWith": "Jami: {amount}",
+  "@commonTotalWith": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "commonBalanceWith": "Qoldiq: {amount}",
+  "@commonBalanceWith": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "commonDueWith": "Muddat: {date}",
+  "@commonDueWith": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "expensesEditTitle": "Harajatni tahrirlash",
+  "expensesNewTitle": "Yangi harajat",
+  "expensesTypeRequired": "Turi *",
+  "expensesAmountRequired": "Summasi (so'm) *",
+  "expensesAmountMissing": "Summani kiriting",
+  "expensesAmountInvalid": "Noto'g'ri summa",
+  "expensesDeleteTitle": "Harajatni o'chirish",
+  "expensesDeleteConfirm": "{expense} butunlay o'chirilsinmi?",
+  "@expensesDeleteConfirm": {
+    "placeholders": {
+      "expense": {
+        "type": "String"
+      }
+    }
+  },
+  "expensesTitle": "Harajatlarim",
+  "expensesFilterByType": "Turi bo'yicha filtr",
+  "expensesTotal": "Jami xarajat",
+  "expensesNotFound": "Harajatlar topilmadi",
+  "debtsPaymentsApplied": "{count} ta qarzga to'lov qo'llanildi",
+  "@debtsPaymentsApplied": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsCloseTitle": "Qarzni yopish",
+  "debtsCloseConfirm": "Qolgan {amount} to'liq to'langan deb belgilansinmi?",
+  "@debtsCloseConfirm": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsTotalBalance": "Jami qoldiq: {amount}",
+  "@debtsTotalBalance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsPayDownTitle": "Umumiy to'lov (FIFO)",
+  "debtsPayDownHint": "Eng eski qarzdan boshlab avtomatik taqsimlanadi",
+  "debtsAllocation": "Taqsimlanishi:",
+  "debtsWillClose": "(yopiladi)",
+  "debtsExceedsTotal": "Summa jami qoldiqdan oshib ketmoqda",
+  "debtsConfirmPayment": "To'lovni tasdiqlash",
+  "debtsTitle": "Qarzlar",
+  "debtsPayment": "To'lov",
+  "debtsTabCustomers": "Mijozlar",
+  "debtsTabOwedToMe": "Menga",
+  "debtsTabMine": "Mening qarzim",
+  "debtsNotFound": "Qarzlar topilmadi",
+  "debtsCustomerNotFound": "Mijoz qarzlari topilmadi",
+  "debtsActiveCount": "{count} ta faol qarz",
+  "@debtsActiveCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsEnterValidAmount": "To'g'ri summa kiriting",
+  "debtsAmountExceedsBalance": "Summa qoldiqdan ({balance}) oshmasligi kerak",
+  "@debtsAmountExceedsBalance": {
+    "placeholders": {
+      "balance": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsMakePayment": "To'lov qilish",
+  "commonActivate": "Faollashtirish",
+  "commonDeletePermanentlyConfirm": "{name} butunlay o'chirilsinmi?",
+  "@commonDeletePermanentlyConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "commonPasswordRequired": "Parol *",
+  "staffDeleteTitle": "Xodimni o'chirish",
+  "staffTitle": "Xodimlar",
+  "staffNotFound": "Xodimlar topilmadi",
+  "staffStoreRequired": "Do'kon tanlanishi shart",
+  "staffEditTitle": "Xodimni tahrirlash",
+  "staffNewTitle": "Yangi xodim",
+  "staffStoreLabel": "Do'kon *",
+  "storesDeleteTitle": "Do'konni o'chirish",
+  "storesTitle": "Do'konlar",
+  "storesDefault": "Asosiy",
+  "storesEditTitle": "Do'konni tahrirlash",
+  "storesNewTitle": "Yangi do'kon",
+  "storesMapLocation": "Xaritadagi joyi",
+  "storesLocationTitle": "Do'kon joylashuvi",
+  "storesLocationHint": "Kuryerlar buyurtmani shu yerdan oladi",
+  "storesHandoverCode": "Topshirish kodi",
+  "storesHandoverCodeHint": "Kuryer buyurtmani topshirishda mijozdan 4 xonali kodni so'raydi. Ilovasi yoki tasdiqlangan raqami bo'lmagan mijozdan kod so'ralmaydi.",
+  "commonBalance": "Qoldiq",
+  "commonPaid": "To'langan",
+  "commonOnCredit": "Qarzga",
+  "commonPickCustomer": "Mijozni tanlang",
+  "commonNew": "Yangi",
+  "posScanProduct": "Mahsulotni skanerlash",
+  "posBarcodeNotFound": "Bu shtrix-kod bo'yicha mahsulot topilmadi",
+  "posSingleCurrency": "Bitta sotuvda faqat bitta valyutadagi mahsulotlar bo'lishi mumkin",
+  "posTitle": "Kassa",
+  "posSavedCarts": "Saqlangan savatlar",
+  "posPriceAndStock": "{price} · Qoldiq: {stock}",
+  "@posPriceAndStock": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "stock": {
+        "type": "String"
+      }
+    }
+  },
+  "salesPickReturnItem": "Qaytariladigan mahsulotni tanlang",
+  "salesReturn": "Qaytarish",
+  "salesReturnableLeft": "Qoldi: {count}",
+  "@salesReturnableLeft": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "salesRefundMethod": "Pulni qaytarish usuli",
+  "salesReturnAmount": "Qaytariladigan summa: {amount}",
+  "@salesReturnAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "salesConfirmReturn": "Qaytarishni tasdiqlash",
+  "salesPayment": "To'lov",
+  "salesPaidNow": "To'landi",
+  "salesDownPaymentOptional": "Oldindan to'lov (ixtiyoriy)",
+  "salesConfirmWithTotal": "Tasdiqlash — {total}",
+  "@salesConfirmWithTotal": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "salesHistoryTitle": "Sotuvlar tarixi",
+  "salesNotFound": "Sotuvlar topilmadi",
+  "salesSale": "Sotuv",
+  "salesCreated": "Sotuv yaratildi",
+  "salesReturnedQty": "qaytarilgan: {count}",
+  "@salesReturnedQty": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "salesDebt": "Qarz",
+  "salesPayments": "To'lovlar",
+  "salesCustomerSearchHint": "Ism yoki telefon...",
+  "salesCustomerNotFound": "Mijoz topilmadi",
+  "cartsSaved": "Savat saqlandi",
+  "cartsSaveOrClearFirst": "Avval joriy savatni saqlang yoki tozalang",
+  "cartsSkipped": "{count} ta mahsulot topilmadi, savatga qo'shilmadi",
+  "@cartsSkipped": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cartsDeleteTitle": "Saqlangan savatni o'chirish",
+  "cartsDeleteConfirm": "Bu amalni ortga qaytarib bo'lmaydi. Davom etasizmi?",
+  "cartsCurrentEmpty": "Joriy savat bo'sh",
+  "cartsSaveCurrent": "Joriy savatni saqlash ({count} ta)",
+  "@cartsSaveCurrent": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cartsNone": "Saqlangan savatlar yo'q",
+  "cartsMore": "+{count} ta",
+  "@cartsMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cartsRestore": "Qaytarib olish",
+  "commonNoData": "Ma'lumot yo'q",
+  "reportsTitle": "Hisobotlar",
+  "reportsTopProducts": "Eng ko'p sotilgan mahsulotlar",
+  "reportsStockWith": "Zaxira: {stock}",
+  "@reportsStockWith": {
+    "placeholders": {
+      "stock": {
+        "type": "String"
+      }
+    }
+  },
+  "reportsStatistics": "Statistika",
+  "reportsRevenue": "Tushum",
+  "reportsNewDebts": "Yangi qarzlar",
+  "reportsDebtPayments": "Qarz to'lovlari",
+  "reportsOutstanding": "Qoldiq qarzdorlik",
+  "reportsSalesChart": "Savdo grafigi",
+  "reportsLast30": "So'nggi 30 kun",
+  "reportsThisMonth": "Bu oy",
+  "workDayDebtsShareText": "Qarzlar ro'yxati",
+  "workDayTitle": "Ish kuni",
+  "workDayOpen": "Ochiq",
+  "workDayClosed": "Yopilgan",
+  "workDayNotStarted": "Hali ish kuni boshlanmagan",
+  "workDayStartedAt": "Boshlangan: {time}",
+  "@workDayStartedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "workDayEndedAt": "Tugagan: {time}",
+  "@workDayEndedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "workDayStart": "Ish kunini boshlash",
+  "workDayEnd": "Ish kunini yakunlash",
+  "workDayExportDebts": "Qarzlar (Excel)",
+  "dashPaymentCash": "Naqd",
+  "dashPaymentCard": "Karta",
+  "dashPaymentBank": "Bank",
+  "dashPaymentDebt": "Qarz",
+  "dashPaymentTypes": "To'lov turlari",
+  "dashIncomeDebt6m": "Daromad va qarz (6 oy)",
+  "dashIncome": "Daromad",
+  "dashSalesTrend14d": "Savdo dinamikasi (14 kun)",
+  "scannerTitle": "Shtrix-kodni skanerlang",
+  "locationMarkOnMap": "Xaritada belgilash",
+  "locationPickTitle": "Joyni belgilang",
+  "locationMarked": "Xaritada belgilangan",
+  "locationCourierHint": "Kuryer aniq joyni topishi uchun",
+  "locationRemove": "Olib tashlash",
+  "locationDetectFailed": "Joylashuvni aniqlab bo'lmadi — GPS va ruxsatni tekshiring",
+  "locationMyLocation": "Mening joylashuvim",
+  "locationChooseHere": "Shu joyni tanlash"
 }

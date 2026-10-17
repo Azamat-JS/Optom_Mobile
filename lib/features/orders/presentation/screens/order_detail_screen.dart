@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/order_status.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
@@ -78,11 +79,11 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Buyurtmani tasdiqlash'),
-        content: const Text('Bu buyurtmani tasdiqlaysizmi? Mahsulot zaxirasi kamayadi.'),
+        title: Text(context.l10n.ordersApproveTitle),
+        content: Text(context.l10n.ordersApproveConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Tasdiqlash')),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonConfirm)),
         ],
       ),
     );
@@ -94,17 +95,17 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     final reason = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Buyurtmani rad etish'),
+        title: Text(context.l10n.ordersRejectTitle),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(labelText: 'Sababi (ixtiyoriy)', border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: context.l10n.commonReasonOptional, border: OutlineInputBorder()),
           maxLines: 3,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Bekor qilish')),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(context.l10n.commonCancel)),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: const Text('Rad etish'),
+            child: Text(context.l10n.commonReject),
           ),
         ],
       ),
@@ -116,11 +117,11 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Yetkazib berildi deb belgilash'),
-        content: const Text('Bu buyurtma yetkazib berilganini tasdiqlaysizmi?'),
+        title: Text(context.l10n.ordersDeliveredTitle),
+        content: Text(context.l10n.ordersDeliveredConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Tasdiqlash')),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonConfirm)),
         ],
       ),
     );
@@ -145,7 +146,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     final isSellerTenant = order != null && tenantId != null && order.seller?.id == tenantId;
 
     return Scaffold(
-      appBar: AppBar(title: Text(order?.orderNumber ?? 'Buyurtma')),
+      appBar: AppBar(title: Text(order?.orderNumber ?? context.l10n.ordersOrder)),
       body: _errorMessage != null
           ? Center(child: Text(_errorMessage!))
           : order == null
@@ -191,7 +192,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                           color: Theme.of(context).colorScheme.errorContainer,
                           child: Padding(
                             padding: const EdgeInsets.all(12),
-                            child: Text('Rad etilish sababi: ${order.rejectionReason}'),
+                            child: Text(context.l10n.ordersRejectionReason(order.rejectionReason ?? '')),
                           ),
                         ),
                       ],
@@ -218,14 +219,14 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
               // Deliberately generic, not "Optomchi" (Wholesaler) — the
               // seller side of a B2C order (Phase 2: a CUSTOMER buying from
               // a RETAILER's storefront) is a retailer, not a wholesaler.
-              subtitle: const Text('Sotuvchi'),
+              subtitle: Text(context.l10n.ordersSeller),
               dense: true,
             ),
           if (order.buyer != null)
             ListTile(
               leading: const Icon(Icons.person_outline),
               title: Text(order.buyer!.fullName),
-              subtitle: const Text('Xaridor'),
+              subtitle: Text(context.l10n.ordersBuyer),
               dense: true,
             ),
         ],
@@ -238,9 +239,9 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
-            child: Text('Mahsulotlar', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(context.l10n.commonProducts, style: TextStyle(fontWeight: FontWeight.bold)),
           ),
           for (final item in order.items)
             ListTile(
@@ -261,10 +262,10 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _totalRow('Oraliq summa', order.subtotal, order.currency),
-            if (order.discount > 0) _totalRow('Chegirma', -order.discount, order.currency),
+            _totalRow(context.l10n.commonSubtotal, order.subtotal, order.currency),
+            if (order.discount > 0) _totalRow(context.l10n.commonDiscount, -order.discount, order.currency),
             const Divider(),
-            _totalRow('Jami', order.total, order.currency, isBold: true),
+            _totalRow(context.l10n.commonTotal, order.total, order.currency, isBold: true),
           ],
         ),
       ),
@@ -293,12 +294,12 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (order.deliveryAddress != null) ...[
-              const Text('Yetkazib berish manzili', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(context.l10n.commonDeliveryAddress, style: TextStyle(fontWeight: FontWeight.bold)),
               Text(order.deliveryAddress!),
               const SizedBox(height: 8),
             ],
             if (order.notes != null) ...[
-              const Text('Izoh', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(context.l10n.commonNote, style: TextStyle(fontWeight: FontWeight.bold)),
               Text(order.notes!),
             ],
           ],
@@ -315,7 +316,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Tarix', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(context.l10n.ordersHistory, style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             for (final entry in order.statusHistory)
               Padding(
@@ -358,19 +359,19 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
           FilledButton.icon(
             onPressed: _isBusy ? null : _confirmApprove,
             icon: const Icon(Icons.check),
-            label: const Text('Tasdiqlash'),
+            label: Text(context.l10n.commonConfirm),
           ),
           OutlinedButton.icon(
             onPressed: _isBusy ? null : _rejectWithReason,
             icon: const Icon(Icons.close),
-            label: const Text('Rad etish'),
+            label: Text(context.l10n.commonReject),
           ),
         ],
         if (order.canMarkDelivered)
           FilledButton.icon(
             onPressed: _isBusy ? null : _confirmDeliver,
             icon: const Icon(Icons.local_shipping_outlined),
-            label: const Text('Yetkazildi'),
+            label: Text(context.l10n.ordersDelivered),
           ),
       ],
     );

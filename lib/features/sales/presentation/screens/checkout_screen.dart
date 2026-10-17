@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/payment_method.dart';
 import 'package:bsmart/core/enums/sale_enums.dart';
@@ -49,7 +50,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final cart = ref.read(posCartProvider);
     if (cart.isEmpty) return;
     if (_customer == null) {
-      setState(() => _errorMessage = 'Mijozni tanlang');
+      setState(() => _errorMessage = context.l10n.commonPickCustomer);
       return;
     }
 
@@ -97,21 +98,21 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final paidAmount = double.tryParse(_paidAmountController.text.trim()) ?? 0;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("To'lov")),
+      appBar: AppBar(title: Text(context.l10n.salesPayment)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Card(
             child: ListTile(
               leading: const Icon(Icons.person_outline),
-              title: Text(_customer?.fullName ?? 'Mijozni tanlang'),
+              title: Text(_customer?.fullName ?? context.l10n.commonPickCustomer),
               subtitle: _customer != null ? Text(_customer!.phone ?? '') : null,
               trailing: const Icon(Icons.chevron_right),
               onTap: _pickCustomer,
             ),
           ),
           const SizedBox(height: 16),
-          Text('Mahsulotlar', style: Theme.of(context).textTheme.titleMedium),
+          Text(context.l10n.commonProducts, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Card(
             child: Column(
@@ -145,14 +146,14 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           TextField(
             controller: _discountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(labelText: 'Chegirma', border: OutlineInputBorder(), isDense: true),
+            decoration: InputDecoration(labelText: context.l10n.commonDiscount, border: OutlineInputBorder(), isDense: true),
             onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: 16),
           SegmentedButton<SaleType>(
-            segments: const [
-              ButtonSegment(value: SaleType.paid, label: Text("To'landi"), icon: Icon(Icons.payments_outlined)),
-              ButtonSegment(value: SaleType.debt, label: Text('Qarzga'), icon: Icon(Icons.receipt_long_outlined)),
+            segments: [
+              ButtonSegment(value: SaleType.paid, label: Text(context.l10n.salesPaidNow), icon: Icon(Icons.payments_outlined)),
+              ButtonSegment(value: SaleType.debt, label: Text(context.l10n.commonOnCredit), icon: Icon(Icons.receipt_long_outlined)),
             ],
             selected: {_type},
             onSelectionChanged: (selection) => setState(() => _type = selection.first),
@@ -161,7 +162,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           if (_type == SaleType.paid) ...[
             DropdownButtonFormField<PaymentMethod>(
               initialValue: _paymentMethod,
-              decoration: const InputDecoration(labelText: "To'lov usuli", border: OutlineInputBorder(), isDense: true),
+              decoration: InputDecoration(labelText: context.l10n.commonPaymentMethod, border: OutlineInputBorder(), isDense: true),
               items: [
                 for (final method in PaymentMethod.immediateMethods)
                   DropdownMenuItem(value: method, child: Text(method.label)),
@@ -172,8 +173,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             TextField(
               controller: _paidAmountController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                labelText: "Oldindan to'lov (ixtiyoriy)",
+              decoration: InputDecoration(
+                labelText: context.l10n.salesDownPaymentOptional,
                 border: OutlineInputBorder(),
                 isDense: true,
               ),
@@ -183,7 +184,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               const SizedBox(height: 8),
               DropdownButtonFormField<PaymentMethod>(
                 initialValue: _paymentMethod,
-                decoration: const InputDecoration(labelText: "To'lov usuli", border: OutlineInputBorder(), isDense: true),
+                decoration: InputDecoration(labelText: context.l10n.commonPaymentMethod, border: OutlineInputBorder(), isDense: true),
                 items: [
                   for (final method in PaymentMethod.immediateMethods)
                     DropdownMenuItem(value: method, child: Text(method.label)),
@@ -195,7 +196,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           const SizedBox(height: 16),
           TextField(
             controller: _notesController,
-            decoration: const InputDecoration(labelText: 'Izoh', border: OutlineInputBorder(), isDense: true),
+            decoration: InputDecoration(labelText: context.l10n.commonNote, border: OutlineInputBorder(), isDense: true),
           ),
           if (_errorMessage != null) ...[
             const SizedBox(height: 12),
@@ -211,7 +212,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
             child: _isSubmitting
                 ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                : Text('Tasdiqlash — ${CurrencyFormatter.format(total.toDouble(), cart.currency!)}'),
+                : Text(context.l10n.salesConfirmWithTotal(CurrencyFormatter.format(total.toDouble(), cart.currency!))),
           ),
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/staff_admins/domain/entities/admin.dart';
 import 'package:bsmart/features/staff_admins/domain/usecases/delete_admin_usecase.dart';
@@ -36,11 +37,11 @@ class AdminsListScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Xodimni o'chirish"),
-        content: Text('${admin.fullName} butunlay oʻchirilsinmi?'),
+        title: Text(context.l10n.staffDeleteTitle),
+        content: Text(context.l10n.commonDeletePermanentlyConfirm(admin.fullName)),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("O'chirish")),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -59,12 +60,12 @@ class AdminsListScreen extends ConsumerWidget {
     final storesAsync = ref.watch(storesListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Xodimlar')),
+      appBar: AppBar(title: Text(context.l10n.staffTitle)),
       body: adminsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Xatolik: $error')),
+        error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
         data: (admins) {
-          if (admins.isEmpty) return const Center(child: Text('Xodimlar topilmadi'));
+          if (admins.isEmpty) return Center(child: Text(context.l10n.staffNotFound));
           final storeNames = {for (final s in storesAsync.valueOrNull ?? []) s.id: s.name};
           return RefreshIndicator(
             onRefresh: () => ref.read(adminsListProvider.notifier).refresh(),
@@ -84,7 +85,7 @@ class AdminsListScreen extends ConsumerWidget {
                       Flexible(child: Text(admin.fullName)),
                       if (!admin.isActive) ...[
                         const SizedBox(width: 6),
-                        const Chip(label: Text('Faolsiz'), visualDensity: VisualDensity.compact),
+                        Chip(label: Text(context.l10n.commonInactiveShort), visualDensity: VisualDensity.compact),
                       ],
                     ],
                   ),
@@ -101,12 +102,12 @@ class AdminsListScreen extends ConsumerWidget {
                       }
                     },
                     itemBuilder: (context) => [
-                      const PopupMenuItem(value: 'edit', child: Text('Tahrirlash')),
+                      PopupMenuItem(value: 'edit', child: Text(context.l10n.commonEdit)),
                       PopupMenuItem(
                         value: 'toggle',
-                        child: Text(admin.isActive ? 'Faolsizlantirish' : 'Faollashtirish'),
+                        child: Text(admin.isActive ? context.l10n.commonDeactivate : context.l10n.commonActivate),
                       ),
-                      const PopupMenuItem(value: 'delete', child: Text("O'chirish")),
+                      PopupMenuItem(value: 'delete', child: Text(context.l10n.commonDelete)),
                     ],
                   ),
                   onTap: () => _openForm(context, ref, editing: admin),

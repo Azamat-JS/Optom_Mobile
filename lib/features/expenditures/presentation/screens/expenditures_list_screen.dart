@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/expenditure_type.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
@@ -52,14 +53,15 @@ class _ExpendituresListScreenState extends ConsumerState<ExpendituresListScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Harajatni o'chirish"),
+        title: Text(context.l10n.expensesDeleteTitle),
         content: Text(
-          '${expenditure.type.label} — ${CurrencyFormatter.format(expenditure.amount, Currency.uzs)} '
-          "butunlay o'chirilsinmi?",
+          context.l10n.expensesDeleteConfirm(
+            '${expenditure.type.label} — ${CurrencyFormatter.format(expenditure.amount, Currency.uzs)}',
+          ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("O'chirish")),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -68,7 +70,7 @@ class _ExpendituresListScreenState extends ConsumerState<ExpendituresListScreen>
       await ref.read(expendituresListProvider.notifier).delete(expenditure.id);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xatolik: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.commonErrorWith('$e'))));
       }
     }
   }
@@ -79,7 +81,7 @@ class _ExpendituresListScreenState extends ConsumerState<ExpendituresListScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Harajatlarim'),
+        title: Text(context.l10n.expensesTitle),
         actions: [
           // PopupMenuButton<T?> can't be used with a null-valued item here:
           // Flutter's own showButtonMenu() treats a null result as "menu
@@ -90,12 +92,12 @@ class _ExpendituresListScreenState extends ConsumerState<ExpendituresListScreen>
           // non-null '' sentinel for "no filter".
           PopupMenuButton<String>(
             icon: const Icon(Icons.filter_list),
-            tooltip: 'Turi bo\'yicha filtr',
+            tooltip: context.l10n.expensesFilterByType,
             onSelected: (value) => ref
                 .read(expendituresListProvider.notifier)
                 .setTypeFilter(value.isEmpty ? null : ExpenditureType.fromWire(value)),
             itemBuilder: (context) => [
-              const PopupMenuItem(value: '', child: Text('Barchasi')),
+              PopupMenuItem(value: '', child: Text(context.l10n.commonAll)),
               for (final type in ExpenditureType.values)
                 PopupMenuItem(value: type.toWire(), child: Text(type.label)),
             ],
@@ -104,7 +106,7 @@ class _ExpendituresListScreenState extends ConsumerState<ExpendituresListScreen>
       ),
       body: listState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Xatolik: $error')),
+        error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
         data: (state) {
           return Column(
             children: [
@@ -115,7 +117,7 @@ class _ExpendituresListScreenState extends ConsumerState<ExpendituresListScreen>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Jami xarajat'),
+                    Text(context.l10n.expensesTotal),
                     Text(
                       CurrencyFormatter.format(state.totalAmount, Currency.uzs),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -129,8 +131,8 @@ class _ExpendituresListScreenState extends ConsumerState<ExpendituresListScreen>
                         onRefresh: () => ref.read(expendituresListProvider.notifier).refresh(),
                         child: ListView(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          children: const [
-                            Padding(padding: EdgeInsets.only(top: 96), child: Center(child: Text('Harajatlar topilmadi'))),
+                          children: [
+                            Padding(padding: EdgeInsets.only(top: 96), child: Center(child: Text(context.l10n.expensesNotFound))),
                           ],
                         ),
                       )
@@ -165,7 +167,7 @@ class _ExpendituresListScreenState extends ConsumerState<ExpendituresListScreen>
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.delete_outline),
-                                    tooltip: "O'chirish",
+                                    tooltip: context.l10n.commonDelete,
                                     onPressed: () => _delete(expenditure),
                                   ),
                                 ],

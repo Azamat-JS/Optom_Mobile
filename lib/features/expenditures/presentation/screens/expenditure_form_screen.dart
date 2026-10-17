@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/expenditure_type.dart';
 import 'package:bsmart/features/expenditures/domain/entities/expenditure.dart';
@@ -81,7 +82,7 @@ class _ExpenditureFormScreenState extends ConsumerState<ExpenditureFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? 'Harajatni tahrirlash' : 'Yangi harajat')),
+      appBar: AppBar(title: Text(_isEditing ? context.l10n.expensesEditTitle : context.l10n.expensesNewTitle)),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -89,7 +90,7 @@ class _ExpenditureFormScreenState extends ConsumerState<ExpenditureFormScreen> {
           children: [
             DropdownButtonFormField<ExpenditureType>(
               initialValue: _type,
-              decoration: const InputDecoration(labelText: 'Turi *', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.expensesTypeRequired, border: OutlineInputBorder()),
               items: [for (final t in ExpenditureType.values) DropdownMenuItem(value: t, child: Text(t.label))],
               onChanged: (v) {
                 if (v != null) setState(() => _type = v);
@@ -99,14 +100,14 @@ class _ExpenditureFormScreenState extends ConsumerState<ExpenditureFormScreen> {
             TextFormField(
               controller: _amountController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                labelText: "Summasi (so'm) *",
+              decoration: InputDecoration(
+                labelText: context.l10n.expensesAmountRequired,
                 border: OutlineInputBorder(),
               ),
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Summani kiriting';
+                if (v == null || v.trim().isEmpty) return context.l10n.expensesAmountMissing;
                 final parsed = double.tryParse(v.trim());
-                if (parsed == null || parsed <= 0) return "Noto'g'ri summa";
+                if (parsed == null || parsed <= 0) return context.l10n.expensesAmountInvalid;
                 return null;
               },
             ),
@@ -114,14 +115,14 @@ class _ExpenditureFormScreenState extends ConsumerState<ExpenditureFormScreen> {
             InkWell(
               onTap: _pickDate,
               child: InputDecorator(
-                decoration: const InputDecoration(labelText: 'Sana *', border: OutlineInputBorder()),
+                decoration: InputDecoration(labelText: context.l10n.commonDateRequired, border: OutlineInputBorder()),
                 child: Text(DateFormat('dd.MM.yyyy').format(_date)),
               ),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _notesController,
-              decoration: const InputDecoration(labelText: 'Izoh', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.commonNote, border: OutlineInputBorder()),
               maxLines: 2,
             ),
             if (_errorMessage != null) ...[
@@ -133,7 +134,7 @@ class _ExpenditureFormScreenState extends ConsumerState<ExpenditureFormScreen> {
               onPressed: _isSaving ? null : _submit,
               child: _isSaving
                   ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Saqlash'),
+                  : Text(context.l10n.commonSave),
             ),
           ],
         ),

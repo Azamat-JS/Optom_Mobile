@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/categories/domain/entities/category.dart';
 import 'package:bsmart/features/categories/domain/usecases/delete_category_usecase.dart';
@@ -28,11 +29,11 @@ class CategoriesAdminListScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Kategoriyani o'chirish"),
-        content: Text('${category.name} oʻchirilsinmi? Unga bogʻliq mahsulotlar boʻlsa, xatolik qaytadi.'),
+        title: Text(context.l10n.categoriesDeleteTitle),
+        content: Text(context.l10n.commonDeleteWithDependentsConfirm(category.name)),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("O'chirish")),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -53,12 +54,12 @@ class CategoriesAdminListScreen extends ConsumerWidget {
     final categoriesAsync = ref.watch(categoriesAdminListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Kategoriyalar')),
+      appBar: AppBar(title: Text(context.l10n.categoriesTitle)),
       body: categoriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Xatolik: $error')),
+        error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
         data: (categories) {
-          if (categories.isEmpty) return const Center(child: Text('Kategoriyalar topilmadi'));
+          if (categories.isEmpty) return Center(child: Text(context.l10n.categoriesNotFound));
           // Group each root immediately followed by its own children (sorted
           // within each level by sortOrder) — a plain "roots first, then a
           // second flat block of every child" sort (an earlier version of
@@ -97,7 +98,7 @@ class CategoriesAdminListScreen extends ConsumerWidget {
                   title: Text(category.name),
                   subtitle: Text([
                     if (!category.isRoot && category.parentName != null) category.parentName!,
-                    if (!category.isActive) 'Faolsiz',
+                    if (!category.isActive) context.l10n.commonInactiveShort,
                   ].join(' • ')),
                   trailing: PopupMenuButton<String>(
                     onSelected: (action) {
@@ -109,8 +110,8 @@ class CategoriesAdminListScreen extends ConsumerWidget {
                       }
                     },
                     itemBuilder: (context) => [
-                      const PopupMenuItem(value: 'edit', child: Text('Tahrirlash')),
-                      const PopupMenuItem(value: 'delete', child: Text("O'chirish")),
+                      PopupMenuItem(value: 'edit', child: Text(context.l10n.commonEdit)),
+                      PopupMenuItem(value: 'delete', child: Text(context.l10n.commonDelete)),
                     ],
                   ),
                   onTap: () => _openForm(context, ref, editing: category),

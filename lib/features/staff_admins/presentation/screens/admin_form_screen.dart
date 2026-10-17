@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/staff_admins/domain/entities/admin.dart';
 import 'package:bsmart/features/staff_admins/domain/entities/admin_write_params.dart';
@@ -51,7 +52,7 @@ class _AdminFormScreenState extends ConsumerState<AdminFormScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedStoreId == null) {
-      setState(() => _errorMessage = "Do'kon tanlanishi shart");
+      setState(() => _errorMessage = context.l10n.staffStoreRequired);
       return;
     }
     setState(() {
@@ -93,7 +94,7 @@ class _AdminFormScreenState extends ConsumerState<AdminFormScreen> {
     final storesAsync = ref.watch(storesListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? 'Xodimni tahrirlash' : 'Yangi xodim')),
+      appBar: AppBar(title: Text(_isEditing ? context.l10n.staffEditTitle : context.l10n.staffNewTitle)),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -101,10 +102,10 @@ class _AdminFormScreenState extends ConsumerState<AdminFormScreen> {
           children: [
             storesAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Text('Xatolik: $error'),
+              error: (error, _) => Text(context.l10n.commonErrorWith('$error')),
               data: (stores) => DropdownButtonFormField<String>(
                 initialValue: _selectedStoreId,
-                decoration: const InputDecoration(labelText: "Do'kon *", border: OutlineInputBorder()),
+                decoration: InputDecoration(labelText: context.l10n.staffStoreLabel, border: OutlineInputBorder()),
                 items: [
                   for (final store in stores) DropdownMenuItem(value: store.id, child: Text(store.name)),
                 ],
@@ -114,27 +115,27 @@ class _AdminFormScreenState extends ConsumerState<AdminFormScreen> {
             const SizedBox(height: 12),
             TextFormField(
               controller: _firstNameController,
-              decoration: const InputDecoration(labelText: 'Ism *', border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Ismni kiriting' : null,
+              decoration: InputDecoration(labelText: context.l10n.commonFirstNameRequired, border: OutlineInputBorder()),
+              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonFirstNameMissing : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _lastNameController,
-              decoration: const InputDecoration(labelText: 'Familiya *', border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Familiyani kiriting' : null,
+              decoration: InputDecoration(labelText: context.l10n.commonLastNameRequired, border: OutlineInputBorder()),
+              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonLastNameMissing : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                labelText: 'Telefon *',
+              decoration: InputDecoration(
+                labelText: context.l10n.commonPhoneRequired,
                 hintText: '+998901234567',
                 border: OutlineInputBorder(),
               ),
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Telefon raqamini kiriting';
-                if (!RegExp(r'^\+998\d{9}$').hasMatch(v.trim())) return 'Format: +998XXXXXXXXX';
+                if (v == null || v.trim().isEmpty) return context.l10n.commonPhoneMissing;
+                if (!RegExp(r'^\+998\d{9}$').hasMatch(v.trim())) return context.l10n.authPhoneFormat;
                 return null;
               },
             ),
@@ -143,8 +144,8 @@ class _AdminFormScreenState extends ConsumerState<AdminFormScreen> {
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: const InputDecoration(labelText: 'Parol *', border: OutlineInputBorder()),
-                validator: (v) => (v == null || v.length < 6) ? 'Kamida 6 ta belgi' : null,
+                decoration: InputDecoration(labelText: context.l10n.commonPasswordRequired, border: OutlineInputBorder()),
+                validator: (v) => (v == null || v.length < 6) ? context.l10n.loginPasswordMinLength : null,
               ),
             ],
             if (_errorMessage != null) ...[
@@ -156,7 +157,7 @@ class _AdminFormScreenState extends ConsumerState<AdminFormScreen> {
               onPressed: _isSaving ? null : _submit,
               child: _isSaving
                   ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Saqlash'),
+                  : Text(context.l10n.commonSave),
             ),
           ],
         ),

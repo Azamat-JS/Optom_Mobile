@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/sales/domain/entities/sale.dart';
@@ -52,7 +53,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
   Widget build(BuildContext context) {
     final sale = _sale;
     return Scaffold(
-      appBar: AppBar(title: Text(sale?.saleNumber ?? 'Sotuv')),
+      appBar: AppBar(title: Text(sale?.saleNumber ?? context.l10n.salesSale)),
       body: _errorMessage != null
           ? Center(child: Text(_errorMessage!))
           : sale == null
@@ -67,7 +68,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                           children: [
                             const Icon(Icons.check_circle, color: Colors.green),
                             const SizedBox(width: 8),
-                            Text('Sotuv yaratildi', style: Theme.of(context).textTheme.titleMedium),
+                            Text(context.l10n.salesCreated, style: Theme.of(context).textTheme.titleMedium),
                           ],
                         ),
                       ),
@@ -106,7 +107,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Mahsulotlar', style: Theme.of(context).textTheme.titleMedium),
+                            Text(context.l10n.commonProducts, style: Theme.of(context).textTheme.titleMedium),
                             const SizedBox(height: 8),
                             for (final item in sale.items)
                               Padding(
@@ -120,7 +121,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                                           Text(item.productName),
                                           Text(
                                             '${item.quantity.toStringAsFixed(item.quantity.truncateToDouble() == item.quantity ? 0 : 3)} x ${CurrencyFormatter.format(item.unitPrice, sale.currency)}'
-                                            '${item.returnedQuantity > 0 ? ' · qaytarilgan: ${item.returnedQuantity.toStringAsFixed(0)}' : ''}',
+                                            '${item.returnedQuantity > 0 ? ' · ${context.l10n.salesReturnedQty(item.returnedQuantity.toStringAsFixed(0))}' : ''}',
                                             style: Theme.of(context).textTheme.bodySmall,
                                           ),
                                         ],
@@ -140,12 +141,12 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                         padding: const EdgeInsets.all(12),
                         child: Column(
                           children: [
-                            _TotalRow(label: 'Oraliq summa', value: CurrencyFormatter.format(sale.subtotal, sale.currency)),
+                            _TotalRow(label: context.l10n.commonSubtotal, value: CurrencyFormatter.format(sale.subtotal, sale.currency)),
                             if (sale.discount > 0)
-                              _TotalRow(label: 'Chegirma', value: '-${CurrencyFormatter.format(sale.discount, sale.currency)}'),
+                              _TotalRow(label: context.l10n.commonDiscount, value: '-${CurrencyFormatter.format(sale.discount, sale.currency)}'),
                             const Divider(),
                             _TotalRow(
-                              label: 'Jami',
+                              label: context.l10n.commonTotal,
                               value: CurrencyFormatter.format(sale.total, sale.currency),
                               bold: true,
                             ),
@@ -162,14 +163,14 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Qarz', style: Theme.of(context).textTheme.titleMedium),
+                              Text(context.l10n.salesDebt, style: Theme.of(context).textTheme.titleMedium),
                               const SizedBox(height: 4),
                               _TotalRow(
-                                label: "To'langan",
+                                label: context.l10n.commonPaid,
                                 value: CurrencyFormatter.format(sale.debt!.paidAmount, sale.currency),
                               ),
                               _TotalRow(
-                                label: 'Qoldiq',
+                                label: context.l10n.commonBalance,
                                 value: CurrencyFormatter.format(sale.debt!.balance, sale.currency),
                                 bold: true,
                               ),
@@ -186,7 +187,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("To'lovlar", style: Theme.of(context).textTheme.titleMedium),
+                              Text(context.l10n.salesPayments, style: Theme.of(context).textTheme.titleMedium),
                               const SizedBox(height: 8),
                               for (final payment in sale.payments)
                                 _TotalRow(
@@ -203,7 +204,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                       OutlinedButton.icon(
                         onPressed: _openReturn,
                         icon: const Icon(Icons.undo),
-                        label: const Text('Qaytarish'),
+                        label: Text(context.l10n.salesReturn),
                       ),
                     ],
                   ],

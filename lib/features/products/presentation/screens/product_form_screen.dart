@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/product_unit.dart';
@@ -122,13 +123,13 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   Future<void> _submit() async {
     if (_form.invalid || (!_isCatalogLinked && (_form.control('name').value as String?)?.isEmpty != false)) {
       _form.markAllAsTouched();
-      setState(() => _errorMessage = _isCatalogLinked ? null : 'Mahsulot nomini kiriting yoki katalogdan tanlang');
+      setState(() => _errorMessage = _isCatalogLinked ? null : context.l10n.productsNameOrCatalog);
       return;
     }
 
     final price = _parseDouble('price');
     if (price == null) {
-      setState(() => _errorMessage = "Narx noto'g'ri kiritildi");
+      setState(() => _errorMessage = context.l10n.productsPriceInvalid);
       return;
     }
 
@@ -195,7 +196,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.isEditing ? 'Mahsulotni tahrirlash' : 'Yangi mahsulot')),
+      appBar: AppBar(title: Text(widget.isEditing ? context.l10n.productsEditTitle : context.l10n.productsNewTitle)),
       body: ReactiveForm(
         formGroup: _form,
         child: ListView(
@@ -210,8 +211,8 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   child: ReactiveTextField<String>(
                     formControlName: 'price',
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(labelText: 'Narx *', border: OutlineInputBorder()),
-                    validationMessages: {ValidationMessage.required: (_) => 'Narx kiritilishi shart'},
+                    decoration: InputDecoration(labelText: context.l10n.commonPriceRequired, border: OutlineInputBorder()),
+                    validationMessages: {ValidationMessage.required: (_) => context.l10n.productsPriceRequired},
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -219,7 +220,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   child: ReactiveTextField<String>(
                     formControlName: 'costPrice',
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(labelText: 'Tannarx', border: OutlineInputBorder()),
+                    decoration: InputDecoration(labelText: context.l10n.commonCostPrice, border: OutlineInputBorder()),
                   ),
                 ),
               ],
@@ -227,22 +228,22 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
             const SizedBox(height: 12),
             if (widget.isEditing)
               InputDecorator(
-                decoration: const InputDecoration(labelText: 'Valyuta', border: OutlineInputBorder()),
-                child: Text((widget.editingProduct!.currency == Currency.uzs) ? "So'm (UZS)" : 'Dollar (USD)'),
+                decoration: InputDecoration(labelText: context.l10n.commonCurrency, border: OutlineInputBorder()),
+                child: Text((widget.editingProduct!.currency == Currency.uzs) ? context.l10n.currencyUzsLong : context.l10n.currencyUsdLong),
               )
             else
               ReactiveDropdownField<Currency>(
                 formControlName: 'currency',
-                decoration: const InputDecoration(labelText: 'Valyuta *', border: OutlineInputBorder()),
-                items: const [
-                  DropdownMenuItem(value: Currency.uzs, child: Text("So'm (UZS)")),
-                  DropdownMenuItem(value: Currency.usd, child: Text('Dollar (USD)')),
+                decoration: InputDecoration(labelText: context.l10n.commonCurrencyRequired, border: OutlineInputBorder()),
+                items: [
+                  DropdownMenuItem(value: Currency.uzs, child: Text(context.l10n.currencyUzsLong)),
+                  DropdownMenuItem(value: Currency.usd, child: Text(context.l10n.currencyUsdLong)),
                 ],
               ),
             const SizedBox(height: 12),
             ReactiveDropdownField<ProductUnit>(
               formControlName: 'unit',
-              decoration: const InputDecoration(labelText: "O'lchov birligi", border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.commonUnit, border: OutlineInputBorder()),
               items: [for (final unit in ProductUnit.values) DropdownMenuItem(value: unit, child: Text(unit.label))],
             ),
             const SizedBox(height: 12),
@@ -250,13 +251,13 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
               ReactiveTextField<String>(
                 formControlName: 'stock',
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Boshlang\'ich zaxira', border: OutlineInputBorder()),
+                decoration: InputDecoration(labelText: context.l10n.productsInitialStock, border: OutlineInputBorder()),
               )
             else
               InputDecorator(
-                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Zaxira'),
+                decoration: InputDecoration(border: OutlineInputBorder(), labelText: context.l10n.commonStock),
                 child: Text(
-                  '${widget.editingProduct!.stock} — o\'zgartirish uchun mahsulot sahifasidagi "Zaxira qo\'shish" tugmasini ishlating',
+                  context.l10n.productsStockEditHint('${widget.editingProduct!.stock}'),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
@@ -270,7 +271,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
             const SizedBox(height: 12),
             ReactiveTextField<String>(
               formControlName: 'barcode',
-              decoration: const InputDecoration(labelText: 'Shtrix-kod', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.commonBarcode, border: OutlineInputBorder()),
             ),
             const SizedBox(height: 12),
             Row(
@@ -289,7 +290,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                     onPressed: _isFetchingPlu ? null : _fetchNextPlu,
                     child: _isFetchingPlu
                         ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                        : const Text('Taklif'),
+                        : Text(context.l10n.productsPluSuggest),
                   ),
                 ),
               ],
@@ -299,7 +300,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
               onTap: _pickExpiryDate,
               child: InputDecorator(
                 decoration: InputDecoration(
-                  labelText: 'Yaroqlilik muddati (ixtiyoriy)',
+                  labelText: context.l10n.productsExpiryOptional,
                   border: const OutlineInputBorder(),
                   suffixIcon: _expiryDate != null
                       ? IconButton(
@@ -311,12 +312,12 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                         )
                       : const Icon(Icons.calendar_today_outlined),
                 ),
-                child: Text(_expiryDate != null ? _expiryDate!.toIso8601String().split('T').first : 'Tanlanmagan'),
+                child: Text(_expiryDate != null ? _expiryDate!.toIso8601String().split('T').first : context.l10n.commonNotSelected),
               ),
             ),
             if (widget.isEditing) ...[
               const SizedBox(height: 12),
-              ReactiveSwitchListTile(formControlName: 'isActive', title: const Text('Faol')),
+              ReactiveSwitchListTile(formControlName: 'isActive', title: Text(context.l10n.commonActive)),
             ],
             if (_errorMessage != null) ...[
               const SizedBox(height: 12),
@@ -328,7 +329,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
               style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
               child: _isSubmitting
                   ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                  : Text(widget.isEditing ? 'Saqlash' : "Qo'shish"),
+                  : Text(widget.isEditing ? context.l10n.commonSave : context.l10n.commonAdd),
             ),
           ],
         ),
@@ -345,14 +346,14 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
             child: OutlinedButton.icon(
               onPressed: _pickFromCatalog,
               icon: const Icon(Icons.inventory_2_outlined),
-              label: const Text('Katalogdan tanlash'),
+              label: Text(context.l10n.productsPickFromCatalog),
             ),
           ),
           const SizedBox(width: 8),
           if (_linkedCatalogEntry != null)
             IconButton(
               icon: const Icon(Icons.close),
-              tooltip: 'Bekor qilish',
+              tooltip: context.l10n.commonCancel,
               onPressed: _clearCatalogLink,
             ),
         ],
@@ -381,14 +382,14 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       children: [
         ReactiveTextField<String>(
           formControlName: 'name',
-          decoration: const InputDecoration(labelText: 'Mahsulot nomi *', border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: context.l10n.productsNameRequired, border: OutlineInputBorder()),
         ),
         const SizedBox(height: 12),
         ReactiveTextField<String>(
           formControlName: 'description',
           minLines: 2,
           maxLines: 4,
-          decoration: const InputDecoration(labelText: 'Tavsif', border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: context.l10n.commonDescription, border: OutlineInputBorder()),
         ),
       ],
     );

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
@@ -111,7 +112,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
 
   Future<void> _scanBarcode() async {
     final code = await Navigator.of(context).push<String>(
-      MaterialPageRoute(builder: (_) => const BarcodeScannerScreen(title: 'Mahsulotni skanerlash')),
+      MaterialPageRoute(builder: (_) => BarcodeScannerScreen(title: context.l10n.posScanProduct)),
     );
     if (code == null || !mounted) return;
     await _loadProducts(resetPage: true, barcode: code);
@@ -119,7 +120,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     if (_products.length == 1) {
       _addToCart(_products.first);
     } else if (_products.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Bu shtrix-kod bo\'yicha mahsulot topilmadi')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.posBarcodeNotFound)));
     }
   }
 
@@ -128,12 +129,12 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     if (!added) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text("Bitta sotuvda faqat bitta valyutadagi mahsulotlar bo'lishi mumkin")));
+        ..showSnackBar(SnackBar(content: Text(context.l10n.posSingleCurrency)));
       return;
     }
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('${product.name} savatga qo\'shildi'), duration: const Duration(milliseconds: 600)));
+      ..showSnackBar(SnackBar(content: Text(context.l10n.ordersAddedToCart(product.name)), duration: const Duration(milliseconds: 600)));
   }
 
   Future<void> _openCheckout() async {
@@ -149,11 +150,11 @@ class _PosScreenState extends ConsumerState<PosScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kassa'),
+        title: Text(context.l10n.posTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.hourglass_empty),
-            tooltip: 'Saqlangan savatlar',
+            tooltip: context.l10n.posSavedCarts,
             onPressed: () => SharedCartSheet.show(context),
           ),
           IconButton(icon: const Icon(Icons.qr_code_scanner), onPressed: _scanBarcode),
@@ -165,8 +166,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: TextField(
               controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Mahsulot qidirish...',
+              decoration: InputDecoration(
+                hintText: context.l10n.ordersSearchProduct,
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
                 isDense: true,
@@ -186,7 +187,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                   onPressed: _openCheckout,
                   style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
                   child: Text(
-                    '${cart.itemCount} ta mahsulot — ${CurrencyFormatter.format(cart.total, cart.currency!)}',
+                    context.l10n.ordersCartSummary(cart.itemCount, CurrencyFormatter.format(cart.total, cart.currency!)),
                   ),
                 ),
               ),
@@ -197,7 +198,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   Widget _buildProductList(PosCartState cart) {
     if (_errorMessage != null) return Center(child: Text(_errorMessage!));
     if (_isLoading) return const Center(child: CircularProgressIndicator());
-    if (_products.isEmpty) return const Center(child: Text('Mahsulotlar topilmadi'));
+    if (_products.isEmpty) return Center(child: Text(context.l10n.productsNotFound));
 
     return ListView.separated(
       controller: _scrollController,
@@ -212,10 +213,10 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         return ListTile(
           title: Text(product.name, maxLines: 1, overflow: TextOverflow.ellipsis),
           subtitle: Text(
-            '${CurrencyFormatter.format(product.price, product.currency)} · Qoldiq: ${product.stock.toStringAsFixed(product.unit?.isWeighable == true ? 2 : 0)}',
+            context.l10n.posPriceAndStock(CurrencyFormatter.format(product.price, product.currency), product.stock.toStringAsFixed(product.unit?.isWeighable == true ? 2 : 0)),
           ),
           trailing: inCart != null
-              ? Chip(label: Text('${inCart.quantity.toStringAsFixed(0)} ta'))
+              ? Chip(label: Text(context.l10n.commonPieces(inCart.quantity.toStringAsFixed(0))))
               : IconButton(icon: const Icon(Icons.add_circle_outline), onPressed: () => _addToCart(product)),
           onTap: () => _addToCart(product),
         );

@@ -723,6 +723,1752 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Optomchi qarzlari'**
   String get homeWholesalerDebts;
+
+  /// No description provided for @enumOrderStatus.
+  ///
+  /// In uz, this message translates to:
+  /// **'{status, select, newOrder{Yangi} approved{Tasdiqlangan} rejected{Rad etilgan} delivered{Yetkazilgan} debtRecorded{Qarzga yozilgan} paid{To\'langan} other{}}'**
+  String enumOrderStatus(String status);
+
+  /// No description provided for @enumPaymentMethod.
+  ///
+  /// In uz, this message translates to:
+  /// **'{method, select, cash{Naqd} card{Karta} bankTransfer{Bank o\'tkazmasi} click{Click} payme{Payme} debt{Qarzga} other{}}'**
+  String enumPaymentMethod(String method);
+
+  /// No description provided for @enumBusinessType.
+  ///
+  /// In uz, this message translates to:
+  /// **'{type, select, general{Do\'kon} restaurant{Restoran} applianceStore{Maishiy texnika} constructionTools{Qurilish mollari} toyStore{O\'yinchoqlar} autoParts{Avto ehtiyot qismlar} pharmacy{Dorixona} clothingStore{Kiyim-kechak} other{}}'**
+  String enumBusinessType(String type);
+
+  /// No description provided for @enumExpenditureType.
+  ///
+  /// In uz, this message translates to:
+  /// **'{type, select, electricity{Elektr energiyasi} gas{Gaz} water{Suv} taxes{Soliqlar} renting{Ijara} other{Boshqa}}'**
+  String enumExpenditureType(String type);
+
+  /// No description provided for @enumProductUnit.
+  ///
+  /// In uz, this message translates to:
+  /// **'{unit, select, dona{Dona} metr{Metr} litr{Litr} kilogram{Kilogramm} gram{Gramm} blok{Blok} other{}}'**
+  String enumProductUnit(String unit);
+
+  /// No description provided for @enumRestaurantOrderType.
+  ///
+  /// In uz, this message translates to:
+  /// **'{type, select, dineIn{Zalda} delivery{Yetkazib berish} other{}}'**
+  String enumRestaurantOrderType(String type);
+
+  /// No description provided for @enumRestaurantOrderStatus.
+  ///
+  /// In uz, this message translates to:
+  /// **'{status, select, newOrder{Yangi} preparing{Tayyorlanmoqda} ready{Tayyor} served{Berildi} delivered{Yetkazildi} cancelled{Bekor qilindi} other{}}'**
+  String enumRestaurantOrderStatus(String status);
+
+  /// No description provided for @enumSaleType.
+  ///
+  /// In uz, this message translates to:
+  /// **'{type, select, paid{To\'langan} debt{Qarzga} other{}}'**
+  String enumSaleType(String type);
+
+  /// No description provided for @enumSaleStatus.
+  ///
+  /// In uz, this message translates to:
+  /// **'{status, select, completed{Yakunlangan} cancelled{Bekor qilingan} partiallyReturned{Qisman qaytarilgan} returned{Qaytarilgan} other{}}'**
+  String enumSaleStatus(String status);
+
+  /// No description provided for @enumDebtStatus.
+  ///
+  /// In uz, this message translates to:
+  /// **'{status, select, active{Faol} partial{Qisman to\'langan} settled{To\'langan} overdue{Muddati o\'tgan} writtenOff{Bekor qilingan} other{}}'**
+  String enumDebtStatus(String status);
+
+  /// No description provided for @currencySom.
+  ///
+  /// In uz, this message translates to:
+  /// **'so\'m'**
+  String get currencySom;
+
+  /// No description provided for @errorSessionExpired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sessiya tugagan, qayta kiring.'**
+  String get errorSessionExpired;
+
+  /// No description provided for @errorForbidden.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu amalni bajarishga ruxsat yo\'q.'**
+  String get errorForbidden;
+
+  /// No description provided for @errorNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Topilmadi.'**
+  String get errorNotFound;
+
+  /// No description provided for @errorConflict.
+  ///
+  /// In uz, this message translates to:
+  /// **'Amalni bajarib bo\'lmadi, ziddiyat mavjud.'**
+  String get errorConflict;
+
+  /// No description provided for @errorNoInternet.
+  ///
+  /// In uz, this message translates to:
+  /// **'Internet aloqasi yo\'q.'**
+  String get errorNoInternet;
+
+  /// No description provided for @errorInvalidData.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ma\'lumotlar noto\'g\'ri kiritildi.'**
+  String get errorInvalidData;
+
+  /// No description provided for @tgTooManyAttempts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu raqam uchun urinishlar juda ko\'p. Birozdan so\'ng qayta urinib ko\'ring.'**
+  String get tgTooManyAttempts;
+
+  /// No description provided for @tgUnavailable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telegram orqali tasdiqlash vaqtincha ishlamayapti. Keyinroq urinib ko\'ring.'**
+  String get tgUnavailable;
+
+  /// No description provided for @tgInvalidPhone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon raqam noto\'g\'ri. Format: +998XXXXXXXXX'**
+  String get tgInvalidPhone;
+
+  /// No description provided for @commonSave.
+  ///
+  /// In uz, this message translates to:
+  /// **'Saqlash'**
+  String get commonSave;
+
+  /// No description provided for @commonDelete.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'chirish'**
+  String get commonDelete;
+
+  /// No description provided for @commonAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'shish'**
+  String get commonAdd;
+
+  /// No description provided for @commonEdit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tahrirlash'**
+  String get commonEdit;
+
+  /// No description provided for @commonActive.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faol'**
+  String get commonActive;
+
+  /// No description provided for @commonInactive.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faol emas'**
+  String get commonInactive;
+
+  /// No description provided for @commonAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barchasi'**
+  String get commonAll;
+
+  /// No description provided for @commonNone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yo\'q'**
+  String get commonNone;
+
+  /// No description provided for @commonNotSelected.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tanlanmagan'**
+  String get commonNotSelected;
+
+  /// No description provided for @commonNotSelectedDash.
+  ///
+  /// In uz, this message translates to:
+  /// **'— Tanlanmagan —'**
+  String get commonNotSelectedDash;
+
+  /// No description provided for @commonErrorWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xatolik: {error}'**
+  String commonErrorWith(String error);
+
+  /// No description provided for @commonNothingFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hech narsa topilmadi'**
+  String get commonNothingFound;
+
+  /// No description provided for @commonReject.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etish'**
+  String get commonReject;
+
+  /// No description provided for @commonReasonOptional.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sababi (ixtiyoriy)'**
+  String get commonReasonOptional;
+
+  /// No description provided for @commonName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomi'**
+  String get commonName;
+
+  /// No description provided for @commonNameRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomi *'**
+  String get commonNameRequired;
+
+  /// No description provided for @commonNameMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomini kiriting'**
+  String get commonNameMissing;
+
+  /// No description provided for @commonDescription.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tavsif'**
+  String get commonDescription;
+
+  /// No description provided for @commonCategory.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kategoriya'**
+  String get commonCategory;
+
+  /// No description provided for @commonBrand.
+  ///
+  /// In uz, this message translates to:
+  /// **'Brend'**
+  String get commonBrand;
+
+  /// No description provided for @commonBarcode.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shtrix-kod'**
+  String get commonBarcode;
+
+  /// No description provided for @commonPrice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx'**
+  String get commonPrice;
+
+  /// No description provided for @commonPriceRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx *'**
+  String get commonPriceRequired;
+
+  /// No description provided for @commonCostPrice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tannarx'**
+  String get commonCostPrice;
+
+  /// No description provided for @commonStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Zaxira'**
+  String get commonStock;
+
+  /// No description provided for @commonUnit.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'lchov birligi'**
+  String get commonUnit;
+
+  /// No description provided for @commonCurrency.
+  ///
+  /// In uz, this message translates to:
+  /// **'Valyuta'**
+  String get commonCurrency;
+
+  /// No description provided for @commonCurrencyRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Valyuta *'**
+  String get commonCurrencyRequired;
+
+  /// No description provided for @currencyUzsLong.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'m (UZS)'**
+  String get currencyUzsLong;
+
+  /// No description provided for @currencyUsdLong.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dollar (USD)'**
+  String get currencyUsdLong;
+
+  /// No description provided for @commonQuantityRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Miqdor kiritilishi shart'**
+  String get commonQuantityRequired;
+
+  /// No description provided for @productsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlar'**
+  String get productsTitle;
+
+  /// No description provided for @productsProduct.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulot'**
+  String get productsProduct;
+
+  /// No description provided for @productsSentToCatalog.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ko\'rib chiqish uchun katalogga yuborildi'**
+  String get productsSentToCatalog;
+
+  /// No description provided for @productsDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotni o\'chirish'**
+  String get productsDeleteTitle;
+
+  /// No description provided for @productsDeleteConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu mahsulotni o\'chirishni tasdiqlaysizmi?'**
+  String get productsDeleteConfirm;
+
+  /// No description provided for @productsCostPriceWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tannarx: {price}'**
+  String productsCostPriceWith(String price);
+
+  /// No description provided for @productsAddStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Zaxira qo\'shish'**
+  String get productsAddStock;
+
+  /// No description provided for @productsCreateBarcode.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barkod yaratish'**
+  String get productsCreateBarcode;
+
+  /// No description provided for @productsShareToCatalog.
+  ///
+  /// In uz, this message translates to:
+  /// **'Katalogga ulashish'**
+  String get productsShareToCatalog;
+
+  /// No description provided for @productsNameOrCatalog.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulot nomini kiriting yoki katalogdan tanlang'**
+  String get productsNameOrCatalog;
+
+  /// No description provided for @productsPriceInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx noto\'g\'ri kiritildi'**
+  String get productsPriceInvalid;
+
+  /// No description provided for @productsEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotni tahrirlash'**
+  String get productsEditTitle;
+
+  /// No description provided for @productsNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi mahsulot'**
+  String get productsNewTitle;
+
+  /// No description provided for @productsPriceRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx kiritilishi shart'**
+  String get productsPriceRequired;
+
+  /// No description provided for @productsInitialStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshlang\'ich zaxira'**
+  String get productsInitialStock;
+
+  /// No description provided for @productsStockEditHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'{stock} — o\'zgartirish uchun mahsulot sahifasidagi \"Zaxira qo\'shish\" tugmasini ishlating'**
+  String productsStockEditHint(String stock);
+
+  /// No description provided for @productsPluSuggest.
+  ///
+  /// In uz, this message translates to:
+  /// **'Taklif'**
+  String get productsPluSuggest;
+
+  /// No description provided for @productsExpiryOptional.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yaroqlilik muddati (ixtiyoriy)'**
+  String get productsExpiryOptional;
+
+  /// No description provided for @productsPickFromCatalog.
+  ///
+  /// In uz, this message translates to:
+  /// **'Katalogdan tanlash'**
+  String get productsPickFromCatalog;
+
+  /// No description provided for @productsNameRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulot nomi *'**
+  String get productsNameRequired;
+
+  /// No description provided for @productsFindTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotni topish'**
+  String get productsFindTitle;
+
+  /// No description provided for @productsSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomi yoki shtrix-kod bo\'yicha qidirish...'**
+  String get productsSearchHint;
+
+  /// No description provided for @productsNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlar topilmadi'**
+  String get productsNotFound;
+
+  /// No description provided for @productsCurrentStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joriy zaxira: {stock}'**
+  String productsCurrentStock(String stock);
+
+  /// No description provided for @productsAddQuantity.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'shiladigan miqdor'**
+  String get productsAddQuantity;
+
+  /// No description provided for @productsCorrectionOptional.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'shimcha tuzatish (ixtiyoriy)'**
+  String get productsCorrectionOptional;
+
+  /// No description provided for @productsCorrectionHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manfiy son ham kiritish mumkin'**
+  String get productsCorrectionHint;
+
+  /// No description provided for @commonConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlash'**
+  String get commonConfirm;
+
+  /// No description provided for @commonDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tayyor'**
+  String get commonDone;
+
+  /// No description provided for @commonSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qidirish...'**
+  String get commonSearchHint;
+
+  /// No description provided for @commonInactiveShort.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faolsiz'**
+  String get commonInactiveShort;
+
+  /// No description provided for @commonDeleteWithDependentsConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} o\'chirilsinmi? Unga bog\'liq mahsulotlar bo\'lsa, xatolik qaytadi.'**
+  String commonDeleteWithDependentsConfirm(String name);
+
+  /// No description provided for @masterStatusPending.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kutilmoqda'**
+  String get masterStatusPending;
+
+  /// No description provided for @masterStatusApproved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlangan'**
+  String get masterStatusApproved;
+
+  /// No description provided for @masterStatusRejected.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etilgan'**
+  String get masterStatusRejected;
+
+  /// No description provided for @masterDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Katalog yozuvini o\'chirish'**
+  String get masterDeleteTitle;
+
+  /// No description provided for @masterReviewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Katalog nazorati'**
+  String get masterReviewTitle;
+
+  /// No description provided for @masterEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Katalog yozuvini tahrirlash'**
+  String get masterEditTitle;
+
+  /// No description provided for @masterNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi katalog yozuvi'**
+  String get masterNewTitle;
+
+  /// No description provided for @masterActiveVisible.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faol (katalogda ko\'rinadi)'**
+  String get masterActiveVisible;
+
+  /// No description provided for @masterSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Katalogdan qidirish...'**
+  String get masterSearchHint;
+
+  /// No description provided for @categoriesDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kategoriyani o\'chirish'**
+  String get categoriesDeleteTitle;
+
+  /// No description provided for @categoriesTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kategoriyalar'**
+  String get categoriesTitle;
+
+  /// No description provided for @categoriesNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kategoriyalar topilmadi'**
+  String get categoriesNotFound;
+
+  /// No description provided for @categoriesEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kategoriyani tahrirlash'**
+  String get categoriesEditTitle;
+
+  /// No description provided for @categoriesNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi kategoriya'**
+  String get categoriesNewTitle;
+
+  /// No description provided for @categoriesParent.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ota kategoriya'**
+  String get categoriesParent;
+
+  /// No description provided for @categoriesNoParent.
+  ///
+  /// In uz, this message translates to:
+  /// **'— Yo\'q (asosiy kategoriya) —'**
+  String get categoriesNoParent;
+
+  /// No description provided for @categoriesSortOrder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tartib raqami'**
+  String get categoriesSortOrder;
+
+  /// No description provided for @categoriesPickerNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kategoriya topilmadi'**
+  String get categoriesPickerNotFound;
+
+  /// No description provided for @commonDeactivate.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faolsizlantirish'**
+  String get commonDeactivate;
+
+  /// No description provided for @commonFirstNameRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ism *'**
+  String get commonFirstNameRequired;
+
+  /// No description provided for @commonFirstNameMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ismni kiriting'**
+  String get commonFirstNameMissing;
+
+  /// No description provided for @commonLastNameRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Familiya *'**
+  String get commonLastNameRequired;
+
+  /// No description provided for @commonLastNameMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Familiyani kiriting'**
+  String get commonLastNameMissing;
+
+  /// No description provided for @commonPhoneRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon *'**
+  String get commonPhoneRequired;
+
+  /// No description provided for @commonPhoneMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon raqamini kiriting'**
+  String get commonPhoneMissing;
+
+  /// No description provided for @commonInvalidFormat.
+  ///
+  /// In uz, this message translates to:
+  /// **'Noto\'g\'ri format'**
+  String get commonInvalidFormat;
+
+  /// No description provided for @commonAddress.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manzil'**
+  String get commonAddress;
+
+  /// No description provided for @commonNote.
+  ///
+  /// In uz, this message translates to:
+  /// **'Izoh'**
+  String get commonNote;
+
+  /// No description provided for @commonTotal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami'**
+  String get commonTotal;
+
+  /// No description provided for @commonSubtotal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oraliq summa'**
+  String get commonSubtotal;
+
+  /// No description provided for @commonDiscount.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chegirma'**
+  String get commonDiscount;
+
+  /// No description provided for @commonPieces.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta'**
+  String commonPieces(String count);
+
+  /// No description provided for @commonProductCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta mahsulot'**
+  String commonProductCount(int count);
+
+  /// No description provided for @commonProducts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlar'**
+  String get commonProducts;
+
+  /// No description provided for @commonDeliveryAddress.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib berish manzili'**
+  String get commonDeliveryAddress;
+
+  /// No description provided for @customersDeactivateTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozni faolsizlantirish'**
+  String get customersDeactivateTitle;
+
+  /// No description provided for @customersDeactivateConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} faolsizlantirilsinmi?'**
+  String customersDeactivateConfirm(String name);
+
+  /// No description provided for @customersTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozlar'**
+  String get customersTitle;
+
+  /// No description provided for @customersSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ism yoki telefon bo\'yicha qidirish...'**
+  String get customersSearchHint;
+
+  /// No description provided for @customersNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozlar topilmadi'**
+  String get customersNotFound;
+
+  /// No description provided for @customersEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozni tahrirlash'**
+  String get customersEditTitle;
+
+  /// No description provided for @customersNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi mijoz'**
+  String get customersNewTitle;
+
+  /// No description provided for @ordersSingleCurrency.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bitta buyurtmada faqat bitta valyutadagi mahsulotlar bo\'lishi mumkin'**
+  String get ordersSingleCurrency;
+
+  /// No description provided for @ordersAddedToCart.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} savatga qo\'shildi'**
+  String ordersAddedToCart(String name);
+
+  /// No description provided for @ordersSearchProduct.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulot qidirish...'**
+  String get ordersSearchProduct;
+
+  /// No description provided for @ordersAllBranches.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barcha filiallar'**
+  String get ordersAllBranches;
+
+  /// No description provided for @ordersCartSummary.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta mahsulot — {total}'**
+  String ordersCartSummary(int count, String total);
+
+  /// No description provided for @ordersPickWholesaler.
+  ///
+  /// In uz, this message translates to:
+  /// **'Optomchini tanlang'**
+  String get ordersPickWholesaler;
+
+  /// No description provided for @ordersNoWholesalers.
+  ///
+  /// In uz, this message translates to:
+  /// **'Optomchilar topilmadi'**
+  String get ordersNoWholesalers;
+
+  /// No description provided for @ordersIncomingTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kelgan buyurtmalar'**
+  String get ordersIncomingTitle;
+
+  /// No description provided for @ordersMineTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmalarim'**
+  String get ordersMineTitle;
+
+  /// No description provided for @ordersTabOutgoing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chiqarilgan'**
+  String get ordersTabOutgoing;
+
+  /// No description provided for @ordersTabIncoming.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kelgan'**
+  String get ordersTabIncoming;
+
+  /// No description provided for @ordersNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmalar topilmadi'**
+  String get ordersNotFound;
+
+  /// No description provided for @ordersReviewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani ko\'rib chiqish'**
+  String get ordersReviewTitle;
+
+  /// No description provided for @ordersPlace.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma berish'**
+  String get ordersPlace;
+
+  /// No description provided for @ordersApproveTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani tasdiqlash'**
+  String get ordersApproveTitle;
+
+  /// No description provided for @ordersApproveConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu buyurtmani tasdiqlaysizmi? Mahsulot zaxirasi kamayadi.'**
+  String get ordersApproveConfirm;
+
+  /// No description provided for @ordersRejectTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani rad etish'**
+  String get ordersRejectTitle;
+
+  /// No description provided for @ordersDeliveredTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib berildi deb belgilash'**
+  String get ordersDeliveredTitle;
+
+  /// No description provided for @ordersDeliveredConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu buyurtma yetkazib berilganini tasdiqlaysizmi?'**
+  String get ordersDeliveredConfirm;
+
+  /// No description provided for @ordersOrder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma'**
+  String get ordersOrder;
+
+  /// No description provided for @ordersRejectionReason.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etilish sababi: {reason}'**
+  String ordersRejectionReason(String reason);
+
+  /// No description provided for @ordersSeller.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotuvchi'**
+  String get ordersSeller;
+
+  /// No description provided for @ordersBuyer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xaridor'**
+  String get ordersBuyer;
+
+  /// No description provided for @ordersHistory.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tarix'**
+  String get ordersHistory;
+
+  /// No description provided for @ordersDelivered.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazildi'**
+  String get ordersDelivered;
+
+  /// No description provided for @commonUnknownPerson.
+  ///
+  /// In uz, this message translates to:
+  /// **'Noma\'lum'**
+  String get commonUnknownPerson;
+
+  /// No description provided for @commonAmount.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summa'**
+  String get commonAmount;
+
+  /// No description provided for @commonPaymentMethod.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov usuli'**
+  String get commonPaymentMethod;
+
+  /// No description provided for @commonNoteOptional.
+  ///
+  /// In uz, this message translates to:
+  /// **'Izoh (ixtiyoriy)'**
+  String get commonNoteOptional;
+
+  /// No description provided for @commonClose.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yopish'**
+  String get commonClose;
+
+  /// No description provided for @commonDateRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sana *'**
+  String get commonDateRequired;
+
+  /// No description provided for @commonTotalWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami: {amount}'**
+  String commonTotalWith(String amount);
+
+  /// No description provided for @commonBalanceWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldiq: {amount}'**
+  String commonBalanceWith(String amount);
+
+  /// No description provided for @commonDueWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddat: {date}'**
+  String commonDueWith(String date);
+
+  /// No description provided for @expensesEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Harajatni tahrirlash'**
+  String get expensesEditTitle;
+
+  /// No description provided for @expensesNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi harajat'**
+  String get expensesNewTitle;
+
+  /// No description provided for @expensesTypeRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Turi *'**
+  String get expensesTypeRequired;
+
+  /// No description provided for @expensesAmountRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summasi (so\'m) *'**
+  String get expensesAmountRequired;
+
+  /// No description provided for @expensesAmountMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summani kiriting'**
+  String get expensesAmountMissing;
+
+  /// No description provided for @expensesAmountInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Noto\'g\'ri summa'**
+  String get expensesAmountInvalid;
+
+  /// No description provided for @expensesDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Harajatni o\'chirish'**
+  String get expensesDeleteTitle;
+
+  /// No description provided for @expensesDeleteConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'{expense} butunlay o\'chirilsinmi?'**
+  String expensesDeleteConfirm(String expense);
+
+  /// No description provided for @expensesTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Harajatlarim'**
+  String get expensesTitle;
+
+  /// No description provided for @expensesFilterByType.
+  ///
+  /// In uz, this message translates to:
+  /// **'Turi bo\'yicha filtr'**
+  String get expensesFilterByType;
+
+  /// No description provided for @expensesTotal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami xarajat'**
+  String get expensesTotal;
+
+  /// No description provided for @expensesNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Harajatlar topilmadi'**
+  String get expensesNotFound;
+
+  /// No description provided for @debtsPaymentsApplied.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta qarzga to\'lov qo\'llanildi'**
+  String debtsPaymentsApplied(int count);
+
+  /// No description provided for @debtsCloseTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzni yopish'**
+  String get debtsCloseTitle;
+
+  /// No description provided for @debtsCloseConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qolgan {amount} to\'liq to\'langan deb belgilansinmi?'**
+  String debtsCloseConfirm(String amount);
+
+  /// No description provided for @debtsTotalBalance.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami qoldiq: {amount}'**
+  String debtsTotalBalance(String amount);
+
+  /// No description provided for @debtsPayDownTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Umumiy to\'lov (FIFO)'**
+  String get debtsPayDownTitle;
+
+  /// No description provided for @debtsPayDownHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eng eski qarzdan boshlab avtomatik taqsimlanadi'**
+  String get debtsPayDownHint;
+
+  /// No description provided for @debtsAllocation.
+  ///
+  /// In uz, this message translates to:
+  /// **'Taqsimlanishi:'**
+  String get debtsAllocation;
+
+  /// No description provided for @debtsWillClose.
+  ///
+  /// In uz, this message translates to:
+  /// **'(yopiladi)'**
+  String get debtsWillClose;
+
+  /// No description provided for @debtsExceedsTotal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summa jami qoldiqdan oshib ketmoqda'**
+  String get debtsExceedsTotal;
+
+  /// No description provided for @debtsConfirmPayment.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lovni tasdiqlash'**
+  String get debtsConfirmPayment;
+
+  /// No description provided for @debtsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzlar'**
+  String get debtsTitle;
+
+  /// No description provided for @debtsPayment.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov'**
+  String get debtsPayment;
+
+  /// No description provided for @debtsTabCustomers.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozlar'**
+  String get debtsTabCustomers;
+
+  /// No description provided for @debtsTabOwedToMe.
+  ///
+  /// In uz, this message translates to:
+  /// **'Menga'**
+  String get debtsTabOwedToMe;
+
+  /// No description provided for @debtsTabMine.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mening qarzim'**
+  String get debtsTabMine;
+
+  /// No description provided for @debtsNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzlar topilmadi'**
+  String get debtsNotFound;
+
+  /// No description provided for @debtsCustomerNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijoz qarzlari topilmadi'**
+  String get debtsCustomerNotFound;
+
+  /// No description provided for @debtsActiveCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta faol qarz'**
+  String debtsActiveCount(int count);
+
+  /// No description provided for @debtsEnterValidAmount.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'g\'ri summa kiriting'**
+  String get debtsEnterValidAmount;
+
+  /// No description provided for @debtsAmountExceedsBalance.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summa qoldiqdan ({balance}) oshmasligi kerak'**
+  String debtsAmountExceedsBalance(String balance);
+
+  /// No description provided for @debtsMakePayment.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov qilish'**
+  String get debtsMakePayment;
+
+  /// No description provided for @commonActivate.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faollashtirish'**
+  String get commonActivate;
+
+  /// No description provided for @commonDeletePermanentlyConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} butunlay o\'chirilsinmi?'**
+  String commonDeletePermanentlyConfirm(String name);
+
+  /// No description provided for @commonPasswordRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Parol *'**
+  String get commonPasswordRequired;
+
+  /// No description provided for @staffDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodimni o\'chirish'**
+  String get staffDeleteTitle;
+
+  /// No description provided for @staffTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodimlar'**
+  String get staffTitle;
+
+  /// No description provided for @staffNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodimlar topilmadi'**
+  String get staffNotFound;
+
+  /// No description provided for @staffStoreRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon tanlanishi shart'**
+  String get staffStoreRequired;
+
+  /// No description provided for @staffEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodimni tahrirlash'**
+  String get staffEditTitle;
+
+  /// No description provided for @staffNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi xodim'**
+  String get staffNewTitle;
+
+  /// No description provided for @staffStoreLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon *'**
+  String get staffStoreLabel;
+
+  /// No description provided for @storesDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'konni o\'chirish'**
+  String get storesDeleteTitle;
+
+  /// No description provided for @storesTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'konlar'**
+  String get storesTitle;
+
+  /// No description provided for @storesDefault.
+  ///
+  /// In uz, this message translates to:
+  /// **'Asosiy'**
+  String get storesDefault;
+
+  /// No description provided for @storesEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'konni tahrirlash'**
+  String get storesEditTitle;
+
+  /// No description provided for @storesNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi do\'kon'**
+  String get storesNewTitle;
+
+  /// No description provided for @storesMapLocation.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xaritadagi joyi'**
+  String get storesMapLocation;
+
+  /// No description provided for @storesLocationTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon joylashuvi'**
+  String get storesLocationTitle;
+
+  /// No description provided for @storesLocationHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryerlar buyurtmani shu yerdan oladi'**
+  String get storesLocationHint;
+
+  /// No description provided for @storesHandoverCode.
+  ///
+  /// In uz, this message translates to:
+  /// **'Topshirish kodi'**
+  String get storesHandoverCode;
+
+  /// No description provided for @storesHandoverCodeHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer buyurtmani topshirishda mijozdan 4 xonali kodni so\'raydi. Ilovasi yoki tasdiqlangan raqami bo\'lmagan mijozdan kod so\'ralmaydi.'**
+  String get storesHandoverCodeHint;
+
+  /// No description provided for @commonBalance.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldiq'**
+  String get commonBalance;
+
+  /// No description provided for @commonPaid.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'langan'**
+  String get commonPaid;
+
+  /// No description provided for @commonOnCredit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzga'**
+  String get commonOnCredit;
+
+  /// No description provided for @commonPickCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozni tanlang'**
+  String get commonPickCustomer;
+
+  /// No description provided for @commonNew.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi'**
+  String get commonNew;
+
+  /// No description provided for @posScanProduct.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotni skanerlash'**
+  String get posScanProduct;
+
+  /// No description provided for @posBarcodeNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu shtrix-kod bo\'yicha mahsulot topilmadi'**
+  String get posBarcodeNotFound;
+
+  /// No description provided for @posSingleCurrency.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bitta sotuvda faqat bitta valyutadagi mahsulotlar bo\'lishi mumkin'**
+  String get posSingleCurrency;
+
+  /// No description provided for @posTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kassa'**
+  String get posTitle;
+
+  /// No description provided for @posSavedCarts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Saqlangan savatlar'**
+  String get posSavedCarts;
+
+  /// No description provided for @posPriceAndStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'{price} · Qoldiq: {stock}'**
+  String posPriceAndStock(String price, String stock);
+
+  /// No description provided for @salesPickReturnItem.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytariladigan mahsulotni tanlang'**
+  String get salesPickReturnItem;
+
+  /// No description provided for @salesReturn.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytarish'**
+  String get salesReturn;
+
+  /// No description provided for @salesReturnableLeft.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldi: {count}'**
+  String salesReturnableLeft(String count);
+
+  /// No description provided for @salesRefundMethod.
+  ///
+  /// In uz, this message translates to:
+  /// **'Pulni qaytarish usuli'**
+  String get salesRefundMethod;
+
+  /// No description provided for @salesReturnAmount.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytariladigan summa: {amount}'**
+  String salesReturnAmount(String amount);
+
+  /// No description provided for @salesConfirmReturn.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytarishni tasdiqlash'**
+  String get salesConfirmReturn;
+
+  /// No description provided for @salesPayment.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov'**
+  String get salesPayment;
+
+  /// No description provided for @salesPaidNow.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'landi'**
+  String get salesPaidNow;
+
+  /// No description provided for @salesDownPaymentOptional.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oldindan to\'lov (ixtiyoriy)'**
+  String get salesDownPaymentOptional;
+
+  /// No description provided for @salesConfirmWithTotal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlash — {total}'**
+  String salesConfirmWithTotal(String total);
+
+  /// No description provided for @salesHistoryTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotuvlar tarixi'**
+  String get salesHistoryTitle;
+
+  /// No description provided for @salesNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotuvlar topilmadi'**
+  String get salesNotFound;
+
+  /// No description provided for @salesSale.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotuv'**
+  String get salesSale;
+
+  /// No description provided for @salesCreated.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotuv yaratildi'**
+  String get salesCreated;
+
+  /// No description provided for @salesReturnedQty.
+  ///
+  /// In uz, this message translates to:
+  /// **'qaytarilgan: {count}'**
+  String salesReturnedQty(String count);
+
+  /// No description provided for @salesDebt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarz'**
+  String get salesDebt;
+
+  /// No description provided for @salesPayments.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lovlar'**
+  String get salesPayments;
+
+  /// No description provided for @salesCustomerSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ism yoki telefon...'**
+  String get salesCustomerSearchHint;
+
+  /// No description provided for @salesCustomerNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijoz topilmadi'**
+  String get salesCustomerNotFound;
+
+  /// No description provided for @cartsSaved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savat saqlandi'**
+  String get cartsSaved;
+
+  /// No description provided for @cartsSaveOrClearFirst.
+  ///
+  /// In uz, this message translates to:
+  /// **'Avval joriy savatni saqlang yoki tozalang'**
+  String get cartsSaveOrClearFirst;
+
+  /// No description provided for @cartsSkipped.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta mahsulot topilmadi, savatga qo\'shilmadi'**
+  String cartsSkipped(int count);
+
+  /// No description provided for @cartsDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Saqlangan savatni o\'chirish'**
+  String get cartsDeleteTitle;
+
+  /// No description provided for @cartsDeleteConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu amalni ortga qaytarib bo\'lmaydi. Davom etasizmi?'**
+  String get cartsDeleteConfirm;
+
+  /// No description provided for @cartsCurrentEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joriy savat bo\'sh'**
+  String get cartsCurrentEmpty;
+
+  /// No description provided for @cartsSaveCurrent.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joriy savatni saqlash ({count} ta)'**
+  String cartsSaveCurrent(int count);
+
+  /// No description provided for @cartsNone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Saqlangan savatlar yo\'q'**
+  String get cartsNone;
+
+  /// No description provided for @cartsMore.
+  ///
+  /// In uz, this message translates to:
+  /// **'+{count} ta'**
+  String cartsMore(int count);
+
+  /// No description provided for @cartsRestore.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytarib olish'**
+  String get cartsRestore;
+
+  /// No description provided for @commonNoData.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ma\'lumot yo\'q'**
+  String get commonNoData;
+
+  /// No description provided for @reportsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisobotlar'**
+  String get reportsTitle;
+
+  /// No description provided for @reportsTopProducts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eng ko\'p sotilgan mahsulotlar'**
+  String get reportsTopProducts;
+
+  /// No description provided for @reportsStockWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Zaxira: {stock}'**
+  String reportsStockWith(String stock);
+
+  /// No description provided for @reportsStatistics.
+  ///
+  /// In uz, this message translates to:
+  /// **'Statistika'**
+  String get reportsStatistics;
+
+  /// No description provided for @reportsRevenue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tushum'**
+  String get reportsRevenue;
+
+  /// No description provided for @reportsNewDebts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi qarzlar'**
+  String get reportsNewDebts;
+
+  /// No description provided for @reportsDebtPayments.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarz to\'lovlari'**
+  String get reportsDebtPayments;
+
+  /// No description provided for @reportsOutstanding.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldiq qarzdorlik'**
+  String get reportsOutstanding;
+
+  /// No description provided for @reportsSalesChart.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savdo grafigi'**
+  String get reportsSalesChart;
+
+  /// No description provided for @reportsLast30.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'nggi 30 kun'**
+  String get reportsLast30;
+
+  /// No description provided for @reportsThisMonth.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu oy'**
+  String get reportsThisMonth;
+
+  /// No description provided for @workDayDebtsShareText.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzlar ro\'yxati'**
+  String get workDayDebtsShareText;
+
+  /// No description provided for @workDayTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ish kuni'**
+  String get workDayTitle;
+
+  /// No description provided for @workDayOpen.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ochiq'**
+  String get workDayOpen;
+
+  /// No description provided for @workDayClosed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yopilgan'**
+  String get workDayClosed;
+
+  /// No description provided for @workDayNotStarted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali ish kuni boshlanmagan'**
+  String get workDayNotStarted;
+
+  /// No description provided for @workDayStartedAt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshlangan: {time}'**
+  String workDayStartedAt(String time);
+
+  /// No description provided for @workDayEndedAt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tugagan: {time}'**
+  String workDayEndedAt(String time);
+
+  /// No description provided for @workDayStart.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ish kunini boshlash'**
+  String get workDayStart;
+
+  /// No description provided for @workDayEnd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ish kunini yakunlash'**
+  String get workDayEnd;
+
+  /// No description provided for @workDayExportDebts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzlar (Excel)'**
+  String get workDayExportDebts;
+
+  /// No description provided for @dashPaymentCash.
+  ///
+  /// In uz, this message translates to:
+  /// **'Naqd'**
+  String get dashPaymentCash;
+
+  /// No description provided for @dashPaymentCard.
+  ///
+  /// In uz, this message translates to:
+  /// **'Karta'**
+  String get dashPaymentCard;
+
+  /// No description provided for @dashPaymentBank.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bank'**
+  String get dashPaymentBank;
+
+  /// No description provided for @dashPaymentDebt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarz'**
+  String get dashPaymentDebt;
+
+  /// No description provided for @dashPaymentTypes.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov turlari'**
+  String get dashPaymentTypes;
+
+  /// No description provided for @dashIncomeDebt6m.
+  ///
+  /// In uz, this message translates to:
+  /// **'Daromad va qarz (6 oy)'**
+  String get dashIncomeDebt6m;
+
+  /// No description provided for @dashIncome.
+  ///
+  /// In uz, this message translates to:
+  /// **'Daromad'**
+  String get dashIncome;
+
+  /// No description provided for @dashSalesTrend14d.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savdo dinamikasi (14 kun)'**
+  String get dashSalesTrend14d;
+
+  /// No description provided for @scannerTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shtrix-kodni skanerlang'**
+  String get scannerTitle;
+
+  /// No description provided for @locationMarkOnMap.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xaritada belgilash'**
+  String get locationMarkOnMap;
+
+  /// No description provided for @locationPickTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joyni belgilang'**
+  String get locationPickTitle;
+
+  /// No description provided for @locationMarked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xaritada belgilangan'**
+  String get locationMarked;
+
+  /// No description provided for @locationCourierHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer aniq joyni topishi uchun'**
+  String get locationCourierHint;
+
+  /// No description provided for @locationRemove.
+  ///
+  /// In uz, this message translates to:
+  /// **'Olib tashlash'**
+  String get locationRemove;
+
+  /// No description provided for @locationDetectFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joylashuvni aniqlab bo\'lmadi — GPS va ruxsatni tekshiring'**
+  String get locationDetectFailed;
+
+  /// No description provided for @locationMyLocation.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mening joylashuvim'**
+  String get locationMyLocation;
+
+  /// No description provided for @locationChooseHere.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shu joyni tanlash'**
+  String get locationChooseHere;
 }
 
 class _AppLocalizationsDelegate

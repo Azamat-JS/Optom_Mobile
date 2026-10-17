@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/customers/domain/entities/customer.dart';
 import 'package:bsmart/features/customers/domain/entities/customer_write_params.dart';
@@ -82,7 +83,7 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? 'Mijozni tahrirlash' : 'Yangi mijoz')),
+      appBar: AppBar(title: Text(_isEditing ? context.l10n.customersEditTitle : context.l10n.customersNewTitle)),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -90,39 +91,39 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
           children: [
             TextFormField(
               controller: _firstNameController,
-              decoration: const InputDecoration(labelText: 'Ism *', border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Ismni kiriting' : null,
+              decoration: InputDecoration(labelText: context.l10n.commonFirstNameRequired, border: OutlineInputBorder()),
+              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonFirstNameMissing : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _lastNameController,
-              decoration: const InputDecoration(labelText: 'Familiya *', border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Familiyani kiriting' : null,
+              decoration: InputDecoration(labelText: context.l10n.commonLastNameRequired, border: OutlineInputBorder()),
+              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonLastNameMissing : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                labelText: 'Telefon *',
+              decoration: InputDecoration(
+                labelText: context.l10n.commonPhoneRequired,
                 hintText: '+998901234567',
                 border: OutlineInputBorder(),
               ),
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Telefon raqamini kiriting';
-                if (!RegExp(r'^\+?[0-9]{9,15}$').hasMatch(v.trim())) return "Noto'g'ri format";
+                if (v == null || v.trim().isEmpty) return context.l10n.commonPhoneMissing;
+                if (!RegExp(r'^\+?[0-9]{9,15}$').hasMatch(v.trim())) return context.l10n.commonInvalidFormat;
                 return null;
               },
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _addressController,
-              decoration: const InputDecoration(labelText: 'Manzil', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.commonAddress, border: OutlineInputBorder()),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _notesController,
-              decoration: const InputDecoration(labelText: 'Izoh', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.commonNote, border: OutlineInputBorder()),
               maxLines: 2,
             ),
             if (_errorMessage != null) ...[
@@ -134,7 +135,7 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
               onPressed: _isSaving ? null : _submit,
               child: _isSaving
                   ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Saqlash'),
+                  : Text(context.l10n.commonSave),
             ),
           ],
         ),

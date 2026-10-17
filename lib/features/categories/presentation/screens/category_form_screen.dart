@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/categories/domain/entities/category.dart';
 import 'package:bsmart/features/categories/domain/entities/category_write_params.dart';
@@ -130,7 +131,7 @@ class _CategoryFormScreenState extends ConsumerState<CategoryFormScreen> {
     final canPickImage = _isEditing || _createdId != null;
 
     return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? 'Kategoriyani tahrirlash' : 'Yangi kategoriya')),
+      appBar: AppBar(title: Text(_isEditing ? context.l10n.categoriesEditTitle : context.l10n.categoriesNewTitle)),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -153,15 +154,15 @@ class _CategoryFormScreenState extends ConsumerState<CategoryFormScreen> {
             ],
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Nomi *', border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Nomini kiriting' : null,
+              decoration: InputDecoration(labelText: context.l10n.commonNameRequired, border: OutlineInputBorder()),
+              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonNameMissing : null,
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String?>(
               initialValue: _parentId,
-              decoration: const InputDecoration(labelText: 'Ota kategoriya', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.categoriesParent, border: OutlineInputBorder()),
               items: [
-                const DropdownMenuItem(value: null, child: Text('— Yo\'q (asosiy kategoriya) —')),
+                DropdownMenuItem(value: null, child: Text(context.l10n.categoriesNoParent)),
                 for (final c in rootCategories) DropdownMenuItem(value: c.id, child: Text(c.name)),
               ],
               onChanged: (value) => setState(() => _parentId = value),
@@ -170,12 +171,12 @@ class _CategoryFormScreenState extends ConsumerState<CategoryFormScreen> {
             TextFormField(
               controller: _sortOrderController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Tartib raqami', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.categoriesSortOrder, border: OutlineInputBorder()),
             ),
             const SizedBox(height: 8),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Faol'),
+              title: Text(context.l10n.commonActive),
               value: _isActive,
               onChanged: (value) => setState(() => _isActive = value),
             ),
@@ -190,7 +191,7 @@ class _CategoryFormScreenState extends ConsumerState<CategoryFormScreen> {
                   : (_createdId != null ? () => Navigator.of(context).pop(true) : _submit),
               child: _isSaving
                   ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text(_createdId != null ? 'Tayyor' : 'Saqlash'),
+                  : Text(_createdId != null ? context.l10n.commonDone : context.l10n.commonSave),
             ),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
@@ -46,8 +47,8 @@ class _DebtsListScreenState extends ConsumerState<DebtsListScreen> with SingleTi
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Qarzlar'),
-        bottom: TabBar(controller: _tabController, tabs: const [Tab(text: 'B2B'), Tab(text: 'Mijozlar')]),
+        title: Text(context.l10n.debtsTitle),
+        bottom: TabBar(controller: _tabController, tabs: [Tab(text: 'B2B'), Tab(text: context.l10n.debtsTabCustomers)]),
       ),
       body: TabBarView(
         controller: _tabController,
@@ -64,9 +65,9 @@ class _DebtsListScreenState extends ConsumerState<DebtsListScreen> with SingleTi
           Padding(
             padding: const EdgeInsets.all(12),
             child: SegmentedButton<String?>(
-              segments: const [
-                ButtonSegment(value: null, label: Text('Menga')),
-                ButtonSegment(value: 'debtor', label: Text('Mening qarzim')),
+              segments: [
+                ButtonSegment(value: null, label: Text(context.l10n.debtsTabOwedToMe)),
+                ButtonSegment(value: 'debtor', label: Text(context.l10n.debtsTabMine)),
               ],
               selected: {_b2bRole},
               onSelectionChanged: (selection) {
@@ -78,11 +79,11 @@ class _DebtsListScreenState extends ConsumerState<DebtsListScreen> with SingleTi
         Expanded(
           child: debtsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => Center(child: Text('Xatolik: $error')),
+            error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
             data: (debts) {
               final currentUserId = ref.read(sessionNotifierProvider).valueOrNull?.session?.userId ?? '';
               final groups = groupDebts(debts, currentUserId: currentUserId);
-              if (groups.isEmpty) return const Center(child: Text('Qarzlar topilmadi'));
+              if (groups.isEmpty) return Center(child: Text(context.l10n.debtsNotFound));
               return RefreshIndicator(
                 onRefresh: () => ref.read(debtsListProvider.notifier).refresh(),
                 child: _buildGroupList(groups),
@@ -98,10 +99,10 @@ class _DebtsListScreenState extends ConsumerState<DebtsListScreen> with SingleTi
     final saleDebtsAsync = ref.watch(saleDebtsListProvider);
     return saleDebtsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text('Xatolik: $error')),
+      error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
       data: (saleDebts) {
         final groups = groupSaleDebts(saleDebts);
-        if (groups.isEmpty) return const Center(child: Text('Mijoz qarzlari topilmadi'));
+        if (groups.isEmpty) return Center(child: Text(context.l10n.debtsCustomerNotFound));
         return RefreshIndicator(
           onRefresh: () => ref.read(saleDebtsListProvider.notifier).refresh(),
           child: _buildGroupList(groups),
@@ -125,7 +126,7 @@ class _DebtsListScreenState extends ConsumerState<DebtsListScreen> with SingleTi
         return ListTile(
           leading: CircleAvatar(child: Text(group.personName.characters.firstOrNull ?? '?')),
           title: Text(group.personName),
-          subtitle: Text('${group.activeCount} ta faol qarz${group.personPhone != null ? ' · ${group.personPhone}' : ''}'),
+          subtitle: Text('${context.l10n.debtsActiveCount(group.activeCount)}${group.personPhone != null ? ' · ${group.personPhone}' : ''}'),
           trailing: Text(
             CurrencyFormatter.format(group.totalBalance, group.currency),
             style: const TextStyle(fontWeight: FontWeight.bold),

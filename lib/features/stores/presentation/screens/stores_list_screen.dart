@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/entities/geo_point.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
@@ -47,11 +48,11 @@ class StoresListScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Do'konni o'chirish"),
-        content: Text('${store.name} butunlay o\'chirilsinmi?'),
+        title: Text(context.l10n.storesDeleteTitle),
+        content: Text(context.l10n.commonDeletePermanentlyConfirm(store.name)),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("O'chirish")),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -69,10 +70,10 @@ class StoresListScreen extends ConsumerWidget {
     final storesAsync = ref.watch(storesListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Do'konlar")),
+      appBar: AppBar(title: Text(context.l10n.storesTitle)),
       body: storesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Xatolik: $error')),
+        error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
         data: (stores) => RefreshIndicator(
           onRefresh: () => ref.read(storesListProvider.notifier).refresh(),
           child: ListView.separated(
@@ -91,7 +92,7 @@ class StoresListScreen extends ConsumerWidget {
                     Flexible(child: Text(store.name)),
                     if (store.isDefault) ...[
                       const SizedBox(width: 6),
-                      const Chip(label: Text('Asosiy'), visualDensity: VisualDensity.compact),
+                      Chip(label: Text(context.l10n.storesDefault), visualDensity: VisualDensity.compact),
                     ],
                   ],
                 ),
@@ -108,9 +109,9 @@ class StoresListScreen extends ConsumerWidget {
                     }
                   },
                   itemBuilder: (context) => [
-                    const PopupMenuItem(value: 'edit', child: Text('Tahrirlash')),
-                    PopupMenuItem(value: 'toggle', child: Text(store.isActive ? 'Faolsizlantirish' : 'Faollashtirish')),
-                    const PopupMenuItem(value: 'delete', child: Text("O'chirish")),
+                    PopupMenuItem(value: 'edit', child: Text(context.l10n.commonEdit)),
+                    PopupMenuItem(value: 'toggle', child: Text(store.isActive ? context.l10n.commonDeactivate : context.l10n.commonActivate)),
+                    PopupMenuItem(value: 'delete', child: Text(context.l10n.commonDelete)),
                   ],
                 ),
               );
@@ -192,7 +193,7 @@ class _StoreFormDialogState extends State<_StoreFormDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: Text(_isEditing ? "Do'konni tahrirlash" : "Yangi do'kon"),
+      title: Text(_isEditing ? context.l10n.storesEditTitle : context.l10n.storesNewTitle),
       content: Form(
         key: _formKey,
         child: Column(
@@ -200,21 +201,21 @@ class _StoreFormDialogState extends State<_StoreFormDialog> {
           children: [
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Nomi *'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Nomini kiriting' : null,
+              decoration: InputDecoration(labelText: context.l10n.commonNameRequired),
+              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonNameMissing : null,
             ),
             const SizedBox(height: 8),
             TextFormField(
               controller: _addressController,
-              decoration: const InputDecoration(labelText: 'Manzil'),
+              decoration: InputDecoration(labelText: context.l10n.commonAddress),
             ),
             const SizedBox(height: 12),
             LocationPickerField(
               value: _location,
               onChanged: (p) => setState(() => _location = p),
-              label: 'Xaritadagi joyi',
-              pickerTitle: "Do'kon joylashuvi",
-              helper: 'Kuryerlar buyurtmani shu yerdan oladi',
+              label: context.l10n.storesMapLocation,
+              pickerTitle: context.l10n.storesLocationTitle,
+              helper: context.l10n.storesLocationHint,
             ),
             // Only on edit: the backend sets it via UpdateStoreDto (new stores start with it off).
             if (_isEditing && widget.showHandoverSetting)
@@ -222,11 +223,8 @@ class _StoreFormDialogState extends State<_StoreFormDialog> {
                 contentPadding: EdgeInsets.zero,
                 value: _requireHandoverCode,
                 onChanged: (v) => setState(() => _requireHandoverCode = v),
-                title: const Text('Topshirish kodi'),
-                subtitle: const Text(
-                  "Kuryer buyurtmani topshirishda mijozdan 4 xonali kodni so'raydi. "
-                  "Ilovasi yoki tasdiqlangan raqami bo'lmagan mijozdan kod so'ralmaydi.",
-                ),
+                title: Text(context.l10n.storesHandoverCode),
+                subtitle: Text(context.l10n.storesHandoverCodeHint),
               ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 8),
@@ -236,12 +234,12 @@ class _StoreFormDialogState extends State<_StoreFormDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Bekor qilish')),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(context.l10n.commonCancel)),
         FilledButton(
           onPressed: _isSaving ? null : _submit,
           child: _isSaving
               ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2))
-              : const Text('Saqlash'),
+              : Text(context.l10n.commonSave),
         ),
       ],
     );

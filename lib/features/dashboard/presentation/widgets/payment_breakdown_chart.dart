@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/entities/reporting_shared.dart';
 
 class PaymentBreakdownChart extends StatelessWidget {
@@ -12,10 +13,10 @@ class PaymentBreakdownChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final entries = <(String, double, Color)>[
-      ('Naqd', breakdown.cash, const Color(0xFF2E7D5B)),
-      ('Karta', breakdown.card, const Color(0xFF3B82C4)),
-      ('Bank', breakdown.bankTransfer, const Color(0xFFC47F3B)),
-      ('Qarz', breakdown.debt, const Color(0xFFB4443B)),
+      (context.l10n.dashPaymentCash, breakdown.cash, const Color(0xFF2E7D5B)),
+      (context.l10n.dashPaymentCard, breakdown.card, const Color(0xFF3B82C4)),
+      (context.l10n.dashPaymentBank, breakdown.bankTransfer, const Color(0xFFC47F3B)),
+      (context.l10n.dashPaymentDebt, breakdown.debt, const Color(0xFFB4443B)),
     ];
     final total = breakdown.total;
 
@@ -25,12 +26,12 @@ class PaymentBreakdownChart extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("To'lov turlari", style: Theme.of(context).textTheme.titleMedium),
+            Text(context.l10n.dashPaymentTypes, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             if (total == 0)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 24),
-                child: Center(child: Text("Ma'lumot yo'q", style: TextStyle(color: Theme.of(context).hintColor))),
+                child: Center(child: Text(context.l10n.commonNoData, style: TextStyle(color: Theme.of(context).hintColor))),
               )
             else
               Row(

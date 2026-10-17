@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/entities/reporting_shared.dart';
 
 /// Last-6-months income-vs-debt grouped bar chart.
@@ -27,12 +28,12 @@ class IncomeDebtBarChart extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Daromad va qarz (6 oy)', style: Theme.of(context).textTheme.titleMedium),
+                Text(context.l10n.dashIncomeDebt6m, style: Theme.of(context).textTheme.titleMedium),
                 Row(
                   children: [
-                    _legendDot(scheme.primary, 'Daromad'),
+                    _legendDot(scheme.primary, context.l10n.dashIncome),
                     const SizedBox(width: 12),
-                    _legendDot(scheme.error, 'Qarz'),
+                    _legendDot(scheme.error, context.l10n.dashPaymentDebt),
                   ],
                 ),
               ],
@@ -41,7 +42,7 @@ class IncomeDebtBarChart extends StatelessWidget {
             SizedBox(
               height: 180,
               child: !hasData
-                  ? Center(child: Text("Ma'lumot yo'q", style: TextStyle(color: Theme.of(context).hintColor)))
+                  ? Center(child: Text(context.l10n.commonNoData, style: TextStyle(color: Theme.of(context).hintColor)))
                   : BarChart(
                       BarChartData(
                         maxY: maxY == 0 ? 1 : maxY * 1.2,

@@ -1,3 +1,5 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
+
 /// The window selector shared by `/reports/period-stats` and
 /// `/reports/sales-chart` — deliberately only exposes the two values both
 /// endpoints accept in common (`period-stats` also accepts `last7`, but
@@ -14,7 +16,7 @@ enum ReportPeriod {
       };
 
   String get label => switch (this) {
-        ReportPeriod.last30 => "So'nggi 30 kun",
-        ReportPeriod.month => 'Bu oy',
+        ReportPeriod.last30 => appL10n.reportsLast30,
+        ReportPeriod.month => appL10n.reportsThisMonth,
       };
 }

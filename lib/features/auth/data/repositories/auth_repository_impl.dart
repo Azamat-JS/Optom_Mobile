@@ -1,3 +1,4 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
 import 'package:dio/dio.dart';
 
 import 'package:bsmart/core/network/api_exception.dart';
@@ -51,15 +52,11 @@ class AuthRepositoryImpl implements AuthRepository {
       return Result.ok(await _remote.startTelegramVerification(phone));
     } on DioException catch (e) {
       // The backend's 429/503 texts are English; the generic mapper has no
-      // case for either status, so give them Uzbek wording here.
+      // case for either status, so give them localized wording here.
       return Result.err(switch (e.response?.statusCode) {
-        429 => const UnknownApiException(
-            "Bu raqam uchun urinishlar juda ko'p. Birozdan so'ng qayta urinib ko'ring.",
-          ),
-        503 => const UnknownApiException(
-            "Telegram orqali tasdiqlash vaqtincha ishlamayapti. Keyinroq urinib ko'ring.",
-          ),
-        400 => const ValidationApiException("Telefon raqam noto'g'ri. Format: +998XXXXXXXXX"),
+        429 => UnknownApiException(appL10n.tgTooManyAttempts),
+        503 => UnknownApiException(appL10n.tgUnavailable),
+        400 => ValidationApiException(appL10n.tgInvalidPhone),
         _ => mapDioException(e),
       });
     }

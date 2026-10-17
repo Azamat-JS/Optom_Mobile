@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/enums/sale_enums.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/sales/presentation/providers/sales_list_notifier.dart';
@@ -49,7 +50,7 @@ class _SalesListScreenState extends ConsumerState<SalesListScreen> {
     final listState = ref.watch(salesListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sotuvlar tarixi')),
+      appBar: AppBar(title: Text(context.l10n.salesHistoryTitle)),
       body: Column(
         children: [
           Padding(
@@ -57,19 +58,19 @@ class _SalesListScreenState extends ConsumerState<SalesListScreen> {
             child: Row(
               children: [
                 ChoiceChip(
-                  label: const Text('Barchasi'),
+                  label: Text(context.l10n.commonAll),
                   selected: _typeFilter == null,
                   onSelected: (_) => _filterByType(null),
                 ),
                 const SizedBox(width: 8),
                 ChoiceChip(
-                  label: const Text("To'langan"),
+                  label: Text(context.l10n.commonPaid),
                   selected: _typeFilter == SaleType.paid,
                   onSelected: (_) => _filterByType(SaleType.paid),
                 ),
                 const SizedBox(width: 8),
                 ChoiceChip(
-                  label: const Text('Qarzga'),
+                  label: Text(context.l10n.commonOnCredit),
                   selected: _typeFilter == SaleType.debt,
                   onSelected: (_) => _filterByType(SaleType.debt),
                 ),
@@ -79,10 +80,10 @@ class _SalesListScreenState extends ConsumerState<SalesListScreen> {
           Expanded(
             child: listState.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text('Xatolik: $error')),
+              error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
               data: (state) {
                 final items = _typeFilter == null ? state.items : state.items.where((s) => s.type == _typeFilter).toList();
-                if (items.isEmpty) return const Center(child: Text('Sotuvlar topilmadi'));
+                if (items.isEmpty) return Center(child: Text(context.l10n.salesNotFound));
                 return RefreshIndicator(
                   onRefresh: () => ref.read(salesListProvider.notifier).refresh(),
                   child: ListView.separated(

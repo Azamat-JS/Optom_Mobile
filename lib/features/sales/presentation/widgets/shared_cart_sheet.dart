@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/sales/domain/entities/shared_cart.dart';
@@ -68,7 +69,7 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
         ref.read(sharedCartsProvider.notifier).refresh();
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(const SnackBar(content: Text('Savat saqlandi')));
+          ..showSnackBar(SnackBar(content: Text(context.l10n.cartsSaved)));
       },
       (failure) => ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -80,7 +81,7 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
     if (!ref.read(posCartProvider).isEmpty) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('Avval joriy savatni saqlang yoki tozalang')));
+        ..showSnackBar(SnackBar(content: Text(context.l10n.cartsSaveOrClearFirst)));
       return;
     }
 
@@ -115,7 +116,7 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
         if (skipped > 0) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text('$skipped ta mahsulot topilmadi, savatga qoʻshilmadi')));
+            ..showSnackBar(SnackBar(content: Text(context.l10n.cartsSkipped(skipped))));
         }
         Navigator.of(context).pop();
       },
@@ -132,11 +133,11 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Saqlangan savatni o'chirish"),
-        content: const Text("Bu amalni ortga qaytarib bo'lmaydi. Davom etasizmi?"),
+        title: Text(context.l10n.cartsDeleteTitle),
+        content: Text(context.l10n.cartsDeleteConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("O'chirish")),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          TextButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -171,7 +172,7 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Text('Saqlangan savatlar', style: Theme.of(context).textTheme.titleMedium),
+                  child: Text(context.l10n.posSavedCarts, style: Theme.of(context).textTheme.titleMedium),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -187,7 +188,7 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
                             )
                           : const Icon(Icons.save_outlined),
                       label: Text(
-                        cart.isEmpty ? "Joriy savat bo'sh" : 'Joriy savatni saqlash (${cart.itemCount} ta)',
+                        cart.isEmpty ? context.l10n.cartsCurrentEmpty : context.l10n.cartsSaveCurrent(cart.itemCount),
                       ),
                     ),
                   ),
@@ -197,10 +198,10 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
                 Expanded(
                   child: sharedCartsAsync.when(
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (error, _) => Center(child: Text('Xatolik: $error')),
+                    error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
                     data: (carts) {
                       if (carts.isEmpty) {
-                        return const Center(child: Text("Saqlangan savatlar yo'q"));
+                        return Center(child: Text(context.l10n.cartsNone));
                       }
                       return ListView.separated(
                         controller: scrollController,
@@ -209,7 +210,7 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
                         itemBuilder: (context, index) {
                           final sharedCart = carts[index];
                           final names = sharedCart.items.take(3).map((i) => i.productName).join(', ');
-                          final extra = sharedCart.items.length > 3 ? ' +${sharedCart.items.length - 3} ta' : '';
+                          final extra = sharedCart.items.length > 3 ? ' ${context.l10n.cartsMore(sharedCart.items.length - 3)}' : '';
                           return ListTile(
                             title: Text(CurrencyFormatter.format(sharedCart.total, sharedCart.currency)),
                             subtitle: Text(
@@ -231,12 +232,12 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
                                       )
                                     : IconButton(
                                         icon: const Icon(Icons.restore),
-                                        tooltip: 'Qaytarib olish',
+                                        tooltip: context.l10n.cartsRestore,
                                         onPressed: () => _restore(sharedCart),
                                       ),
                                 IconButton(
                                   icon: const Icon(Icons.delete_outline),
-                                  tooltip: "O'chirish",
+                                  tooltip: context.l10n.commonDelete,
                                   onPressed: () => _delete(sharedCart),
                                 ),
                               ],

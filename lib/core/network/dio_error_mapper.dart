@@ -23,12 +23,12 @@ ApiException mapDioException(DioException error) {
   final message = _extractMessage(body);
 
   return switch (response.statusCode) {
-    400 => ValidationApiException(message ?? "Ma'lumotlar noto'g'ri kiritildi."),
-    401 => UnauthorizedApiException(message ?? const UnauthorizedApiException().message),
-    403 => ForbiddenApiException(message ?? const ForbiddenApiException().message),
-    404 => NotFoundApiException(message ?? const NotFoundApiException().message),
-    409 => ConflictApiException(message ?? const ConflictApiException().message),
-    _ => UnknownApiException(message ?? const UnknownApiException().message),
+    400 => ValidationApiException(message),
+    401 => UnauthorizedApiException(message),
+    403 => ForbiddenApiException(message),
+    404 => NotFoundApiException(message),
+    409 => ConflictApiException(message),
+    _ => UnknownApiException(message),
   };
 }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
@@ -76,7 +77,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     setState(() => _isBusy = false);
     result.fold(
       (_) => ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Ko'rib chiqish uchun katalogga yuborildi")),
+        SnackBar(content: Text(context.l10n.productsSentToCatalog)),
       ),
       (failure) => _showError(failure.message),
     );
@@ -110,11 +111,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Mahsulotni o'chirish"),
-        content: const Text("Bu mahsulotni o'chirishni tasdiqlaysizmi?"),
+        title: Text(context.l10n.productsDeleteTitle),
+        content: Text(context.l10n.productsDeleteConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("O'chirish")),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -143,7 +144,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final product = _product;
     return Scaffold(
       appBar: AppBar(
-        title: Text(product?.name ?? 'Mahsulot'),
+        title: Text(product?.name ?? context.l10n.productsProduct),
         actions: [
           if (product != null)
             IconButton(
@@ -238,16 +239,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 Text(CurrencyFormatter.format(product.price, product.currency),
                     style: Theme.of(context).textTheme.headlineSmall),
                 if (!product.isActive)
-                  Chip(label: const Text('Faol emas'), backgroundColor: Theme.of(context).colorScheme.errorContainer),
+                  Chip(label: Text(context.l10n.commonInactive), backgroundColor: Theme.of(context).colorScheme.errorContainer),
               ],
             ),
             if (product.costPrice != null)
-              Text('Tannarx: ${CurrencyFormatter.format(product.costPrice!, product.currency)}'),
+              Text(context.l10n.productsCostPriceWith(CurrencyFormatter.format(product.costPrice!, product.currency))),
             const Divider(height: 24),
-            _infoRow('Zaxira', '${product.stock.toStringAsFixed(product.unit?.isWeighable ?? false ? 2 : 0)} ${product.unit?.label ?? ''}'),
-            if (product.category != null) _infoRow('Kategoriya', product.category!.name),
-            if (product.brand != null) _infoRow('Brend', product.brand!),
-            _infoRow('Barkod', product.barcode ?? "Yo'q"),
+            _infoRow(context.l10n.commonStock, '${product.stock.toStringAsFixed(product.unit?.isWeighable ?? false ? 2 : 0)} ${product.unit?.label ?? ''}'),
+            if (product.category != null) _infoRow(context.l10n.commonCategory, product.category!.name),
+            if (product.brand != null) _infoRow(context.l10n.commonBrand, product.brand!),
+            _infoRow(context.l10n.commonBarcode, product.barcode ?? context.l10n.commonNone),
             if (product.plu != null) _infoRow('PLU', product.plu!),
             if (product.sku != null) _infoRow('SKU', product.sku!),
             if (product.description != null && product.description!.isNotEmpty) ...[
@@ -279,19 +280,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         FilledButton.icon(
           onPressed: _isBusy ? null : _openStockSheet,
           icon: const Icon(Icons.add_box_outlined),
-          label: const Text("Zaxira qo'shish"),
+          label: Text(context.l10n.productsAddStock),
         ),
         if (product.barcode == null)
           OutlinedButton.icon(
             onPressed: _isBusy ? null : _assignBarcode,
             icon: const Icon(Icons.qr_code),
-            label: const Text('Barkod yaratish'),
+            label: Text(context.l10n.productsCreateBarcode),
           ),
         if (!product.isCatalogLinked)
           OutlinedButton.icon(
             onPressed: _isBusy ? null : _shareToCatalog,
             icon: const Icon(Icons.share_outlined),
-            label: const Text('Katalogga ulashish'),
+            label: Text(context.l10n.productsShareToCatalog),
           ),
       ],
     );

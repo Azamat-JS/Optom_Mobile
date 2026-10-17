@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/master_catalog/domain/entities/master_product.dart';
 import 'package:bsmart/features/master_catalog/domain/usecases/search_master_catalog_usecase.dart';
@@ -65,7 +66,7 @@ class _MasterCatalogPickerScreenState extends State<MasterCatalogPickerScreen> {
         title: TextField(
           controller: _searchController,
           autofocus: true,
-          decoration: const InputDecoration(hintText: 'Katalogdan qidirish...', border: InputBorder.none),
+          decoration: InputDecoration(hintText: context.l10n.masterSearchHint, border: InputBorder.none),
           onChanged: _onQueryChanged,
         ),
       ),
@@ -81,7 +82,7 @@ class _MasterCatalogPickerScreenState extends State<MasterCatalogPickerScreen> {
       return Center(child: Text(_errorMessage!));
     }
     if (_results.isEmpty) {
-      return const Center(child: Text('Hech narsa topilmadi'));
+      return Center(child: Text(context.l10n.commonNothingFound));
     }
     return ListView.separated(
       itemCount: _results.length,

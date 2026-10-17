@@ -1,3 +1,5 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
+
 /// Mirrors the backend's Prisma `PaymentMethod` enum. `debt` is a member of
 /// the enum itself (used elsewhere, e.g. reporting breakdowns) but is never
 /// a valid `CreateSaleDto.paymentMethod` value — that field only accepts the
@@ -30,14 +32,7 @@ enum PaymentMethod {
         PaymentMethod.debt => 'DEBT',
       };
 
-  String get label => switch (this) {
-        PaymentMethod.cash => 'Naqd',
-        PaymentMethod.card => 'Karta',
-        PaymentMethod.bankTransfer => "Bank o'tkazmasi",
-        PaymentMethod.click => 'Click',
-        PaymentMethod.payme => 'Payme',
-        PaymentMethod.debt => 'Qarzga',
-      };
+  String get label => appL10n.enumPaymentMethod(name);
 
   static const immediateMethods = [
     PaymentMethod.cash,

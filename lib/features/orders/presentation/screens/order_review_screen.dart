@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
@@ -78,7 +79,7 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
     final currency = cart.lines.isEmpty ? null : cart.lines.values.first.product.currency;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Buyurtmani ko'rib chiqish")),
+      appBar: AppBar(title: Text(context.l10n.ordersReviewTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -118,14 +119,14 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
           const SizedBox(height: 12),
           TextField(
             controller: _addressController,
-            decoration: const InputDecoration(labelText: 'Yetkazib berish manzili', border: OutlineInputBorder()),
+            decoration: InputDecoration(labelText: context.l10n.commonDeliveryAddress, border: OutlineInputBorder()),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _notesController,
             minLines: 2,
             maxLines: 4,
-            decoration: const InputDecoration(labelText: 'Izoh', border: OutlineInputBorder()),
+            decoration: InputDecoration(labelText: context.l10n.commonNote, border: OutlineInputBorder()),
           ),
           if (_errorMessage != null) ...[
             const SizedBox(height: 12),
@@ -135,7 +136,7 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Jami', style: Theme.of(context).textTheme.titleMedium),
+              Text(context.l10n.commonTotal, style: Theme.of(context).textTheme.titleMedium),
               Text(
                 currency != null ? CurrencyFormatter.format(cart.total, currency) : '-',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -148,7 +149,7 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
             style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
             child: _isSubmitting
                 ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                : const Text('Buyurtma berish'),
+                : Text(context.l10n.ordersPlace),
           ),
         ],
       ),

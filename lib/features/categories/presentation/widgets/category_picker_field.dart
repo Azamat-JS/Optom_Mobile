@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/features/categories/domain/entities/category.dart';
 import 'package:bsmart/features/categories/presentation/providers/categories_provider.dart';
 
@@ -28,10 +29,11 @@ String _displayLabel(Category category) =>
 /// bottom sheet of leaf categories. Stores the selected category's id as the
 /// form control's value.
 class CategoryPickerField extends ConsumerWidget {
-  const CategoryPickerField({super.key, required this.formControlName, this.labelText = 'Kategoriya'});
+  const CategoryPickerField({super.key, required this.formControlName, this.labelText});
 
   final String formControlName;
-  final String labelText;
+  /// Defaults to the localized "Category".
+  final String? labelText;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,14 +67,14 @@ class CategoryPickerField extends ConsumerWidget {
                 },
           child: InputDecorator(
             decoration: InputDecoration(
-              labelText: labelText,
+              labelText: labelText ?? context.l10n.commonCategory,
               border: const OutlineInputBorder(),
               suffixIcon: const Icon(Icons.arrow_drop_down),
               errorText: field.errorText,
             ),
             child: categoriesAsync.isLoading
                 ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                : Text(label ?? 'Tanlanmagan', style: label == null ? TextStyle(color: Theme.of(context).hintColor) : null),
+                : Text(label ?? context.l10n.commonNotSelected, style: label == null ? TextStyle(color: Theme.of(context).hintColor) : null),
           ),
         );
       },
@@ -111,8 +113,8 @@ class _CategoryPickerSheetState extends State<_CategoryPickerSheet> {
               padding: const EdgeInsets.all(16),
               child: TextField(
                 autofocus: false,
-                decoration: const InputDecoration(
-                  hintText: 'Qidirish...',
+                decoration: InputDecoration(
+                  hintText: context.l10n.commonSearchHint,
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(),
                 ),
@@ -121,7 +123,7 @@ class _CategoryPickerSheetState extends State<_CategoryPickerSheet> {
             ),
             Expanded(
               child: filtered.isEmpty
-                  ? const Center(child: Text('Kategoriya topilmadi'))
+                  ? Center(child: Text(context.l10n.categoriesPickerNotFound))
                   : ListView.builder(
                       controller: scrollController,
                       itemCount: filtered.length,

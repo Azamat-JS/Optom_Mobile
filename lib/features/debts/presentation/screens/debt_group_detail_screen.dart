@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/payment_method.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
@@ -112,7 +113,7 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
         await _refreshGroup();
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${payDownResult.paymentCount} ta qarzga toʻlov qoʻllanildi')),
+          SnackBar(content: Text(context.l10n.debtsPaymentsApplied(payDownResult.paymentCount))),
         );
       },
       (failure) => setState(() {
@@ -131,13 +132,13 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Qarzni yopish'),
+        title: Text(context.l10n.debtsCloseTitle),
         content: Text(
-          'Qolgan ${CurrencyFormatter.format(item.balance, item.currency)} toʻliq toʻlangan deb belgilansinmi?',
+          context.l10n.debtsCloseConfirm(CurrencyFormatter.format(item.balance, item.currency)),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Yopish')),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonClose)),
         ],
       ),
     );
@@ -170,7 +171,7 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
                   if (_group.personPhone != null) Text(_group.personPhone!),
                   const SizedBox(height: 4),
                   Text(
-                    'Jami qoldiq: ${CurrencyFormatter.format(totalActiveBalance, _group.currency)}',
+                    context.l10n.debtsTotalBalance(CurrencyFormatter.format(totalActiveBalance, _group.currency)),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ],
@@ -185,23 +186,23 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Umumiy toʻlov (FIFO)', style: Theme.of(context).textTheme.titleMedium),
+                    Text(context.l10n.debtsPayDownTitle, style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 4),
                     Text(
-                      'Eng eski qarzdan boshlab avtomatik taqsimlanadi',
+                      context.l10n.debtsPayDownHint,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     const SizedBox(height: 12),
                     TextField(
                       controller: _payDownAmountController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(labelText: 'Summa', border: OutlineInputBorder(), isDense: true),
+                      decoration: InputDecoration(labelText: context.l10n.commonAmount, border: OutlineInputBorder(), isDense: true),
                       onChanged: (_) => setState(() {}),
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<PaymentMethod>(
                       initialValue: _payDownMethod,
-                      decoration: const InputDecoration(labelText: "To'lov usuli", border: OutlineInputBorder(), isDense: true),
+                      decoration: InputDecoration(labelText: context.l10n.commonPaymentMethod, border: OutlineInputBorder(), isDense: true),
                       items: [
                         for (final method in PaymentMethod.immediateMethods)
                           DropdownMenuItem(value: method, child: Text(method.label)),
@@ -210,7 +211,7 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
                     ),
                     if (preview.isNotEmpty) ...[
                       const SizedBox(height: 12),
-                      Text('Taqsimlanishi:', style: Theme.of(context).textTheme.labelLarge),
+                      Text(context.l10n.debtsAllocation, style: Theme.of(context).textTheme.labelLarge),
                       for (final (item, applied) in preview)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2),
@@ -223,7 +224,7 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
                               ),
                               Text(
                                 '${CurrencyFormatter.format(applied, item.currency)}'
-                                '${applied >= item.balance ? ' (yopiladi)' : ''}',
+                                '${applied >= item.balance ? ' ${context.l10n.debtsWillClose}' : ''}',
                               ),
                             ],
                           ),
@@ -232,7 +233,7 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
                         Padding(
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
-                            'Summa jami qoldiqdan oshib ketmoqda',
+                            context.l10n.debtsExceedsTotal,
                             style: TextStyle(color: Theme.of(context).colorScheme.error),
                           ),
                         ),
@@ -249,7 +250,7 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
                       style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
                       child: _isPayingDown
                           ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                          : const Text("To'lovni tasdiqlash"),
+                          : Text(context.l10n.debtsConfirmPayment),
                     ),
                   ],
                 ),
@@ -257,7 +258,7 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
             ),
           ],
           const SizedBox(height: 20),
-          Text('Qarzlar', style: Theme.of(context).textTheme.titleMedium),
+          Text(context.l10n.debtsTitle, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           for (final item in _group.items)
             Card(
@@ -277,14 +278,14 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Text('Jami: ${CurrencyFormatter.format(item.originalAmount, item.currency)}'),
+                    Text(context.l10n.commonTotalWith(CurrencyFormatter.format(item.originalAmount, item.currency))),
                     Text(
-                      'Qoldiq: ${CurrencyFormatter.format(item.balance, item.currency)}',
+                      context.l10n.commonBalanceWith(CurrencyFormatter.format(item.balance, item.currency)),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     if (item.dueDate != null)
                       Text(
-                        "Muddat: ${'${item.dueDate!.toLocal()}'.split(' ').first}",
+                        context.l10n.commonDueWith('${item.dueDate!.toLocal()}'.split(' ').first),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     if (!item.isSettled && !_group.viewerIsDebtor) ...[
@@ -293,11 +294,11 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
                         children: [
                           OutlinedButton(
                             onPressed: () => _recordSinglePayment(item),
-                            child: const Text("To'lov"),
+                            child: Text(context.l10n.debtsPayment),
                           ),
                           if (item.kind == DebtKind.b2b) ...[
                             const SizedBox(width: 8),
-                            OutlinedButton(onPressed: () => _closeDebt(item), child: const Text('Yopish')),
+                            OutlinedButton(onPressed: () => _closeDebt(item), child: Text(context.l10n.commonClose)),
                           ],
                         ],
                       ),

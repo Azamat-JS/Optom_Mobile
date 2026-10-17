@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/features/catalog/domain/entities/catalog_seller.dart';
@@ -38,13 +39,13 @@ class _SellerPickerScreenState extends ConsumerState<SellerPickerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Optomchini tanlang')),
+      appBar: AppBar(title: Text(context.l10n.ordersPickWholesaler)),
       body: _errorMessage != null
           ? Center(child: Text(_errorMessage!))
           : _sellers == null
               ? const Center(child: CircularProgressIndicator())
               : _sellers!.isEmpty
-                  ? const Center(child: Text('Optomchilar topilmadi'))
+                  ? Center(child: Text(context.l10n.ordersNoWholesalers))
                   : ListView.separated(
                       itemCount: _sellers!.length,
                       separatorBuilder: (_, _) => const Divider(height: 1),

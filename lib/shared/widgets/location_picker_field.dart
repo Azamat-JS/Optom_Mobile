@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/entities/geo_point.dart';
 import 'package:bsmart/shared/widgets/map_pin_picker_screen.dart';
 
@@ -10,19 +11,20 @@ class LocationPickerField extends StatelessWidget {
     super.key,
     required this.value,
     required this.onChanged,
-    this.label = 'Xaritada belgilash',
-    this.pickerTitle = 'Joyni belgilang',
+    this.label,
+    this.pickerTitle,
     this.helper,
   });
 
   final GeoPoint? value;
   final ValueChanged<GeoPoint?> onChanged;
-  final String label;
-  final String pickerTitle;
+  /// Default labels are localized ("Mark on map" / "Mark the location").
+  final String? label;
+  final String? pickerTitle;
   final String? helper;
 
   Future<void> _pick(BuildContext context) async {
-    final picked = await MapPinPickerScreen.pick(context, title: pickerTitle, initial: value);
+    final picked = await MapPinPickerScreen.pick(context, title: pickerTitle ?? context.l10n.locationPickTitle, initial: value);
     if (picked != null) onChanged(picked);
   }
 
@@ -39,10 +41,10 @@ class LocationPickerField extends StatelessWidget {
       child: ListTile(
         onTap: () => _pick(context),
         leading: Icon(set ? Icons.where_to_vote : Icons.add_location_alt_outlined, color: theme.colorScheme.primary),
-        title: Text(set ? 'Xaritada belgilangan' : label),
-        subtitle: Text(set ? value!.label : (helper ?? 'Kuryer aniq joyni topishi uchun')),
+        title: Text(set ? context.l10n.locationMarked : (label ?? context.l10n.locationMarkOnMap)),
+        subtitle: Text(set ? value!.label : (helper ?? context.l10n.locationCourierHint)),
         trailing: set
-            ? IconButton(tooltip: 'Olib tashlash', icon: const Icon(Icons.close), onPressed: () => onChanged(null))
+            ? IconButton(tooltip: context.l10n.locationRemove, icon: const Icon(Icons.close), onPressed: () => onChanged(null))
             : const Icon(Icons.chevron_right),
       ),
     );

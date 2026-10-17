@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/features/categories/domain/entities/category.dart';
 import 'package:bsmart/features/categories/presentation/providers/categories_provider.dart';
@@ -53,7 +54,7 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
 
   Future<void> _scanBarcode() async {
     final code = await Navigator.of(context).push<String>(
-      MaterialPageRoute(builder: (_) => const BarcodeScannerScreen(title: 'Mahsulotni topish')),
+      MaterialPageRoute(builder: (_) => BarcodeScannerScreen(title: context.l10n.productsFindTitle)),
     );
     if (code == null) return;
     _searchController.text = code;
@@ -77,7 +78,7 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mahsulotlar'),
+        title: Text(context.l10n.productsTitle),
         actions: [
           IconButton(icon: const Icon(Icons.qr_code_scanner), onPressed: _scanBarcode),
           IconButton(
@@ -92,8 +93,8 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: TextField(
               controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Nomi yoki shtrix-kod bo\'yicha qidirish...',
+              decoration: InputDecoration(
+                hintText: context.l10n.productsSearchHint,
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
                 isDense: true,
@@ -104,10 +105,10 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
           Expanded(
             child: listState.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text('Xatolik: $error')),
+              error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
               data: (state) {
                 if (state.items.isEmpty) {
-                  return const Center(child: Text('Mahsulotlar topilmadi'));
+                  return Center(child: Text(context.l10n.productsNotFound));
                 }
                 return RefreshIndicator(
                   onRefresh: () => ref.read(productsListProvider.notifier).refresh(),
@@ -157,7 +158,7 @@ class _CategoryFilterSheet extends StatelessWidget {
         shrinkWrap: true,
         children: [
           ListTile(
-            title: const Text('Barchasi'),
+            title: Text(context.l10n.commonAll),
             trailing: selectedId == null ? const Icon(Icons.check) : null,
             onTap: () => Navigator.of(context).pop(null),
           ),

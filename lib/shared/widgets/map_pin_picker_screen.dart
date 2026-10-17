@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/entities/geo_point.dart';
 import 'package:bsmart/core/location/location_tracker.dart';
@@ -56,7 +57,7 @@ class _MapPinPickerScreenState extends State<MapPinPickerScreen> {
     if (fix == null) {
       if (!silent) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Joylashuvni aniqlab bo'lmadi — GPS va ruxsatni tekshiring")),
+          SnackBar(content: Text(context.l10n.locationDetectFailed)),
         );
       }
       return;
@@ -112,7 +113,7 @@ class _MapPinPickerScreenState extends State<MapPinPickerScreen> {
             bottom: 104,
             child: FloatingActionButton.small(
               heroTag: 'pin-me',
-              tooltip: 'Mening joylashuvim',
+              tooltip: context.l10n.locationMyLocation,
               onPressed: _locating ? null : _goToMe,
               child: _locating
                   ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
@@ -130,7 +131,7 @@ class _MapPinPickerScreenState extends State<MapPinPickerScreen> {
                     ? null
                     : () => Navigator.of(context).pop(GeoPoint(_center.latitude, _center.longitude)),
                 icon: const Icon(Icons.check),
-                label: const Text('Shu joyni tanlash'),
+                label: Text(context.l10n.locationChooseHere),
               ),
             ),
           ),

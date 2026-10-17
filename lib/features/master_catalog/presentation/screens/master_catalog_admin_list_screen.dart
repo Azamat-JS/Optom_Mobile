@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/master_product_status.dart';
 import 'package:bsmart/features/master_catalog/domain/entities/master_product.dart';
@@ -64,17 +65,17 @@ class _MasterCatalogAdminListScreenState extends ConsumerState<MasterCatalogAdmi
     final reason = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Rad etish'),
+        title: Text(context.l10n.commonReject),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(labelText: 'Sababi (ixtiyoriy)', border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: context.l10n.commonReasonOptional, border: OutlineInputBorder()),
           maxLines: 3,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Bekor qilish')),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(context.l10n.commonCancel)),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: const Text('Rad etish'),
+            child: Text(context.l10n.commonReject),
           ),
         ],
       ),
@@ -92,11 +93,11 @@ class _MasterCatalogAdminListScreenState extends ConsumerState<MasterCatalogAdmi
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Katalog yozuvini o'chirish"),
-        content: Text('${item.name} oʻchirilsinmi? Unga bogʻliq mahsulotlar boʻlsa, xatolik qaytadi.'),
+        title: Text(context.l10n.masterDeleteTitle),
+        content: Text(context.l10n.commonDeleteWithDependentsConfirm(item.name)),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("O'chirish")),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -110,9 +111,9 @@ class _MasterCatalogAdminListScreenState extends ConsumerState<MasterCatalogAdmi
   }
 
   String _statusLabel(MasterProductStatus status) => switch (status) {
-        MasterProductStatus.pending => 'Kutilmoqda',
-        MasterProductStatus.approved => 'Tasdiqlangan',
-        MasterProductStatus.rejected => 'Rad etilgan',
+        MasterProductStatus.pending => context.l10n.masterStatusPending,
+        MasterProductStatus.approved => context.l10n.masterStatusApproved,
+        MasterProductStatus.rejected => context.l10n.masterStatusRejected,
       };
 
   @override
@@ -120,7 +121,7 @@ class _MasterCatalogAdminListScreenState extends ConsumerState<MasterCatalogAdmi
     final listState = ref.watch(masterCatalogAdminListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Katalog nazorati')),
+      appBar: AppBar(title: Text(context.l10n.masterReviewTitle)),
       body: Column(
         children: [
           Padding(
@@ -130,7 +131,7 @@ class _MasterCatalogAdminListScreenState extends ConsumerState<MasterCatalogAdmi
               child: Row(
                 children: [
                   ChoiceChip(
-                    label: const Text('Barchasi'),
+                    label: Text(context.l10n.commonAll),
                     selected: listState.valueOrNull?.query.status == null,
                     onSelected: (_) => ref.read(masterCatalogAdminListProvider.notifier).setStatus(null),
                   ),
@@ -150,9 +151,9 @@ class _MasterCatalogAdminListScreenState extends ConsumerState<MasterCatalogAdmi
           Expanded(
             child: listState.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text('Xatolik: $error')),
+              error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
               data: (state) {
-                if (state.items.isEmpty) return const Center(child: Text('Hech narsa topilmadi'));
+                if (state.items.isEmpty) return Center(child: Text(context.l10n.commonNothingFound));
                 return RefreshIndicator(
                   onRefresh: () => ref.read(masterCatalogAdminListProvider.notifier).refresh(),
                   child: ListView.separated(
@@ -190,12 +191,12 @@ class _MasterCatalogAdminListScreenState extends ConsumerState<MasterCatalogAdmi
                                 children: [
                                   IconButton(
                                     icon: const Icon(Icons.check_circle_outline),
-                                    tooltip: 'Tasdiqlash',
+                                    tooltip: context.l10n.commonConfirm,
                                     onPressed: () => _approve(item),
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.cancel_outlined),
-                                    tooltip: 'Rad etish',
+                                    tooltip: context.l10n.commonReject,
                                     onPressed: () => _reject(item),
                                   ),
                                 ],
@@ -210,8 +211,8 @@ class _MasterCatalogAdminListScreenState extends ConsumerState<MasterCatalogAdmi
                                   }
                                 },
                                 itemBuilder: (context) => [
-                                  const PopupMenuItem(value: 'edit', child: Text('Tahrirlash')),
-                                  const PopupMenuItem(value: 'delete', child: Text("O'chirish")),
+                                  PopupMenuItem(value: 'edit', child: Text(context.l10n.commonEdit)),
+                                  PopupMenuItem(value: 'delete', child: Text(context.l10n.commonDelete)),
                                 ],
                               ),
                         onTap: () => _openForm(editing: item),

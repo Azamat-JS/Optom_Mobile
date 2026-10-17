@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
@@ -60,16 +61,16 @@ class _OrdersListScreenState extends ConsumerState<OrdersListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isSellerView ? 'Kelgan buyurtmalar' : 'Buyurtmalarim'),
+        title: Text(isSellerView ? context.l10n.ordersIncomingTitle : context.l10n.ordersMineTitle),
         bottom: isRetailer
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(56),
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: SegmentedButton<String?>(
-                    segments: const [
-                      ButtonSegment(value: null, label: Text('Chiqarilgan')),
-                      ButtonSegment(value: 'incoming', label: Text('Kelgan')),
+                    segments: [
+                      ButtonSegment(value: null, label: Text(context.l10n.ordersTabOutgoing)),
+                      ButtonSegment(value: 'incoming', label: Text(context.l10n.ordersTabIncoming)),
                     ],
                     selected: {_view},
                     onSelectionChanged: (selection) {
@@ -83,10 +84,10 @@ class _OrdersListScreenState extends ConsumerState<OrdersListScreen> {
       ),
       body: listState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Xatolik: $error')),
+        error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
         data: (state) {
           if (state.items.isEmpty) {
-            return const Center(child: Text('Buyurtmalar topilmadi'));
+            return Center(child: Text(context.l10n.ordersNotFound));
           }
           return RefreshIndicator(
             onRefresh: () => ref.read(ordersListProvider.notifier).refresh(),
@@ -107,7 +108,7 @@ class _OrdersListScreenState extends ConsumerState<OrdersListScreen> {
                 return ListTile(
                   title: Text(order.orderNumber),
                   subtitle: Text(
-                    '${counterpart?.fullName ?? ''} • ${order.itemCount} ta mahsulot',
+                    '${counterpart?.fullName ?? ''} • ${context.l10n.commonProductCount(order.itemCount)}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

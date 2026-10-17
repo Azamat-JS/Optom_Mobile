@@ -1,3 +1,5 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
+
 /// Mirrors the backend's Prisma `Currency` enum. UZS and USD are two fully
 /// parallel, never-converted ledgers — never sum figures across currencies.
 enum Currency {
@@ -16,7 +18,7 @@ enum Currency {
       };
 
   String get symbol => switch (this) {
-        Currency.uzs => "so'm",
+        Currency.uzs => appL10n.currencySom,
         Currency.usd => '\$',
       };
 }

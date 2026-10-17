@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/payment_method.dart';
 import 'package:bsmart/core/enums/sale_enums.dart';
@@ -52,7 +53,7 @@ class _SaleReturnScreenState extends State<SaleReturnScreen> {
           CreateSaleReturnItemParams(saleItemId: item.id, quantity: _quantities[item.id]!),
     ];
     if (items.isEmpty) {
-      setState(() => _errorMessage = 'Qaytariladigan mahsulotni tanlang');
+      setState(() => _errorMessage = context.l10n.salesPickReturnItem);
       return;
     }
     setState(() {
@@ -83,7 +84,7 @@ class _SaleReturnScreenState extends State<SaleReturnScreen> {
     final returnableItems = widget.sale.items.where((i) => i.remainingReturnable > 0).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Qaytarish')),
+      appBar: AppBar(title: Text(context.l10n.salesReturn)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -99,7 +100,7 @@ class _SaleReturnScreenState extends State<SaleReturnScreen> {
                         children: [
                           Text(item.productName),
                           Text(
-                            'Qoldi: ${item.remainingReturnable.toStringAsFixed(0)}',
+                            context.l10n.salesReturnableLeft(item.remainingReturnable.toStringAsFixed(0)),
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
@@ -129,13 +130,13 @@ class _SaleReturnScreenState extends State<SaleReturnScreen> {
           const SizedBox(height: 12),
           TextField(
             controller: _reasonController,
-            decoration: const InputDecoration(labelText: 'Sababi (ixtiyoriy)', border: OutlineInputBorder()),
+            decoration: InputDecoration(labelText: context.l10n.commonReasonOptional, border: OutlineInputBorder()),
           ),
           if (widget.sale.type == SaleType.paid) ...[
             const SizedBox(height: 12),
             DropdownButtonFormField<PaymentMethod>(
               initialValue: _refundMethod,
-              decoration: const InputDecoration(labelText: 'Pulni qaytarish usuli', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: context.l10n.salesRefundMethod, border: OutlineInputBorder()),
               items: [
                 for (final method in PaymentMethod.immediateMethods)
                   DropdownMenuItem(value: method, child: Text(method.label)),
@@ -145,7 +146,7 @@ class _SaleReturnScreenState extends State<SaleReturnScreen> {
           ],
           const SizedBox(height: 12),
           Text(
-            'Qaytariladigan summa: ${CurrencyFormatter.format(_totalReturnAmount, widget.sale.currency)}',
+            context.l10n.salesReturnAmount(CurrencyFormatter.format(_totalReturnAmount, widget.sale.currency)),
             style: Theme.of(context).textTheme.titleMedium,
           ),
           if (_errorMessage != null) ...[
@@ -161,7 +162,7 @@ class _SaleReturnScreenState extends State<SaleReturnScreen> {
             onPressed: _isSubmitting ? null : _submit,
             child: _isSubmitting
                 ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Text('Qaytarishni tasdiqlash'),
+                : Text(context.l10n.salesConfirmReturn),
           ),
         ),
       ),
