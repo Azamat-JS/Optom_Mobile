@@ -4,6 +4,7 @@ import 'package:bsmart/core/network/dio_error_mapper.dart';
 import 'package:bsmart/core/network/paginated_result.dart';
 import 'package:bsmart/core/network/result.dart';
 import 'package:bsmart/features/storefront/data/datasources/storefront_remote_data_source.dart';
+import 'package:bsmart/features/storefront/domain/entities/storefront_branch.dart';
 import 'package:bsmart/features/storefront/domain/entities/storefront_product.dart';
 import 'package:bsmart/features/storefront/domain/entities/storefront_query.dart';
 import 'package:bsmart/features/storefront/domain/repositories/storefront_repository.dart';
@@ -35,6 +36,15 @@ class StorefrontRepositoryImpl implements StorefrontRepository {
   Future<Result<StorefrontProduct>> getProduct(String id) async {
     try {
       return Result.ok(await _remote.getProduct(id));
+    } on DioException catch (e) {
+      return Result.err(mapDioException(e));
+    }
+  }
+
+  @override
+  Future<Result<List<StorefrontBranch>>> listBranches(String sellerId) async {
+    try {
+      return Result.ok(await _remote.listBranches(sellerId));
     } on DioException catch (e) {
       return Result.err(mapDioException(e));
     }

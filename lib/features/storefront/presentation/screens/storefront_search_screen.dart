@@ -27,7 +27,8 @@ enum _Sort { relevance, priceLow, priceHigh, name }
 /// - typing → live suggestions (debounced `GET /public/catalog/products?search=`):
 ///   a "search for this" row, matching shops, matching products;
 /// - submitted → results with Mahsulotlar / Do'konlar tabs and filter chips.
-///   Sorting and the chips run on the loaded results (the public catalog has
+///   Shop rows, banners, group headers and shop suggestions open the shop
+///   page. Sorting and the chips run on the loaded results (the public catalog has
 ///   no sort); the "Natijalar: …" header scopes the request to a top category.
 class StorefrontSearchScreen extends StatelessWidget {
   const StorefrontSearchScreen({super.key});
@@ -58,14 +59,6 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
   late final _tabs = TabController(length: 2, vsync: this);
   Timer? _debounce;
 
-
-
-
-
-
-
-
-
   /// Debounced field text that drives the suggestions.
   String _typed = '';
   List<StorefrontProduct> _lastSuggestions = const [];
@@ -76,7 +69,6 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
   _Sort _sort = _Sort.relevance;
   bool _inStockOnly = false;
   String? _categoryChip;
-  String? _shopFilter;
 
   @override
   void dispose() {
@@ -99,7 +91,7 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
     });
   }
 
-  void _submit(String text, {String? shopFilter}) {
+  void _submit(String text) {
     final trimmed = text.trim();
     if (trimmed.isEmpty && _scopeCategoryId == null) return;
     _debounce?.cancel();
@@ -113,12 +105,13 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
       _sort = _Sort.relevance;
       _inStockOnly = false;
       _categoryChip = null;
-      _shopFilter = shopFilter;
     });
     _tabs.index = 0;
     if (trimmed.isNotEmpty) ref.read(recentSearchesProvider.notifier).add(trimmed);
     ref.read(storefrontSearchResultsProvider.notifier).submit(trimmed, categoryId: _scopeCategoryId);
   }
+
+  void _openShop(String sellerId, String name) => context.push(RouteNames.customerShop(sellerId, name: name));
 
   void _clear() {
     _controller.clear();
@@ -141,7 +134,7 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
       showDragHandle: true,
       builder: (sheetContext) => Theme(
         data: BrandTheme.of(context),
-        child: _ChoiceSheet(
+        child: ChoiceSheet(
           title: l10n.sfChooseCategory,
           options: {'': l10n.sfAllCategories, for (final c in roots) c.id: c.name},
           selected: _scopeCategoryId ?? '',
@@ -163,7 +156,7 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
       showDragHandle: true,
       builder: (sheetContext) => Theme(
         data: BrandTheme.of(context),
-        child: _ChoiceSheet(
+        child: ChoiceSheet(
           title: l10n.sfSort,
           options: {for (final s in _Sort.values) s.name: labels[s]!},
           selected: _sort.name,
@@ -359,7 +352,7 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
                     imageUrl: shop.imageUrl,
                     icon: Icons.storefront_rounded,
                     square: true,
-                    onTap: () => _submit(_typed, shopFilter: shop.sellerId),
+                    onTap: () => _openShop(shop.sellerId, shop.name),
                   ),
               ],
               if (items.isNotEmpty) ...[
@@ -403,16 +396,13 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
     final visible = _visible(data.items);
     final groups = SearchShopGroup.of(visible);
     final chips = data.items.map((p) => p.categoryName).whereType<String>().toSet().take(12).toList();
-    final hasFilters = _inStockOnly || _categoryChip != null || _shopFilter != null;
-    final shopName = _shopFilter == null
-        ? null
-        : data.items.where((p) => p.sellerId == _shopFilter).map(shopNameOf).firstOrNull;
+    final hasFilters = _inStockOnly || _categoryChip != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _ResultTabs(controller: _tabs, labels: [l10n.navProducts, l10n.sfShops]),
-        _filterBar(chips, shopName),
+        _filterBar(chips),
         Expanded(
           child: visible.isEmpty
               ? _Message(
@@ -423,7 +413,6 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
                   onAction: () => setState(() {
                     _inStockOnly = false;
                     _categoryChip = null;
-                    _shopFilter = null;
                   }),
                 )
               : NotificationListener<ScrollNotification>(
@@ -442,12 +431,7 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
 
   List<StorefrontProduct> _visible(List<StorefrontProduct> items) {
     final filtered = items
-        .where(
-          (p) =>
-              (!_inStockOnly || p.stock > 0) &&
-              (_categoryChip == null || p.categoryName == _categoryChip) &&
-              (_shopFilter == null || p.sellerId == _shopFilter),
-        )
+        .where((p) => (!_inStockOnly || p.stock > 0) && (_categoryChip == null || p.categoryName == _categoryChip))
         .toList();
     switch (_sort) {
       case _Sort.relevance:
@@ -462,7 +446,7 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
     return filtered;
   }
 
-  Widget _filterBar(List<String> categoryChips, String? shopName) {
+  Widget _filterBar(List<String> categoryChips) {
     final l10n = context.l10n;
     final colors = BrandColors.of(context);
     final sortLabel = _sort == _Sort.relevance ? l10n.sfSort : _sortLabels(l10n)[_sort]!;
@@ -487,16 +471,6 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
               selected: _inStockOnly,
               onTap: () => setState(() => _inStockOnly = !_inStockOnly),
             ),
-            if (shopName != null) ...[
-              const SizedBox(width: 10),
-              ResultFilterChip(
-                label: shopName,
-                icon: Icons.storefront_rounded,
-                selected: true,
-                onTap: () => setState(() => _shopFilter = null),
-                onClear: () => setState(() => _shopFilter = null),
-              ),
-            ],
             for (final chip in categoryChips) ...[
               const SizedBox(width: 10),
               ResultFilterChip(
@@ -523,7 +497,7 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
         for (final group in groups) ...[
           SliverToBoxAdapter(
             child: InkWell(
-              onTap: () => setState(() => _shopFilter = _shopFilter == group.sellerId ? null : group.sellerId),
+              onTap: () => _openShop(group.sellerId, group.name),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 16, 12),
                 child: Row(
@@ -582,11 +556,6 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
 
   Widget _shopsTab(List<SearchShopGroup> groups) {
     final l10n = context.l10n;
-    void openShop(String sellerId) {
-      setState(() => _shopFilter = sellerId);
-      _tabs.animateTo(0);
-    }
-
     return ListView(
       key: const PageStorageKey('search-shops'),
       padding: const EdgeInsets.only(top: 18, bottom: 24),
@@ -598,15 +567,17 @@ class _SearchBodyState extends ConsumerState<_SearchBody> with SingleTickerProvi
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: groups.length.clamp(0, 6),
             separatorBuilder: (_, _) => const SizedBox(width: 14),
-            itemBuilder: (context, index) =>
-                SearchShopBanner(group: groups[index], onTap: () => openShop(groups[index].sellerId)),
+            itemBuilder: (context, index) => SearchShopBanner(
+              group: groups[index],
+              onTap: () => _openShop(groups[index].sellerId, groups[index].name),
+            ),
           ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: SearchSectionLabel(text: l10n.sfFeaturedShops),
         ),
-        for (final group in groups) SearchShopRow(group: group, onTap: () => openShop(group.sellerId)),
+        for (final group in groups) SearchShopRow(group: group, onTap: () => _openShop(group.sellerId, group.name)),
       ],
     );
   }
@@ -714,57 +685,6 @@ class _ResultTabs extends StatelessWidget {
       indicatorSize: TabBarIndicatorSize.label,
       dividerColor: Colors.transparent,
       tabs: [for (final label in labels) Tab(height: 52, text: label)],
-    );
-  }
-}
-
-/// Radio list in a bottom sheet; pops the chosen key.
-class _ChoiceSheet extends StatelessWidget {
-  const _ChoiceSheet({required this.title, required this.options, required this.selected});
-
-  final String title;
-  final Map<String, String> options;
-  final String selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = BrandColors.of(context);
-    return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
-            child: Text(title, style: Theme.of(context).textTheme.headlineSmall),
-          ),
-          Flexible(
-            child: ListView(
-              shrinkWrap: true,
-              padding: const EdgeInsets.only(bottom: 16),
-              children: [
-                for (final entry in options.entries)
-                  ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                    title: Text(
-                      entry.value,
-                      style: TextStyle(
-                        color: colors.textPrimary,
-                        fontSize: 16,
-                        fontWeight: entry.key == selected ? FontWeight.w800 : FontWeight.w500,
-                      ),
-                    ),
-                    trailing: Icon(
-                      entry.key == selected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
-                      color: entry.key == selected ? colors.success : colors.outline,
-                    ),
-                    onTap: () => Navigator.of(context).pop(entry.key),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

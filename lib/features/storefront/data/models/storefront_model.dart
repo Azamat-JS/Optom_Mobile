@@ -1,15 +1,22 @@
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/product_unit.dart';
 import 'package:bsmart/core/utils/decimal_parser.dart';
+import 'package:bsmart/features/storefront/domain/entities/storefront_branch.dart';
 import 'package:bsmart/features/storefront/domain/entities/storefront_product.dart';
 
+StorefrontBranch storefrontBranchFromJson(Map<String, dynamic> json) => StorefrontBranch(
+  id: json['id'] as String,
+  name: json['name'] as String? ?? '',
+  address: (json['address'] as String?)?.trim().isEmpty ?? true ? null : (json['address'] as String).trim(),
+);
+
 StorefrontCategory storefrontCategoryFromJson(Map<String, dynamic> json) => StorefrontCategory(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      imageUrl: json['imageUrl'] as String?,
-      icon: json['icon'] as String?,
-      parentId: json['parentId'] as String?,
-    );
+  id: json['id'] as String,
+  name: json['name'] as String,
+  imageUrl: json['imageUrl'] as String?,
+  icon: json['icon'] as String?,
+  parentId: json['parentId'] as String?,
+);
 
 /// Parses one row of `GET /public/catalog/products`'s `data[]` (and the
 /// single-product `GET /public/catalog/products/:id` response) — same

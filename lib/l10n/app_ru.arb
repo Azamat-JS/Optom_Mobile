@@ -440,5 +440,18 @@
   "sfNoResultsHint": "Попробуйте другое слово или уберите фильтры",
   "sfFeaturedShops": "Подходящие магазины",
   "sfChooseCategory": "Где будем искать?",
-  "sfShopProducts": "Товары магазина"
+  "sfShopProducts": "Товары магазина",
+  "sfProductsShort": "товаров",
+  "sfChooseBranch": "Выберите филиал",
+  "sfCurrentBranch": "Текущий филиал",
+  "sfOtherBranches": "Другие филиалы",
+  "sfBranchesCount": "{count, plural, one{{count} филиал} few{{count} филиала} other{{count} филиалов}} · выбрать другой",
+  "sfCallShop": "Позвонить",
+  "sfCallFailed": "Не удалось позвонить",
+  "sfShopOwner": "Владелец магазина",
+  "sfSearchInShop": "Поиск в «{shop}»",
+  "sfMenu": "МЕНЮ",
+  "sfOtherCategory": "Другое",
+  "sfCartHasOtherShop": "В корзине товары другого магазина. Чтобы добавить товары отсюда, сначала очистите корзину.",
+  "sfShopEmpty": "В этом магазине пока нет товаров"
 }

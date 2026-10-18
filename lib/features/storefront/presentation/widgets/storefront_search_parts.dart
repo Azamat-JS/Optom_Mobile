@@ -590,3 +590,54 @@ class SearchShopBanner extends StatelessWidget {
     );
   }
 }
+
+/// Radio list in a bottom sheet; pops the chosen key.
+class ChoiceSheet extends StatelessWidget {
+  const ChoiceSheet({required this.title, required this.options, required this.selected, super.key});
+
+  final String title;
+  final Map<String, String> options;
+  final String selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BrandColors.of(context);
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+            child: Text(title, style: Theme.of(context).textTheme.headlineSmall),
+          ),
+          Flexible(
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.only(bottom: 16),
+              children: [
+                for (final entry in options.entries)
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                    title: Text(
+                      entry.value,
+                      style: TextStyle(
+                        color: colors.textPrimary,
+                        fontSize: 16,
+                        fontWeight: entry.key == selected ? FontWeight.w800 : FontWeight.w500,
+                      ),
+                    ),
+                    trailing: Icon(
+                      entry.key == selected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
+                      color: entry.key == selected ? colors.success : colors.outline,
+                    ),
+                    onTap: () => Navigator.of(context).pop(entry.key),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

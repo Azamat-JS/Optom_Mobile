@@ -29,7 +29,7 @@ import 'package:bsmart/features/storefront/presentation/widgets/storefront_skele
 /// Layout (Phase 9 U2a, Swiggy home reference): dark hero with top-level
 /// category tabs, a search button (→ `StorefrontSearchScreen`) and a shop strip; a "new / favourites" rail; pinned
 /// subcategory circles; the full feed as big cards. Filters: top category →
-/// subcategory (sent as one `categoryId`), shop (`sellerId`).
+/// subcategory (sent as one `categoryId`); a shop card opens the shop page.
 ///
 /// Must sit under a [BrandTheme] (`CustomerHomeScreen` provides it).
 class StorefrontCatalogTab extends ConsumerStatefulWidget {
@@ -92,8 +92,6 @@ class _StorefrontCatalogTabState extends ConsumerState<StorefrontCatalogTab> {
     setState(() => _subCategoryId = id);
     ref.read(storefrontProductsProvider.notifier).filterByCategory(id ?? _rootCategoryId);
   }
-
-  void _selectShop(String? sellerId) => ref.read(storefrontProductsProvider.notifier).filterBySeller(sellerId);
 
   Future<void> _clearFilters() async {
     setState(() {
@@ -174,8 +172,7 @@ class _StorefrontCatalogTabState extends ConsumerState<StorefrontCatalogTab> {
                   onSearchTap: () => context.push(RouteNames.customerSearch),
                   searchHints: hints,
                   shops: _shops,
-                  selectedSellerId: feed?.query.sellerId,
-                  onShopSelected: _selectShop,
+                  onShopTap: (shop) => context.push(RouteNames.customerShop(shop.sellerId, name: shop.name)),
                 ),
               ),
               const SliverToBoxAdapter(child: SizedBox(height: 22)),
@@ -214,13 +211,7 @@ class _StorefrontCatalogTabState extends ConsumerState<StorefrontCatalogTab> {
                   ),
                 ],
                 data: (state) => [
-                  SliverToBoxAdapter(
-                    child: _FeedHeader(
-                      total: state.total,
-                      shopName: _shopName(state.query.sellerId),
-                      onClearShop: () => _selectShop(null),
-                    ),
-                  ),
+                  SliverToBoxAdapter(child: _FeedHeader(total: state.total)),
                   if (state.items.isEmpty)
                     SliverToBoxAdapter(
                       child: _FeedMessage(
@@ -257,24 +248,13 @@ class _StorefrontCatalogTabState extends ConsumerState<StorefrontCatalogTab> {
 
   bool _hasFilters(StorefrontProductsState state) =>
       state.query.categoryId != null || state.query.sellerId != null || (state.query.search?.isNotEmpty ?? false);
-
-  String? _shopName(String? sellerId) {
-    if (sellerId == null) return null;
-    for (final shop in _shops) {
-      if (shop.sellerId == sellerId) return shop.name;
-    }
-    return null;
-  }
 }
 
-/// "12 ta mahsulot / Siz uchun saralangan mahsulotlar", plus the active shop
-/// filter as a removable chip.
+/// "12 ta mahsulot / Siz uchun saralangan mahsulotlar".
 class _FeedHeader extends StatelessWidget {
-  const _FeedHeader({required this.total, required this.shopName, required this.onClearShop});
+  const _FeedHeader({required this.total});
 
   final int total;
-  final String? shopName;
-  final VoidCallback onClearShop;
 
   @override
   Widget build(BuildContext context) {
@@ -294,19 +274,6 @@ class _FeedHeader extends StatelessWidget {
             l10n.sfProductsSubtitle,
             style: TextStyle(color: colors.textSecondary, fontSize: 15, fontWeight: FontWeight.w500),
           ),
-          if (shopName != null) ...[
-            const SizedBox(height: 12),
-            InputChip(
-              avatar: Icon(Icons.storefront_rounded, size: 18, color: colors.accentText),
-              label: Text(shopName!),
-              labelStyle: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700),
-              onDeleted: onClearShop,
-              deleteButtonTooltipMessage: l10n.sfRemoveFilter,
-              backgroundColor: AppColors.brandYellow.withValues(alpha: 0.18),
-              side: const BorderSide(color: AppColors.brandAmber),
-              shape: const StadiumBorder(),
-            ),
-          ],
         ],
       ),
     );

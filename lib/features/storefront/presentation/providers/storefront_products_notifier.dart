@@ -75,16 +75,7 @@ class StorefrontProductsNotifier extends AsyncNotifier<StorefrontProductsState> 
     );
   }
 
-  /// Narrows the feed to one shop (owner), or back to every shop with null.
-  Future<void> filterBySeller(String? sellerId) async {
-    final current = state.valueOrNull?.query ?? const StorefrontQuery();
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => _fetch(current.copyWith(page: 1, sellerId: sellerId, clearSeller: sellerId == null)),
-    );
-  }
-
-  /// Drops every filter (category, shop, search) in one request.
+  /// Drops every filter (category, search) in one request.
   Future<void> resetFilters() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => _fetch(const StorefrontQuery()));

@@ -29,8 +29,7 @@ class StorefrontHero extends StatelessWidget {
     required this.onSearchTap,
     required this.searchHints,
     required this.shops,
-    required this.selectedSellerId,
-    required this.onShopSelected,
+    required this.onShopTap,
     super.key,
   });
 
@@ -48,8 +47,9 @@ class StorefrontHero extends StatelessWidget {
   /// Rotated through the search placeholder ("«Non» ni qidiring").
   final List<String> searchHints;
   final List<StorefrontShop> shops;
-  final String? selectedSellerId;
-  final ValueChanged<String?> onShopSelected;
+
+  /// Opens that shop's page.
+  final ValueChanged<StorefrontShop> onShopTap;
 
   @override
   Widget build(BuildContext context) {
@@ -146,11 +146,9 @@ class StorefrontHero extends StatelessWidget {
                         separatorBuilder: (_, _) => const SizedBox(width: 12),
                         itemBuilder: (context, index) {
                           final shop = shops[index];
-                          final selected = shop.sellerId == selectedSellerId;
                           return _ShopCard(
                             shop: shop,
-                            selected: selected,
-                            onTap: () => onShopSelected(selected ? null : shop.sellerId),
+                            onTap: () => onShopTap(shop),
                           ).animate().fadeIn(delay: (40 * index).ms, duration: AppMotion.standard);
                         },
                       ),
@@ -401,23 +399,21 @@ class _SearchFieldState extends State<_SearchField> {
 }
 
 class _ShopCard extends StatelessWidget {
-  const _ShopCard({required this.shop, required this.selected, required this.onTap});
+  const _ShopCard({required this.shop, required this.onTap});
 
   final StorefrontShop shop;
-  final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(20);
     return Semantics(
-      selected: selected,
       button: true,
       child: Material(
         color: _shopCardColor,
         shape: RoundedRectangleBorder(
           borderRadius: radius,
-          side: BorderSide(color: selected ? AppColors.brandYellow : Colors.white.withValues(alpha: 0.06), width: 2),
+          side: BorderSide(color: Colors.white.withValues(alpha: 0.06), width: 2),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(

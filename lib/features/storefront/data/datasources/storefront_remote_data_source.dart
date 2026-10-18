@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import 'package:bsmart/core/network/paginated_result.dart';
 import 'package:bsmart/features/storefront/data/models/storefront_model.dart';
+import 'package:bsmart/features/storefront/domain/entities/storefront_branch.dart';
 import 'package:bsmart/features/storefront/domain/entities/storefront_product.dart';
 import 'package:bsmart/features/storefront/domain/entities/storefront_query.dart';
 
@@ -29,5 +30,10 @@ class StorefrontRemoteDataSource {
   Future<StorefrontProduct> getProduct(String id) async {
     final response = await _dio.get<Map<String, dynamic>>('/public/catalog/products/$id');
     return storefrontProductFromJson(response.data!);
+  }
+
+  Future<List<StorefrontBranch>> listBranches(String sellerId) async {
+    final response = await _dio.get<List<dynamic>>('/public/catalog/sellers/$sellerId/stores');
+    return response.data!.map((e) => storefrontBranchFromJson(e as Map<String, dynamic>)).toList();
   }
 }

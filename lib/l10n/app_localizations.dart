@@ -2745,6 +2745,84 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Do\'kon mahsulotlari'**
   String get sfShopProducts;
+
+  /// No description provided for @sfProductsShort.
+  ///
+  /// In uz, this message translates to:
+  /// **'mahsulot'**
+  String get sfProductsShort;
+
+  /// No description provided for @sfChooseBranch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Filialni tanlang'**
+  String get sfChooseBranch;
+
+  /// No description provided for @sfCurrentBranch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joriy filial'**
+  String get sfCurrentBranch;
+
+  /// No description provided for @sfOtherBranches.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqa filiallar'**
+  String get sfOtherBranches;
+
+  /// No description provided for @sfBranchesCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta filial · boshqasini tanlash'**
+  String sfBranchesCount(int count);
+
+  /// No description provided for @sfCallShop.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'ng\'iroq qilish'**
+  String get sfCallShop;
+
+  /// No description provided for @sfCallFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'ng\'iroq qilib bo\'lmadi'**
+  String get sfCallFailed;
+
+  /// No description provided for @sfShopOwner.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon egasi'**
+  String get sfShopOwner;
+
+  /// No description provided for @sfSearchInShop.
+  ///
+  /// In uz, this message translates to:
+  /// **'«{shop}» dan qidiring'**
+  String sfSearchInShop(String shop);
+
+  /// No description provided for @sfMenu.
+  ///
+  /// In uz, this message translates to:
+  /// **'MENYU'**
+  String get sfMenu;
+
+  /// No description provided for @sfOtherCategory.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqa'**
+  String get sfOtherCategory;
+
+  /// No description provided for @sfCartHasOtherShop.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savatingizda boshqa do\'kon mahsulotlari bor. Bu do\'kondan qo\'shish uchun avval savatni bo\'shating.'**
+  String get sfCartHasOtherShop;
+
+  /// No description provided for @sfShopEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu do\'konda hozircha mahsulot yo\'q'**
+  String get sfShopEmpty;
 }
 
 class _AppLocalizationsDelegate

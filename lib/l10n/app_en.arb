@@ -440,5 +440,18 @@
   "sfNoResultsHint": "Try another word or remove the filters",
   "sfFeaturedShops": "Matching shops",
   "sfChooseCategory": "Where should we search?",
-  "sfShopProducts": "Shop products"
+  "sfShopProducts": "Shop products",
+  "sfProductsShort": "products",
+  "sfChooseBranch": "Choose a branch",
+  "sfCurrentBranch": "Current branch",
+  "sfOtherBranches": "Other branches",
+  "sfBranchesCount": "{count, plural, one{{count} branch} other{{count} branches}} · choose another",
+  "sfCallShop": "Call",
+  "sfCallFailed": "Couldn't place the call",
+  "sfShopOwner": "Shop owner",
+  "sfSearchInShop": "Search in {shop}",
+  "sfMenu": "MENU",
+  "sfOtherCategory": "Other",
+  "sfCartHasOtherShop": "Your cart has products from another shop. Empty it first to add products from here.",
+  "sfShopEmpty": "This shop has no products yet"
 }

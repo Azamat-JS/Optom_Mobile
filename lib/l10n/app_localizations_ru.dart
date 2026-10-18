@@ -1610,4 +1610,55 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sfShopProducts => 'Товары магазина';
+
+  @override
+  String get sfProductsShort => 'товаров';
+
+  @override
+  String get sfChooseBranch => 'Выберите филиал';
+
+  @override
+  String get sfCurrentBranch => 'Текущий филиал';
+
+  @override
+  String get sfOtherBranches => 'Другие филиалы';
+
+  @override
+  String sfBranchesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count филиалов',
+      few: '$count филиала',
+      one: '$count филиал',
+    );
+    return '$_temp0 · выбрать другой';
+  }
+
+  @override
+  String get sfCallShop => 'Позвонить';
+
+  @override
+  String get sfCallFailed => 'Не удалось позвонить';
+
+  @override
+  String get sfShopOwner => 'Владелец магазина';
+
+  @override
+  String sfSearchInShop(String shop) {
+    return 'Поиск в «$shop»';
+  }
+
+  @override
+  String get sfMenu => 'МЕНЮ';
+
+  @override
+  String get sfOtherCategory => 'Другое';
+
+  @override
+  String get sfCartHasOtherShop =>
+      'В корзине товары другого магазина. Чтобы добавить товары отсюда, сначала очистите корзину.';
+
+  @override
+  String get sfShopEmpty => 'В этом магазине пока нет товаров';
 }

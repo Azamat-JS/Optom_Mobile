@@ -1573,8 +1573,8 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 |---|---|---|
 | U1 | Auth: splash, login, register, Telegram verify (reference: Swiggy onboarding) | 🟢 Done 2026-10-18 |
 | U2a | Storefront home (Katalog tab) + storefront tab bar (reference: Swiggy home/listing) | 🟢 Done 2026-10-18 |
-| U2b | Storefront search screen: recent searches, live suggestions, results tabs + filter chips | ⚪ |
-| U2c | Shop page: header card, branch ("outlet") sheet, in-shop search, collapsible category sections, product grid with ADD/stepper, "Menyu" jump FAB | ⚪ |
+| U2b | Storefront search screen: recent searches, live suggestions, results tabs + filter chips | 🟢 Done 2026-10-18 |
+| U2c | Shop page: header card, branch ("outlet") sheet, in-shop search, collapsible category sections, product grid with ADD/stepper, "Menyu" jump FAB | 🟢 Done 2026-10-18 |
 | U2d | Product detail + masonry "explore" grid | ⚪ |
 | U3+ | Next areas, as the user sends references | ⚪ |
 
@@ -1637,6 +1637,85 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
   **Not checked live:** taps (cart stepper, favourites toggle, shop filter chip, guest login
   prompt); there's no tap tooling in the simulator here. In the local DB the category images 404
   on ImageKit, so circles/tabs show placeholders.
+  *(Covered later the same day by the U2b on-device test below: shop chip, ADD/stepper, guest
+  favourites prompt.)*
+
+**U2b notes (2026-10-18):**
+- New route **`/customer/search`** (`RouteNames.customerSearch`, guest-allowed) →
+  `StorefrontSearchScreen`, which applies the brand theme and dark status bar icons itself. The
+  home hero's search field is now only a button that opens it (inline home search was removed).
+- Three states, driven by the field:
+  - **Empty:** "SO'NGGI QIDIRUVLAR" (device-local, SharedPreferences
+    `bsmart.storefront.recentSearches`, max 8, newest first, case-insensitive de-dup, "Tarixni
+    tozalash"). Below it, top-category pills that search the whole category.
+  - **Typing** (300 ms debounce): `storefrontSuggestionsProvider(text)` (family, limit 12, so a
+    late answer can't overwrite a newer text). Shows a "search for this" row, shops for the text
+    (derived from the matches), and matching products with the match in bold (`highlightMatches`).
+  - **Submitted:** `StorefrontSearchResultsNotifier` (limit 100, the API max; generation counter
+    drops stale answers). Results have "Mahsulotlar | Do'konlar" tabs:
+    - Mahsulotlar: products grouped by shop, in the reference's dish cards (stock square, photo,
+      overlapping ADD).
+    - Do'konlar: a shop banner carousel plus "MOS DO'KONLAR" rows.
+    - Filter bar: Saralash sheet (relevance / cheap first / expensive first / A–Z), Mavjud, a shop
+      chip, and category chips from the results.
+    - **Sort and chips run on the loaded results** (the public catalog has no sort). The
+      "Natijalar: … ▾" header re-queries scoped to a top category.
+- No backend change.
+- **Verified:**
+  - `flutter analyze` clean; 63 unit/widget tests (7 new: `storefront_search_test.dart`, covering
+    highlighting and recent searches incl. the add-before-load race).
+  - On the iPhone 17 simulator: screenshots of every state in light + dark.
+  - **An on-device integration test against the local backend, as a guest: 20/20 steps.** Steps:
+    shop filter chip on/off, ADD → snackbar → stepper +/−, guest favourites prompt, hero → search,
+    typing → suggestions, submit → 5 results, both price sorts (first card 10 000 / 334 000),
+    in-stock and category chips, shops tab → shop row filters products, scope sheet → Texnologiya,
+    editing → suggestions, clear → recent, back → home.
+  - Fixed during verification: the status bar icons were invisible (inherited from the dark hero);
+    recent searches were overwritten when one was added before the saved list loaded; a
+    section-label truncation/hairline layout issue.
+- `integration_test/storefront_flow_test.dart` (+ the `integration_test` dev dependency) were
+  committed by the user mid-run. The file is the final passing version, but it depends on local
+  dev data, so it is a manual check (`flutter test integration_test/... -d <simulator>`), not part
+  of `flutter test`.
+- **Not checked live:** the search wait screen (results return too fast to see it), Russian/English
+  layouts of the new screens, and a logged-in customer (favourites rail with data).
+
+**U2c notes (2026-10-18):**
+- New route **`/customer/shops/:sellerId?storeId=&name=`** (`RouteNames.customerShop(...)`,
+  guest-allowed via the `/customer/shops/` prefix) → `StorefrontShopScreen`. Every shop entry point
+  now opens it: the home shop strip, search shop suggestions, result group headers, the shop banner
+  carousel and shop rows. The home feed's shop filter (chip + `filterBySeller`) and the search
+  results' shop chip were removed.
+- **Data:** `shopProductsProvider((sellerId, storeId))` loads the whole shop (100 per page, max 10
+  pages), because search, filters, sorting and the section jump run on the device.
+  `shopBranchesProvider(sellerId)` uses the existing public `GET /public/catalog/sellers/:id/stores`
+  (new `StorefrontBranch`, `ListShopBranchesUseCase`). `StorefrontQuery` gained `storeId`. A
+  multi-branch owner opened without a branch shows its default (first) branch, never all branches
+  mixed (orders are single-store anyway). No backend change.
+- **Layout** (`storefront_shop_parts.dart`):
+  - Dark header with back/call buttons and a white card: top categories, name, branch row (▾ opens
+    `BranchSheet` when there are several), green product-count badge, owner name/phone + call
+    button (`tel:`). The yellow notice line under the card shows either "your cart has another
+    shop's products" or "N filial · boshqasini tanlash".
+  - Pinned search + chips bar (Mavjud, Sevimlilar — guests are sent to login, Saralash via the
+    shared `ChoiceSheet`). Its status-bar-high top strip is painted as the header's rounded tail
+    until it pins.
+  - Category sections, biggest first, "Boshqa" last. A header tap collapses the section. 2-column
+    grid with a **fixed card extent** (`ShopProductCard.heightFor`).
+  - Round black "MENYU" button → `ShopMenuPanel` (sections + counts). Because every block has a
+    known height, the jump offset is computed (no lazy-build wait).
+- **Section headers are deliberately not pinned:** pinned headers inside `SliverMainAxisGroup` under
+  an already pinned bar threw "layoutExtent exceeds paintExtent" (caught live).
+- **Verified:**
+  - `flutter analyze` clean, 63 unit tests.
+  - The on-device integration test (`integration_test/storefront_flow_test.dart`) now has **26/26
+    steps**, all passing. New steps: shop card → shop page (owner row, sections), in-shop search →
+    only Soatlar, collapse/expand, MENYU → Telefonlar header lands right under the pinned bar
+    (y≈350), ADD → stepper on the shop page, back home; search shop row → shop page → back to the
+    results.
+  - Screenshots on the iPhone 17 simulator.
+- **Not checked live:** the branch sheet (no local owner has more than one active store), the
+  other-shop cart notice, the call button actually dialling (simulator), dark mode of the shop page.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

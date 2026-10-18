@@ -1601,4 +1601,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sfShopProducts => 'Shop products';
+
+  @override
+  String get sfProductsShort => 'products';
+
+  @override
+  String get sfChooseBranch => 'Choose a branch';
+
+  @override
+  String get sfCurrentBranch => 'Current branch';
+
+  @override
+  String get sfOtherBranches => 'Other branches';
+
+  @override
+  String sfBranchesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count branches',
+      one: '$count branch',
+    );
+    return '$_temp0 · choose another';
+  }
+
+  @override
+  String get sfCallShop => 'Call';
+
+  @override
+  String get sfCallFailed => 'Couldn\'t place the call';
+
+  @override
+  String get sfShopOwner => 'Shop owner';
+
+  @override
+  String sfSearchInShop(String shop) {
+    return 'Search in $shop';
+  }
+
+  @override
+  String get sfMenu => 'MENU';
+
+  @override
+  String get sfOtherCategory => 'Other';
+
+  @override
+  String get sfCartHasOtherShop =>
+      'Your cart has products from another shop. Empty it first to add products from here.';
+
+  @override
+  String get sfShopEmpty => 'This shop has no products yet';
 }

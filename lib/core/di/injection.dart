@@ -168,6 +168,7 @@ import 'package:bsmart/features/storefront/data/repositories/storefront_reposito
 import 'package:bsmart/features/storefront/domain/repositories/storefront_repository.dart';
 import 'package:bsmart/features/storefront/domain/usecases/browse_storefront_usecase.dart';
 import 'package:bsmart/features/storefront/domain/usecases/get_storefront_product_usecase.dart';
+import 'package:bsmart/features/storefront/domain/usecases/list_shop_branches_usecase.dart';
 import 'package:bsmart/features/storefront/domain/usecases/list_storefront_categories_usecase.dart';
 import 'package:bsmart/features/staff_admins/data/datasources/admins_remote_data_source.dart';
 import 'package:bsmart/features/staff_admins/data/repositories/admins_repository_impl.dart';
@@ -481,6 +482,7 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => ListStorefrontCategoriesUseCase(getIt()));
   getIt.registerFactory(() => BrowseStorefrontUseCase(getIt()));
   getIt.registerFactory(() => GetStorefrontProductUseCase(getIt()));
+  getIt.registerFactory(() => ListShopBranchesUseCase(getIt()));
 
   // --- features/favorites (Phase 2) ---
   getIt.registerLazySingleton(() => FavoritesRemoteDataSource(mainDio));

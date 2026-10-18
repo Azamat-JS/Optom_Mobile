@@ -1565,4 +1565,48 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get sfShopProducts => 'Do\'kon mahsulotlari';
+
+  @override
+  String get sfProductsShort => 'mahsulot';
+
+  @override
+  String get sfChooseBranch => 'Filialni tanlang';
+
+  @override
+  String get sfCurrentBranch => 'Joriy filial';
+
+  @override
+  String get sfOtherBranches => 'Boshqa filiallar';
+
+  @override
+  String sfBranchesCount(int count) {
+    return '$count ta filial · boshqasini tanlash';
+  }
+
+  @override
+  String get sfCallShop => 'Qo\'ng\'iroq qilish';
+
+  @override
+  String get sfCallFailed => 'Qo\'ng\'iroq qilib bo\'lmadi';
+
+  @override
+  String get sfShopOwner => 'Do\'kon egasi';
+
+  @override
+  String sfSearchInShop(String shop) {
+    return '«$shop» dan qidiring';
+  }
+
+  @override
+  String get sfMenu => 'MENYU';
+
+  @override
+  String get sfOtherCategory => 'Boshqa';
+
+  @override
+  String get sfCartHasOtherShop =>
+      'Savatingizda boshqa do\'kon mahsulotlari bor. Bu do\'kondan qo\'shish uchun avval savatni bo\'shating.';
+
+  @override
+  String get sfShopEmpty => 'Bu do\'konda hozircha mahsulot yo\'q';
 }

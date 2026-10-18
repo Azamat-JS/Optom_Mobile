@@ -1,11 +1,15 @@
-// TEMPORARY verification test (Phase 9 U2a/U2b) — drives the real app on a
-// simulator against the local backend as a guest. Not part of the suite.
+// Manual verification test (Phase 9 U2a/U2b): drives the real app on a simulator
+// against the LOCAL backend as a guest. It relies on local dev data (shops
+// "Osh markazi"/"Davron market", five "soat" products, a "Texnologiya"
+// category), so it is not part of `flutter test`. Run with:
+//   flutter test integration_test/storefront_flow_test.dart -d <simulator>
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'package:bsmart/bootstrap.dart';
 import 'package:bsmart/features/storefront/presentation/widgets/storefront_search_parts.dart';
+import 'package:bsmart/features/storefront/presentation/widgets/storefront_shop_parts.dart';
 
 Future<void> pumpFor(WidgetTester t, [int ms = 1200]) async {
   for (var i = 0; i < ms ~/ 100; i++) {
@@ -49,6 +53,15 @@ Future<void> tapVisible(WidgetTester t, Finder f) async {
   fail('No tappable $f');
 }
 
+/// Scrolls the page back to the top, then taps the header's back arrow.
+Future<void> backFromTop(WidgetTester t) async {
+  // `.last` = the top route (a covered route can still be in the tree).
+  await t.drag(mainScroll.last, const Offset(0, 6000));
+  await pumpFor(t, 800);
+  await t.tap(find.byIcon(Icons.arrow_back_rounded).last);
+  await pumpFor(t, 1200);
+}
+
 Finder get mainScroll => find.byWidgetPredicate(
   (w) => w is Scrollable && w.axisDirection == AxisDirection.down,
   description: 'vertical scrollable',
@@ -69,25 +82,55 @@ void main() {
 
     ok('home greeting');
 
-    // --- Shop strip filter -------------------------------------------------
+    // --- Shop page (U2c) ------------------------------------------------------
     await waitFor(t, find.text("Do'konlar"), why: 'shop strip');
-    await t.tap(find.text('Osh markazi').first);
-    await pumpFor(t, 3000); // filtered feed loads; the chip is below the fold
-    await scrollToFind(t, find.byType(InputChip));
-    ok('shop card → shop chip');
-    await t.tap(find.byTooltip('Filtrni olib tashlash'));
-    await pumpFor(t, 2500);
-    expect(find.byType(InputChip), findsNothing);
-    ok('shop chip removed');
+    await t.tap(find.text('Davron market').first);
+    await waitFor(t, find.textContaining('dan qidiring'), why: 'shop page');
+    await waitFor(t, find.byType(ShopSectionHeader), why: 'shop sections');
+    expect(find.text('Davron Odilov'), findsOneWidget);
+    ok('shop card → shop page (owner row, sections)');
+
+    await t.enterText(find.byType(TextField), 'soat');
+    await pumpFor(t, 800);
+    expect(find.textContaining('Soatlar ('), findsOneWidget);
+    expect(find.textContaining('Kiyimlar ('), findsNothing);
+    ok('in-shop search "soat" → only Soatlar');
+    await t.tap(find.byTooltip('Tozalash'));
+    await pumpFor(t, 800);
+
+    await t.tap(find.textContaining('Kiyimlar ('));
+    await pumpFor(t, 800);
+    expect(find.text('Pechenye'), findsNothing);
+    ok('section collapses');
+    await t.tap(find.textContaining('Kiyimlar ('));
+    await pumpFor(t, 800);
+    expect(find.text('Pechenye'), findsOneWidget);
+    ok('section expands');
+
+    await t.tap(find.text('MENYU'));
+    await waitFor(t, find.byType(ShopMenuPanel), why: 'menu panel');
+    await t.tap(find.descendant(of: find.byType(ShopMenuPanel), matching: find.text('Telefonlar')));
+    await pumpFor(t, 1500);
+    final header = find.textContaining('Telefonlar (');
+    expect(header, findsOneWidget);
+    final y = t.getTopLeft(header).dy;
+    expect(y, inInclusiveRange(150, 420), reason: 'section header right under the pinned bar (y=$y)');
+    ok('MENYU → jumps to Telefonlar (y=${y.round()})');
+
+    await tapVisible(t, find.text("QO'SHISH"));
+    await waitFor(t, find.byIcon(Icons.remove_rounded), why: 'shop stepper');
+    await tapVisible(t, find.byIcon(Icons.remove_rounded));
+    await pumpFor(t, 500);
+    ok('ADD on shop page → stepper → removed');
+
+    await backFromTop(t);
+    await waitFor(t, find.text('Xush kelibsiz!'), why: 'back home from shop');
+    ok('shop → back home');
 
     // --- Add to cart, stepper, badge -----------------------------------------
     await scrollToFind(t, find.text("QO'SHISH"));
     await tapVisible(t, find.text("QO'SHISH"));
     await pumpFor(t, 600);
-    // ignore: avoid_print
-    print('DEBUG stepper=${find.byIcon(Icons.remove_rounded).evaluate().length} '
-        'snack=${find.byType(SnackBar).evaluate().length} '
-        'texts=${find.byType(SnackBar).evaluate().isEmpty ? '' : t.widgetList<Text>(find.descendant(of: find.byType(SnackBar), matching: find.byType(Text))).map((w) => w.data).join('|')}');
     await waitFor(t, find.textContaining("savatga qo'shildi"), why: 'added snackbar');
     await waitFor(t, find.byIcon(Icons.remove_rounded), why: 'stepper');
     ok('ADD → snackbar + stepper');
@@ -159,9 +202,11 @@ void main() {
     ok('shops tab');
     await pumpFor(t, 1000); // let the tab slide finish
     await t.tap(find.byType(SearchShopRow).first);
-    await pumpFor(t, 1200);
-    expect(find.byType(SearchProductCard), findsWidgets);
-    ok('shop row → products tab filtered');
+    await waitFor(t, find.textContaining('dan qidiring'), why: 'shop page from search');
+    ok('shop row → shop page');
+    await backFromTop(t);
+    await waitFor(t, find.text('Natijalar: Barchasi'), why: 'back to results');
+    ok('shop page → back to results');
 
     // --- Scope sheet ---------------------------------------------------------------
     await t.tap(find.text('Natijalar: Barchasi'));
@@ -177,7 +222,10 @@ void main() {
     ok('scope → Texnologiya, still 5');
 
     // --- Editing goes back to suggestions; clear → recent ----------------------------
+    await t.tap(find.byType(TextField));
+    await pumpFor(t, 800);
     await t.enterText(find.byType(TextField), 'iph');
+    await pumpFor(t, 2500);
     await waitFor(t, find.text('Boshqa mos natijalar'), why: 'suggestions after edit');
     expect(find.textContaining('Natijalar:'), findsNothing);
     ok('edit → suggestions again');
@@ -186,7 +234,7 @@ void main() {
     expect(find.text('soat'), findsOneWidget);
     ok('clear → recent has "soat"');
 
-    await t.tap(find.byTooltip('Back'));
+    await t.tap(find.byIcon(Icons.arrow_back_rounded));
     await waitFor(t, find.text('Xush kelibsiz!'), why: 'back home');
     ok('back → home');
 

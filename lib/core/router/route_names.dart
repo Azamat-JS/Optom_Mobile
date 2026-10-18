@@ -10,7 +10,8 @@ abstract final class RouteNames {
   static const customerVerifyPhone = '/customer/verify-phone';
   static const customerDeliveries = '/customer/deliveries';
 
-  static String telegramVerifyFor(String phone) => Uri(path: telegramVerify, queryParameters: {'phone': phone}).toString();
+  static String telegramVerifyFor(String phone) =>
+      Uri(path: telegramVerify, queryParameters: {'phone': phone}).toString();
   static const home = '/home';
 
   /// App settings (language, logout) — guest-eligible.
@@ -22,6 +23,12 @@ abstract final class RouteNames {
   static const customerProductDetailPattern = '/customer/products/:id';
   static const customerCartReview = '/customer/cart/review';
   static const customerSearch = '/customer/search';
+
+  /// Shop page; `?storeId=` picks a branch, `?name=` is shown while loading.
+  static const customerShopPattern = '/customer/shops/:sellerId';
+
+  static String customerShop(String sellerId, {String? storeId, String? name}) =>
+      Uri(path: '/customer/shops/$sellerId', queryParameters: {'storeId': ?storeId, 'name': ?name}).toString();
   static const customerDebts = '/customer/debts';
 
   static String customerProductDetail(String id) => '/customer/products/$id';

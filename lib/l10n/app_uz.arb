@@ -839,5 +839,32 @@
   "sfNoResultsHint": "Boshqa so'z bilan qidiring yoki filtrlarni olib tashlang",
   "sfFeaturedShops": "Mos do'konlar",
   "sfChooseCategory": "Qaysi bo'limda qidiramiz?",
-  "sfShopProducts": "Do'kon mahsulotlari"
+  "sfShopProducts": "Do'kon mahsulotlari",
+  "sfProductsShort": "mahsulot",
+  "sfChooseBranch": "Filialni tanlang",
+  "sfCurrentBranch": "Joriy filial",
+  "sfOtherBranches": "Boshqa filiallar",
+  "sfBranchesCount": "{count} ta filial · boshqasini tanlash",
+  "@sfBranchesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sfCallShop": "Qo'ng'iroq qilish",
+  "sfCallFailed": "Qo'ng'iroq qilib bo'lmadi",
+  "sfShopOwner": "Do'kon egasi",
+  "sfSearchInShop": "«{shop}» dan qidiring",
+  "@sfSearchInShop": {
+    "placeholders": {
+      "shop": {
+        "type": "String"
+      }
+    }
+  },
+  "sfMenu": "MENYU",
+  "sfOtherCategory": "Boshqa",
+  "sfCartHasOtherShop": "Savatingizda boshqa do'kon mahsulotlari bor. Bu do'kondan qo'shish uchun avval savatni bo'shating.",
+  "sfShopEmpty": "Bu do'konda hozircha mahsulot yo'q"
 }
