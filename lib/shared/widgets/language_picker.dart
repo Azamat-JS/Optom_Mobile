@@ -4,14 +4,32 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/l10n/locale_provider.dart';
 
-/// Compact AppBar action (globe + current code) for the auth screens, where
+/// Compact language switch (globe + current code) for the auth screens, where
 /// a not-yet-logged-in user has no way to reach Settings.
+///
+/// [onDark] renders it as a translucent white pill for the dark auth hero.
 class LanguagePickerButton extends ConsumerWidget {
-  const LanguagePickerButton({super.key});
+  const LanguagePickerButton({this.onDark = false, super.key});
+
+  final bool onDark;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final current = ref.watch(localeProvider).languageCode;
+    final row = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.language, size: 18, color: onDark ? Colors.white : null),
+        const SizedBox(width: 6),
+        Text(
+          current.toUpperCase(),
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            color: onDark ? Colors.white : null,
+            fontWeight: onDark ? FontWeight.w700 : null,
+          ),
+        ),
+      ],
+    );
     return PopupMenuButton<String>(
       tooltip: context.l10n.languageChange,
       initialValue: current,
@@ -20,17 +38,17 @@ class LanguagePickerButton extends ConsumerWidget {
         for (final code in supportedLanguageCodes)
           CheckedPopupMenuItem(value: code, checked: code == current, child: Text(languageNames[code]!)),
       ],
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.language, size: 20),
-            const SizedBox(width: 6),
-            Text(current.toUpperCase(), style: Theme.of(context).textTheme.labelLarge),
-          ],
-        ),
-      ),
+      child: onDark
+          ? Container(
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: row,
+            )
+          : Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), child: row),
     );
   }
 }

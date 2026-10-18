@@ -1559,6 +1559,45 @@ Settings + the registration/login flow. Backend error messages and Telegram bot 
   page couldn't load … `@E80`". `useChangeLocale` now writes the cookie client-side and calls
   `router.refresh()` instead of using a Server Action; see Optom_Savdo/CLAUDE.md i18n.
 
+### Phase 9 — UI redesign from user-supplied references (mobile only)
+
+The user supplies reference screenshots (Mobbin) one area at a time; each area is one milestone.
+Brand = the bsmart logo: **yellow `#FFC904` + white on near-black `#0B0D12`**. Yellow is a fill
+colour only (fails contrast as text on white); brand-coloured text uses gold `#8A5D00` on light,
+yellow on dark. Tokens: `lib/core/theme/app_colors.dart`. Font: **Manrope** (bundled static
+weights 400–800 in `assets/fonts/`, OFL; no Uzbek-Cyrillic қ/ғ glyphs, which fall back to the
+system font). Logo: `assets/images/bsmart_mark.png` (BSM mark only, background keyed out of
+Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widgets/brand_mark.dart`.
+
+| # | Scope | Status |
+|---|---|---|
+| U1 | Auth: splash, login, register, Telegram verify (reference: Swiggy onboarding) | 🟢 Done 2026-10-18 |
+| U2+ | Next areas, as the user sends references | ⚪ |
+
+**U1 notes (2026-10-18):**
+- **Scoped theme:** the brand look is applied only inside the auth flow, via
+  `features/auth/presentation/widgets/auth_theme.dart` (`AuthTheme` + `AuthColors` extension,
+  light/dark). The global `AppTheme` (green seed, Roboto) is **unchanged** until the next areas
+  are redesigned, so the logged-in screens didn't change.
+- `AuthScaffold`: dark hero (logo, localized tagline `authTagline`, three floating business
+  tiles) + rounded sheet; one `CustomScrollView`, the tiles fold away while the keyboard is open.
+  Top bar: back button if the route can pop, otherwise a "Keyinroq" pill → `/customer`; language
+  pill (`LanguagePickerButton(onDark: true)`).
+- `PhoneNumberField`: fixed "🇺🇿 +998" prefix, 9 digits grouped "90 123 45 67", paste of a
+  full number keeps the local part, clear button. Login/register dropped `reactive_forms`:
+  buttons stay disabled (grey) until the input is complete, instead of showing validation errors.
+- Telegram verify keeps all logic; new layout ("Tasdiqlanadigan raqam: … ✎", stepper, green
+  waiting pill with countdown, success check).
+- Android native launch background is now `#0B0D12` (`res/values/colors.xml`), matching the splash.
+- New ARB keys: `authTagline`, `authEnterNumber`, `authSkip`, `authOr`, `authClear`,
+  `tgVerifyingNumber`.
+- **Verified:** `flutter analyze` clean, 52 tests (6 new: `phone_number_field_test.dart`). On the
+  iPhone 17 simulator against the local backend: splash, login, register (light + dark), and the
+  real Telegram start → bot link opened in Safari → back to the waiting screen. The Pixel_9a
+  emulator couldn't be used (only ~595 MB free, the 180 MB debug APK failed to install).
+  **Not checked live:** the keyboard-open layout and typed input (no tap/type tooling in the
+  simulator; input is covered by widget tests).
+
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
 priority) a real-time layer — all as **new NestJS + PostgreSQL infrastructure**, never a
@@ -1579,7 +1618,9 @@ Every milestone should be verified against the **real, running** Optom Savdo bac
    check the printed `PORT` in the startup log; it's not always 4004, e.g. it ran on 4005 during
    Milestone 2 verification because something else already held 4004 locally).
 2. **Point bsmart at it**: edit `bsmart/.env`'s `API_BASE_URL`. From an Android emulator, the host
-   machine's `localhost` is reachable at `10.0.2.2` — e.g. `http://10.0.2.2:4005/api`. Revert to
+   machine's `localhost` is reachable at `10.0.2.2` — e.g. `http://10.0.2.2:4005/api`. The same
+   value works on the iOS Simulator: `Env` rewrites `10.0.2.2` → `localhost` on iOS (a real iOS
+   device needs the Mac's LAN IP, e.g. `http://192.168.x.x:4005/api`). Revert to
    the `.env.example` default (`http://localhost:3000/api`) when done, so the repo's checked-in
    default stays sane for the next session.
 3. **You need a real SELLER/RETAILER account** — there is no self-registration for these roles

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:bsmart/core/router/route_names.dart';
-import 'package:bsmart/core/theme/app_motion.dart';
+import 'package:bsmart/features/auth/presentation/widgets/auth_scaffold.dart';
+import 'package:bsmart/features/auth/presentation/widgets/auth_sheet_header.dart';
+import 'package:bsmart/features/auth/presentation/widgets/auth_theme.dart';
+import 'package:bsmart/features/auth/presentation/widgets/phone_number_field.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
-import 'package:bsmart/shared/widgets/language_picker.dart';
 
 /// Customer self-registration (Phase 6) — phone only; the number is confirmed
 /// through the Telegram verify bot ([RouteNames.telegramVerify]) and the new
@@ -25,87 +25,63 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _form = FormGroup({
-    'phone': FormControl<String>(
-      value: '+998',
-      validators: [Validators.required, Validators.pattern(r'^\+998\d{9}$')],
-    ),
-  });
+  final _phone = TextEditingController();
 
   @override
   void dispose() {
-    _form.dispose();
+    _phone.dispose();
     super.dispose();
   }
 
   void _submit() {
-    if (_form.invalid) {
-      _form.markAllAsTouched();
-      return;
-    }
-    context.push(RouteNames.telegramVerifyFor(_form.control('phone').value as String));
+    final phone = PhoneNumberField.e164(_phone.text);
+    if (phone == null) return;
+    FocusScope.of(context).unfocus();
+    context.push(RouteNames.telegramVerifyFor(phone));
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = context.l10n;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.commonRegister), actions: const [LanguagePickerButton()]),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: ReactiveForm(
-            formGroup: _form,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'bsmart',
-                  style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(duration: AppMotion.slow).slideY(begin: 0.1, end: 0),
-                const SizedBox(height: 8),
-                Text(
-                  l10n.registerSubtitle,
-                  style: theme.textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(delay: AppMotion.fast, duration: AppMotion.slow),
-                const SizedBox(height: 32),
-                ReactiveTextField<String>(
-                  formControlName: 'phone',
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    labelText: l10n.authPhoneLabel,
-                    hintText: '+998901234567',
-                    prefixIcon: Icon(Icons.phone_outlined),
-                    border: OutlineInputBorder(),
-                  ),
-                  validationMessages: {
-                    ValidationMessage.required: (_) => l10n.authPhoneRequired,
-                    ValidationMessage.pattern: (_) => l10n.authPhoneFormat,
-                  },
-                  onSubmitted: (_) => _submit(),
-                ),
-                const SizedBox(height: 12),
-                Text(l10n.registerHint, style: theme.textTheme.bodySmall),
-                const SizedBox(height: 24),
-                FilledButton.icon(
-                  onPressed: _submit,
-                  icon: const Icon(Icons.telegram),
-                  label: Text(l10n.registerWithTelegram),
-                  style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-                ),
-                const SizedBox(height: 12),
-                TextButton(
-                  onPressed: () => context.go(RouteNames.login),
-                  child: Text(l10n.registerHaveAccount),
-                ),
-              ],
-            ),
+    return AuthScaffold(
+      // Builder: read AuthColors/text styles from inside AuthScaffold's theme.
+      child: Builder(builder: (context) => _form(context, l10n)),
+    );
+  }
+
+  Widget _form(BuildContext context, AppLocalizations l10n) {
+    final colors = AuthColors.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AuthSheetHeader(title: l10n.commonRegister, subtitle: l10n.registerSubtitle),
+        const SizedBox(height: 24),
+        PhoneNumberField(controller: _phone, onSubmitted: _submit),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(color: colors.field, borderRadius: BorderRadius.circular(14)),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.info_outline_rounded, size: 20, color: colors.accentText),
+              const SizedBox(width: 10),
+              Expanded(child: Text(l10n.registerHint, style: Theme.of(context).textTheme.bodySmall)),
+            ],
           ),
         ),
-      ),
+        const SizedBox(height: 20),
+        ValueListenableBuilder<TextEditingValue>(
+          valueListenable: _phone,
+          builder: (context, value, _) => FilledButton.icon(
+            onPressed: PhoneNumberField.e164(value.text) == null ? null : _submit,
+            icon: const Icon(Icons.telegram, size: 22),
+            label: Text(l10n.registerWithTelegram),
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextButton(onPressed: () => context.go(RouteNames.login), child: Text(l10n.registerHaveAccount)),
+      ],
     );
   }
 }

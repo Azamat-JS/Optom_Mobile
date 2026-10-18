@@ -196,6 +196,42 @@ abstract class AppLocalizations {
   /// **'Format: +998XXXXXXXXX'**
   String get authPhoneFormat;
 
+  /// No description provided for @authTagline.
+  ///
+  /// In uz, this message translates to:
+  /// **'Aqlli savdo, yaxlit biznes'**
+  String get authTagline;
+
+  /// No description provided for @authEnterNumber.
+  ///
+  /// In uz, this message translates to:
+  /// **'Raqamingizni kiriting'**
+  String get authEnterNumber;
+
+  /// No description provided for @authSkip.
+  ///
+  /// In uz, this message translates to:
+  /// **'Keyinroq'**
+  String get authSkip;
+
+  /// No description provided for @authOr.
+  ///
+  /// In uz, this message translates to:
+  /// **'yoki'**
+  String get authOr;
+
+  /// No description provided for @authClear.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tozalash'**
+  String get authClear;
+
+  /// No description provided for @tgVerifyingNumber.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlanadigan raqam'**
+  String get tgVerifyingNumber;
+
   /// No description provided for @loginSubtitle.
   ///
   /// In uz, this message translates to:

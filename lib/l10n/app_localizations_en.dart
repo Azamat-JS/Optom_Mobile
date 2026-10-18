@@ -70,6 +70,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPhoneFormat => 'Format: +998XXXXXXXXX';
 
   @override
+  String get authTagline => 'Smart trade, whole business';
+
+  @override
+  String get authEnterNumber => 'Enter your number';
+
+  @override
+  String get authSkip => 'Later';
+
+  @override
+  String get authOr => 'or';
+
+  @override
+  String get authClear => 'Clear';
+
+  @override
+  String get tgVerifyingNumber => 'Number to confirm';
+
+  @override
   String get loginSubtitle => 'Sign in to Optom Savdo';
 
   @override

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Same near-black as the Flutter splash (AppColors.ink), so the
+         native launch window and the first Flutter frame match. -->
+    <color name="launch_ink">#0B0D12</color>
+</resources>

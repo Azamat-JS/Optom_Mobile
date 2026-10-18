@@ -70,6 +70,24 @@ class AppLocalizationsUz extends AppLocalizations {
   String get authPhoneFormat => 'Format: +998XXXXXXXXX';
 
   @override
+  String get authTagline => 'Aqlli savdo, yaxlit biznes';
+
+  @override
+  String get authEnterNumber => 'Raqamingizni kiriting';
+
+  @override
+  String get authSkip => 'Keyinroq';
+
+  @override
+  String get authOr => 'yoki';
+
+  @override
+  String get authClear => 'Tozalash';
+
+  @override
+  String get tgVerifyingNumber => 'Tasdiqlanadigan raqam';
+
+  @override
   String get loginSubtitle => 'Optom Savdo tizimiga kirish';
 
   @override

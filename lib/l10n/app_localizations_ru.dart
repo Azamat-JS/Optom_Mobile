@@ -70,6 +70,24 @@ class AppLocalizationsRu extends AppLocalizations {
   String get authPhoneFormat => 'Формат: +998XXXXXXXXX';
 
   @override
+  String get authTagline => 'Умная торговля, цельный бизнес';
+
+  @override
+  String get authEnterNumber => 'Введите номер';
+
+  @override
+  String get authSkip => 'Позже';
+
+  @override
+  String get authOr => 'или';
+
+  @override
+  String get authClear => 'Очистить';
+
+  @override
+  String get tgVerifyingNumber => 'Подтверждаемый номер';
+
+  @override
   String get loginSubtitle => 'Вход в систему Optom Savdo';
 
   @override

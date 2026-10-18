@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:bsmart/core/network/api_exception.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/features/auth/presentation/widgets/auth_scaffold.dart';
+import 'package:bsmart/features/auth/presentation/widgets/auth_sheet_header.dart';
+import 'package:bsmart/features/auth/presentation/widgets/phone_number_field.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
-import 'package:bsmart/shared/widgets/language_picker.dart';
 
 /// One login screen for every role — SELLER/RETAILER (+ their `_ADMIN`
 /// staff) and `CUSTOMER`s alike (the storefront's guest flow lands here
@@ -21,6 +22,9 @@ import 'package:bsmart/shared/widgets/language_picker.dart';
 /// a new `CUSTOMER` account. Phone + password stays as an optional fallback
 /// behind "Parol bilan kirish"; SELLER/RETAILER accounts are still only
 /// provisioned by SUPER_ADMIN, never self-service.
+///
+/// Buttons stay disabled (grey) until the input is complete, instead of
+/// showing validation errors.
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -29,37 +33,37 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _form = FormGroup({
-    'phone': FormControl<String>(value: '+998', validators: [Validators.required, Validators.pattern(r'^\+998\d{9}$')]),
-    'password': FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
-  });
+  static const _minPasswordLength = 6;
+
+  final _phone = TextEditingController();
+  final _password = TextEditingController();
+  late final _inputs = Listenable.merge([_phone, _password]);
 
   bool _obscurePassword = true;
   bool _showPassword = false;
 
   @override
   void dispose() {
-    _form.dispose();
+    _phone.dispose();
+    _password.dispose();
     super.dispose();
   }
 
+  String? get _e164 => PhoneNumberField.e164(_phone.text);
+
+  bool get _canLoginWithPassword => _e164 != null && _password.text.length >= _minPasswordLength;
+
   void _continueWithTelegram() {
-    final phone = _form.control('phone');
-    if (phone.invalid) {
-      phone.markAsTouched();
-      return;
-    }
-    context.push(RouteNames.telegramVerifyFor(phone.value as String));
+    final phone = _e164;
+    if (phone == null) return;
+    FocusScope.of(context).unfocus();
+    context.push(RouteNames.telegramVerifyFor(phone));
   }
 
-  void _submit() {
-    if (_form.invalid) {
-      _form.markAllAsTouched();
-      return;
-    }
-    final phone = _form.control('phone').value as String;
-    final password = _form.control('password').value as String;
-    ref.read(sessionNotifierProvider.notifier).login(phone: phone, password: password);
+  void _submitPassword() {
+    if (!_canLoginWithPassword) return;
+    FocusScope.of(context).unfocus();
+    ref.read(sessionNotifierProvider.notifier).login(phone: _e164!, password: _password.text);
   }
 
   @override
@@ -76,104 +80,89 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final isLoading = ref.watch(sessionNotifierProvider).isLoading;
     final l10n = context.l10n;
 
-    return Scaffold(
-      // Language is picked right here: a signed-out user can't reach Settings.
-      appBar: AppBar(actions: const [LanguagePickerButton()]),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: ReactiveForm(
-              formGroup: _form,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'bsmart',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ).animate().fadeIn(duration: AppMotion.slow).slideY(begin: 0.1, end: 0),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.loginSubtitle,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ).animate().fadeIn(delay: AppMotion.fast, duration: AppMotion.slow),
-                  const SizedBox(height: 32),
-                  ReactiveTextField<String>(
-                    formControlName: 'phone',
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      labelText: l10n.authPhoneLabel,
-                      hintText: '+998901234567',
-                      prefixIcon: Icon(Icons.phone_outlined),
-                      border: OutlineInputBorder(),
-                    ),
-                    validationMessages: {
-                      ValidationMessage.required: (_) => l10n.authPhoneRequired,
-                      ValidationMessage.pattern: (_) => l10n.authPhoneFormat,
-                    },
-                  ).animate().fadeIn(delay: AppMotion.standard),
-                  const SizedBox(height: 16),
-                  FilledButton.icon(
-                    onPressed: isLoading ? null : _continueWithTelegram,
-                    icon: const Icon(Icons.telegram),
-                    label: Text(l10n.loginContinueWithTelegram),
-                    style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-                  ).animate().fadeIn(delay: AppMotion.standard + AppMotion.fast),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.loginAccountAutoCreated,
-                    style: Theme.of(context).textTheme.bodySmall,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  if (!_showPassword)
-                    TextButton(
-                      onPressed: () => setState(() => _showPassword = true),
-                      child: Text(l10n.loginWithPassword),
-                    )
-                  else
-                    ..._passwordFields(isLoading),
-                ],
-              ),
+    return AuthScaffold(
+      // `context` below is inside AuthScaffold's theme.
+      child: ListenableBuilder(
+        listenable: _inputs,
+        builder: (context, _) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AuthSheetHeader(title: l10n.authEnterNumber, subtitle: l10n.loginSubtitle),
+            const SizedBox(height: 24),
+            PhoneNumberField(
+              controller: _phone,
+              enabled: !isLoading,
+              onSubmitted: _showPassword ? null : _continueWithTelegram,
             ),
-          ),
+            const SizedBox(height: 20),
+            FilledButton.icon(
+              onPressed: isLoading || _e164 == null ? null : _continueWithTelegram,
+              icon: const Icon(Icons.telegram, size: 22),
+              label: Text(l10n.loginContinueWithTelegram),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              l10n.loginAccountAutoCreated,
+              style: Theme.of(context).textTheme.bodySmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            AnimatedSwitcher(
+              duration: AppMotion.standard,
+              child: _showPassword
+                  ? _passwordSection(isLoading)
+                  : Column(
+                      key: const ValueKey('password-collapsed'),
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AuthOrDivider(label: l10n.authOr),
+                        const SizedBox(height: 8),
+                        TextButton.icon(
+                          onPressed: isLoading ? null : () => setState(() => _showPassword = true),
+                          icon: const Icon(Icons.lock_outline_rounded, size: 20),
+                          label: Text(l10n.loginWithPassword),
+                        ),
+                      ],
+                    ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  List<Widget> _passwordFields(bool isLoading) {
+  Widget _passwordSection(bool isLoading) {
     final l10n = context.l10n;
-    return [
-      ReactiveTextField<String>(
-        formControlName: 'password',
-        obscureText: _obscurePassword,
-        decoration: InputDecoration(
-          labelText: l10n.loginPasswordLabel,
-          prefixIcon: const Icon(Icons.lock_outline),
-          border: const OutlineInputBorder(),
-          suffixIcon: IconButton(
-            icon: Icon(_obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+    return Column(
+      key: const ValueKey('password-open'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextField(
+          controller: _password,
+          enabled: !isLoading,
+          obscureText: _obscurePassword,
+          autofocus: true,
+          autofillHints: const [AutofillHints.password],
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) => _submitPassword(),
+          decoration: InputDecoration(
+            labelText: l10n.loginPasswordLabel,
+            helperText: l10n.loginPasswordMinLength,
+            prefixIcon: const Icon(Icons.lock_outline_rounded),
+            suffixIcon: IconButton(
+              icon: Icon(_obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+            ),
           ),
         ),
-        validationMessages: {
-          ValidationMessage.required: (_) => l10n.loginPasswordRequired,
-          ValidationMessage.minLength: (_) => l10n.loginPasswordMinLength,
-        },
-        onSubmitted: (_) => _submit(),
-      ).animate().fadeIn(duration: AppMotion.standard),
-      const SizedBox(height: 16),
-      OutlinedButton(
-        onPressed: isLoading ? null : _submit,
-        style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-        child: isLoading
-            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-            : Text(l10n.commonLogin),
-      ).animate().fadeIn(duration: AppMotion.standard),
-    ];
+        const SizedBox(height: 16),
+        OutlinedButton(
+          onPressed: isLoading || !_canLoginWithPassword ? null : _submitPassword,
+          child: isLoading
+              ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2.4))
+              : Text(l10n.commonLogin),
+        ),
+      ],
+    ).animate().fadeIn(duration: AppMotion.standard).slideY(begin: 0.1, end: 0);
   }
 }
