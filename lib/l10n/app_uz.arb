@@ -888,5 +888,40 @@
         "type": "String"
       }
     }
+  },
+  "cartEmptyTitle": "Savatingiz bo'sh",
+  "cartEmptyHint": "Do'konlardan yoqqan mahsulotlarni qo'shing — ular shu yerda paydo bo'ladi.",
+  "cartStartShopping": "Xarid qilish",
+  "cartAddMore": "Yana qo'shish",
+  "cartRemove": "O'chirish",
+  "cartClear": "Savatni tozalash",
+  "cartClearConfirm": "Savatdagi barcha mahsulotlar o'chiriladi.",
+  "cartBillTitle": "To'lov tafsilotlari",
+  "cartItemsTotal": "Mahsulotlar",
+  "cartDelivery": "Yetkazib berish",
+  "cartDeliveryAgreed": "Do'kon bilan kelishiladi",
+  "cartToPay": "Jami",
+  "cartNoteLabel": "ESLATMA:",
+  "cartNote": "Buyurtmani do'kon tasdiqlaydi. To'lov va yetkazib berish shartlarini do'kon siz bilan kelishadi.",
+  "cartCheckout": "Rasmiylashtirish",
+  "cartUnitPrice": "{price} / {unit}",
+  "@cartUnitPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "enumProductUnitShort": "{unit, select, dona{dona} metr{m} litr{l} kilogram{kg} gram{g} blok{blok} other{}}",
+  "@enumProductUnitShort": {
+    "description": "Short unit for prices (\"20 000 so'm / kg\"); keyed by ProductUnit enum name.",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
   }
 }

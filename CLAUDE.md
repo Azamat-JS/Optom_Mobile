@@ -1576,7 +1576,11 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 | U2b | Storefront search screen: recent searches, live suggestions, results tabs + filter chips | 🟢 Done 2026-10-18 |
 | U2c | Shop page: header card, branch ("outlet") sheet, in-shop search, collapsible category sections, product grid with ADD/stepper, "Menyu" jump FAB | 🟢 Done 2026-10-18 |
 | U2d | Product detail + masonry "explore" grid | 🟢 Done 2026-10-18 |
-| U3+ | Next areas, as the user sends references | ⚪ |
+| G1 | Global brand theme for every not-yet-redesigned screen (`AppTheme`) | 🟢 Done 2026-10-18 |
+| U3a | Cart tab (Swiggy cart reference) | 🟢 Done 2026-10-18 |
+| U3b | Checkout: address step (map pin + saved/recent addresses), order summary, "Buyurtma berildi" success screen | ⚪ |
+| U3c | Order tracking (map + status card) | ⚪ |
+| U4+ | Next areas, as the user sends references | ⚪ |
 
 **U1 notes (2026-10-18):**
 - **Scoped theme:** the brand look is applied only inside the auth flow, via
@@ -1747,6 +1751,59 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
   - Light and dark screenshots of the product page, the mosaic and the shop page.
 - **Not checked live:** photo swiping with real images (local product images 404 on ImageKit),
   the read-more toggle (no local description over 120 chars), Russian/English layouts.
+
+**G1 notes (2026-10-18), global theme:**
+- `lib/core/theme/app_theme.dart` was rewritten in the brand: Manrope, the neutral grey surfaces,
+  and `BrandColors` registered globally (so `BrandColors.of` works anywhere). The old green seed is
+  gone. `BrandTheme` stays as the local theme of the redesigned screens, whose buttons are full
+  width.
+- **Colour roles:**
+  - `colorScheme.primary` = **dark gold `#8A5D00` in light mode, logo yellow in dark mode**. About
+    20 existing widgets use `primary` for text, icons and chart lines, where logo yellow on white is
+    unreadable.
+  - Filled buttons, the FAB, and the navigation bar/rail indicator are explicitly **logo yellow
+    with near-black content**.
+  - `secondaryContainer` is a pale yellow, which colours selected segmented buttons and chips.
+- **Global buttons keep their natural width** (`minimumSize 64×48`, not `Size.fromHeight`), so
+  existing rows of buttons lay out as before.
+- Also themed: app bar (flat, bold title), cards (radius 18, hairline border, no tint), inputs
+  (rounded, gold floating label), dialogs, bottom sheets, tabs, chips, snackbars and badges.
+  Semantic status colours (green/red badges, map marker colours) were left as they are.
+- **Verified:**
+  - `flutter analyze` clean, 65 unit tests.
+  - A temporary on-device test logged in as a throwaway local SELLER (created with a Prisma
+    script, deleted afterwards). It opened home + products, new product, orders, customers, POS,
+    sales, debts, stores, admins, expenditures, reports and settings in **light and dark** with no
+    layout errors (an overflow fails an integration test), with a screenshot of each.
+  - The storefront integration test: 33/33. Its hero-search tap now targets the search bar's
+    semantics label instead of the rotating hint text, which was flaky mid-rotation.
+- **Not checked:** WAITER/COURIER/SUPER_ADMIN screens, the customer Savat/Sevimlilar/Profil tabs
+  (seen only through the theme, not opened in a test), Russian/English text lengths.
+
+**U3a notes (2026-10-18), cart tab:**
+- The user's ordering references (Swiggy Instamart cart → address → pay → "Order received" →
+  tracking) are split: U3a cart, U3b checkout, U3c tracking.
+- `storefront_cart_tab.dart` was rewritten under the brand theme (the shell gives it a `Theme` and
+  no AppBar; `onStartShopping` switches to the catalog tab). Grey page with white cards:
+  - Header "Savat" + clear-cart (confirm dialog).
+  - Shop card (→ shop page with the cart's branch).
+  - Item rows: photo, name, "price / short unit", dotted "O'chirish", the shared `AddToCartButton`
+    stepper, line total. "Yana qo'shish" opens the shop.
+  - "Shu do'kondan yana" rail with + buttons (same shop/branch, in stock, not already in the cart).
+  - Bill card ("TO'LOV TAFSILOTLARI": items, "Yetkazib berish: Do'kon bilan kelishiladi", Jami).
+  - "ESLATMA" note: the shop confirms and agrees payment/delivery.
+  - Sticky yellow "Rasmiylashtirish · total →" (guests → login via the existing redirect).
+  - Empty state with "Xarid qilish".
+- **Left out on purpose (no backend):** fees, coupons, tips, online payment / "slide to pay", CVV.
+  Checkout stays `POST /orders` and the shop settles payment.
+- New `ProductUnit.shortLabel` (ARB `enumProductUnitShort`: kg, g, l, m, dona/шт/pc, blok), now
+  used for stock and price units across the storefront (it was the long "kilogramm").
+- **Verified:** `flutter analyze` clean, 65 unit tests. The on-device integration test now has
+  **40/40 steps**. New steps: empty cart → "Xarid qilish", add 2 from a shop → cart (2 products,
+  bill card), stepper +, "O'chirish", guest checkout → login, clear cart. The test now drags only
+  hit-testable scroll views, because the `IndexedStack` keeps hidden tabs in the tree.
+  Screenshots on the iPhone 17 simulator.
+- **Not checked:** the cart in dark mode, a logged-in checkout (U3b).
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

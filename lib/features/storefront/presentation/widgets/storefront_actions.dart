@@ -30,7 +30,7 @@ void addToStorefrontCart(BuildContext context, WidgetRef ref, StorefrontProduct 
 String stockLabel(StorefrontProduct product) {
   final stock = product.stock;
   final quantity = stock == stock.roundToDouble() ? stock.toInt().toString() : stock.toStringAsFixed(1);
-  final unit = product.unit?.label.toLowerCase();
+  final unit = product.unit?.shortLabel;
   return unit == null ? quantity : '$quantity $unit';
 }
 

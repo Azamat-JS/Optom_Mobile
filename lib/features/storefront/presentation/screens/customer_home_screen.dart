@@ -19,8 +19,8 @@ import 'package:bsmart/core/l10n/l10n.dart';
 /// route itself carries no login requirement — see `app_router.dart`'s
 /// guest-allowed list; each tab decides its own guest-vs-logged-in content.
 ///
-/// Phase 9 U2a: the Katalog tab and the tab bar use the brand theme; the
-/// Katalog tab draws its own dark header instead of an AppBar. The other
+/// Phase 9 U2a/U3a: the Katalog and Savat tabs and the tab bar use the brand
+/// theme and draw their own headers instead of an AppBar. The other
 /// tabs keep the app theme until they are redesigned.
 class CustomerHomeScreen extends ConsumerStatefulWidget {
   const CustomerHomeScreen({super.key});
@@ -31,6 +31,7 @@ class CustomerHomeScreen extends ConsumerStatefulWidget {
 
 class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
   static const _catalogTab = 0;
+  static const _cartTab = 1;
   static const _profileTab = 3;
 
   int _tabIndex = _catalogTab;
@@ -43,7 +44,7 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
     final brandTheme = BrandTheme.of(context);
 
     return Scaffold(
-      appBar: _tabIndex == _catalogTab ? null : AppBar(title: Text(titles[_tabIndex])),
+      appBar: _tabIndex == _catalogTab || _tabIndex == _cartTab ? null : AppBar(title: Text(titles[_tabIndex])),
       body: IndexedStack(
         index: _tabIndex,
         children: [
@@ -51,7 +52,10 @@ class _CustomerHomeScreenState extends ConsumerState<CustomerHomeScreen> {
             data: brandTheme,
             child: StorefrontCatalogTab(onOpenProfile: () => setState(() => _tabIndex = _profileTab)),
           ),
-          const StorefrontCartTab(),
+          Theme(
+            data: brandTheme,
+            child: StorefrontCartTab(onStartShopping: () => setState(() => _tabIndex = _catalogTab)),
+          ),
           const FavoritesTab(),
           const StorefrontProfileTab(),
         ],

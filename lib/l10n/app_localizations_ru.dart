@@ -1689,4 +1689,70 @@ class AppLocalizationsRu extends AppLocalizations {
   String sfInCart(String quantity) {
     return 'В корзине: $quantity';
   }
+
+  @override
+  String get cartEmptyTitle => 'Корзина пуста';
+
+  @override
+  String get cartEmptyHint =>
+      'Добавляйте понравившиеся товары из магазинов — они появятся здесь.';
+
+  @override
+  String get cartStartShopping => 'За покупками';
+
+  @override
+  String get cartAddMore => 'Добавить ещё';
+
+  @override
+  String get cartRemove => 'Удалить';
+
+  @override
+  String get cartClear => 'Очистить корзину';
+
+  @override
+  String get cartClearConfirm => 'Все товары будут удалены из корзины.';
+
+  @override
+  String get cartBillTitle => 'Детали оплаты';
+
+  @override
+  String get cartItemsTotal => 'Товары';
+
+  @override
+  String get cartDelivery => 'Доставка';
+
+  @override
+  String get cartDeliveryAgreed => 'По договорённости с магазином';
+
+  @override
+  String get cartToPay => 'Итого';
+
+  @override
+  String get cartNoteLabel => 'ВАЖНО:';
+
+  @override
+  String get cartNote =>
+      'Заказ подтверждает магазин. Условия оплаты и доставки магазин согласует с вами.';
+
+  @override
+  String get cartCheckout => 'Оформить';
+
+  @override
+  String cartUnitPrice(String price, String unit) {
+    return '$price / $unit';
+  }
+
+  @override
+  String enumProductUnitShort(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'dona': 'шт',
+      'metr': 'м',
+      'litr': 'л',
+      'kilogram': 'кг',
+      'gram': 'г',
+      'blok': 'блок',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }

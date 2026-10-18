@@ -1679,4 +1679,70 @@ class AppLocalizationsEn extends AppLocalizations {
   String sfInCart(String quantity) {
     return 'In cart: $quantity';
   }
+
+  @override
+  String get cartEmptyTitle => 'Your cart is empty';
+
+  @override
+  String get cartEmptyHint =>
+      'Add products you like from the shops — they\'ll show up here.';
+
+  @override
+  String get cartStartShopping => 'Start shopping';
+
+  @override
+  String get cartAddMore => 'Add more items';
+
+  @override
+  String get cartRemove => 'Remove';
+
+  @override
+  String get cartClear => 'Clear cart';
+
+  @override
+  String get cartClearConfirm => 'All products will be removed from the cart.';
+
+  @override
+  String get cartBillTitle => 'Bill details';
+
+  @override
+  String get cartItemsTotal => 'Items';
+
+  @override
+  String get cartDelivery => 'Delivery';
+
+  @override
+  String get cartDeliveryAgreed => 'Agreed with the shop';
+
+  @override
+  String get cartToPay => 'Total';
+
+  @override
+  String get cartNoteLabel => 'NOTE:';
+
+  @override
+  String get cartNote =>
+      'The shop confirms your order and agrees payment and delivery with you.';
+
+  @override
+  String get cartCheckout => 'Checkout';
+
+  @override
+  String cartUnitPrice(String price, String unit) {
+    return '$price / $unit';
+  }
+
+  @override
+  String enumProductUnitShort(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'dona': 'pc',
+      'metr': 'm',
+      'litr': 'L',
+      'kilogram': 'kg',
+      'gram': 'g',
+      'blok': 'block',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }

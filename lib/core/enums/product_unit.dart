@@ -10,30 +10,32 @@ enum ProductUnit {
   blok;
 
   static ProductUnit fromWire(String value) => switch (value) {
-        'DONA' => ProductUnit.dona,
-        'METR' => ProductUnit.metr,
-        'LITR' => ProductUnit.litr,
-        'KILOGRAM' => ProductUnit.kilogram,
-        'GRAM' => ProductUnit.gram,
-        'BLOK' => ProductUnit.blok,
-        _ => throw ArgumentError('Unknown ProductUnit from backend: $value'),
-      };
+    'DONA' => ProductUnit.dona,
+    'METR' => ProductUnit.metr,
+    'LITR' => ProductUnit.litr,
+    'KILOGRAM' => ProductUnit.kilogram,
+    'GRAM' => ProductUnit.gram,
+    'BLOK' => ProductUnit.blok,
+    _ => throw ArgumentError('Unknown ProductUnit from backend: $value'),
+  };
 
   String toWire() => switch (this) {
-        ProductUnit.dona => 'DONA',
-        ProductUnit.metr => 'METR',
-        ProductUnit.litr => 'LITR',
-        ProductUnit.kilogram => 'KILOGRAM',
-        ProductUnit.gram => 'GRAM',
-        ProductUnit.blok => 'BLOK',
-      };
+    ProductUnit.dona => 'DONA',
+    ProductUnit.metr => 'METR',
+    ProductUnit.litr => 'LITR',
+    ProductUnit.kilogram => 'KILOGRAM',
+    ProductUnit.gram => 'GRAM',
+    ProductUnit.blok => 'BLOK',
+  };
 
   /// Uzbek display label, matching the reference web app's copy.
   String get label => appL10n.enumProductUnit(name);
 
+  /// Short form for prices and stock ("kg", "dona", "l").
+  String get shortLabel => appL10n.enumProductUnitShort(name);
+
   /// Quantity input should accept fractional amounts for these units (a
   /// decimal keyboard + kg/g/l label) vs. an integer stepper for the rest —
   /// see the implementation plan's Milestone 2 edge cases.
-  bool get isWeighable =>
-      this == ProductUnit.kilogram || this == ProductUnit.gram || this == ProductUnit.litr;
+  bool get isWeighable => this == ProductUnit.kilogram || this == ProductUnit.gram || this == ProductUnit.litr;
 }

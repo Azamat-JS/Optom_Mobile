@@ -8,6 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'package:bsmart/bootstrap.dart';
+import 'package:bsmart/features/storefront/presentation/widgets/storefront_actions.dart';
+import 'package:bsmart/features/storefront/presentation/widgets/storefront_bottom_nav.dart';
 import 'package:bsmart/features/storefront/presentation/widgets/storefront_masonry.dart';
 import 'package:bsmart/features/storefront/presentation/widgets/storefront_search_parts.dart';
 import 'package:bsmart/features/storefront/presentation/widgets/storefront_shop_parts.dart';
@@ -29,7 +31,7 @@ Future<void> waitFor(WidgetTester t, Finder f, {int timeoutMs = 15000, String? w
 /// Drags the main list by [step] until [f] has at least one match.
 Future<void> scrollToFind(WidgetTester t, Finder f, {double step = -300, int maxDrags = 40}) async {
   for (var i = 0; i < maxDrags && f.evaluate().isEmpty; i++) {
-    await t.drag(mainScroll.first, Offset(0, step));
+    await t.drag(mainScroll.hitTestable().first, Offset(0, step));
     await pumpFor(t, 400);
   }
   if (f.evaluate().isEmpty) fail('Could not scroll to $f');
@@ -48,7 +50,7 @@ Future<void> tapVisible(WidgetTester t, Finder f) async {
         return;
       }
     }
-    await t.drag(mainScroll.first, const Offset(0, -200));
+    await t.drag(mainScroll.hitTestable().first, const Offset(0, -200));
     await pumpFor(t, 400);
   }
   fail('No tappable $f');
@@ -56,8 +58,9 @@ Future<void> tapVisible(WidgetTester t, Finder f) async {
 
 /// Scrolls the page back to the top, then taps the header's back arrow.
 Future<void> backFromTop(WidgetTester t) async {
-  // `.last` = the top route (a covered route can still be in the tree).
-  await t.drag(mainScroll.last, const Offset(0, 6000));
+  // hitTestable: only the scroll view that can actually receive the gesture
+  // (a covered route or a hidden IndexedStack tab is still in the tree).
+  await t.drag(mainScroll.hitTestable().first, const Offset(0, 6000));
   await pumpFor(t, 800);
   await t.tap(find.byIcon(Icons.arrow_back_rounded).last);
   await pumpFor(t, 1200);
@@ -179,7 +182,7 @@ void main() {
 
     // --- Favourites segment as a guest ----------------------------------------
     await scrollToFind(t, find.text('SEVIMLILAR'), step: 400);
-    await t.drag(mainScroll.first, const Offset(0, 300));
+    await t.drag(mainScroll.hitTestable().first, const Offset(0, 300));
     await pumpFor(t, 600);
     await t.tap(find.text('SEVIMLILAR'));
     await waitFor(t, find.textContaining('hisobingizga kiring'), why: 'guest favourites prompt');
@@ -189,9 +192,9 @@ void main() {
 
     // --- Search: open, type, suggestions -------------------------------------
     await scrollToFind(t, find.textContaining('ni qidiring'), step: 400);
-    await t.drag(mainScroll.first, const Offset(0, 2000));
+    await t.drag(mainScroll.hitTestable().first, const Offset(0, 2000));
     await pumpFor(t, 800);
-    await t.tap(find.textContaining('ni qidiring'));
+    await t.tap(find.bySemanticsLabel("Mahsulot va do'konlarni qidiring")); // the bar, not the rotating hint
     await waitFor(t, find.text("Mahsulot va do'konlarni qidiring"), why: 'search screen');
     ok('hero search → search screen');
     await t.enterText(find.byType(TextField), 'soat');
@@ -269,6 +272,66 @@ void main() {
     await t.tap(find.byIcon(Icons.arrow_back_rounded));
     await waitFor(t, find.text('Xush kelibsiz!'), why: 'back home');
     ok('back → home');
+
+    // --- U3a: cart tab -----------------------------------------------------------
+    void shot(String name) {
+      // ignore: avoid_print
+      print('SHOT:$name');
+    }
+
+    await t.tap(find.descendant(of: find.byType(StorefrontBottomNav), matching: find.text('Savat')));
+    await waitFor(t, find.text("Savatingiz bo'sh"), why: 'empty cart');
+    shot('cart_empty');
+    await pumpFor(t, 2500);
+    ok('empty cart state');
+    await t.tap(find.text('Xarid qilish'));
+    await waitFor(t, find.text('Xush kelibsiz!'), why: 'back to catalog');
+    ok('"Xarid qilish" → catalog');
+
+    await t.tap(find.text('Davron market').first);
+    await waitFor(t, find.byType(ShopSectionHeader), why: 'shop for cart');
+    await tapVisible(t, find.text("QO'SHISH"));
+    await pumpFor(t, 1200);
+    await tapVisible(t, find.text("QO'SHISH"));
+    await pumpFor(t, 1200);
+    await backFromTop(t);
+    await waitFor(t, find.text('Xush kelibsiz!'), why: 'home after adding');
+
+    await t.tap(find.descendant(of: find.byType(StorefrontBottomNav), matching: find.text('Savat')));
+    await waitFor(t, find.text('2 ta mahsulot'), why: 'cart with items');
+    shot('cart_full');
+    await pumpFor(t, 2500);
+    // The bill card is below the fold (the list builds lazily).
+    await scrollToFind(t, find.text("TO'LOV TAFSILOTLARI"));
+    shot('cart_bill');
+    await pumpFor(t, 2500);
+    await t.drag(mainScroll.hitTestable().first, const Offset(0, 3000));
+    await pumpFor(t, 800);
+    ok('cart: 2 products, bill card');
+
+    final firstStepper = find.byType(AddToCartButton).first;
+    await t.tap(find.descendant(of: firstStepper, matching: find.byIcon(Icons.add_rounded)));
+    await pumpFor(t, 500);
+    expect(find.descendant(of: firstStepper, matching: find.text('2')), findsOneWidget);
+    ok('cart stepper + → 2');
+
+    await t.tap(find.text("O'chirish").first);
+    await pumpFor(t, 600);
+    expect(find.text('1 ta mahsulot'), findsOneWidget);
+    ok('"O\'chirish" removes a line');
+
+    await t.tap(find.text('Rasmiylashtirish'));
+    await waitFor(t, find.text('Parol bilan kirish'), why: 'guest checkout → login');
+    ok('guest checkout → login');
+    await t.tap(find.byIcon(Icons.arrow_back_rounded).last);
+    await waitFor(t, find.text('1 ta mahsulot'), why: 'back to cart');
+    await pumpFor(t, 1200); // let the back transition finish
+
+    await t.tap(find.byTooltip('Savatni tozalash'));
+    await waitFor(t, find.byType(AlertDialog), why: 'clear dialog');
+    await t.tap(find.widgetWithText(TextButton, 'Savatni tozalash'));
+    await waitFor(t, find.text("Savatingiz bo'sh"), why: 'cleared cart');
+    ok('clear cart → empty');
 
     // ignore: avoid_print
     print('ALL STEPS:\n${log.join('\n')}');

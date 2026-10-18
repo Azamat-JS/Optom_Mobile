@@ -461,5 +461,30 @@
   "sfOpenShop": "В магазин",
   "sfExploreShop": "Смотреть с фото",
   "sfUnitLabel": "Единица: {unit}",
-  "sfInCart": "В корзине: {quantity}"
+  "sfInCart": "В корзине: {quantity}",
+  "cartEmptyTitle": "Корзина пуста",
+  "cartEmptyHint": "Добавляйте понравившиеся товары из магазинов — они появятся здесь.",
+  "cartStartShopping": "За покупками",
+  "cartAddMore": "Добавить ещё",
+  "cartRemove": "Удалить",
+  "cartClear": "Очистить корзину",
+  "cartClearConfirm": "Все товары будут удалены из корзины.",
+  "cartBillTitle": "Детали оплаты",
+  "cartItemsTotal": "Товары",
+  "cartDelivery": "Доставка",
+  "cartDeliveryAgreed": "По договорённости с магазином",
+  "cartToPay": "Итого",
+  "cartNoteLabel": "ВАЖНО:",
+  "cartNote": "Заказ подтверждает магазин. Условия оплаты и доставки магазин согласует с вами.",
+  "cartCheckout": "Оформить",
+  "cartUnitPrice": "{price} / {unit}",
+  "enumProductUnitShort": "{unit, select, dona{шт} metr{м} litr{л} kilogram{кг} gram{г} blok{блок} other{}}",
+  "@enumProductUnitShort": {
+    "description": "Short unit for prices (\"20 000 so'm / kg\"); keyed by ProductUnit enum name.",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  }
 }

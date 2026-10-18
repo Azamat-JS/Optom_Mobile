@@ -271,7 +271,7 @@ class _LoadedState extends ConsumerState<_Loaded> {
                     if (product.unit != null) ...[
                       const SizedBox(width: 10),
                       Text(
-                        '/ ${product.unit!.label.toLowerCase()}',
+                        '/ ${product.unit!.shortLabel}',
                         style: TextStyle(color: colors.textSecondary, fontSize: 15, fontWeight: FontWeight.w600),
                       ),
                     ],

@@ -461,5 +461,30 @@
   "sfOpenShop": "Open shop",
   "sfExploreShop": "Browse with photos",
   "sfUnitLabel": "Unit: {unit}",
-  "sfInCart": "In cart: {quantity}"
+  "sfInCart": "In cart: {quantity}",
+  "cartEmptyTitle": "Your cart is empty",
+  "cartEmptyHint": "Add products you like from the shops — they'll show up here.",
+  "cartStartShopping": "Start shopping",
+  "cartAddMore": "Add more items",
+  "cartRemove": "Remove",
+  "cartClear": "Clear cart",
+  "cartClearConfirm": "All products will be removed from the cart.",
+  "cartBillTitle": "Bill details",
+  "cartItemsTotal": "Items",
+  "cartDelivery": "Delivery",
+  "cartDeliveryAgreed": "Agreed with the shop",
+  "cartToPay": "Total",
+  "cartNoteLabel": "NOTE:",
+  "cartNote": "The shop confirms your order and agrees payment and delivery with you.",
+  "cartCheckout": "Checkout",
+  "cartUnitPrice": "{price} / {unit}",
+  "enumProductUnitShort": "{unit, select, dona{pc} metr{m} litr{L} kilogram{kg} gram{g} blok{block} other{}}",
+  "@enumProductUnitShort": {
+    "description": "Short unit for prices (\"20 000 so'm / kg\"); keyed by ProductUnit enum name.",
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  }
 }

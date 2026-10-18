@@ -1637,4 +1637,70 @@ class AppLocalizationsUz extends AppLocalizations {
   String sfInCart(String quantity) {
     return 'Savatda: $quantity';
   }
+
+  @override
+  String get cartEmptyTitle => 'Savatingiz bo\'sh';
+
+  @override
+  String get cartEmptyHint =>
+      'Do\'konlardan yoqqan mahsulotlarni qo\'shing — ular shu yerda paydo bo\'ladi.';
+
+  @override
+  String get cartStartShopping => 'Xarid qilish';
+
+  @override
+  String get cartAddMore => 'Yana qo\'shish';
+
+  @override
+  String get cartRemove => 'O\'chirish';
+
+  @override
+  String get cartClear => 'Savatni tozalash';
+
+  @override
+  String get cartClearConfirm => 'Savatdagi barcha mahsulotlar o\'chiriladi.';
+
+  @override
+  String get cartBillTitle => 'To\'lov tafsilotlari';
+
+  @override
+  String get cartItemsTotal => 'Mahsulotlar';
+
+  @override
+  String get cartDelivery => 'Yetkazib berish';
+
+  @override
+  String get cartDeliveryAgreed => 'Do\'kon bilan kelishiladi';
+
+  @override
+  String get cartToPay => 'Jami';
+
+  @override
+  String get cartNoteLabel => 'ESLATMA:';
+
+  @override
+  String get cartNote =>
+      'Buyurtmani do\'kon tasdiqlaydi. To\'lov va yetkazib berish shartlarini do\'kon siz bilan kelishadi.';
+
+  @override
+  String get cartCheckout => 'Rasmiylashtirish';
+
+  @override
+  String cartUnitPrice(String price, String unit) {
+    return '$price / $unit';
+  }
+
+  @override
+  String enumProductUnitShort(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'dona': 'dona',
+      'metr': 'm',
+      'litr': 'l',
+      'kilogram': 'kg',
+      'gram': 'g',
+      'blok': 'blok',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }

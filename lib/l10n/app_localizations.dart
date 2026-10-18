@@ -2871,6 +2871,108 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Savatda: {quantity}'**
   String sfInCart(String quantity);
+
+  /// No description provided for @cartEmptyTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savatingiz bo\'sh'**
+  String get cartEmptyTitle;
+
+  /// No description provided for @cartEmptyHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'konlardan yoqqan mahsulotlarni qo\'shing — ular shu yerda paydo bo\'ladi.'**
+  String get cartEmptyHint;
+
+  /// No description provided for @cartStartShopping.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarid qilish'**
+  String get cartStartShopping;
+
+  /// No description provided for @cartAddMore.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yana qo\'shish'**
+  String get cartAddMore;
+
+  /// No description provided for @cartRemove.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'chirish'**
+  String get cartRemove;
+
+  /// No description provided for @cartClear.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savatni tozalash'**
+  String get cartClear;
+
+  /// No description provided for @cartClearConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savatdagi barcha mahsulotlar o\'chiriladi.'**
+  String get cartClearConfirm;
+
+  /// No description provided for @cartBillTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov tafsilotlari'**
+  String get cartBillTitle;
+
+  /// No description provided for @cartItemsTotal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlar'**
+  String get cartItemsTotal;
+
+  /// No description provided for @cartDelivery.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib berish'**
+  String get cartDelivery;
+
+  /// No description provided for @cartDeliveryAgreed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon bilan kelishiladi'**
+  String get cartDeliveryAgreed;
+
+  /// No description provided for @cartToPay.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami'**
+  String get cartToPay;
+
+  /// No description provided for @cartNoteLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'ESLATMA:'**
+  String get cartNoteLabel;
+
+  /// No description provided for @cartNote.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani do\'kon tasdiqlaydi. To\'lov va yetkazib berish shartlarini do\'kon siz bilan kelishadi.'**
+  String get cartNote;
+
+  /// No description provided for @cartCheckout.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rasmiylashtirish'**
+  String get cartCheckout;
+
+  /// No description provided for @cartUnitPrice.
+  ///
+  /// In uz, this message translates to:
+  /// **'{price} / {unit}'**
+  String cartUnitPrice(String price, String unit);
+
+  /// Short unit for prices ("20 000 so'm / kg"); keyed by ProductUnit enum name.
+  ///
+  /// In uz, this message translates to:
+  /// **'{unit, select, dona{dona} metr{m} litr{l} kilogram{kg} gram{g} blok{blok} other{}}'**
+  String enumProductUnitShort(String unit);
 }
 
 class _AppLocalizationsDelegate
