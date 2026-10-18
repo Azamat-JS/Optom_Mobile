@@ -2823,6 +2823,54 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Bu do\'konda hozircha mahsulot yo\'q'**
   String get sfShopEmpty;
+
+  /// No description provided for @sfDescription.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tavsif'**
+  String get sfDescription;
+
+  /// No description provided for @sfReadMore.
+  ///
+  /// In uz, this message translates to:
+  /// **'batafsil'**
+  String get sfReadMore;
+
+  /// No description provided for @sfReadLess.
+  ///
+  /// In uz, this message translates to:
+  /// **'yig\'ish'**
+  String get sfReadLess;
+
+  /// No description provided for @sfMoreFromShop.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shu do\'kondan yana'**
+  String get sfMoreFromShop;
+
+  /// No description provided for @sfOpenShop.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'konga o\'tish'**
+  String get sfOpenShop;
+
+  /// No description provided for @sfExploreShop.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rasmlar bilan ko\'rish'**
+  String get sfExploreShop;
+
+  /// No description provided for @sfUnitLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'lchov: {unit}'**
+  String sfUnitLabel(String unit);
+
+  /// No description provided for @sfInCart.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savatda: {quantity}'**
+  String sfInCart(String quantity);
 }
 
 class _AppLocalizationsDelegate

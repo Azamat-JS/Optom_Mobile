@@ -1575,7 +1575,7 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 | U2a | Storefront home (Katalog tab) + storefront tab bar (reference: Swiggy home/listing) | 🟢 Done 2026-10-18 |
 | U2b | Storefront search screen: recent searches, live suggestions, results tabs + filter chips | 🟢 Done 2026-10-18 |
 | U2c | Shop page: header card, branch ("outlet") sheet, in-shop search, collapsible category sections, product grid with ADD/stepper, "Menyu" jump FAB | 🟢 Done 2026-10-18 |
-| U2d | Product detail + masonry "explore" grid | ⚪ |
+| U2d | Product detail + masonry "explore" grid | 🟢 Done 2026-10-18 |
 | U3+ | Next areas, as the user sends references | ⚪ |
 
 **U1 notes (2026-10-18):**
@@ -1716,6 +1716,37 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
   - Screenshots on the iPhone 17 simulator.
 - **Not checked live:** the branch sheet (no local owner has more than one active store), the
   other-shop cart notice, the call button actually dialling (simulator), dark mode of the shop page.
+  *(Dark mode of the shop page was checked during U2d.)*
+
+**U2d notes (2026-10-18):**
+- **Product page** (`storefront_product_detail_screen.dart`, rewritten): `storefrontProductProvider(id)`
+  replaces the old `initState` load.
+  - Swipeable photos with page dots, back and heart buttons on a scrim (light status bar).
+  - Then a sheet with: stock square + "Qoldi: …" + category tag, name, yellow price tag + unit,
+    "Tavsif" (3 lines, "batafsil/yig'ish" when longer than 120 chars), a shop card (→ shop page,
+    with the product's branch), and "Shu do'kondan yana" (other products of that shop/branch;
+    tapping one replaces the page).
+  - Sticky bottom bar: the price, or the line total plus "Savatda: N" once the product is in the
+    cart, and the shared ADD/stepper. The old quantity picker was removed.
+  - The sheet's rounded top is drawn inside the photo stack, because a viewport paints earlier
+    slivers over later ones, so a translated sheet can't overlap the photo (caught live).
+- **Photo mosaic:** route **`/customer/shops/:sellerId/explore?storeId=&name=`**
+  (`RouteNames.customerShopExplore`, guest-allowed by the shop prefix) →
+  `StorefrontShopExploreScreen`. A grey search pill filters live over `shopProductsProvider`, so
+  there's no extra request when coming from the shop page.
+  - `StorefrontMasonry` lays out blocks of 9: three small tiles, then two small + one big, then the
+    mirror. A partial last block uses rows of three.
+  - `photosInBigSlots` moves products that have photos into the big slots.
+  - It is opened from the new mosaic button next to the shop page search field.
+- **MENYU button** is yellow in dark mode (black vanished on the dark page).
+- **Verified:**
+  - `flutter analyze` clean, 65 unit tests (2 new: `storefront_masonry_test.dart`).
+  - On-device integration test: **33/33 steps**. New steps: shop → mosaic, mosaic search "soat",
+    tile → product page, ADD → "Savatda: 1", − → removed, shop card → shop page, back through
+    product → mosaic → shop.
+  - Light and dark screenshots of the product page, the mosaic and the shop page.
+- **Not checked live:** photo swiping with real images (local product images 404 on ImageKit),
+  the read-more toggle (no local description over 120 chars), Russian/English layouts.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

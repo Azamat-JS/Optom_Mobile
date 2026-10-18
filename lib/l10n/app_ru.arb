@@ -453,5 +453,13 @@
   "sfMenu": "МЕНЮ",
   "sfOtherCategory": "Другое",
   "sfCartHasOtherShop": "В корзине товары другого магазина. Чтобы добавить товары отсюда, сначала очистите корзину.",
-  "sfShopEmpty": "В этом магазине пока нет товаров"
+  "sfShopEmpty": "В этом магазине пока нет товаров",
+  "sfDescription": "Описание",
+  "sfReadMore": "подробнее",
+  "sfReadLess": "свернуть",
+  "sfMoreFromShop": "Ещё из этого магазина",
+  "sfOpenShop": "В магазин",
+  "sfExploreShop": "Смотреть с фото",
+  "sfUnitLabel": "Единица: {unit}",
+  "sfInCart": "В корзине: {quantity}"
 }

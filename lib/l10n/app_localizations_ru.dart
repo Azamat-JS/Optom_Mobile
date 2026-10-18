@@ -1661,4 +1661,32 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sfShopEmpty => 'В этом магазине пока нет товаров';
+
+  @override
+  String get sfDescription => 'Описание';
+
+  @override
+  String get sfReadMore => 'подробнее';
+
+  @override
+  String get sfReadLess => 'свернуть';
+
+  @override
+  String get sfMoreFromShop => 'Ещё из этого магазина';
+
+  @override
+  String get sfOpenShop => 'В магазин';
+
+  @override
+  String get sfExploreShop => 'Смотреть с фото';
+
+  @override
+  String sfUnitLabel(String unit) {
+    return 'Единица: $unit';
+  }
+
+  @override
+  String sfInCart(String quantity) {
+    return 'В корзине: $quantity';
+  }
 }

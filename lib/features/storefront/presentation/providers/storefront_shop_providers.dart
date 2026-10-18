@@ -5,6 +5,7 @@ import 'package:bsmart/features/storefront/domain/entities/storefront_branch.dar
 import 'package:bsmart/features/storefront/domain/entities/storefront_product.dart';
 import 'package:bsmart/features/storefront/domain/entities/storefront_query.dart';
 import 'package:bsmart/features/storefront/domain/usecases/browse_storefront_usecase.dart';
+import 'package:bsmart/features/storefront/domain/usecases/get_storefront_product_usecase.dart';
 import 'package:bsmart/features/storefront/domain/usecases/list_shop_branches_usecase.dart';
 
 /// Which shop page: the owner, optionally narrowed to one branch.
@@ -33,4 +34,10 @@ final shopProductsProvider = FutureProvider.autoDispose.family<List<StorefrontPr
 final shopBranchesProvider = FutureProvider.autoDispose.family<List<StorefrontBranch>, String>((ref, sellerId) async {
   final result = await getIt<ListShopBranchesUseCase>().call(sellerId);
   return result.fold((branches) => branches, (_) => const []);
+});
+
+/// One product (`GET /public/catalog/products/:id`, public).
+final storefrontProductProvider = FutureProvider.autoDispose.family<StorefrontProduct, String>((ref, id) async {
+  final result = await getIt<GetStorefrontProductUseCase>().call(id);
+  return result.fold((product) => product, (failure) => throw failure);
 });

@@ -1609,4 +1609,32 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get sfShopEmpty => 'Bu do\'konda hozircha mahsulot yo\'q';
+
+  @override
+  String get sfDescription => 'Tavsif';
+
+  @override
+  String get sfReadMore => 'batafsil';
+
+  @override
+  String get sfReadLess => 'yig\'ish';
+
+  @override
+  String get sfMoreFromShop => 'Shu do\'kondan yana';
+
+  @override
+  String get sfOpenShop => 'Do\'konga o\'tish';
+
+  @override
+  String get sfExploreShop => 'Rasmlar bilan ko\'rish';
+
+  @override
+  String sfUnitLabel(String unit) {
+    return 'O\'lchov: $unit';
+  }
+
+  @override
+  String sfInCart(String quantity) {
+    return 'Savatda: $quantity';
+  }
 }

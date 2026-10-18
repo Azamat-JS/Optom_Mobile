@@ -634,8 +634,11 @@ class ShopMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Black on light pages; yellow on dark ones, where black would vanish.
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final foreground = dark ? AppColors.onBrand : Colors.white;
     return Material(
-      color: AppColors.ink,
+      color: dark ? AppColors.brandYellow : AppColors.ink,
       shape: const CircleBorder(),
       elevation: 8,
       shadowColor: Colors.black54,
@@ -648,13 +651,13 @@ class ShopMenuButton extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.restaurant_menu_rounded, color: Colors.white, size: 26),
+              Icon(Icons.restaurant_menu_rounded, color: foreground, size: 26),
               const SizedBox(height: 4),
               Text(
                 context.l10n.sfMenu,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: BrandTheme.fontFamily,
-                  color: Colors.white,
+                  color: foreground,
                   fontSize: 12.5,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.6,

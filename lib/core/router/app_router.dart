@@ -11,6 +11,7 @@ import 'package:bsmart/features/auth/presentation/screens/register_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/splash_screen.dart';
 import 'package:bsmart/features/storefront/presentation/screens/storefront_search_screen.dart';
 import 'package:bsmart/features/storefront/presentation/screens/storefront_shop_screen.dart';
+import 'package:bsmart/features/storefront/presentation/screens/storefront_shop_explore_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/telegram_verify_screen.dart';
 import 'package:bsmart/features/deliveries/presentation/screens/customer_deliveries_screen.dart';
 import 'package:bsmart/features/customers/presentation/screens/customers_list_screen.dart';
@@ -99,6 +100,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.customerHome,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const CustomerHomeScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.customerShopExplorePattern,
+        pageBuilder: (context, state) => fadeThroughPage(
+          state: state,
+          child: StorefrontShopExploreScreen(
+            sellerId: state.pathParameters['sellerId']!,
+            storeId: state.uri.queryParameters['storeId'],
+            name: state.uri.queryParameters['name'],
+          ),
+        ),
       ),
       GoRoute(
         path: RouteNames.customerShopPattern,

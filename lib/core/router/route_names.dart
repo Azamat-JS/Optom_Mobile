@@ -27,6 +27,12 @@ abstract final class RouteNames {
   /// Shop page; `?storeId=` picks a branch, `?name=` is shown while loading.
   static const customerShopPattern = '/customer/shops/:sellerId';
 
+  /// A shop's photo mosaic with search.
+  static const customerShopExplorePattern = '/customer/shops/:sellerId/explore';
+
+  static String customerShopExplore(String sellerId, {String? storeId, String? name}) =>
+      Uri(path: '/customer/shops/$sellerId/explore', queryParameters: {'storeId': ?storeId, 'name': ?name}).toString();
+
   static String customerShop(String sellerId, {String? storeId, String? name}) =>
       Uri(path: '/customer/shops/$sellerId', queryParameters: {'storeId': ?storeId, 'name': ?name}).toString();
   static const customerDebts = '/customer/debts';

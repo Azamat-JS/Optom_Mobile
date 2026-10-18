@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/router/route_names.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
@@ -77,6 +78,9 @@ class _ShopBodyState extends ConsumerState<_ShopBody> {
   bool _favoritesOnly = false;
   _Sort _sort = _Sort.relevance;
   final Set<String> _collapsed = {};
+
+  /// Branch currently shown (for the explore route).
+  String? _shownStoreId;
 
   @override
   void initState() {
@@ -257,6 +261,7 @@ class _ShopBodyState extends ConsumerState<_ShopBody> {
     final colors = BrandColors.of(context);
     final branches = ref.watch(shopBranchesProvider(widget.sellerId)).valueOrNull ?? const <StorefrontBranch>[];
     final storeId = _effectiveStoreId(branches);
+    _shownStoreId = storeId;
     final productsAsync = ref.watch(shopProductsProvider((sellerId: widget.sellerId, storeId: storeId)));
     final products = productsAsync.valueOrNull ?? const <StorefrontProduct>[];
     final loggedIn = ref.watch(sessionNotifierProvider.select((s) => s.valueOrNull?.isAuthenticated ?? false));
@@ -428,46 +433,65 @@ class _ShopBodyState extends ConsumerState<_ShopBody> {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-          child: Container(
-            height: 54,
-            decoration: BoxDecoration(color: colors.field, borderRadius: BorderRadius.circular(18)),
-            child: Row(
-              children: [
-                const SizedBox(width: 16),
-                Icon(Icons.search_rounded, color: colors.textSecondary, size: 26),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (value) => setState(() => _query = value),
-                    textInputAction: TextInputAction.search,
-                    cursorColor: colors.accentText,
-                    style: TextStyle(color: colors.textPrimary, fontSize: 16.5, fontWeight: FontWeight.w600),
-                    decoration: InputDecoration(
-                      hintText: l10n.sfSearchInShop(shopName),
-                      hintMaxLines: 1,
-                      hintStyle: TextStyle(color: colors.textMuted, fontSize: 16.5, fontWeight: FontWeight.w500),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      isCollapsed: true,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 15),
-                    ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 54,
+                  decoration: BoxDecoration(color: colors.field, borderRadius: BorderRadius.circular(18)),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 16),
+                      Icon(Icons.search_rounded, color: colors.textSecondary, size: 26),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: (value) => setState(() => _query = value),
+                          textInputAction: TextInputAction.search,
+                          cursorColor: colors.accentText,
+                          style: TextStyle(color: colors.textPrimary, fontSize: 16.5, fontWeight: FontWeight.w600),
+                          decoration: InputDecoration(
+                            hintText: l10n.sfSearchInShop(shopName),
+                            hintMaxLines: 1,
+                            hintStyle: TextStyle(color: colors.textMuted, fontSize: 16.5, fontWeight: FontWeight.w500),
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            isCollapsed: true,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                          ),
+                        ),
+                      ),
+                      if (_query.isNotEmpty)
+                        IconButton(
+                          tooltip: l10n.authClear,
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() => _query = '');
+                          },
+                          icon: Icon(Icons.close_rounded, color: colors.textSecondary),
+                        )
+                      else
+                        const SizedBox(width: 12),
+                    ],
                   ),
                 ),
-                if (_query.isNotEmpty)
-                  IconButton(
-                    tooltip: l10n.authClear,
-                    onPressed: () {
-                      _searchController.clear();
-                      setState(() => _query = '');
-                    },
-                    icon: Icon(Icons.close_rounded, color: colors.textSecondary),
-                  )
-                else
-                  const SizedBox(width: 12),
-              ],
-            ),
+              ),
+              const SizedBox(width: 10),
+              IconButton(
+                tooltip: l10n.sfExploreShop,
+                onPressed: () => context.push(
+                  RouteNames.customerShopExplore(widget.sellerId, storeId: _shownStoreId, name: shopName),
+                ),
+                icon: Icon(Icons.auto_awesome_mosaic_rounded, color: colors.accentText),
+                style: IconButton.styleFrom(
+                  backgroundColor: AppColors.brandYellow.withValues(alpha: 0.18),
+                  fixedSize: const Size(54, 54),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                ),
+              ),
+            ],
           ),
         ),
         SizedBox(

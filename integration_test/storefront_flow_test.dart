@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'package:bsmart/bootstrap.dart';
+import 'package:bsmart/features/storefront/presentation/widgets/storefront_masonry.dart';
 import 'package:bsmart/features/storefront/presentation/widgets/storefront_search_parts.dart';
 import 'package:bsmart/features/storefront/presentation/widgets/storefront_shop_parts.dart';
 
@@ -116,6 +117,37 @@ void main() {
     final y = t.getTopLeft(header).dy;
     expect(y, inInclusiveRange(150, 420), reason: 'section header right under the pinned bar (y=$y)');
     ok('MENYU → jumps to Telefonlar (y=${y.round()})');
+
+    // --- U2d: mosaic + product page ---------------------------------------------
+    await t.tap(find.byTooltip("Rasmlar bilan ko'rish"));
+    await waitFor(t, find.byType(StorefrontMasonry), why: 'explore mosaic');
+    ok('shop → photo mosaic');
+    await t.enterText(find.byType(TextField).last, 'soat');
+    await pumpFor(t, 600);
+    expect(find.text('Soat 330'), findsOneWidget);
+    expect(find.text('Pechenye'), findsNothing);
+    ok('mosaic search "soat"');
+    await t.tap(find.text('Soat 330'));
+    await waitFor(t, find.text("Do'konga o'tish"), why: 'product page');
+    expect(find.text('Tavsif'), findsOneWidget);
+    ok('tile → product page (description, shop card)');
+    await t.tap(find.text("QO'SHISH").last);
+    await waitFor(t, find.text('Savatda: 1'), why: 'in-cart line');
+    ok('product page ADD → "Savatda: 1"');
+    await t.tap(find.byIcon(Icons.remove_rounded).last);
+    await pumpFor(t, 500);
+    expect(find.text('Savatda: 1'), findsNothing);
+    ok('product page − → removed');
+    await t.tap(find.text("Do'konga o'tish"));
+    await waitFor(t, find.textContaining('dan qidiring'), why: 'shop from product');
+    ok('shop card → shop page');
+    await backFromTop(t);
+    await waitFor(t, find.text("Do'konga o'tish"), why: 'back to product');
+    await t.tap(find.byIcon(Icons.arrow_back_rounded).last);
+    await waitFor(t, find.byType(StorefrontMasonry), why: 'back to mosaic');
+    await t.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+    await pumpFor(t, 1200);
+    ok('back → product → mosaic → shop');
 
     await tapVisible(t, find.text("QO'SHISH"));
     await waitFor(t, find.byIcon(Icons.remove_rounded), why: 'shop stepper');

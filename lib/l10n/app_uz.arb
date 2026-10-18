@@ -866,5 +866,27 @@
   "sfMenu": "MENYU",
   "sfOtherCategory": "Boshqa",
   "sfCartHasOtherShop": "Savatingizda boshqa do'kon mahsulotlari bor. Bu do'kondan qo'shish uchun avval savatni bo'shating.",
-  "sfShopEmpty": "Bu do'konda hozircha mahsulot yo'q"
+  "sfShopEmpty": "Bu do'konda hozircha mahsulot yo'q",
+  "sfDescription": "Tavsif",
+  "sfReadMore": "batafsil",
+  "sfReadLess": "yig'ish",
+  "sfMoreFromShop": "Shu do'kondan yana",
+  "sfOpenShop": "Do'konga o'tish",
+  "sfExploreShop": "Rasmlar bilan ko'rish",
+  "sfUnitLabel": "O'lchov: {unit}",
+  "@sfUnitLabel": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "sfInCart": "Savatda: {quantity}",
+  "@sfInCart": {
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  }
 }

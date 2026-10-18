@@ -1651,4 +1651,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sfShopEmpty => 'This shop has no products yet';
+
+  @override
+  String get sfDescription => 'Description';
+
+  @override
+  String get sfReadMore => 'more';
+
+  @override
+  String get sfReadLess => 'less';
+
+  @override
+  String get sfMoreFromShop => 'More from this shop';
+
+  @override
+  String get sfOpenShop => 'Open shop';
+
+  @override
+  String get sfExploreShop => 'Browse with photos';
+
+  @override
+  String sfUnitLabel(String unit) {
+    return 'Unit: $unit';
+  }
+
+  @override
+  String sfInCart(String quantity) {
+    return 'In cart: $quantity';
+  }
 }
