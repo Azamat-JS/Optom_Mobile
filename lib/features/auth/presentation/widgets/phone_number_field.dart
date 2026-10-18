@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
-import 'package:bsmart/features/auth/presentation/widgets/auth_theme.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 
 /// Uzbek mobile number input: a fixed "🇺🇿 +998" prefix and the 9 local
 /// digits typed into [controller], shown grouped as "90 123 45 67".
@@ -33,7 +33,7 @@ class PhoneNumberField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = AuthColors.of(context);
+    final colors = BrandColors.of(context);
     final l10n = context.l10n;
     return TextField(
       controller: controller,
@@ -45,7 +45,7 @@ class PhoneNumberField extends StatelessWidget {
       inputFormatters: [_UzPhoneFormatter()],
       onSubmitted: (_) => onSubmitted?.call(),
       style: TextStyle(
-        fontFamily: AuthTheme.fontFamily,
+        fontFamily: BrandTheme.fontFamily,
         fontSize: 17,
         fontWeight: FontWeight.w700,
         letterSpacing: 0.4,
@@ -65,7 +65,7 @@ class PhoneNumberField extends StatelessWidget {
               Text(
                 '+998',
                 style: TextStyle(
-                  fontFamily: AuthTheme.fontFamily,
+                  fontFamily: BrandTheme.fontFamily,
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
                   color: colors.textPrimary,

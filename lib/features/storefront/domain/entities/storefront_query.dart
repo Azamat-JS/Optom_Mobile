@@ -10,22 +10,30 @@ class StorefrontQuery {
   final String? categoryId;
   final String? sellerId;
 
-  StorefrontQuery copyWith({int? page, String? search, bool clearSearch = false, String? categoryId, bool clearCategory = false}) {
+  StorefrontQuery copyWith({
+    int? page,
+    String? search,
+    bool clearSearch = false,
+    String? categoryId,
+    bool clearCategory = false,
+    String? sellerId,
+    bool clearSeller = false,
+  }) {
     return StorefrontQuery(
       page: page ?? this.page,
       limit: limit,
       search: clearSearch ? null : (search ?? this.search),
       categoryId: clearCategory ? null : (categoryId ?? this.categoryId),
-      sellerId: sellerId,
+      sellerId: clearSeller ? null : (sellerId ?? this.sellerId),
     );
   }
 
   Map<String, dynamic> toQueryParameters() => {
-        'page': page,
-        'limit': limit,
-        'sellerRole': 'RETAILER',
-        if (search != null && search!.isNotEmpty) 'search': search,
-        if (categoryId != null) 'categoryId': categoryId,
-        if (sellerId != null) 'sellerId': sellerId,
-      };
+    'page': page,
+    'limit': limit,
+    'sellerRole': 'RETAILER',
+    if (search != null && search!.isNotEmpty) 'search': search,
+    if (categoryId != null) 'categoryId': categoryId,
+    if (sellerId != null) 'sellerId': sellerId,
+  };
 }

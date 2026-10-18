@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/features/auth/presentation/widgets/auth_scaffold.dart';
 import 'package:bsmart/features/auth/presentation/widgets/auth_sheet_header.dart';
-import 'package:bsmart/features/auth/presentation/widgets/auth_theme.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/auth/presentation/widgets/phone_number_field.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
 
@@ -44,13 +44,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return AuthScaffold(
-      // Builder: read AuthColors/text styles from inside AuthScaffold's theme.
+      // Builder: read BrandColors/text styles from inside AuthScaffold's theme.
       child: Builder(builder: (context) => _form(context, l10n)),
     );
   }
 
   Widget _form(BuildContext context, AppLocalizations l10n) {
-    final colors = AuthColors.of(context);
+    final colors = BrandColors.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:bsmart/core/theme/app_colors.dart';
 
-/// Surface/text colours of the auth sheet, for light and dark mode. The hero
-/// above the sheet is always [AppColors.ink], whatever the brightness.
+/// Surface/text colours of brand-themed screens (auth, storefront), for light
+/// and dark mode. Dark heroes are always [AppColors.ink], whatever the
+/// brightness.
 @immutable
-class AuthColors extends ThemeExtension<AuthColors> {
-  const AuthColors({
+class BrandColors extends ThemeExtension<BrandColors> {
+  const BrandColors({
     required this.sheet,
     required this.field,
     required this.outline,
@@ -36,7 +37,7 @@ class AuthColors extends ThemeExtension<AuthColors> {
   final Color successTint;
   final Color errorTint;
 
-  static const light = AuthColors(
+  static const light = BrandColors(
     sheet: AppColors.sheet,
     field: AppColors.field,
     outline: AppColors.outline,
@@ -51,7 +52,7 @@ class AuthColors extends ThemeExtension<AuthColors> {
     errorTint: Color(0xFFFDECEC),
   );
 
-  static const dark = AuthColors(
+  static const dark = BrandColors(
     sheet: Color(0xFF121419),
     field: Color(0xFF1B1E25),
     outline: Color(0xFF343843),
@@ -66,25 +67,29 @@ class AuthColors extends ThemeExtension<AuthColors> {
     errorTint: Color(0xFF3A1D1F),
   );
 
-  static AuthColors of(BuildContext context) => Theme.of(context).extension<AuthColors>() ?? light;
+  static BrandColors of(BuildContext context) => Theme.of(context).extension<BrandColors>() ?? light;
 
   @override
-  AuthColors copyWith() => this;
+  BrandColors copyWith() => this;
 
   @override
-  AuthColors lerp(AuthColors? other, double t) => t < 0.5 ? this : (other ?? this);
+  BrandColors lerp(BrandColors? other, double t) => t < 0.5 ? this : (other ?? this);
 }
 
-/// Local theme for the sign-in flow (splash, login, register, Telegram
-/// verification): Manrope, yellow filled buttons, outlined fields with a
-/// floating gold label, built from [AppColors].
-abstract final class AuthTheme {
+/// Brand theme (Phase 9 redesign): Manrope, yellow filled buttons, outlined
+/// fields with a floating gold label, built from [AppColors]. Applied locally
+/// to the redesigned screens (auth flow, storefront catalog) while the global
+/// `AppTheme` still serves the rest of the app.
+///
+/// Filled/outlined buttons default to full width (`Size.fromHeight(56)`):
+/// give a button inside a `Row` its own `minimumSize`.
+abstract final class BrandTheme {
   static const fontFamily = 'Manrope';
 
   static ThemeData of(BuildContext context) => build(Theme.of(context).brightness);
 
   static ThemeData build(Brightness brightness) {
-    final c = brightness == Brightness.dark ? AuthColors.dark : AuthColors.light;
+    final c = brightness == Brightness.dark ? BrandColors.dark : BrandColors.light;
     final scheme = ColorScheme(
       brightness: brightness,
       primary: AppColors.brandYellow,

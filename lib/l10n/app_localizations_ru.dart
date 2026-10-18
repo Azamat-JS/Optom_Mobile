@@ -1465,4 +1465,68 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get locationChooseHere => 'Выбрать это место';
+
+  @override
+  String sfGreeting(String name) {
+    return 'Привет, $name!';
+  }
+
+  @override
+  String get sfGreetingGuest => 'Добро пожаловать!';
+
+  @override
+  String get sfGreetingSubtitle => 'Что купим сегодня?';
+
+  @override
+  String get sfAllCategories => 'Все';
+
+  @override
+  String sfSearchHint(String term) {
+    return 'Найти «$term»';
+  }
+
+  @override
+  String get sfSearchHintDefault => 'Поиск товаров';
+
+  @override
+  String get sfShops => 'Магазины';
+
+  @override
+  String get sfNewArrivals => 'Новинки';
+
+  @override
+  String get sfFavoritesLogin => 'Войдите, чтобы видеть избранные товары';
+
+  @override
+  String get sfFavoritesEmpty =>
+      'В избранном пока пусто. Нажмите ♡ на понравившемся товаре.';
+
+  @override
+  String get sfProductsSubtitle => 'Подборка товаров для вас';
+
+  @override
+  String sfInStock(String quantity) {
+    return 'Осталось: $quantity';
+  }
+
+  @override
+  String get sfOutOfStock => 'Нет в наличии';
+
+  @override
+  String get sfAdd => 'ДОБАВИТЬ';
+
+  @override
+  String sfAddedToCart(String name) {
+    return '$name — в корзине';
+  }
+
+  @override
+  String get sfCartOtherShop =>
+      'В корзине могут быть товары только одного магазина';
+
+  @override
+  String get sfNoProducts => 'Товары не найдены';
+
+  @override
+  String get sfRemoveFilter => 'Убрать фильтр';
 }

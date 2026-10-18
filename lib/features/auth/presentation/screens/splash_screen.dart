@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/theme/app_colors.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
-import 'package:bsmart/features/auth/presentation/widgets/auth_theme.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/shared/widgets/brand_mark.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
 
@@ -25,7 +25,7 @@ class SplashScreen extends ConsumerWidget {
     final authState = ref.watch(sessionNotifierProvider);
 
     return Theme(
-      data: AuthTheme.build(Brightness.dark),
+      data: BrandTheme.build(Brightness.dark),
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent),
         child: Scaffold(
@@ -45,7 +45,7 @@ class SplashScreen extends ConsumerWidget {
                     context.l10n.authTagline,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: AuthTheme.fontFamily,
+                      fontFamily: BrandTheme.fontFamily,
                       color: Colors.white.withValues(alpha: 0.72),
                       fontSize: 15,
                       fontWeight: FontWeight.w600,

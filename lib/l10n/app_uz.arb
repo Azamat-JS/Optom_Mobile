@@ -743,5 +743,51 @@
   "locationRemove": "Olib tashlash",
   "locationDetectFailed": "Joylashuvni aniqlab bo'lmadi — GPS va ruxsatni tekshiring",
   "locationMyLocation": "Mening joylashuvim",
-  "locationChooseHere": "Shu joyni tanlash"
+  "locationChooseHere": "Shu joyni tanlash",
+  "sfGreeting": "Salom, {name}!",
+  "@sfGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sfGreetingGuest": "Xush kelibsiz!",
+  "sfGreetingSubtitle": "Bugun nima xarid qilamiz?",
+  "sfAllCategories": "Barchasi",
+  "sfSearchHint": "«{term}» ni qidiring",
+  "@sfSearchHint": {
+    "placeholders": {
+      "term": {
+        "type": "String"
+      }
+    }
+  },
+  "sfSearchHintDefault": "Mahsulot qidirish",
+  "sfShops": "Do'konlar",
+  "sfNewArrivals": "Yangi kelganlar",
+  "sfFavoritesLogin": "Sevimli mahsulotlaringizni ko'rish uchun hisobingizga kiring",
+  "sfFavoritesEmpty": "Hali sevimli mahsulot yo'q. Yoqqan mahsulotdagi ♡ ni bosing.",
+  "sfProductsSubtitle": "Siz uchun saralangan mahsulotlar",
+  "sfInStock": "Qoldi: {quantity}",
+  "@sfInStock": {
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "sfOutOfStock": "Tugagan",
+  "sfAdd": "QO'SHISH",
+  "sfAddedToCart": "{name} savatga qo'shildi",
+  "@sfAddedToCart": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sfCartOtherShop": "Savatda faqat bitta do'kondan mahsulot bo'lishi mumkin",
+  "sfNoProducts": "Mahsulotlar topilmadi",
+  "sfRemoveFilter": "Filtrni olib tashlash"
 }

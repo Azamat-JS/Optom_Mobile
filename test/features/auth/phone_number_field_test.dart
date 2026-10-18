@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
-import 'package:bsmart/features/auth/presentation/widgets/auth_theme.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/auth/presentation/widgets/phone_number_field.dart';
 
 Future<TextEditingController> _pumpField(WidgetTester tester) async {
@@ -13,7 +13,7 @@ Future<TextEditingController> _pumpField(WidgetTester tester) async {
       locale: const Locale('uz'),
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      theme: AuthTheme.build(Brightness.light),
+      theme: BrandTheme.build(Brightness.light),
       home: Scaffold(body: PhoneNumberField(controller: controller)),
     ),
   );

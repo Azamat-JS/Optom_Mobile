@@ -1458,4 +1458,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get locationChooseHere => 'Choose this spot';
+
+  @override
+  String sfGreeting(String name) {
+    return 'Hi, $name!';
+  }
+
+  @override
+  String get sfGreetingGuest => 'Welcome!';
+
+  @override
+  String get sfGreetingSubtitle => 'What are we buying today?';
+
+  @override
+  String get sfAllCategories => 'All';
+
+  @override
+  String sfSearchHint(String term) {
+    return 'Search for “$term”';
+  }
+
+  @override
+  String get sfSearchHintDefault => 'Search products';
+
+  @override
+  String get sfShops => 'Shops';
+
+  @override
+  String get sfNewArrivals => 'New arrivals';
+
+  @override
+  String get sfFavoritesLogin => 'Sign in to see your favourite products';
+
+  @override
+  String get sfFavoritesEmpty =>
+      'No favourites yet. Tap ♡ on a product you like.';
+
+  @override
+  String get sfProductsSubtitle => 'Picked for you';
+
+  @override
+  String sfInStock(String quantity) {
+    return 'Left: $quantity';
+  }
+
+  @override
+  String get sfOutOfStock => 'Out of stock';
+
+  @override
+  String get sfAdd => 'ADD';
+
+  @override
+  String sfAddedToCart(String name) {
+    return '$name added to cart';
+  }
+
+  @override
+  String get sfCartOtherShop => 'The cart can only hold products from one shop';
+
+  @override
+  String get sfNoProducts => 'No products found';
+
+  @override
+  String get sfRemoveFilter => 'Remove filter';
 }

@@ -1,23 +1,41 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import 'package:bsmart/core/router/route_names.dart';
-import 'package:bsmart/core/utils/currency_formatter.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/app_motion.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/features/favorites/presentation/providers/favorites_list_notifier.dart';
 import 'package:bsmart/features/storefront/domain/entities/storefront_product.dart';
-import 'package:bsmart/features/storefront/presentation/providers/storefront_cart_notifier.dart';
+import 'package:bsmart/features/storefront/domain/entities/storefront_shop.dart';
 import 'package:bsmart/features/storefront/presentation/providers/storefront_categories_notifier.dart';
 import 'package:bsmart/features/storefront/presentation/providers/storefront_products_notifier.dart';
+import 'package:bsmart/features/storefront/presentation/widgets/storefront_category_circles.dart';
+import 'package:bsmart/features/storefront/presentation/widgets/storefront_hero.dart';
+import 'package:bsmart/features/storefront/presentation/widgets/storefront_product_card.dart';
+import 'package:bsmart/features/storefront/presentation/widgets/storefront_product_rail.dart';
+import 'package:bsmart/features/storefront/presentation/widgets/storefront_skeleton.dart';
 
 /// The "Katalog" tab of the storefront — guest-eligible product feed
-/// (`GET /public/catalog/products?sellerRole=RETAILER`), category chips +
-/// search, no seller-picker step (see `StorefrontProductsNotifier`'s doc
-/// comment for why this differs from the B2B catalog browse).
+/// (`GET /public/catalog/products?sellerRole=RETAILER`), no seller-picker step
+/// (see `StorefrontProductsNotifier`'s doc comment for why this differs from
+/// the B2B catalog browse).
+///
+/// Layout (Phase 9 U2a, Swiggy home reference): dark hero with top-level
+/// category tabs, search and a shop strip; a "new / favourites" rail; pinned
+/// subcategory circles; the full feed as big cards. Filters: top category →
+/// subcategory (sent as one `categoryId`), shop (`sellerId`), search.
+///
+/// Must sit under a [BrandTheme] (`CustomerHomeScreen` provides it).
 class StorefrontCatalogTab extends ConsumerStatefulWidget {
-  const StorefrontCatalogTab({super.key});
+  const StorefrontCatalogTab({required this.onOpenProfile, super.key});
+
+  final VoidCallback onOpenProfile;
 
   @override
   ConsumerState<StorefrontCatalogTab> createState() => _StorefrontCatalogTabState();
@@ -26,8 +44,19 @@ class StorefrontCatalogTab extends ConsumerStatefulWidget {
 class _StorefrontCatalogTabState extends ConsumerState<StorefrontCatalogTab> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
+  final _heroKey = GlobalKey();
+
+  /// True once the dark hero has scrolled away — flips the status bar strip
+  /// and icons to the light content below.
+  final _pastHero = ValueNotifier(false);
   Timer? _debounce;
-  String? _selectedCategoryId;
+
+  String? _rootCategoryId;
+  String? _subCategoryId;
+
+  /// Shop strip contents, kept while a shop filter narrows the feed to one
+  /// shop (otherwise the strip would collapse to that single shop).
+  List<StorefrontShop> _shops = const [];
 
   @override
   void initState() {
@@ -40,211 +69,295 @@ class _StorefrontCatalogTabState extends ConsumerState<StorefrontCatalogTab> {
     _debounce?.cancel();
     _searchController.dispose();
     _scrollController.dispose();
+    _pastHero.dispose();
     super.dispose();
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    final position = _scrollController.position;
+    if (position.pixels >= position.maxScrollExtent - 400) {
       ref.read(storefrontProductsProvider.notifier).loadMore();
     }
+    final heroHeight = _heroKey.currentContext?.size?.height ?? 0;
+    final topInset = MediaQuery.paddingOf(context).top;
+    _pastHero.value = heroHeight > 0 && position.pixels > heroHeight - topInset;
   }
 
   void _onSearchChanged(String value) {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 400), () {
-      ref.read(storefrontProductsProvider.notifier).search(value);
+      ref.read(storefrontProductsProvider.notifier).search(value.trim());
     });
   }
 
-  void _onCategorySelected(String? categoryId) {
-    setState(() => _selectedCategoryId = categoryId);
-    ref.read(storefrontProductsProvider.notifier).filterByCategory(categoryId);
+  void _selectRoot(String? id) {
+    if (id == _rootCategoryId && _subCategoryId == null) return;
+    setState(() {
+      _rootCategoryId = id;
+      _subCategoryId = null;
+    });
+    ref.read(storefrontProductsProvider.notifier).filterByCategory(id);
   }
 
-  void _addToCart(StorefrontProduct product) {
-    final added = ref.read(storefrontCartProvider.notifier).addProduct(product);
-    if (!added) {
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(content: Text('Savatda faqat bitta doʻkondan mahsulot boʻlishi mumkin')),
-        );
-      return;
+  void _selectSub(String? id) {
+    setState(() => _subCategoryId = id);
+    ref.read(storefrontProductsProvider.notifier).filterByCategory(id ?? _rootCategoryId);
+  }
+
+  void _selectShop(String? sellerId) => ref.read(storefrontProductsProvider.notifier).filterBySeller(sellerId);
+
+  Future<void> _clearFilters() async {
+    _searchController.clear();
+    setState(() {
+      _rootCategoryId = null;
+      _subCategoryId = null;
+    });
+    await ref.read(storefrontProductsProvider.notifier).resetFilters();
+  }
+
+  Future<void> _refresh() async {
+    ref.invalidate(storefrontCategoriesProvider);
+    if (ref.read(sessionNotifierProvider).valueOrNull?.isAuthenticated ?? false) {
+      ref.invalidate(favoritesListProvider);
     }
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(content: Text('${product.name} savatga qoʻshildi'), duration: const Duration(milliseconds: 800)),
-      );
+    await ref.read(storefrontProductsProvider.notifier).refresh();
   }
 
   @override
   Widget build(BuildContext context) {
-    final categoriesAsync = ref.watch(storefrontCategoriesProvider);
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    final categories = ref.watch(storefrontCategoriesProvider).valueOrNull ?? const <StorefrontCategory>[];
+    final roots = categories.where((c) => c.parentId == null).toList();
+    final subs = _rootCategoryId == null
+        ? const <StorefrontCategory>[]
+        : categories.where((c) => c.parentId == _rootCategoryId).toList();
     final productsAsync = ref.watch(storefrontProductsProvider);
+    final feed = productsAsync.valueOrNull;
+    if (feed != null && feed.query.sellerId == null && feed.items.isNotEmpty) {
+      _shops = StorefrontShop.fromProducts(feed.items);
+    }
+    final firstName = ref.watch(sessionNotifierProvider.select((s) => s.valueOrNull?.user?.firstName.trim()));
+    final greeting = (firstName?.isNotEmpty ?? false) ? l10n.sfGreeting(firstName!) : l10n.sfGreetingGuest;
+    final hints = categories.map((c) => c.name).where((n) => n.trim().isNotEmpty).take(8).toList();
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-          child: TextField(
-            controller: _searchController,
-            decoration: const InputDecoration(
-              hintText: 'Mahsulot qidirish...',
-              prefixIcon: Icon(Icons.search),
-              border: OutlineInputBorder(),
-              isDense: true,
+    return ValueListenableBuilder<bool>(
+      valueListenable: _pastHero,
+      builder: (context, pastHero, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value:
+            (pastHero && Theme.of(context).brightness == Brightness.light
+                    ? SystemUiOverlayStyle.dark
+                    : SystemUiOverlayStyle.light)
+                .copyWith(statusBarColor: Colors.transparent),
+        child: Stack(
+          children: [
+            child!,
+            // Status bar backdrop: hero black at the top, page colour after.
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: MediaQuery.paddingOf(context).top,
+              child: AnimatedContainer(duration: AppMotion.fast, color: pastHero ? colors.sheet : AppColors.ink),
             ),
-            onChanged: _onSearchChanged,
-          ),
+          ],
         ),
-        categoriesAsync.when(
-          loading: () => const SizedBox(height: 44),
-          error: (error, _) => const SizedBox.shrink(),
-          data: (categories) => categories.isEmpty
-              ? const SizedBox.shrink()
-              : SizedBox(
-                  height: 44,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: ChoiceChip(
-                          label: const Text('Barchasi'),
-                          selected: _selectedCategoryId == null,
-                          onSelected: (_) => _onCategorySelected(null),
-                        ),
-                      ),
-                      for (final category in categories)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: ChoiceChip(
-                            label: Text(category.name),
-                            selected: _selectedCategoryId == category.id,
-                            onSelected: (_) => _onCategorySelected(category.id),
-                          ),
-                        ),
-                    ],
+      ),
+      child: ColoredBox(
+        color: colors.sheet,
+        child: RefreshIndicator(
+          onRefresh: _refresh,
+          color: AppColors.onBrand,
+          backgroundColor: AppColors.brandYellow,
+          edgeOffset: MediaQuery.paddingOf(context).top,
+          child: CustomScrollView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            slivers: [
+              SliverToBoxAdapter(
+                child: StorefrontHero(
+                  key: _heroKey,
+                  greeting: greeting,
+                  onProfile: widget.onOpenProfile,
+                  categories: roots,
+                  selectedCategoryId: _rootCategoryId,
+                  onCategorySelected: _selectRoot,
+                  searchController: _searchController,
+                  onSearchChanged: _onSearchChanged,
+                  searchHints: hints,
+                  shops: _shops,
+                  selectedSellerId: feed?.query.sellerId,
+                  onShopSelected: _selectShop,
+                ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 22)),
+              if (feed != null && feed.items.isNotEmpty && !productsAsync.isLoading) ...[
+                SliverToBoxAdapter(child: StorefrontProductRail(newest: feed.items.take(10).toList())),
+                // The circles header brings its own status-bar-high top gap.
+                if (subs.isEmpty) const SliverToBoxAdapter(child: SizedBox(height: 18)),
+              ],
+              if (subs.isNotEmpty)
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: StorefrontCategoryCirclesHeader(
+                    categories: subs,
+                    selectedId: _subCategoryId,
+                    onSelected: _selectSub,
+                    background: colors.sheet,
+                    divider: colors.outline,
+                    topInset: MediaQuery.paddingOf(context).top,
                   ),
                 ),
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: productsAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('Xatolik: $error', textAlign: TextAlign.center),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () => ref.invalidate(storefrontProductsProvider),
-                    child: const Text('Qayta urinish'),
+              ...productsAsync.when(
+                skipLoadingOnRefresh: true,
+                loading: () => [
+                  const SliverToBoxAdapter(
+                    child: Padding(padding: EdgeInsets.only(top: 8), child: StorefrontFeedSkeleton()),
                   ),
                 ],
+                error: (error, _) => [
+                  SliverToBoxAdapter(
+                    child: _FeedMessage(
+                      icon: Icons.wifi_off_rounded,
+                      title: l10n.commonUnknownError,
+                      actionLabel: l10n.commonRetry,
+                      onAction: () => ref.invalidate(storefrontProductsProvider),
+                    ),
+                  ),
+                ],
+                data: (state) => [
+                  SliverToBoxAdapter(
+                    child: _FeedHeader(
+                      total: state.total,
+                      shopName: _shopName(state.query.sellerId),
+                      onClearShop: () => _selectShop(null),
+                    ),
+                  ),
+                  if (state.items.isEmpty)
+                    SliverToBoxAdapter(
+                      child: _FeedMessage(
+                        icon: Icons.search_off_rounded,
+                        title: l10n.sfNoProducts,
+                        actionLabel: _hasFilters(state) ? l10n.sfRemoveFilter : null,
+                        onAction: _clearFilters,
+                      ),
+                    )
+                  else
+                    SliverList.builder(
+                      itemCount: state.items.length,
+                      itemBuilder: (context, index) => StorefrontProductCard(product: state.items[index])
+                          .animate()
+                          .fadeIn(duration: AppMotion.standard)
+                          .slideY(begin: 0.04, end: 0, curve: AppMotion.emphasized),
+                    ),
+                  if (state.isLoadingMore)
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                    ),
+                ],
               ),
-            ),
-            data: (state) {
-              if (state.items.isEmpty) {
-                return RefreshIndicator(
-                  onRefresh: () => ref.read(storefrontProductsProvider.notifier).refresh(),
-                  child: ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    children: const [
-                      Padding(padding: EdgeInsets.only(top: 96), child: Center(child: Text('Mahsulotlar topilmadi'))),
-                    ],
-                  ),
-                );
-              }
-              return RefreshIndicator(
-                onRefresh: () => ref.read(storefrontProductsProvider.notifier).refresh(),
-                child: GridView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                    childAspectRatio: 0.72,
-                  ),
-                  itemCount: state.items.length,
-                  itemBuilder: (context, index) {
-                    final product = state.items[index];
-                    return _ProductCard(
-                      product: product,
-                      onTap: () => context.push(RouteNames.customerProductDetail(product.id)),
-                      onAddToCart: () => _addToCart(product),
-                    );
-                  },
-                ),
-              );
-            },
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            ],
           ),
         ),
-      ],
+      ),
+    );
+  }
+
+  bool _hasFilters(StorefrontProductsState state) =>
+      state.query.categoryId != null || state.query.sellerId != null || (state.query.search?.isNotEmpty ?? false);
+
+  String? _shopName(String? sellerId) {
+    if (sellerId == null) return null;
+    for (final shop in _shops) {
+      if (shop.sellerId == sellerId) return shop.name;
+    }
+    return null;
+  }
+}
+
+/// "12 ta mahsulot / Siz uchun saralangan mahsulotlar", plus the active shop
+/// filter as a removable chip.
+class _FeedHeader extends StatelessWidget {
+  const _FeedHeader({required this.total, required this.shopName, required this.onClearShop});
+
+  final int total;
+  final String? shopName;
+  final VoidCallback onClearShop;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BrandColors.of(context);
+    final l10n = context.l10n;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 14, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.commonProductCount(total),
+            style: TextStyle(color: colors.textPrimary, fontSize: 21, fontWeight: FontWeight.w800, letterSpacing: -0.4),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            l10n.sfProductsSubtitle,
+            style: TextStyle(color: colors.textSecondary, fontSize: 15, fontWeight: FontWeight.w500),
+          ),
+          if (shopName != null) ...[
+            const SizedBox(height: 12),
+            InputChip(
+              avatar: Icon(Icons.storefront_rounded, size: 18, color: colors.accentText),
+              label: Text(shopName!),
+              labelStyle: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700),
+              onDeleted: onClearShop,
+              deleteButtonTooltipMessage: l10n.sfRemoveFilter,
+              backgroundColor: AppColors.brandYellow.withValues(alpha: 0.18),
+              side: const BorderSide(color: AppColors.brandAmber),
+              shape: const StadiumBorder(),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
 
-class _ProductCard extends StatelessWidget {
-  const _ProductCard({required this.product, required this.onTap, required this.onAddToCart});
+class _FeedMessage extends StatelessWidget {
+  const _FeedMessage({required this.icon, required this.title, this.actionLabel, this.onAction});
 
-  final StorefrontProduct product;
-  final VoidCallback onTap;
-  final VoidCallback onAddToCart;
+  final IconData icon;
+  final String title;
+  final String? actionLabel;
+  final VoidCallback? onAction;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: product.imageUrl != null
-                  ? CachedNetworkImage(imageUrl: product.imageUrl!, fit: BoxFit.cover)
-                  : Container(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      child: const Icon(Icons.inventory_2_outlined, size: 32),
-                    ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(product.name, maxLines: 1, overflow: TextOverflow.ellipsis),
-                  Text(product.sellerName, maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodySmall),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          CurrencyFormatter.format(product.price, product.currency),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: onAddToCart,
-                        borderRadius: BorderRadius.circular(20),
-                        child: const Padding(
-                          padding: EdgeInsets.all(2),
-                          child: Icon(Icons.add_circle, size: 26),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+    final colors = BrandColors.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(32, 32, 32, 16),
+      child: Column(
+        children: [
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(color: colors.field, shape: BoxShape.circle),
+            child: Icon(icon, size: 34, color: colors.textSecondary),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700),
+          ),
+          if (actionLabel != null) ...[
+            const SizedBox(height: 10),
+            TextButton(onPressed: onAction, child: Text(actionLabel!)),
           ],
-        ),
+        ],
       ),
     );
   }

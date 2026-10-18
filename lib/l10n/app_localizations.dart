@@ -2505,6 +2505,114 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Shu joyni tanlash'**
   String get locationChooseHere;
+
+  /// No description provided for @sfGreeting.
+  ///
+  /// In uz, this message translates to:
+  /// **'Salom, {name}!'**
+  String sfGreeting(String name);
+
+  /// No description provided for @sfGreetingGuest.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xush kelibsiz!'**
+  String get sfGreetingGuest;
+
+  /// No description provided for @sfGreetingSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bugun nima xarid qilamiz?'**
+  String get sfGreetingSubtitle;
+
+  /// No description provided for @sfAllCategories.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barchasi'**
+  String get sfAllCategories;
+
+  /// No description provided for @sfSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'«{term}» ni qidiring'**
+  String sfSearchHint(String term);
+
+  /// No description provided for @sfSearchHintDefault.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulot qidirish'**
+  String get sfSearchHintDefault;
+
+  /// No description provided for @sfShops.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'konlar'**
+  String get sfShops;
+
+  /// No description provided for @sfNewArrivals.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi kelganlar'**
+  String get sfNewArrivals;
+
+  /// No description provided for @sfFavoritesLogin.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sevimli mahsulotlaringizni ko\'rish uchun hisobingizga kiring'**
+  String get sfFavoritesLogin;
+
+  /// No description provided for @sfFavoritesEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali sevimli mahsulot yo\'q. Yoqqan mahsulotdagi ♡ ni bosing.'**
+  String get sfFavoritesEmpty;
+
+  /// No description provided for @sfProductsSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Siz uchun saralangan mahsulotlar'**
+  String get sfProductsSubtitle;
+
+  /// No description provided for @sfInStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldi: {quantity}'**
+  String sfInStock(String quantity);
+
+  /// No description provided for @sfOutOfStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tugagan'**
+  String get sfOutOfStock;
+
+  /// No description provided for @sfAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'QO\'SHISH'**
+  String get sfAdd;
+
+  /// No description provided for @sfAddedToCart.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} savatga qo\'shildi'**
+  String sfAddedToCart(String name);
+
+  /// No description provided for @sfCartOtherShop.
+  ///
+  /// In uz, this message translates to:
+  /// **'Savatda faqat bitta do\'kondan mahsulot bo\'lishi mumkin'**
+  String get sfCartOtherShop;
+
+  /// No description provided for @sfNoProducts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlar topilmadi'**
+  String get sfNoProducts;
+
+  /// No description provided for @sfRemoveFilter.
+  ///
+  /// In uz, this message translates to:
+  /// **'Filtrni olib tashlash'**
+  String get sfRemoveFilter;
 }
 
 class _AppLocalizationsDelegate

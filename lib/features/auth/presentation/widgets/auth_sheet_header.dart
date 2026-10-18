@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import 'package:bsmart/core/theme/app_motion.dart';
-import 'package:bsmart/features/auth/presentation/widgets/auth_theme.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 
 /// Bold sheet title ("Raqamingizni kiriting") with an optional muted line.
 class AuthSheetHeader extends StatelessWidget {
@@ -32,7 +32,7 @@ class AuthOrDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = AuthColors.of(context);
+    final colors = BrandColors.of(context);
     return Row(
       children: [
         const Expanded(child: Divider()),

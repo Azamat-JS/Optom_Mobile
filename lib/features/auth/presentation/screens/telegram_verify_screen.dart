@@ -10,7 +10,7 @@ import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/features/auth/presentation/providers/telegram_verify_notifier.dart';
 import 'package:bsmart/features/auth/presentation/widgets/auth_scaffold.dart';
 import 'package:bsmart/features/auth/presentation/widgets/auth_sheet_header.dart';
-import 'package:bsmart/features/auth/presentation/widgets/auth_theme.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/auth/presentation/widgets/phone_number_field.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
 
@@ -178,7 +178,7 @@ class _Done extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = AuthColors.of(context);
+    final colors = BrandColors.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 56),
       child: Column(
@@ -217,7 +217,7 @@ class _Waiting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = AuthColors.of(context);
+    final colors = BrandColors.of(context);
     final left = remaining.isNegative ? Duration.zero : remaining;
     final countdown = '${left.inMinutes}:${(left.inSeconds % 60).toString().padLeft(2, '0')}';
     final l10n = context.l10n;
@@ -290,7 +290,7 @@ class _Step extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = AuthColors.of(context);
+    final colors = BrandColors.of(context);
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -338,7 +338,7 @@ class _StatusPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = AuthColors.of(context);
+    final colors = BrandColors.of(context);
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
@@ -392,7 +392,7 @@ class _Problem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = AuthColors.of(context);
+    final colors = BrandColors.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

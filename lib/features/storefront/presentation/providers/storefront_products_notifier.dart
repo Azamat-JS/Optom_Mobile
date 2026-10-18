@@ -9,24 +9,30 @@ class StorefrontProductsState {
   const StorefrontProductsState({
     required this.items,
     required this.query,
+    this.total = 0,
     this.hasNext = false,
     this.isLoadingMore = false,
   });
 
   final List<StorefrontProduct> items;
   final StorefrontQuery query;
+
+  /// Matching products across all pages (`meta.total`).
+  final int total;
   final bool hasNext;
   final bool isLoadingMore;
 
   StorefrontProductsState copyWith({
     List<StorefrontProduct>? items,
     StorefrontQuery? query,
+    int? total,
     bool? hasNext,
     bool? isLoadingMore,
   }) {
     return StorefrontProductsState(
       items: items ?? this.items,
       query: query ?? this.query,
+      total: total ?? this.total,
       hasNext: hasNext ?? this.hasNext,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     );
@@ -44,7 +50,8 @@ class StorefrontProductsNotifier extends AsyncNotifier<StorefrontProductsState> 
   Future<StorefrontProductsState> _fetch(StorefrontQuery query) async {
     final result = await getIt<BrowseStorefrontUseCase>().call(query);
     return result.fold(
-      (page) => StorefrontProductsState(items: page.data, query: query, hasNext: page.meta.hasNext),
+      (page) =>
+          StorefrontProductsState(items: page.data, query: query, total: page.meta.total, hasNext: page.meta.hasNext),
       (failure) => throw failure,
     );
   }
@@ -57,9 +64,7 @@ class StorefrontProductsNotifier extends AsyncNotifier<StorefrontProductsState> 
   Future<void> search(String query) async {
     final current = state.valueOrNull?.query ?? const StorefrontQuery();
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => _fetch(current.copyWith(page: 1, search: query, clearSearch: query.isEmpty)),
-    );
+    state = await AsyncValue.guard(() => _fetch(current.copyWith(page: 1, search: query, clearSearch: query.isEmpty)));
   }
 
   Future<void> filterByCategory(String? categoryId) async {
@@ -68,6 +73,21 @@ class StorefrontProductsNotifier extends AsyncNotifier<StorefrontProductsState> 
     state = await AsyncValue.guard(
       () => _fetch(current.copyWith(page: 1, categoryId: categoryId, clearCategory: categoryId == null)),
     );
+  }
+
+  /// Narrows the feed to one shop (owner), or back to every shop with null.
+  Future<void> filterBySeller(String? sellerId) async {
+    final current = state.valueOrNull?.query ?? const StorefrontQuery();
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => _fetch(current.copyWith(page: 1, sellerId: sellerId, clearSeller: sellerId == null)),
+    );
+  }
+
+  /// Drops every filter (category, shop, search) in one request.
+  Future<void> resetFilters() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _fetch(const StorefrontQuery()));
   }
 
   Future<void> loadMore() async {
@@ -82,6 +102,7 @@ class StorefrontProductsNotifier extends AsyncNotifier<StorefrontProductsState> 
         current.copyWith(
           items: [...current.items, ...page.data],
           query: nextQuery,
+          total: page.meta.total,
           hasNext: page.meta.hasNext,
           isLoadingMore: false,
         ),

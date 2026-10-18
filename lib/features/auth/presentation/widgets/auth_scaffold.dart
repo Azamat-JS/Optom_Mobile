@@ -7,7 +7,7 @@ import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/theme/app_colors.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
-import 'package:bsmart/features/auth/presentation/widgets/auth_theme.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/shared/widgets/brand_mark.dart';
 import 'package:bsmart/shared/widgets/language_picker.dart';
 
@@ -34,7 +34,7 @@ class AuthScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
     return Theme(
-      data: AuthTheme.of(context),
+      data: BrandTheme.of(context),
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent),
         child: Scaffold(
@@ -131,7 +131,7 @@ class _Hero extends StatelessWidget {
                     context.l10n.authTagline,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontFamily: AuthTheme.fontFamily,
+                      fontFamily: BrandTheme.fontFamily,
                       color: Colors.white,
                       fontSize: 19,
                       fontWeight: FontWeight.w700,
@@ -267,7 +267,7 @@ class _Sheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = AuthColors.of(context);
+    final colors = BrandColors.of(context);
     return Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -321,7 +321,7 @@ class _HeroPill extends StatelessWidget {
         minimumSize: const Size(0, 40),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         shape: const StadiumBorder(),
-        textStyle: const TextStyle(fontFamily: AuthTheme.fontFamily, fontSize: 14, fontWeight: FontWeight.w700),
+        textStyle: const TextStyle(fontFamily: BrandTheme.fontFamily, fontSize: 14, fontWeight: FontWeight.w700),
       ),
       child: Text(label),
     );

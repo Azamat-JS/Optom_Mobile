@@ -1425,4 +1425,69 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get locationChooseHere => 'Shu joyni tanlash';
+
+  @override
+  String sfGreeting(String name) {
+    return 'Salom, $name!';
+  }
+
+  @override
+  String get sfGreetingGuest => 'Xush kelibsiz!';
+
+  @override
+  String get sfGreetingSubtitle => 'Bugun nima xarid qilamiz?';
+
+  @override
+  String get sfAllCategories => 'Barchasi';
+
+  @override
+  String sfSearchHint(String term) {
+    return '«$term» ni qidiring';
+  }
+
+  @override
+  String get sfSearchHintDefault => 'Mahsulot qidirish';
+
+  @override
+  String get sfShops => 'Do\'konlar';
+
+  @override
+  String get sfNewArrivals => 'Yangi kelganlar';
+
+  @override
+  String get sfFavoritesLogin =>
+      'Sevimli mahsulotlaringizni ko\'rish uchun hisobingizga kiring';
+
+  @override
+  String get sfFavoritesEmpty =>
+      'Hali sevimli mahsulot yo\'q. Yoqqan mahsulotdagi ♡ ni bosing.';
+
+  @override
+  String get sfProductsSubtitle => 'Siz uchun saralangan mahsulotlar';
+
+  @override
+  String sfInStock(String quantity) {
+    return 'Qoldi: $quantity';
+  }
+
+  @override
+  String get sfOutOfStock => 'Tugagan';
+
+  @override
+  String get sfAdd => 'QO\'SHISH';
+
+  @override
+  String sfAddedToCart(String name) {
+    return '$name savatga qo\'shildi';
+  }
+
+  @override
+  String get sfCartOtherShop =>
+      'Savatda faqat bitta do\'kondan mahsulot bo\'lishi mumkin';
+
+  @override
+  String get sfNoProducts => 'Mahsulotlar topilmadi';
+
+  @override
+  String get sfRemoveFilter => 'Filtrni olib tashlash';
 }

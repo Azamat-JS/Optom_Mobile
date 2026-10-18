@@ -1572,7 +1572,11 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 | # | Scope | Status |
 |---|---|---|
 | U1 | Auth: splash, login, register, Telegram verify (reference: Swiggy onboarding) | 🟢 Done 2026-10-18 |
-| U2+ | Next areas, as the user sends references | ⚪ |
+| U2a | Storefront home (Katalog tab) + storefront tab bar (reference: Swiggy home/listing) | 🟢 Done 2026-10-18 |
+| U2b | Storefront search screen: recent searches, live suggestions, results tabs + filter chips | ⚪ |
+| U2c | Shop page: header card, branch ("outlet") sheet, in-shop search, collapsible category sections, product grid with ADD/stepper, "Menyu" jump FAB | ⚪ |
+| U2d | Product detail + masonry "explore" grid | ⚪ |
+| U3+ | Next areas, as the user sends references | ⚪ |
 
 **U1 notes (2026-10-18):**
 - **Scoped theme:** the brand look is applied only inside the auth flow, via
@@ -1597,6 +1601,42 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
   emulator couldn't be used (only ~595 MB free, the 180 MB debug APK failed to install).
   **Not checked live:** the keyboard-open layout and typed input (no tap/type tooling in the
   simulator; input is covered by widget tests).
+
+**U2a notes (2026-10-18):**
+- The auth theme became the shared **`core/theme/brand_theme.dart`** (`BrandTheme`, `BrandColors`).
+  It is still applied locally: the auth screens, the storefront Katalog tab and the storefront tab
+  bar. Its filled/outlined buttons are full width by default, so a button inside a `Row` needs its
+  own `minimumSize`. Savat/Sevimlilar/Profil tabs keep the old theme and AppBar until redesigned.
+- **No backend change.** Everything comes from the existing public catalog: products, categories
+  (`parentId` gives top level vs subcategory), `sellerId` filter, `meta.total`. The public catalog
+  has no shop list, so the shop strip is derived from the loaded products
+  (`StorefrontShop.fromProducts`). It is kept while a shop filter is active.
+- Layout (`storefront_catalog_tab.dart` + `presentation/widgets/storefront_*`):
+  - Dark hero: greeting (user's first name, or "Xush kelibsiz!"), profile button → Profil tab,
+    slanted top-level category tabs (selected one merges into the panel), search field with a
+    rotating "«Kategoriya» ni qidiring" placeholder (inline search, debounced), and a shop strip.
+    Tapping a shop filters the feed by `sellerId` (U2c will open the shop page instead).
+  - "YANGI KELGANLAR | SEVIMLILAR" switch over a horizontal rail. New = first 10 of the current
+    feed. Favourites = `favoritesListProvider`; guests get a login prompt.
+  - Pinned subcategory circles, shown only when the selected top category has subcategories. The
+    header's height includes the status bar inset, so it stays visible when pinned.
+  - "N ta mahsulot" header (`commonProductCount`), removable shop chip, big product cards (photo,
+    stock badge, category tab, shop, name, price, green "QO'SHISH" → yellow −/+ stepper), shimmer
+    skeleton, infinite scroll, pull to refresh.
+  - A status-bar backdrop switches from hero black to page colour (and dark icons) once the hero
+    scrolls away.
+- Left out on purpose (no data): ratings, delivery times, offers/promo banners, veg filter, voice
+  search, coachmarks.
+- `StorefrontProductsNotifier` gained `total`, `filterBySeller`, `resetFilters`; `StorefrontQuery`
+  gained a `sellerId` copy/clear.
+- **Verified:** `flutter analyze` clean, 56 tests (4 new: `storefront_shop_test.dart`). On the
+  iPhone 17 simulator against the local backend: hero, shops, rail, feed cards, a top category with
+  subcategory circles (Texnologiya → 8 products), the pinned circles header, light + dark. Fixed
+  live: a skeleton row overflow, the hint animation overlapping mid-transition, the pinned header
+  hidden under the status bar, and the dark fade looking dirty on photo-less products.
+  **Not checked live:** taps (cart stepper, favourites toggle, shop filter chip, guest login
+  prompt); there's no tap tooling in the simulator here. In the local DB the category images 404
+  on ImageKit, so circles/tabs show placeholders.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
