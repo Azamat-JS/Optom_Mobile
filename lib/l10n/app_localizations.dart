@@ -2613,6 +2613,138 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Filtrni olib tashlash'**
   String get sfRemoveFilter;
+
+  /// No description provided for @sfSearchTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulot va do\'konlarni qidiring'**
+  String get sfSearchTitle;
+
+  /// No description provided for @sfSearchFieldHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qidiring, tanlang, buyurtma bering!'**
+  String get sfSearchFieldHint;
+
+  /// No description provided for @sfRecentSearches.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'nggi qidiruvlar'**
+  String get sfRecentSearches;
+
+  /// No description provided for @sfClearRecent.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tarixni tozalash'**
+  String get sfClearRecent;
+
+  /// No description provided for @sfBrowseCategories.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kategoriyalar'**
+  String get sfBrowseCategories;
+
+  /// No description provided for @sfSuggestionProduct.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulot'**
+  String get sfSuggestionProduct;
+
+  /// No description provided for @sfShopsFor.
+  ///
+  /// In uz, this message translates to:
+  /// **'«{query}» bo\'yicha do\'konlar'**
+  String sfShopsFor(String query);
+
+  /// No description provided for @sfMoreResults.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqa mos natijalar'**
+  String get sfMoreResults;
+
+  /// No description provided for @sfSearching.
+  ///
+  /// In uz, this message translates to:
+  /// **'Siz uchun eng mosini qidiryapmiz…'**
+  String get sfSearching;
+
+  /// No description provided for @sfResultsIn.
+  ///
+  /// In uz, this message translates to:
+  /// **'Natijalar: {category}'**
+  String sfResultsIn(String category);
+
+  /// No description provided for @sfSort.
+  ///
+  /// In uz, this message translates to:
+  /// **'Saralash'**
+  String get sfSort;
+
+  /// No description provided for @sfSortRelevance.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tavsiya etilgan'**
+  String get sfSortRelevance;
+
+  /// No description provided for @sfSortPriceLow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Avval arzonlari'**
+  String get sfSortPriceLow;
+
+  /// No description provided for @sfSortPriceHigh.
+  ///
+  /// In uz, this message translates to:
+  /// **'Avval qimmatlari'**
+  String get sfSortPriceHigh;
+
+  /// No description provided for @sfSortName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomi bo\'yicha (A–Z)'**
+  String get sfSortName;
+
+  /// No description provided for @sfInStockOnly.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mavjud'**
+  String get sfInStockOnly;
+
+  /// No description provided for @sfShopMatches.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta mos mahsulot'**
+  String sfShopMatches(int count);
+
+  /// No description provided for @sfNoResults.
+  ///
+  /// In uz, this message translates to:
+  /// **'«{query}» bo\'yicha hech narsa topilmadi'**
+  String sfNoResults(String query);
+
+  /// No description provided for @sfNoResultsHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqa so\'z bilan qidiring yoki filtrlarni olib tashlang'**
+  String get sfNoResultsHint;
+
+  /// No description provided for @sfFeaturedShops.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mos do\'konlar'**
+  String get sfFeaturedShops;
+
+  /// No description provided for @sfChooseCategory.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaysi bo\'limda qidiramiz?'**
+  String get sfChooseCategory;
+
+  /// No description provided for @sfShopProducts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon mahsulotlari'**
+  String get sfShopProducts;
 }
 
 class _AppLocalizationsDelegate

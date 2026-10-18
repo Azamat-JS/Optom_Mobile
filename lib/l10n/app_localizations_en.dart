@@ -1521,4 +1521,84 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sfRemoveFilter => 'Remove filter';
+
+  @override
+  String get sfSearchTitle => 'Search products & shops';
+
+  @override
+  String get sfSearchFieldHint => 'Search, pick, order!';
+
+  @override
+  String get sfRecentSearches => 'Recent searches';
+
+  @override
+  String get sfClearRecent => 'Clear history';
+
+  @override
+  String get sfBrowseCategories => 'Categories';
+
+  @override
+  String get sfSuggestionProduct => 'Product';
+
+  @override
+  String sfShopsFor(String query) {
+    return 'Shops for “$query”';
+  }
+
+  @override
+  String get sfMoreResults => 'More matching results';
+
+  @override
+  String get sfSearching => 'Finding the best matches…';
+
+  @override
+  String sfResultsIn(String category) {
+    return 'Showing results in $category';
+  }
+
+  @override
+  String get sfSort => 'Sort by';
+
+  @override
+  String get sfSortRelevance => 'Relevance';
+
+  @override
+  String get sfSortPriceLow => 'Price: low to high';
+
+  @override
+  String get sfSortPriceHigh => 'Price: high to low';
+
+  @override
+  String get sfSortName => 'Name (A–Z)';
+
+  @override
+  String get sfInStockOnly => 'In stock';
+
+  @override
+  String sfShopMatches(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count matching products',
+      one: '$count matching product',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sfNoResults(String query) {
+    return 'Nothing found for “$query”';
+  }
+
+  @override
+  String get sfNoResultsHint => 'Try another word or remove the filters';
+
+  @override
+  String get sfFeaturedShops => 'Matching shops';
+
+  @override
+  String get sfChooseCategory => 'Where should we search?';
+
+  @override
+  String get sfShopProducts => 'Shop products';
 }

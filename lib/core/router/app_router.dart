@@ -9,6 +9,7 @@ import 'package:bsmart/features/auth/presentation/providers/session_notifier.dar
 import 'package:bsmart/features/auth/presentation/screens/login_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/register_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/splash_screen.dart';
+import 'package:bsmart/features/storefront/presentation/screens/storefront_search_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/telegram_verify_screen.dart';
 import 'package:bsmart/features/deliveries/presentation/screens/customer_deliveries_screen.dart';
 import 'package:bsmart/features/customers/presentation/screens/customers_list_screen.dart';
@@ -97,6 +98,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.customerHome,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const CustomerHomeScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.customerSearch,
+        pageBuilder: (context, state) => fadeThroughPage(
+          state: state,
+          child: const StorefrontSearchScreen(),
+        ),
       ),
       GoRoute(
         path: RouteNames.customerProductDetailPattern,
@@ -290,6 +298,7 @@ bool _isGuestAllowed(String location) {
     RouteNames.register,
     RouteNames.telegramVerify,
     RouteNames.customerHome,
+    RouteNames.customerSearch,
     RouteNames.settings,
   };
   if (allowed.contains(location)) return true;

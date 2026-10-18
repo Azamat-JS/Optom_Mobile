@@ -26,8 +26,7 @@ class StorefrontHero extends StatelessWidget {
     required this.categories,
     required this.selectedCategoryId,
     required this.onCategorySelected,
-    required this.searchController,
-    required this.onSearchChanged,
+    required this.onSearchTap,
     required this.searchHints,
     required this.shops,
     required this.selectedSellerId,
@@ -42,8 +41,9 @@ class StorefrontHero extends StatelessWidget {
   final List<StorefrontCategory> categories;
   final String? selectedCategoryId;
   final ValueChanged<String?> onCategorySelected;
-  final TextEditingController searchController;
-  final ValueChanged<String> onSearchChanged;
+
+  /// Opens the search screen (the field here is only a button).
+  final VoidCallback onSearchTap;
 
   /// Rotated through the search placeholder ("«Non» ni qidiring").
   final List<String> searchHints;
@@ -123,7 +123,7 @@ class StorefrontHero extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 16),
-                    child: _SearchField(controller: searchController, onChanged: onSearchChanged, hints: searchHints),
+                    child: _SearchField(onTap: onSearchTap, hints: searchHints),
                   ),
                   if (shops.isNotEmpty) ...[
                     const SizedBox(height: 20),
@@ -300,11 +300,12 @@ class _TabClipper extends CustomClipper<Path> {
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
 
+/// Search bar look-alike with a rotating "«Kategoriya» ni qidiring"
+/// placeholder; tapping it opens the search screen.
 class _SearchField extends StatefulWidget {
-  const _SearchField({required this.controller, required this.onChanged, required this.hints});
+  const _SearchField({required this.onTap, required this.hints});
 
-  final TextEditingController controller;
-  final ValueChanged<String> onChanged;
+  final VoidCallback onTap;
   final List<String> hints;
 
   @override
@@ -319,7 +320,7 @@ class _SearchFieldState extends State<_SearchField> {
   void initState() {
     super.initState();
     _timer = Timer.periodic(const Duration(seconds: 3), (_) {
-      if (mounted && widget.hints.length > 1 && widget.controller.text.isEmpty) {
+      if (mounted && widget.hints.length > 1) {
         setState(() => _hintIndex = (_hintIndex + 1) % widget.hints.length);
       }
     });
@@ -337,89 +338,62 @@ class _SearchFieldState extends State<_SearchField> {
     final hint = widget.hints.isEmpty
         ? l10n.sfSearchHintDefault
         : l10n.sfSearchHint(widget.hints[_hintIndex % widget.hints.length]);
-    const textStyle = TextStyle(
-      fontFamily: BrandTheme.fontFamily,
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-      color: AppColors.textPrimary,
-    );
-    return Container(
-      height: 56,
-      decoration: BoxDecoration(
+    return Semantics(
+      button: true,
+      label: l10n.sfSearchTitle,
+      excludeSemantics: true,
+      child: Material(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.18), blurRadius: 14, offset: const Offset(0, 6))],
-      ),
-      child: ValueListenableBuilder<TextEditingValue>(
-        valueListenable: widget.controller,
-        builder: (context, value, _) => Row(
-          children: [
-            const SizedBox(width: 16),
-            const Icon(Icons.search_rounded, color: AppColors.textSecondary, size: 26),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Stack(
-                alignment: Alignment.centerLeft,
-                children: [
-                  // Animated placeholder: TextField's own hint can't slide.
-                  if (value.text.isEmpty)
-                    IgnorePointer(
-                      child: ClipRect(
-                        child: AnimatedSwitcher(
-                          duration: AppMotion.slow,
-                          // New hint rises from below; the old one leaves upwards.
-                          transitionBuilder: (child, animation) {
-                            final incoming = child.key == ValueKey(hint);
-                            final offset = Tween(
-                              begin: incoming ? const Offset(0, 1) : const Offset(0, -1),
-                              end: Offset.zero,
-                            ).animate(CurvedAnimation(parent: animation, curve: AppMotion.emphasized));
-                            return FadeTransition(
-                              opacity: animation,
-                              child: SlideTransition(position: offset, child: child),
-                            );
-                          },
-                          layoutBuilder: (current, previous) =>
-                              Stack(alignment: Alignment.centerLeft, children: [...previous, ?current]),
-                          child: Text(
-                            hint,
-                            key: ValueKey(hint),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: textStyle.copyWith(color: AppColors.textMuted, fontWeight: FontWeight.w500),
-                          ),
+        elevation: 6,
+        shadowColor: Colors.black.withValues(alpha: 0.4),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: widget.onTap,
+          child: SizedBox(
+            height: 56,
+            child: Row(
+              children: [
+                const SizedBox(width: 16),
+                const Icon(Icons.search_rounded, color: AppColors.textSecondary, size: 26),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ClipRect(
+                    child: AnimatedSwitcher(
+                      duration: AppMotion.slow,
+                      // New hint rises from below; the old one leaves upwards.
+                      transitionBuilder: (child, animation) {
+                        final incoming = child.key == ValueKey(hint);
+                        final offset = Tween(
+                          begin: incoming ? const Offset(0, 1) : const Offset(0, -1),
+                          end: Offset.zero,
+                        ).animate(CurvedAnimation(parent: animation, curve: AppMotion.emphasized));
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(position: offset, child: child),
+                        );
+                      },
+                      layoutBuilder: (current, previous) =>
+                          Stack(alignment: Alignment.centerLeft, children: [...previous, ?current]),
+                      child: Text(
+                        hint,
+                        key: ValueKey(hint),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: BrandTheme.fontFamily,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textMuted,
                         ),
                       ),
                     ),
-                  TextField(
-                    controller: widget.controller,
-                    onChanged: widget.onChanged,
-                    textInputAction: TextInputAction.search,
-                    style: textStyle,
-                    cursorColor: AppColors.goldInk,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      isCollapsed: true,
-                      contentPadding: EdgeInsets.symmetric(vertical: 16),
-                    ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 16),
+              ],
             ),
-            if (value.text.isNotEmpty)
-              IconButton(
-                tooltip: l10n.authClear,
-                onPressed: () {
-                  widget.controller.clear();
-                  widget.onChanged('');
-                },
-                icon: const Icon(Icons.close_rounded, color: AppColors.textSecondary),
-              )
-            else
-              const SizedBox(width: 12),
-          ],
+          ),
         ),
       ),
     );

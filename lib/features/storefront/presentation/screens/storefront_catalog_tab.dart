@@ -1,11 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/theme/app_colors.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/core/theme/brand_theme.dart';
@@ -27,9 +27,9 @@ import 'package:bsmart/features/storefront/presentation/widgets/storefront_skele
 /// the B2B catalog browse).
 ///
 /// Layout (Phase 9 U2a, Swiggy home reference): dark hero with top-level
-/// category tabs, search and a shop strip; a "new / favourites" rail; pinned
+/// category tabs, a search button (→ `StorefrontSearchScreen`) and a shop strip; a "new / favourites" rail; pinned
 /// subcategory circles; the full feed as big cards. Filters: top category →
-/// subcategory (sent as one `categoryId`), shop (`sellerId`), search.
+/// subcategory (sent as one `categoryId`), shop (`sellerId`).
 ///
 /// Must sit under a [BrandTheme] (`CustomerHomeScreen` provides it).
 class StorefrontCatalogTab extends ConsumerStatefulWidget {
@@ -42,14 +42,12 @@ class StorefrontCatalogTab extends ConsumerStatefulWidget {
 }
 
 class _StorefrontCatalogTabState extends ConsumerState<StorefrontCatalogTab> {
-  final _searchController = TextEditingController();
   final _scrollController = ScrollController();
   final _heroKey = GlobalKey();
 
   /// True once the dark hero has scrolled away — flips the status bar strip
   /// and icons to the light content below.
   final _pastHero = ValueNotifier(false);
-  Timer? _debounce;
 
   String? _rootCategoryId;
   String? _subCategoryId;
@@ -66,8 +64,6 @@ class _StorefrontCatalogTabState extends ConsumerState<StorefrontCatalogTab> {
 
   @override
   void dispose() {
-    _debounce?.cancel();
-    _searchController.dispose();
     _scrollController.dispose();
     _pastHero.dispose();
     super.dispose();
@@ -81,13 +77,6 @@ class _StorefrontCatalogTabState extends ConsumerState<StorefrontCatalogTab> {
     final heroHeight = _heroKey.currentContext?.size?.height ?? 0;
     final topInset = MediaQuery.paddingOf(context).top;
     _pastHero.value = heroHeight > 0 && position.pixels > heroHeight - topInset;
-  }
-
-  void _onSearchChanged(String value) {
-    _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 400), () {
-      ref.read(storefrontProductsProvider.notifier).search(value.trim());
-    });
   }
 
   void _selectRoot(String? id) {
@@ -107,7 +96,6 @@ class _StorefrontCatalogTabState extends ConsumerState<StorefrontCatalogTab> {
   void _selectShop(String? sellerId) => ref.read(storefrontProductsProvider.notifier).filterBySeller(sellerId);
 
   Future<void> _clearFilters() async {
-    _searchController.clear();
     setState(() {
       _rootCategoryId = null;
       _subCategoryId = null;
@@ -183,8 +171,7 @@ class _StorefrontCatalogTabState extends ConsumerState<StorefrontCatalogTab> {
                   categories: roots,
                   selectedCategoryId: _rootCategoryId,
                   onCategorySelected: _selectRoot,
-                  searchController: _searchController,
-                  onSearchChanged: _onSearchChanged,
+                  onSearchTap: () => context.push(RouteNames.customerSearch),
                   searchHints: hints,
                   shops: _shops,
                   selectedSellerId: feed?.query.sellerId,

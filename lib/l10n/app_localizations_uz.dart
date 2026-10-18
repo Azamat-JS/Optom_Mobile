@@ -1490,4 +1490,79 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get sfRemoveFilter => 'Filtrni olib tashlash';
+
+  @override
+  String get sfSearchTitle => 'Mahsulot va do\'konlarni qidiring';
+
+  @override
+  String get sfSearchFieldHint => 'Qidiring, tanlang, buyurtma bering!';
+
+  @override
+  String get sfRecentSearches => 'So\'nggi qidiruvlar';
+
+  @override
+  String get sfClearRecent => 'Tarixni tozalash';
+
+  @override
+  String get sfBrowseCategories => 'Kategoriyalar';
+
+  @override
+  String get sfSuggestionProduct => 'Mahsulot';
+
+  @override
+  String sfShopsFor(String query) {
+    return '«$query» bo\'yicha do\'konlar';
+  }
+
+  @override
+  String get sfMoreResults => 'Boshqa mos natijalar';
+
+  @override
+  String get sfSearching => 'Siz uchun eng mosini qidiryapmiz…';
+
+  @override
+  String sfResultsIn(String category) {
+    return 'Natijalar: $category';
+  }
+
+  @override
+  String get sfSort => 'Saralash';
+
+  @override
+  String get sfSortRelevance => 'Tavsiya etilgan';
+
+  @override
+  String get sfSortPriceLow => 'Avval arzonlari';
+
+  @override
+  String get sfSortPriceHigh => 'Avval qimmatlari';
+
+  @override
+  String get sfSortName => 'Nomi bo\'yicha (A–Z)';
+
+  @override
+  String get sfInStockOnly => 'Mavjud';
+
+  @override
+  String sfShopMatches(int count) {
+    return '$count ta mos mahsulot';
+  }
+
+  @override
+  String sfNoResults(String query) {
+    return '«$query» bo\'yicha hech narsa topilmadi';
+  }
+
+  @override
+  String get sfNoResultsHint =>
+      'Boshqa so\'z bilan qidiring yoki filtrlarni olib tashlang';
+
+  @override
+  String get sfFeaturedShops => 'Mos do\'konlar';
+
+  @override
+  String get sfChooseCategory => 'Qaysi bo\'limda qidiramiz?';
+
+  @override
+  String get sfShopProducts => 'Do\'kon mahsulotlari';
 }

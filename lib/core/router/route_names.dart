@@ -21,6 +21,7 @@ abstract final class RouteNames {
   static const customerHome = '/customer';
   static const customerProductDetailPattern = '/customer/products/:id';
   static const customerCartReview = '/customer/cart/review';
+  static const customerSearch = '/customer/search';
   static const customerDebts = '/customer/debts';
 
   static String customerProductDetail(String id) => '/customer/products/$id';

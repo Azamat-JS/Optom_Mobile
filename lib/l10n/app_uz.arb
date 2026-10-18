@@ -789,5 +789,55 @@
   },
   "sfCartOtherShop": "Savatda faqat bitta do'kondan mahsulot bo'lishi mumkin",
   "sfNoProducts": "Mahsulotlar topilmadi",
-  "sfRemoveFilter": "Filtrni olib tashlash"
+  "sfRemoveFilter": "Filtrni olib tashlash",
+  "sfSearchTitle": "Mahsulot va do'konlarni qidiring",
+  "sfSearchFieldHint": "Qidiring, tanlang, buyurtma bering!",
+  "sfRecentSearches": "So'nggi qidiruvlar",
+  "sfClearRecent": "Tarixni tozalash",
+  "sfBrowseCategories": "Kategoriyalar",
+  "sfSuggestionProduct": "Mahsulot",
+  "sfShopsFor": "«{query}» bo'yicha do'konlar",
+  "@sfShopsFor": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "sfMoreResults": "Boshqa mos natijalar",
+  "sfSearching": "Siz uchun eng mosini qidiryapmiz…",
+  "sfResultsIn": "Natijalar: {category}",
+  "@sfResultsIn": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "sfSort": "Saralash",
+  "sfSortRelevance": "Tavsiya etilgan",
+  "sfSortPriceLow": "Avval arzonlari",
+  "sfSortPriceHigh": "Avval qimmatlari",
+  "sfSortName": "Nomi bo'yicha (A–Z)",
+  "sfInStockOnly": "Mavjud",
+  "sfShopMatches": "{count} ta mos mahsulot",
+  "@sfShopMatches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sfNoResults": "«{query}» bo'yicha hech narsa topilmadi",
+  "@sfNoResults": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "sfNoResultsHint": "Boshqa so'z bilan qidiring yoki filtrlarni olib tashlang",
+  "sfFeaturedShops": "Mos do'konlar",
+  "sfChooseCategory": "Qaysi bo'limda qidiramiz?",
+  "sfShopProducts": "Do'kon mahsulotlari"
 }

@@ -1529,4 +1529,85 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sfRemoveFilter => 'Убрать фильтр';
+
+  @override
+  String get sfSearchTitle => 'Поиск товаров и магазинов';
+
+  @override
+  String get sfSearchFieldHint => 'Ищите, выбирайте, заказывайте!';
+
+  @override
+  String get sfRecentSearches => 'Недавние запросы';
+
+  @override
+  String get sfClearRecent => 'Очистить историю';
+
+  @override
+  String get sfBrowseCategories => 'Категории';
+
+  @override
+  String get sfSuggestionProduct => 'Товар';
+
+  @override
+  String sfShopsFor(String query) {
+    return 'Магазины по запросу «$query»';
+  }
+
+  @override
+  String get sfMoreResults => 'Другие подходящие результаты';
+
+  @override
+  String get sfSearching => 'Подбираем самое подходящее…';
+
+  @override
+  String sfResultsIn(String category) {
+    return 'Результаты: $category';
+  }
+
+  @override
+  String get sfSort => 'Сортировка';
+
+  @override
+  String get sfSortRelevance => 'Рекомендуемые';
+
+  @override
+  String get sfSortPriceLow => 'Сначала дешёвые';
+
+  @override
+  String get sfSortPriceHigh => 'Сначала дорогие';
+
+  @override
+  String get sfSortName => 'По названию (А–Я)';
+
+  @override
+  String get sfInStockOnly => 'В наличии';
+
+  @override
+  String sfShopMatches(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count подходящих товаров',
+      few: '$count подходящих товара',
+      one: '$count подходящий товар',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sfNoResults(String query) {
+    return 'По запросу «$query» ничего не найдено';
+  }
+
+  @override
+  String get sfNoResultsHint => 'Попробуйте другое слово или уберите фильтры';
+
+  @override
+  String get sfFeaturedShops => 'Подходящие магазины';
+
+  @override
+  String get sfChooseCategory => 'Где будем искать?';
+
+  @override
+  String get sfShopProducts => 'Товары магазина';
 }
