@@ -1,3 +1,4 @@
+import 'package:bsmart/core/entities/geo_point.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/order_status.dart';
 import 'package:bsmart/features/orders/domain/entities/order_item.dart';
@@ -22,6 +23,7 @@ class Order {
     this.type,
     this.notes,
     this.deliveryAddress,
+    this.deliveryPoint,
     this.rejectionReason,
     this.approvedAt,
     this.rejectedAt,
@@ -46,6 +48,9 @@ class Order {
   final double balance;
   final String? notes;
   final String? deliveryAddress;
+
+  /// Drop-off pin chosen at checkout (`deliveryLat/deliveryLng`), if any.
+  final GeoPoint? deliveryPoint;
 
   /// B2B (wholesaler sells) or B2C (retailer sells) — courier deliveries are B2C-only.
   final OrderType? type;

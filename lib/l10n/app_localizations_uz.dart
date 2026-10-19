@@ -1794,4 +1794,100 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get addrRemove => 'Manzilni o\'chirish';
+
+  @override
+  String otTitle(String number) {
+    return 'Buyurtma #$number';
+  }
+
+  @override
+  String otSubtitle(String time, int count) {
+    return '$time · $count ta mahsulot';
+  }
+
+  @override
+  String get otNewTitle => 'Buyurtma qabul qilindi!';
+
+  @override
+  String get otNewHint => 'Do\'kon buyurtmani tasdiqlashini kutmoqdamiz';
+
+  @override
+  String get otApprovedTitle => 'Buyurtma tayyorlanmoqda!';
+
+  @override
+  String get otApprovedHint => 'Do\'kon tasdiqladi va buyurtmani yig\'moqda';
+
+  @override
+  String get otCourierSearching => 'Kuryer qidirilmoqda';
+
+  @override
+  String get otCourierAssigned => 'Kuryer tayinlandi';
+
+  @override
+  String get otCourierToShop => 'Kuryer do\'konga bormoqda';
+
+  @override
+  String get otOnTheWay => 'Buyurtma yo\'lda!';
+
+  @override
+  String get otArrived => 'Kuryer yetib keldi!';
+
+  @override
+  String get otDeliveredTitle => 'Buyurtma topshirildi';
+
+  @override
+  String get otDeliveredHint => 'Xaridingiz uchun rahmat!';
+
+  @override
+  String get otRejectedTitle => 'Buyurtma rad etildi';
+
+  @override
+  String get otDeliveryCancelled => 'Yetkazish bekor qilindi';
+
+  @override
+  String get otDeliveryFailed => 'Yetkazib bo\'lmadi';
+
+  @override
+  String get otPickupAt => 'Do\'kondan olib ketasiz';
+
+  @override
+  String get otStepPlaced => 'Qabul';
+
+  @override
+  String get otStepApproved => 'Tasdiq';
+
+  @override
+  String get otStepOnTheWay => 'Yo\'lda';
+
+  @override
+  String get otStepDelivered => 'Topshirildi';
+
+  @override
+  String get otMins => 'daq';
+
+  @override
+  String get otViewItems => 'Mahsulotlar ro\'yxati';
+
+  @override
+  String get otTrackCourier => 'Kuryerni xaritada kuzatish';
+
+  @override
+  String get otCallShop => 'Do\'konga qo\'ng\'iroq';
+
+  @override
+  String get otYourCourier => 'Sizning kuryeringiz';
+
+  @override
+  String get otRefresh => 'Yangilash';
+
+  @override
+  String get otShowAll => 'Hammasini ko\'rsatish';
+
+  @override
+  String get otCourierUpdating => 'Kuryer joylashuvi yangilanmoqda…';
+
+  @override
+  String otCourierBringing(String name) {
+    return '$name buyurtmangizni olib kelmoqda';
+  }
 }

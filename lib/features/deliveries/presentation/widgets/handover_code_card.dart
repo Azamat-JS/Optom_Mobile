@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import 'package:bsmart/core/theme/app_colors.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
 
 /// Customer-side: the 4-digit code to tell the courier at the door (Phase 7 N2). The server only
@@ -14,41 +15,45 @@ class HandoverCodeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.tertiaryContainer,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.pin_outlined, color: theme.colorScheme.onTertiaryContainer),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Topshirish kodi', style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onTertiaryContainer)),
-                Text(
-                  'Buyurtmani olganingizda kuryerga ayting. Boshqa hech kimga bermang.',
-                  style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onTertiaryContainer),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          // Fixed brand look (near-black card, yellow digits) on every screen.
+          decoration: BoxDecoration(color: AppColors.ink, borderRadius: BorderRadius.circular(20)),
+          child: Row(
+            children: [
+              const Icon(Icons.pin_outlined, color: AppColors.brandYellow),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Topshirish kodi',
+                      style: theme.textTheme.labelLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.w800),
+                    ),
+                    Text(
+                      'Buyurtmani olganingizda kuryerga ayting. Boshqa hech kimga bermang.',
+                      style: theme.textTheme.bodySmall?.copyWith(color: Colors.white.withValues(alpha: 0.72)),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Semantics(
-            label: 'Kod ${code.split('').join(' ')}',
-            child: Text(
-              code,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-                letterSpacing: 6,
-                color: theme.colorScheme.onTertiaryContainer,
               ),
-            ),
+              const SizedBox(width: 12),
+              Semantics(
+                label: 'Kod ${code.split('').join(' ')}',
+                child: Text(
+                  code,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 6,
+                    color: AppColors.brandYellow,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ).animate().fadeIn(duration: AppMotion.standard).scale(begin: const Offset(0.97, 0.97), curve: AppMotion.emphasized);
+        )
+        .animate()
+        .fadeIn(duration: AppMotion.standard)
+        .scale(begin: const Offset(0.97, 0.97), curve: AppMotion.emphasized);
   }
 }

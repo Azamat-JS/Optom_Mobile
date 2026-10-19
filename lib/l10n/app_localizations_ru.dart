@@ -1846,4 +1846,107 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get addrRemove => 'Удалить адрес';
+
+  @override
+  String otTitle(String number) {
+    return 'Заказ #$number';
+  }
+
+  @override
+  String otSubtitle(String time, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count товаров',
+      few: '$count товара',
+      one: '$count товар',
+    );
+    return '$time · $_temp0';
+  }
+
+  @override
+  String get otNewTitle => 'Заказ принят!';
+
+  @override
+  String get otNewHint => 'Ждём, пока магазин подтвердит заказ';
+
+  @override
+  String get otApprovedTitle => 'Заказ собирают!';
+
+  @override
+  String get otApprovedHint => 'Магазин подтвердил и собирает заказ';
+
+  @override
+  String get otCourierSearching => 'Ищем курьера';
+
+  @override
+  String get otCourierAssigned => 'Курьер назначен';
+
+  @override
+  String get otCourierToShop => 'Курьер едет в магазин';
+
+  @override
+  String get otOnTheWay => 'Заказ в пути!';
+
+  @override
+  String get otArrived => 'Курьер на месте!';
+
+  @override
+  String get otDeliveredTitle => 'Заказ доставлен';
+
+  @override
+  String get otDeliveredHint => 'Спасибо за покупку!';
+
+  @override
+  String get otRejectedTitle => 'Заказ отклонён';
+
+  @override
+  String get otDeliveryCancelled => 'Доставка отменена';
+
+  @override
+  String get otDeliveryFailed => 'Не удалось доставить';
+
+  @override
+  String get otPickupAt => 'Вы заберёте заказ в магазине';
+
+  @override
+  String get otStepPlaced => 'Принят';
+
+  @override
+  String get otStepApproved => 'Подтверждён';
+
+  @override
+  String get otStepOnTheWay => 'В пути';
+
+  @override
+  String get otStepDelivered => 'Доставлен';
+
+  @override
+  String get otMins => 'мин';
+
+  @override
+  String get otViewItems => 'Список товаров';
+
+  @override
+  String get otTrackCourier => 'Следить за курьером на карте';
+
+  @override
+  String get otCallShop => 'Позвонить в магазин';
+
+  @override
+  String get otYourCourier => 'Ваш курьер';
+
+  @override
+  String get otRefresh => 'Обновить';
+
+  @override
+  String get otShowAll => 'Показать всё';
+
+  @override
+  String get otCourierUpdating => 'Обновляем местоположение курьера…';
+
+  @override
+  String otCourierBringing(String name) {
+    return '$name везёт ваш заказ';
+  }
 }

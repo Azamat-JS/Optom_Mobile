@@ -3147,6 +3147,186 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Manzilni o\'chirish'**
   String get addrRemove;
+
+  /// No description provided for @otTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma #{number}'**
+  String otTitle(String number);
+
+  /// No description provided for @otSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'{time} · {count} ta mahsulot'**
+  String otSubtitle(String time, int count);
+
+  /// No description provided for @otNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma qabul qilindi!'**
+  String get otNewTitle;
+
+  /// No description provided for @otNewHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon buyurtmani tasdiqlashini kutmoqdamiz'**
+  String get otNewHint;
+
+  /// No description provided for @otApprovedTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma tayyorlanmoqda!'**
+  String get otApprovedTitle;
+
+  /// No description provided for @otApprovedHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon tasdiqladi va buyurtmani yig\'moqda'**
+  String get otApprovedHint;
+
+  /// No description provided for @otCourierSearching.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer qidirilmoqda'**
+  String get otCourierSearching;
+
+  /// No description provided for @otCourierAssigned.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer tayinlandi'**
+  String get otCourierAssigned;
+
+  /// No description provided for @otCourierToShop.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer do\'konga bormoqda'**
+  String get otCourierToShop;
+
+  /// No description provided for @otOnTheWay.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma yo\'lda!'**
+  String get otOnTheWay;
+
+  /// No description provided for @otArrived.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer yetib keldi!'**
+  String get otArrived;
+
+  /// No description provided for @otDeliveredTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma topshirildi'**
+  String get otDeliveredTitle;
+
+  /// No description provided for @otDeliveredHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xaridingiz uchun rahmat!'**
+  String get otDeliveredHint;
+
+  /// No description provided for @otRejectedTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma rad etildi'**
+  String get otRejectedTitle;
+
+  /// No description provided for @otDeliveryCancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazish bekor qilindi'**
+  String get otDeliveryCancelled;
+
+  /// No description provided for @otDeliveryFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib bo\'lmadi'**
+  String get otDeliveryFailed;
+
+  /// No description provided for @otPickupAt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kondan olib ketasiz'**
+  String get otPickupAt;
+
+  /// No description provided for @otStepPlaced.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qabul'**
+  String get otStepPlaced;
+
+  /// No description provided for @otStepApproved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiq'**
+  String get otStepApproved;
+
+  /// No description provided for @otStepOnTheWay.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yo\'lda'**
+  String get otStepOnTheWay;
+
+  /// No description provided for @otStepDelivered.
+  ///
+  /// In uz, this message translates to:
+  /// **'Topshirildi'**
+  String get otStepDelivered;
+
+  /// No description provided for @otMins.
+  ///
+  /// In uz, this message translates to:
+  /// **'daq'**
+  String get otMins;
+
+  /// No description provided for @otViewItems.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlar ro\'yxati'**
+  String get otViewItems;
+
+  /// No description provided for @otTrackCourier.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryerni xaritada kuzatish'**
+  String get otTrackCourier;
+
+  /// No description provided for @otCallShop.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'konga qo\'ng\'iroq'**
+  String get otCallShop;
+
+  /// No description provided for @otYourCourier.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sizning kuryeringiz'**
+  String get otYourCourier;
+
+  /// No description provided for @otRefresh.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangilash'**
+  String get otRefresh;
+
+  /// No description provided for @otShowAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hammasini ko\'rsatish'**
+  String get otShowAll;
+
+  /// No description provided for @otCourierUpdating.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer joylashuvi yangilanmoqda…'**
+  String get otCourierUpdating;
+
+  /// No description provided for @otCourierBringing.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} buyurtmangizni olib kelmoqda'**
+  String otCourierBringing(String name);
 }
 
 class _AppLocalizationsDelegate

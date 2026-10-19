@@ -1836,4 +1836,106 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addrRemove => 'Remove address';
+
+  @override
+  String otTitle(String number) {
+    return 'Order #$number';
+  }
+
+  @override
+  String otSubtitle(String time, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '$count item',
+    );
+    return '$time · $_temp0';
+  }
+
+  @override
+  String get otNewTitle => 'Order received!';
+
+  @override
+  String get otNewHint => 'Waiting for the shop to confirm it';
+
+  @override
+  String get otApprovedTitle => 'Order getting packed!';
+
+  @override
+  String get otApprovedHint => 'The shop confirmed and is packing it';
+
+  @override
+  String get otCourierSearching => 'Finding a courier';
+
+  @override
+  String get otCourierAssigned => 'Courier assigned';
+
+  @override
+  String get otCourierToShop => 'Courier heading to the shop';
+
+  @override
+  String get otOnTheWay => 'Order on the way!';
+
+  @override
+  String get otArrived => 'Courier has arrived!';
+
+  @override
+  String get otDeliveredTitle => 'Order delivered';
+
+  @override
+  String get otDeliveredHint => 'Thanks for shopping!';
+
+  @override
+  String get otRejectedTitle => 'Order rejected';
+
+  @override
+  String get otDeliveryCancelled => 'Delivery cancelled';
+
+  @override
+  String get otDeliveryFailed => 'Delivery failed';
+
+  @override
+  String get otPickupAt => 'You\'ll pick it up at the shop';
+
+  @override
+  String get otStepPlaced => 'Placed';
+
+  @override
+  String get otStepApproved => 'Confirmed';
+
+  @override
+  String get otStepOnTheWay => 'On the way';
+
+  @override
+  String get otStepDelivered => 'Delivered';
+
+  @override
+  String get otMins => 'mins';
+
+  @override
+  String get otViewItems => 'View item list';
+
+  @override
+  String get otTrackCourier => 'Track the courier on the map';
+
+  @override
+  String get otCallShop => 'Call the shop';
+
+  @override
+  String get otYourCourier => 'Your courier';
+
+  @override
+  String get otRefresh => 'Refresh';
+
+  @override
+  String get otShowAll => 'Show everything';
+
+  @override
+  String get otCourierUpdating => 'Updating the courier\'s location…';
+
+  @override
+  String otCourierBringing(String name) {
+    return '$name is bringing your order';
+  }
 }

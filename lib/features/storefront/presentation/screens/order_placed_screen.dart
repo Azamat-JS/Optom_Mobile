@@ -72,7 +72,9 @@ class OrderPlacedScreen extends StatelessWidget {
                         ).animate().fadeIn(delay: 350.ms, duration: AppMotion.standard),
                         const Spacer(flex: 4),
                         FilledButton(
-                          onPressed: () => context.go(RouteNames.orderDetail(orderId)),
+                          onPressed: () => context
+                            ..go(RouteNames.customerHome)
+                            ..push(RouteNames.customerOrder(orderId)),
                           child: Text(l10n.coTrackOrder),
                         ),
                         const SizedBox(height: 8),

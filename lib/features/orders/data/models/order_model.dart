@@ -1,3 +1,4 @@
+import 'package:bsmart/core/entities/geo_point.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/order_status.dart';
 import 'package:bsmart/core/enums/user_role.dart';
@@ -57,6 +58,10 @@ Order orderFromJson(Map<String, dynamic> json) {
     balance: parseDecimal(json['balance'] ?? 0),
     notes: json['notes'] as String?,
     deliveryAddress: json['deliveryAddress'] as String?,
+    deliveryPoint: switch ((parseNullableDecimal(json['deliveryLat']), parseNullableDecimal(json['deliveryLng']))) {
+      (final double lat, final double lng) => GeoPoint(lat, lng),
+      _ => null,
+    },
     type: json['type'] is String ? OrderType.fromWire(json['type'] as String) : null,
     rejectionReason: json['rejectionReason'] as String?,
     approvedAt: json['approvedAt'] != null ? DateTime.parse(json['approvedAt'] as String) : null,

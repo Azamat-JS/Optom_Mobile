@@ -24,6 +24,11 @@ abstract final class RouteNames {
   static const customerCartReview = '/customer/cart/review';
   static const customerSearch = '/customer/search';
 
+  /// A customer's order with its status and delivery (login required).
+  static const customerOrderPattern = '/customer/orders/:orderId';
+
+  static String customerOrder(String orderId) => '/customer/orders/$orderId';
+
   /// "Buyurtma qabul qilindi" after checkout (login required).
   static const customerOrderPlacedPattern = '/customer/order-placed/:orderId';
 

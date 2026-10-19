@@ -9,6 +9,7 @@ import 'package:bsmart/features/auth/presentation/providers/session_notifier.dar
 import 'package:bsmart/features/auth/presentation/screens/login_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/register_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/splash_screen.dart';
+import 'package:bsmart/features/storefront/presentation/screens/customer_order_screen.dart';
 import 'package:bsmart/features/storefront/presentation/screens/order_placed_screen.dart';
 import 'package:bsmart/features/storefront/presentation/screens/storefront_search_screen.dart';
 import 'package:bsmart/features/storefront/presentation/screens/storefront_shop_screen.dart';
@@ -125,21 +126,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(
+        path: RouteNames.customerOrderPattern,
+        pageBuilder: (context, state) => fadeThroughPage(
+          state: state,
+          child: CustomerOrderScreen(orderId: state.pathParameters['orderId']!),
+        ),
+      ),
+      GoRoute(
         path: RouteNames.customerOrderPlacedPattern,
         pageBuilder: (context, state) => fadeThroughPage(
           state: state,
-          child: OrderPlacedScreen(
-            orderId: state.pathParameters['orderId']!,
-            shop: state.uri.queryParameters['shop'],
-          ),
+          child: OrderPlacedScreen(orderId: state.pathParameters['orderId']!, shop: state.uri.queryParameters['shop']),
         ),
       ),
       GoRoute(
         path: RouteNames.customerSearch,
-        pageBuilder: (context, state) => fadeThroughPage(
-          state: state,
-          child: const StorefrontSearchScreen(),
-        ),
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const StorefrontSearchScreen()),
       ),
       GoRoute(
         path: RouteNames.customerProductDetailPattern,
@@ -363,9 +365,8 @@ String? _redirect(Ref ref, GoRouterState state) {
   final authState = ref.read(sessionNotifierProvider);
   final location = state.matchedLocation;
   final isSplash = location == RouteNames.splash;
-  final isAuthScreen = location == RouteNames.login ||
-      location == RouteNames.register ||
-      location == RouteNames.telegramVerify;
+  final isAuthScreen =
+      location == RouteNames.login || location == RouteNames.register || location == RouteNames.telegramVerify;
 
   if (authState.isLoading) {
     return isSplash ? null : RouteNames.splash;

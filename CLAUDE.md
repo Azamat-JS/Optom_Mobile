@@ -1579,7 +1579,7 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 | G1 | Global brand theme for every not-yet-redesigned screen (`AppTheme`) | 🟢 Done 2026-10-18 |
 | U3a | Cart tab (Swiggy cart reference) | 🟢 Done 2026-10-18 |
 | U3b | Checkout: address step (map pin + saved/recent addresses), order summary, "Buyurtma berildi" success screen | 🟢 Done 2026-10-19 |
-| U3c | Order tracking (map + status card) | ⚪ |
+| U3c | Order tracking (map + status card) | 🟢 Done 2026-10-19 |
 | U4+ | Next areas, as the user sends references | ⚪ |
 
 **U1 notes (2026-10-18):**
@@ -1848,6 +1848,44 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
   - Guest storefront integration test still 40/40.
 - **Not checked:** dark mode of the checkout screens; "my location" on a real device (the
   simulator has no position, so the pin stayed on the Tashkent default).
+
+**U3c notes (2026-10-19), order tracking:**
+- New route **`/customer/orders/:orderId`** (`RouteNames.customerOrder`, login required) →
+  `CustomerOrderScreen`. "Buyurtmani ko'rish" on the success screen opens it (home underneath so
+  back works), and a CUSTOMER's orders list opens it. Sellers/retailers keep `OrderDetailScreen`.
+  - Map hero (destination pin from checkout; the shop pin + a dashed line once a courier delivery
+    with a pickup exists; `MapIcons.pin`, new: near-black teardrop pins). The map runs behind the
+    status card, and its camera padding (top 140 / bottom 270) keeps both pins clear of the
+    floating header and the card. With no pin (pickup order), a dark branded panel.
+  - Floating back / "Buyurtma #…" pill (shrinks to fit) / refresh.
+  - Status card: title + hint per stage, the green ETA box ("13 daq", from `Delivery.eta`) while
+    the courier is on the way, else a stage icon; 4-step bar (Qabul / Tasdiq / Yo'lda /
+    Topshirildi); shop → address route; "Mahsulotlar ro'yxati" bottom sheet.
+  - Then the handover code, the courier card (call + "Kuryerni xaritada kuzatish" →
+    `DeliveryTrackingScreen`), the shop card (call / open shop), the bill and the note.
+  - Refreshes every 30 s until delivered/rejected; pull to refresh.
+- `customerOrderStage(order, delivery)` (pure, tested): rejected > delivered (order DELIVERED/PAID/
+  DEBT_RECORDED or delivery DELIVERED) > placed (NEW) > onTheWay (delivery PICKED_UP/ARRIVED) >
+  approved.
+- The `Order` entity now carries `deliveryPoint` (the backend already returned
+  `deliveryLat/deliveryLng`; the app ignored them).
+- **`DeliveryTrackingScreen` was restyled** (shared with staff, visual only): no AppBar; a floating
+  back / order number / fit row; teardrop shop and destination pins; a near-black courier marker
+  and route; the panel with a bold headline, address and green ETA box.
+- **`HandoverCodeCard`** is now a fixed brand card (near-black, yellow digits) everywhere. It used
+  `tertiaryContainer`, which looked different per theme.
+- **Verified:**
+  - `flutter analyze` clean, 76 unit tests (3 new: `customer_order_stage_test.dart`).
+  - A temporary on-device test (deleted) with a host script that placed a real order through
+    `POST /orders` as a throwaway CUSTOMER. The script then moved the order in the DB through
+    APPROVED, a PICKED_UP `Delivery` (throwaway COURIER, ETA 780 s, handover code) and DELIVERED,
+    while the app refreshed.
+  - 9/9 steps: orders list → screen, NEW, APPROVED, on the way + "13", code + courier cards, live
+    map, item sheet, DELIVERED. All rows/users deleted afterwards.
+  - Fixed live: the hint said "packing" while on the way, the order number was cut, a duplicate
+    track link, and the pins hidden under the card/header.
+- **Not checked:** live courier movement / ETA on the live map (no GPS points or Routes key
+  locally), dark mode, Russian/English.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

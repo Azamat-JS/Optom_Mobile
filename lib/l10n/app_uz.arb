@@ -966,5 +966,59 @@
   "addrFieldLabel": "Manzil (ko'cha, uy, xonadon, mo'ljal)",
   "addrConfirm": "Tasdiqlash va davom etish",
   "addrDetecting": "Manzil aniqlanmoqda…",
-  "addrRemove": "Manzilni o'chirish"
+  "addrRemove": "Manzilni o'chirish",
+  "otTitle": "Buyurtma #{number}",
+  "@otTitle": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "otSubtitle": "{time} · {count} ta mahsulot",
+  "@otSubtitle": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "otNewTitle": "Buyurtma qabul qilindi!",
+  "otNewHint": "Do'kon buyurtmani tasdiqlashini kutmoqdamiz",
+  "otApprovedTitle": "Buyurtma tayyorlanmoqda!",
+  "otApprovedHint": "Do'kon tasdiqladi va buyurtmani yig'moqda",
+  "otCourierSearching": "Kuryer qidirilmoqda",
+  "otCourierAssigned": "Kuryer tayinlandi",
+  "otCourierToShop": "Kuryer do'konga bormoqda",
+  "otOnTheWay": "Buyurtma yo'lda!",
+  "otArrived": "Kuryer yetib keldi!",
+  "otDeliveredTitle": "Buyurtma topshirildi",
+  "otDeliveredHint": "Xaridingiz uchun rahmat!",
+  "otRejectedTitle": "Buyurtma rad etildi",
+  "otDeliveryCancelled": "Yetkazish bekor qilindi",
+  "otDeliveryFailed": "Yetkazib bo'lmadi",
+  "otPickupAt": "Do'kondan olib ketasiz",
+  "otStepPlaced": "Qabul",
+  "otStepApproved": "Tasdiq",
+  "otStepOnTheWay": "Yo'lda",
+  "otStepDelivered": "Topshirildi",
+  "otMins": "daq",
+  "otViewItems": "Mahsulotlar ro'yxati",
+  "otTrackCourier": "Kuryerni xaritada kuzatish",
+  "otCallShop": "Do'konga qo'ng'iroq",
+  "otYourCourier": "Sizning kuryeringiz",
+  "otRefresh": "Yangilash",
+  "otShowAll": "Hammasini ko'rsatish",
+  "otCourierUpdating": "Kuryer joylashuvi yangilanmoqda…",
+  "otCourierBringing": "{name} buyurtmangizni olib kelmoqda",
+  "@otCourierBringing": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

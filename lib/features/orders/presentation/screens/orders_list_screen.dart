@@ -121,7 +121,10 @@ class _OrdersListScreenState extends ConsumerState<OrdersListScreen> {
                       OrderStatusBadge(status: order.status),
                     ],
                   ),
-                  onTap: () => context.push(RouteNames.orderDetail(order.id)),
+                  // Customers get the tracking-style order screen (Phase 9 U3c).
+                  onTap: () => context.push(
+                    role == UserRole.customer ? RouteNames.customerOrder(order.id) : RouteNames.orderDetail(order.id),
+                  ),
                 );
               },
             ),

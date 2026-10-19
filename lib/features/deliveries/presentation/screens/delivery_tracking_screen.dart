@@ -12,6 +12,7 @@ import 'package:bsmart/core/maps/animated_position.dart';
 import 'package:bsmart/core/maps/map_icons.dart';
 import 'package:bsmart/core/maps/polyline_codec.dart';
 import 'package:bsmart/core/realtime/tracking_socket.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery.dart';
@@ -46,6 +47,8 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
   StreamSubscription<TrackingSocketEvent>? _events;
   GoogleMapController? _map;
   BitmapDescriptor? _courierIcon;
+  BitmapDescriptor? _shopIcon;
+  BitmapDescriptor? _homeIcon;
   DateTime? _lastPointAt;
   Timer? _tick;
   bool _fitted = false;
@@ -71,9 +74,21 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
     _tick = Timer.periodic(const Duration(seconds: 15), (_) {
       if (mounted) setState(() {}); // ETA countdown + stale check
     });
-    MapIcons.courier(const Color(0xFF1565C0)).then((icon) {
+    MapIcons.courier(AppColors.ink).then((icon) {
       if (mounted) setState(() => _courierIcon = icon);
     });
+    MapIcons.pin(
+      Icons.storefront_rounded,
+      fill: AppColors.ink,
+      ring: AppColors.brandYellow,
+      glyphColor: AppColors.brandYellow,
+    ).then((icon) => mounted ? setState(() => _shopIcon = icon) : null);
+    MapIcons.pin(
+      Icons.near_me_rounded,
+      fill: AppColors.ink,
+      ring: Colors.white,
+      glyphColor: Colors.white,
+    ).then((icon) => mounted ? setState(() => _homeIcon = icon) : null);
   }
 
   @override
@@ -124,8 +139,8 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
       }
     }
 
+    final title = delivery.valueOrNull?.label ?? 'Yetkazish';
     return Scaffold(
-      appBar: AppBar(title: Text(delivery.valueOrNull?.label ?? 'Yetkazish')),
       body: delivery.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Xatolik: $e')),
@@ -146,7 +161,7 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
                       Future.delayed(AppMotion.standard, _fit);
                     }
                   },
-                  padding: const EdgeInsets.only(bottom: 220),
+                  padding: const EdgeInsets.only(top: 90, bottom: 250),
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
                   mapToolbarEnabled: false,
@@ -155,16 +170,18 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
                       Marker(
                         markerId: const MarkerId('dropoff'),
                         position: _ll(d.dropoff!),
-                        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-                        infoWindow: const InfoWindow(title: 'Yetkazib berish manzili'),
+                        icon: _homeIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
+                        anchor: const Offset(0.5, 1),
+                        infoWindow: InfoWindow(title: d.dropoffAddress ?? 'Yetkazib berish manzili'),
                       ),
                     // The store only matters until the courier has picked the order up.
                     if (d.pickup != null && (d.status.isOffer || d.status == DeliveryStatus.accepted))
                       Marker(
                         markerId: const MarkerId('pickup'),
                         position: _ll(d.pickup!),
-                        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-                        infoWindow: const InfoWindow(title: "Do'kon"),
+                        icon: _shopIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+                        anchor: const Offset(0.5, 1),
+                        infoWindow: InfoWindow(title: d.storeName ?? "Do'kon"),
                       ),
                     if (me != null && _courierIcon != null && d.status.isActive)
                       Marker(
@@ -188,7 +205,7 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
                       Polyline(
                         polylineId: const PolylineId('route'),
                         points: _routePoints,
-                        color: const Color(0xFF1565C0),
+                        color: AppColors.ink,
                         width: 5,
                         zIndex: 1,
                       ),
@@ -198,13 +215,43 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
               ),
             ),
             Positioned(
-              right: 12,
-              bottom: 232,
-              child: FloatingActionButton.small(
-                heroTag: 'fit',
-                tooltip: "Hammasini ko'rsatish",
-                onPressed: _fit,
-                child: const Icon(Icons.zoom_out_map),
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: Row(
+                    children: [
+                      _MapButton(
+                        icon: Icons.arrow_back_rounded,
+                        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                        onTap: () => Navigator.of(context).maybePop(),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Container(
+                          height: 48,
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.95),
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: const [BoxShadow(color: Color(0x1A000000), blurRadius: 10)],
+                          ),
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      _MapButton(icon: Icons.zoom_out_map_rounded, tooltip: "Hammasini ko'rsatish", onTap: _fit),
+                    ],
+                  ),
+                ),
               ),
             ),
             Positioned(
@@ -251,10 +298,11 @@ class _InfoPanel extends StatelessWidget {
         d.status.isActive &&
         (lastPointAt == null || now.difference(lastPointAt!) > _DeliveryTrackingScreenState._staleAfter);
 
+    final minutes = eta == null ? null : math.max(1, (eta.inSeconds / 60).ceil());
     return Material(
       elevation: 12,
       color: theme.colorScheme.surface,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: SafeArea(
         top: false,
         child: Padding(
@@ -263,17 +311,65 @@ class _InfoPanel extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(OrderDeliveryCard.headline(d.status), style: theme.textTheme.titleLarge),
-              const SizedBox(height: 4),
-              AnimatedSwitcher(
-                duration: AppMotion.standard,
-                child: eta != null
-                    ? Text(
-                        '~${(eta.inSeconds / 60).ceil()} daqiqada yetib keladi',
-                        key: ValueKey(eta.inMinutes),
-                        style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.primary),
-                      )
-                    : const SizedBox.shrink(),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          OrderDeliveryCard.headline(d.status),
+                          style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800, height: 1.15),
+                        ),
+                        if (d.dropoffAddress != null) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            d.dropoffAddress!,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  // Green ETA box (minutes to the customer's door).
+                  AnimatedSwitcher(
+                    duration: AppMotion.standard,
+                    child: minutes == null
+                        ? const SizedBox.shrink()
+                        : Container(
+                            key: ValueKey(minutes),
+                            width: 72,
+                            height: 72,
+                            margin: const EdgeInsets.only(left: 12),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Color(0xFF1FA463), Color(0xFF12784A)],
+                              ),
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '$minutes',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w800,
+                                    height: 1,
+                                  ),
+                                ),
+                                const Text('daq', style: TextStyle(color: Colors.white, fontSize: 13)),
+                              ],
+                            ),
+                          ),
+                  ),
+                ],
               ),
               if (d.status == DeliveryStatus.failed) ...[
                 const SizedBox(height: 4),
@@ -283,10 +379,7 @@ class _InfoPanel extends StatelessWidget {
                 ),
               ],
               // Only the customer's view carries the code (Phase 7 N2).
-              if (d.handover.code != null) ...[
-                const SizedBox(height: 12),
-                HandoverCodeCard(code: d.handover.code!),
-              ],
+              if (d.handover.code != null) ...[const SizedBox(height: 12), HandoverCodeCard(code: d.handover.code!)],
               if (stale) ...[
                 const SizedBox(height: 4),
                 Row(
@@ -300,9 +393,9 @@ class _InfoPanel extends StatelessWidget {
               const Divider(height: 24),
               Row(
                 children: [
-                  CircleAvatar(
-                    backgroundColor: theme.colorScheme.primaryContainer,
-                    child: Icon(Icons.delivery_dining, color: theme.colorScheme.onPrimaryContainer),
+                  const CircleAvatar(
+                    backgroundColor: AppColors.ink,
+                    child: Icon(Icons.delivery_dining_rounded, color: AppColors.brandYellow),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -315,15 +408,42 @@ class _InfoPanel extends StatelessWidget {
                     ),
                   ),
                   if (d.courier?.phone != null && !d.status.isTerminal)
-                    FilledButton.tonalIcon(
+                    FilledButton.icon(
                       onPressed: () => DeliveryActions.call(context, d.courier!.phone),
-                      icon: const Icon(Icons.call),
+                      icon: const Icon(Icons.call_rounded),
                       label: const Text("Qo'ng'iroq"),
                     ),
                 ],
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MapButton extends StatelessWidget {
+  const _MapButton({required this.icon, required this.tooltip, required this.onTap});
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Material(
+      color: scheme.surface,
+      shape: const CircleBorder(),
+      elevation: 3,
+      shadowColor: Colors.black26,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: Tooltip(
+          message: tooltip,
+          child: SizedBox(width: 48, height: 48, child: Icon(icon, color: scheme.onSurface)),
         ),
       ),
     );
