@@ -1755,4 +1755,95 @@ class AppLocalizationsRu extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get coTitle => 'Оформление';
+
+  @override
+  String get coDeliverTo => 'Адрес доставки';
+
+  @override
+  String get coPickup => 'Заберу сам';
+
+  @override
+  String get coPickupHint => 'Вы заберёте заказ в магазине';
+
+  @override
+  String get coWhereToDeliver => 'Куда доставить заказ?';
+
+  @override
+  String get coAddAddress => 'Добавить адрес';
+
+  @override
+  String get coSelectAddress => 'Выбрать адрес';
+
+  @override
+  String get coNoDelivery => 'Без адреса — заберу сам';
+
+  @override
+  String get coItems => 'Состав заказа';
+
+  @override
+  String get coNoteHint => 'Комментарий для магазина (необязательно)';
+
+  @override
+  String get coPayment => 'Оплата';
+
+  @override
+  String get coPaymentValue => 'В магазине: наличные или карта';
+
+  @override
+  String coSlideToOrder(String total) {
+    return 'Сдвиньте, чтобы заказать | $total';
+  }
+
+  @override
+  String get coPlacing => 'Минутку!';
+
+  @override
+  String get coPlacedTitle => 'Заказ принят!';
+
+  @override
+  String coPlacedBody(String shop) {
+    return '«$shop» рассмотрит ваш заказ и свяжется с вами.';
+  }
+
+  @override
+  String get coTrackOrder => 'Открыть заказ';
+
+  @override
+  String get coContinueShopping => 'Продолжить покупки';
+
+  @override
+  String get addrSelectTitle => 'Выберите адрес';
+
+  @override
+  String get addrSearchHint => 'Поиск по сохранённым адресам';
+
+  @override
+  String get addrUseCurrent => 'Использовать текущее местоположение';
+
+  @override
+  String get addrPickOnMap => 'Отметить на карте';
+
+  @override
+  String get addrRecent => 'Недавние адреса';
+
+  @override
+  String get addrNoneSaved => 'Сохранённых адресов пока нет';
+
+  @override
+  String get addrDeliveredHere => 'Заказ будет доставлен сюда';
+
+  @override
+  String get addrFieldLabel => 'Адрес (улица, дом, квартира, ориентир)';
+
+  @override
+  String get addrConfirm => 'Подтвердить и продолжить';
+
+  @override
+  String get addrDetecting => 'Определяем адрес…';
+
+  @override
+  String get addrRemove => 'Удалить адрес';
 }

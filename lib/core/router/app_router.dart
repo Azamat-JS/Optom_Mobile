@@ -9,6 +9,7 @@ import 'package:bsmart/features/auth/presentation/providers/session_notifier.dar
 import 'package:bsmart/features/auth/presentation/screens/login_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/register_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/splash_screen.dart';
+import 'package:bsmart/features/storefront/presentation/screens/order_placed_screen.dart';
 import 'package:bsmart/features/storefront/presentation/screens/storefront_search_screen.dart';
 import 'package:bsmart/features/storefront/presentation/screens/storefront_shop_screen.dart';
 import 'package:bsmart/features/storefront/presentation/screens/storefront_shop_explore_screen.dart';
@@ -120,6 +121,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             sellerId: state.pathParameters['sellerId']!,
             storeId: state.uri.queryParameters['storeId'],
             name: state.uri.queryParameters['name'],
+          ),
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.customerOrderPlacedPattern,
+        pageBuilder: (context, state) => fadeThroughPage(
+          state: state,
+          child: OrderPlacedScreen(
+            orderId: state.pathParameters['orderId']!,
+            shop: state.uri.queryParameters['shop'],
           ),
         ),
       ),

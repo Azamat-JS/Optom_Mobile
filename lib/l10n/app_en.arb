@@ -486,5 +486,34 @@
         "type": "String"
       }
     }
-  }
+  },
+  "coTitle": "Checkout",
+  "coDeliverTo": "Delivery address",
+  "coPickup": "I'll pick it up",
+  "coPickupHint": "You'll collect the order at the shop",
+  "coWhereToDeliver": "Where should we deliver this order?",
+  "coAddAddress": "Add address",
+  "coSelectAddress": "Select address",
+  "coNoDelivery": "No address — I'll pick it up",
+  "coItems": "Order items",
+  "coNoteHint": "Note for the shop (optional)",
+  "coPayment": "Payment",
+  "coPaymentValue": "At the shop: cash or card",
+  "coSlideToOrder": "Slide to order | {total}",
+  "coPlacing": "Hold on!",
+  "coPlacedTitle": "Order received!",
+  "coPlacedBody": "{shop} will review your order and get in touch.",
+  "coTrackOrder": "View order",
+  "coContinueShopping": "Continue shopping",
+  "addrSelectTitle": "Select your location",
+  "addrSearchHint": "Search saved addresses",
+  "addrUseCurrent": "Use my current location",
+  "addrPickOnMap": "Pick on the map",
+  "addrRecent": "Recent addresses",
+  "addrNoneSaved": "No saved addresses yet",
+  "addrDeliveredHere": "Order will be delivered here",
+  "addrFieldLabel": "Address (street, building, flat, landmark)",
+  "addrConfirm": "Confirm & proceed",
+  "addrDetecting": "Finding the address…",
+  "addrRemove": "Remove address"
 }

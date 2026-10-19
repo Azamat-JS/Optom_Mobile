@@ -2973,6 +2973,180 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'{unit, select, dona{dona} metr{m} litr{l} kilogram{kg} gram{g} blok{blok} other{}}'**
   String enumProductUnitShort(String unit);
+
+  /// No description provided for @coTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rasmiylashtirish'**
+  String get coTitle;
+
+  /// No description provided for @coDeliverTo.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazish manzili'**
+  String get coDeliverTo;
+
+  /// No description provided for @coPickup.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'zim olib ketaman'**
+  String get coPickup;
+
+  /// No description provided for @coPickupHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani do\'kondan olib ketasiz'**
+  String get coPickupHint;
+
+  /// No description provided for @coWhereToDeliver.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani qayerga yetkazamiz?'**
+  String get coWhereToDeliver;
+
+  /// No description provided for @coAddAddress.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manzil qo\'shish'**
+  String get coAddAddress;
+
+  /// No description provided for @coSelectAddress.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manzilni tanlash'**
+  String get coSelectAddress;
+
+  /// No description provided for @coNoDelivery.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manzilsiz — o\'zim olib ketaman'**
+  String get coNoDelivery;
+
+  /// No description provided for @coItems.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma tarkibi'**
+  String get coItems;
+
+  /// No description provided for @coNoteHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon uchun izoh (ixtiyoriy)'**
+  String get coNoteHint;
+
+  /// No description provided for @coPayment.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov'**
+  String get coPayment;
+
+  /// No description provided for @coPaymentValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'konga: naqd yoki karta'**
+  String get coPaymentValue;
+
+  /// No description provided for @coSlideToOrder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Surib buyurtma bering | {total}'**
+  String coSlideToOrder(String total);
+
+  /// No description provided for @coPlacing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Biroz kuting!'**
+  String get coPlacing;
+
+  /// No description provided for @coPlacedTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma qabul qilindi!'**
+  String get coPlacedTitle;
+
+  /// No description provided for @coPlacedBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'«{shop}» buyurtmangizni ko\'rib chiqadi va siz bilan bog\'lanadi.'**
+  String coPlacedBody(String shop);
+
+  /// No description provided for @coTrackOrder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani ko\'rish'**
+  String get coTrackOrder;
+
+  /// No description provided for @coContinueShopping.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xaridni davom ettirish'**
+  String get coContinueShopping;
+
+  /// No description provided for @addrSelectTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manzilni tanlang'**
+  String get addrSelectTitle;
+
+  /// No description provided for @addrSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Saqlangan manzillardan qidiring'**
+  String get addrSearchHint;
+
+  /// No description provided for @addrUseCurrent.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joriy joylashuvimdan foydalanish'**
+  String get addrUseCurrent;
+
+  /// No description provided for @addrPickOnMap.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xaritada belgilash'**
+  String get addrPickOnMap;
+
+  /// No description provided for @addrRecent.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'nggi manzillar'**
+  String get addrRecent;
+
+  /// No description provided for @addrNoneSaved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali saqlangan manzil yo\'q'**
+  String get addrNoneSaved;
+
+  /// No description provided for @addrDeliveredHere.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma shu yerga yetkaziladi'**
+  String get addrDeliveredHere;
+
+  /// No description provided for @addrFieldLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manzil (ko\'cha, uy, xonadon, mo\'ljal)'**
+  String get addrFieldLabel;
+
+  /// No description provided for @addrConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlash va davom etish'**
+  String get addrConfirm;
+
+  /// No description provided for @addrDetecting.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manzil aniqlanmoqda…'**
+  String get addrDetecting;
+
+  /// No description provided for @addrRemove.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manzilni o\'chirish'**
+  String get addrRemove;
 }
 
 class _AppLocalizationsDelegate

@@ -24,6 +24,12 @@ abstract final class RouteNames {
   static const customerCartReview = '/customer/cart/review';
   static const customerSearch = '/customer/search';
 
+  /// "Buyurtma qabul qilindi" after checkout (login required).
+  static const customerOrderPlacedPattern = '/customer/order-placed/:orderId';
+
+  static String customerOrderPlaced(String orderId, {String? shop}) =>
+      Uri(path: '/customer/order-placed/$orderId', queryParameters: {'shop': ?shop}).toString();
+
   /// Shop page; `?storeId=` picks a branch, `?name=` is shown while loading.
   static const customerShopPattern = '/customer/shops/:sellerId';
 

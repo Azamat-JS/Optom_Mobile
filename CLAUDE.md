@@ -1578,7 +1578,7 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 | U2d | Product detail + masonry "explore" grid | 🟢 Done 2026-10-18 |
 | G1 | Global brand theme for every not-yet-redesigned screen (`AppTheme`) | 🟢 Done 2026-10-18 |
 | U3a | Cart tab (Swiggy cart reference) | 🟢 Done 2026-10-18 |
-| U3b | Checkout: address step (map pin + saved/recent addresses), order summary, "Buyurtma berildi" success screen | ⚪ |
+| U3b | Checkout: address step (map pin + saved/recent addresses), order summary, "Buyurtma berildi" success screen | 🟢 Done 2026-10-19 |
 | U3c | Order tracking (map + status card) | ⚪ |
 | U4+ | Next areas, as the user sends references | ⚪ |
 
@@ -1804,6 +1804,50 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
   hit-testable scroll views, because the `IndexedStack` keeps hidden tabs in the tree.
   Screenshots on the iPhone 17 simulator.
 - **Not checked:** the cart in dark mode, a logged-in checkout (U3b).
+
+**U3b notes (2026-10-19), checkout:**
+- `storefront_cart_review_screen.dart` was rewritten (still `RouteNames.customerCartReview`, login
+  required, still `POST /orders` with the same params).
+  - Header: the delivery choice (address title + rest ▾ → address list), pickup, or "Buyurtmani
+    qayerga yetkazamiz?".
+  - Body (grey page, `CheckoutCard`s): shop + items with the shared stepper (emptying the cart pops
+    back), "Izoh" note, bill, the ESLATMA note.
+  - Bottom: with no choice, "Manzil qo'shish" (map) / "Manzilni tanlash" (list) / "Manzilsiz —
+    o'zim olib ketaman" (pickup = no `deliveryAddress`, so ordering without an address still
+    works). With a choice: the payment line ("Do'konga: naqd yoki karta") + `SlideToConfirm`
+    ("Surib buyurtma bering | total": drag past 85%; a short drag springs back; screen readers get
+    a plain button).
+  - While sending: full-screen "Biroz kuting!". Then `context.go` → new route
+    **`/customer/order-placed/:orderId?shop=`** (`OrderPlacedScreen`: yellow check, "Buyurtma
+    qabul qilindi!", → order detail / continue shopping; back goes to the storefront).
+- **Addresses (device-local, the backend has no address book):** `delivery_address_providers.dart`
+  has `SavedAddress {text, point?}`, `savedAddressesProvider` (SharedPreferences
+  `bsmart.storefront.savedAddresses`, max 6, newest first, same text de-duplicated), and
+  `checkoutDeliveryProvider` (`DeliverTo` / `PickUp` / null; it starts on the most recent saved
+  address).
+  - `DeliveryAddressScreen` ("Manzilni tanlang"): the search only filters saved addresses (no place
+    search: that would need a paid API), plus "Joriy joylashuvimdan foydalanish", "Xaritada
+    belgilash", and the recent list with remove.
+  - `DeliveryPinScreen`: full map, centre pin, my-location button, bottom card "Buyurtma shu
+    yerga yetkaziladi" + an address field **pre-filled by reverse geocoding** (new dependency
+    **`geocoding: ^4.0.0`**, the phone's own geocoder, no API key; it stops overwriting once the
+    customer types).
+  - Apple returns Tashkent street names in Russian Cyrillic even with `uz_UZ` (a data limit; the
+    field is editable). The shared `MapPinPickerScreen` (stores, restaurant) is unchanged.
+- The cart's card / bill row / dashed divider moved to `widgets/checkout_parts.dart`.
+- The iOS `NSLocationWhenInUseUsageDescription` now also explains the checkout use (it was
+  courier-only text, shown to customers at checkout).
+- **Verified:**
+  - `flutter analyze` clean, 73 unit tests (8 new: `delivery_address_test.dart`).
+  - A temporary on-device test (deleted afterwards) logged in as a throwaway CUSTOMER (Prisma
+    seed, deleted with its order afterwards). Steps: added 2 products → cart → checkout (no
+    address) → map pin (reverse geocode filled the field) → typed address → header → saved list →
+    note → a short slide doesn't order → a full slide → "Buyurtma qabul qilindi!" → order detail:
+    9/9.
+  - The DB row was checked: B2C, NEW, 40 000, both items, address, pin, note.
+  - Guest storefront integration test still 40/40.
+- **Not checked:** dark mode of the checkout screens; "my location" on a real device (the
+  simulator has no position, so the pin stayed on the Tashkent default).
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

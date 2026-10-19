@@ -486,5 +486,34 @@
         "type": "String"
       }
     }
-  }
+  },
+  "coTitle": "Оформление",
+  "coDeliverTo": "Адрес доставки",
+  "coPickup": "Заберу сам",
+  "coPickupHint": "Вы заберёте заказ в магазине",
+  "coWhereToDeliver": "Куда доставить заказ?",
+  "coAddAddress": "Добавить адрес",
+  "coSelectAddress": "Выбрать адрес",
+  "coNoDelivery": "Без адреса — заберу сам",
+  "coItems": "Состав заказа",
+  "coNoteHint": "Комментарий для магазина (необязательно)",
+  "coPayment": "Оплата",
+  "coPaymentValue": "В магазине: наличные или карта",
+  "coSlideToOrder": "Сдвиньте, чтобы заказать | {total}",
+  "coPlacing": "Минутку!",
+  "coPlacedTitle": "Заказ принят!",
+  "coPlacedBody": "«{shop}» рассмотрит ваш заказ и свяжется с вами.",
+  "coTrackOrder": "Открыть заказ",
+  "coContinueShopping": "Продолжить покупки",
+  "addrSelectTitle": "Выберите адрес",
+  "addrSearchHint": "Поиск по сохранённым адресам",
+  "addrUseCurrent": "Использовать текущее местоположение",
+  "addrPickOnMap": "Отметить на карте",
+  "addrRecent": "Недавние адреса",
+  "addrNoneSaved": "Сохранённых адресов пока нет",
+  "addrDeliveredHere": "Заказ будет доставлен сюда",
+  "addrFieldLabel": "Адрес (улица, дом, квартира, ориентир)",
+  "addrConfirm": "Подтвердить и продолжить",
+  "addrDetecting": "Определяем адрес…",
+  "addrRemove": "Удалить адрес"
 }

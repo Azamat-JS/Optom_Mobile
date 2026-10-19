@@ -14,6 +14,7 @@ import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/storefront/domain/entities/storefront_product.dart';
 import 'package:bsmart/features/storefront/presentation/providers/storefront_cart_notifier.dart';
 import 'package:bsmart/features/storefront/presentation/providers/storefront_shop_providers.dart';
+import 'package:bsmart/features/storefront/presentation/widgets/checkout_parts.dart';
 import 'package:bsmart/features/storefront/presentation/widgets/storefront_actions.dart';
 import 'package:bsmart/features/storefront/presentation/widgets/storefront_image.dart';
 import 'package:bsmart/features/storefront/presentation/widgets/storefront_search_parts.dart';
@@ -187,7 +188,7 @@ class _CartContent extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
             children: [
-              _Card(
+              CheckoutCard(
                 padding: const EdgeInsets.all(14),
                 onTap: openShop,
                 child: Row(
@@ -221,13 +222,13 @@ class _CartContent extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 14),
-              _Card(
+              CheckoutCard(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     for (var i = 0; i < lines.length; i++) ...[
-                      if (i > 0) _DashedDivider(color: colors.outline),
+                      if (i > 0) DashedDivider(color: colors.outline),
                       _LineRow(line: lines[i]),
                     ],
                     const SizedBox(height: 8),
@@ -242,7 +243,7 @@ class _CartContent extends ConsumerWidget {
               ),
               if (suggestions != null && suggestions.isNotEmpty) ...[
                 const SizedBox(height: 14),
-                _Card(
+                CheckoutCard(
                   padding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -268,32 +269,28 @@ class _CartContent extends ConsumerWidget {
                 ),
               ],
               const SizedBox(height: 14),
-              _Card(
+              CheckoutCard(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SearchSectionLabel(text: l10n.cartBillTitle),
-                    _BillRow(
+                    BillRow(
                       label: '${l10n.cartItemsTotal} (${lines.length})',
                       value: CurrencyFormatter.format(cart.total, currency),
                     ),
                     const SizedBox(height: 10),
-                    _BillRow(label: l10n.cartDelivery, value: l10n.cartDeliveryAgreed, muted: true),
+                    BillRow(label: l10n.cartDelivery, value: l10n.cartDeliveryAgreed, muted: true),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      child: _DashedDivider(color: colors.outline),
+                      child: DashedDivider(color: colors.outline),
                     ),
-                    _BillRow(
-                      label: l10n.cartToPay,
-                      value: CurrencyFormatter.format(cart.total, currency),
-                      strong: true,
-                    ),
+                    BillRow(label: l10n.cartToPay, value: CurrencyFormatter.format(cart.total, currency), strong: true),
                   ],
                 ),
               ),
               const SizedBox(height: 14),
-              _Card(
+              CheckoutCard(
                 padding: const EdgeInsets.all(16),
                 child: Text.rich(
                   TextSpan(
@@ -313,29 +310,6 @@ class _CartContent extends ConsumerWidget {
         ),
         _CheckoutBar(total: cart.total, currency: currency),
       ],
-    );
-  }
-}
-
-class _Card extends StatelessWidget {
-  const _Card({required this.child, required this.padding, this.onTap});
-
-  final Widget child;
-  final EdgeInsets padding;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = BrandColors.of(context);
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    return Material(
-      color: dark ? colors.field : Colors.white,
-      borderRadius: BorderRadius.circular(22),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(padding: padding, child: child),
-      ),
     );
   }
 }
@@ -476,61 +450,6 @@ class _SuggestionCard extends ConsumerWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _BillRow extends StatelessWidget {
-  const _BillRow({required this.label, required this.value, this.strong = false, this.muted = false});
-
-  final String label;
-  final String value;
-  final bool strong;
-  final bool muted;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = BrandColors.of(context);
-    final style = TextStyle(
-      color: muted ? colors.textSecondary : colors.textPrimary,
-      fontSize: strong ? 17 : 15.5,
-      fontWeight: strong ? FontWeight.w800 : FontWeight.w500,
-    );
-    // Label takes the free space; the value hugs the right edge and wraps
-    // inside at most 60% of the row.
-    return LayoutBuilder(
-      builder: (context, constraints) => Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(child: Text(label, style: style)),
-          const SizedBox(width: 12),
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.6),
-            child: Text(value, textAlign: TextAlign.right, style: style),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DashedDivider extends StatelessWidget {
-  const _DashedDivider({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final count = (constraints.maxWidth / 9).floor();
-        return Row(
-          children: [
-            for (var i = 0; i < count; i++)
-              Container(width: 5, height: 1.2, margin: const EdgeInsets.only(right: 4), color: color),
-          ],
-        );
-      },
     );
   }
 }

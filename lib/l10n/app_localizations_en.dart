@@ -1745,4 +1745,95 @@ class AppLocalizationsEn extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get coTitle => 'Checkout';
+
+  @override
+  String get coDeliverTo => 'Delivery address';
+
+  @override
+  String get coPickup => 'I\'ll pick it up';
+
+  @override
+  String get coPickupHint => 'You\'ll collect the order at the shop';
+
+  @override
+  String get coWhereToDeliver => 'Where should we deliver this order?';
+
+  @override
+  String get coAddAddress => 'Add address';
+
+  @override
+  String get coSelectAddress => 'Select address';
+
+  @override
+  String get coNoDelivery => 'No address — I\'ll pick it up';
+
+  @override
+  String get coItems => 'Order items';
+
+  @override
+  String get coNoteHint => 'Note for the shop (optional)';
+
+  @override
+  String get coPayment => 'Payment';
+
+  @override
+  String get coPaymentValue => 'At the shop: cash or card';
+
+  @override
+  String coSlideToOrder(String total) {
+    return 'Slide to order | $total';
+  }
+
+  @override
+  String get coPlacing => 'Hold on!';
+
+  @override
+  String get coPlacedTitle => 'Order received!';
+
+  @override
+  String coPlacedBody(String shop) {
+    return '$shop will review your order and get in touch.';
+  }
+
+  @override
+  String get coTrackOrder => 'View order';
+
+  @override
+  String get coContinueShopping => 'Continue shopping';
+
+  @override
+  String get addrSelectTitle => 'Select your location';
+
+  @override
+  String get addrSearchHint => 'Search saved addresses';
+
+  @override
+  String get addrUseCurrent => 'Use my current location';
+
+  @override
+  String get addrPickOnMap => 'Pick on the map';
+
+  @override
+  String get addrRecent => 'Recent addresses';
+
+  @override
+  String get addrNoneSaved => 'No saved addresses yet';
+
+  @override
+  String get addrDeliveredHere => 'Order will be delivered here';
+
+  @override
+  String get addrFieldLabel => 'Address (street, building, flat, landmark)';
+
+  @override
+  String get addrConfirm => 'Confirm & proceed';
+
+  @override
+  String get addrDetecting => 'Finding the address…';
+
+  @override
+  String get addrRemove => 'Remove address';
 }

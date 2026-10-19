@@ -923,5 +923,48 @@
         "type": "String"
       }
     }
-  }
+  },
+  "coTitle": "Rasmiylashtirish",
+  "coDeliverTo": "Yetkazish manzili",
+  "coPickup": "O'zim olib ketaman",
+  "coPickupHint": "Buyurtmani do'kondan olib ketasiz",
+  "coWhereToDeliver": "Buyurtmani qayerga yetkazamiz?",
+  "coAddAddress": "Manzil qo'shish",
+  "coSelectAddress": "Manzilni tanlash",
+  "coNoDelivery": "Manzilsiz — o'zim olib ketaman",
+  "coItems": "Buyurtma tarkibi",
+  "coNoteHint": "Do'kon uchun izoh (ixtiyoriy)",
+  "coPayment": "To'lov",
+  "coPaymentValue": "Do'konga: naqd yoki karta",
+  "coSlideToOrder": "Surib buyurtma bering | {total}",
+  "@coSlideToOrder": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "coPlacing": "Biroz kuting!",
+  "coPlacedTitle": "Buyurtma qabul qilindi!",
+  "coPlacedBody": "«{shop}» buyurtmangizni ko'rib chiqadi va siz bilan bog'lanadi.",
+  "@coPlacedBody": {
+    "placeholders": {
+      "shop": {
+        "type": "String"
+      }
+    }
+  },
+  "coTrackOrder": "Buyurtmani ko'rish",
+  "coContinueShopping": "Xaridni davom ettirish",
+  "addrSelectTitle": "Manzilni tanlang",
+  "addrSearchHint": "Saqlangan manzillardan qidiring",
+  "addrUseCurrent": "Joriy joylashuvimdan foydalanish",
+  "addrPickOnMap": "Xaritada belgilash",
+  "addrRecent": "So'nggi manzillar",
+  "addrNoneSaved": "Hali saqlangan manzil yo'q",
+  "addrDeliveredHere": "Buyurtma shu yerga yetkaziladi",
+  "addrFieldLabel": "Manzil (ko'cha, uy, xonadon, mo'ljal)",
+  "addrConfirm": "Tasdiqlash va davom etish",
+  "addrDetecting": "Manzil aniqlanmoqda…",
+  "addrRemove": "Manzilni o'chirish"
 }

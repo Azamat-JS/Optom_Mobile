@@ -1703,4 +1703,95 @@ class AppLocalizationsUz extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get coTitle => 'Rasmiylashtirish';
+
+  @override
+  String get coDeliverTo => 'Yetkazish manzili';
+
+  @override
+  String get coPickup => 'O\'zim olib ketaman';
+
+  @override
+  String get coPickupHint => 'Buyurtmani do\'kondan olib ketasiz';
+
+  @override
+  String get coWhereToDeliver => 'Buyurtmani qayerga yetkazamiz?';
+
+  @override
+  String get coAddAddress => 'Manzil qo\'shish';
+
+  @override
+  String get coSelectAddress => 'Manzilni tanlash';
+
+  @override
+  String get coNoDelivery => 'Manzilsiz — o\'zim olib ketaman';
+
+  @override
+  String get coItems => 'Buyurtma tarkibi';
+
+  @override
+  String get coNoteHint => 'Do\'kon uchun izoh (ixtiyoriy)';
+
+  @override
+  String get coPayment => 'To\'lov';
+
+  @override
+  String get coPaymentValue => 'Do\'konga: naqd yoki karta';
+
+  @override
+  String coSlideToOrder(String total) {
+    return 'Surib buyurtma bering | $total';
+  }
+
+  @override
+  String get coPlacing => 'Biroz kuting!';
+
+  @override
+  String get coPlacedTitle => 'Buyurtma qabul qilindi!';
+
+  @override
+  String coPlacedBody(String shop) {
+    return '«$shop» buyurtmangizni ko\'rib chiqadi va siz bilan bog\'lanadi.';
+  }
+
+  @override
+  String get coTrackOrder => 'Buyurtmani ko\'rish';
+
+  @override
+  String get coContinueShopping => 'Xaridni davom ettirish';
+
+  @override
+  String get addrSelectTitle => 'Manzilni tanlang';
+
+  @override
+  String get addrSearchHint => 'Saqlangan manzillardan qidiring';
+
+  @override
+  String get addrUseCurrent => 'Joriy joylashuvimdan foydalanish';
+
+  @override
+  String get addrPickOnMap => 'Xaritada belgilash';
+
+  @override
+  String get addrRecent => 'So\'nggi manzillar';
+
+  @override
+  String get addrNoneSaved => 'Hali saqlangan manzil yo\'q';
+
+  @override
+  String get addrDeliveredHere => 'Buyurtma shu yerga yetkaziladi';
+
+  @override
+  String get addrFieldLabel => 'Manzil (ko\'cha, uy, xonadon, mo\'ljal)';
+
+  @override
+  String get addrConfirm => 'Tasdiqlash va davom etish';
+
+  @override
+  String get addrDetecting => 'Manzil aniqlanmoqda…';
+
+  @override
+  String get addrRemove => 'Manzilni o\'chirish';
 }
