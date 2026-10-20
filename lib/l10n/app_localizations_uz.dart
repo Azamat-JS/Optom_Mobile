@@ -1948,4 +1948,30 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get salesDebtLeft => 'Qarzga qoladi';
+
+  @override
+  String productsProfitWith(String amount, String percent) {
+    return 'Foyda: $amount · $percent%';
+  }
+
+  @override
+  String get productsExpiry => 'Yaroqlilik muddati';
+
+  @override
+  String get productsDetails => 'Ma\'lumotlar';
+
+  @override
+  String get formBasics => 'Asosiy ma\'lumotlar';
+
+  @override
+  String get formPricing => 'Narx';
+
+  @override
+  String get formStockSection => 'Ombor';
+
+  @override
+  String get formExtra => 'Qo\'shimcha';
+
+  @override
+  String get productsSource => 'Manba';
 }

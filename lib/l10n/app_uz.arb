@@ -1061,5 +1061,23 @@
   "salesPaymentType": "To'lov turi",
   "salesNewSale": "Yangi sotuv",
   "salesCustomerHint": "Har bir sotuv mijoz nomiga yoziladi",
-  "salesDebtLeft": "Qarzga qoladi"
+  "salesDebtLeft": "Qarzga qoladi",
+  "productsProfitWith": "Foyda: {amount} · {percent}%",
+  "@productsProfitWith": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "productsExpiry": "Yaroqlilik muddati",
+  "productsDetails": "Ma'lumotlar",
+  "formBasics": "Asosiy ma'lumotlar",
+  "formPricing": "Narx",
+  "formStockSection": "Ombor",
+  "formExtra": "Qo'shimcha",
+  "productsSource": "Manba"
 }

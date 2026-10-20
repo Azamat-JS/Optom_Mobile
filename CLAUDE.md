@@ -1582,7 +1582,13 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 | U3c | Order tracking (map + status card) | 🟢 Done 2026-10-19 |
 | U4a | Operator home dashboard + Reports (references: Plum, Stripe Dashboard, Revolut Business, Mailchimp, Toggl Track) | 🟢 Done 2026-10-20 |
 | U4b | POS (Kassa), checkout, receipt, customer picker; no reference: matched to the U4a style | 🟢 Done 2026-10-20 |
-| U4c+ | Sweep of the remaining old screens (products, orders, customers, debts, sales, stores/admins/expenditures, settings, customer Sevimlilar/Profil, waiter/courier/super-admin) | ⚪ |
+| U4c1 | Products: list, detail, form, stock sheet, catalog picker + shared page kit (`dash_page.dart`) | 🟢 Done 2026-10-20 |
+| U4c2 | Orders (list, detail, review, catalog browse, seller picker) | ⚪ |
+| U4c3 | Customers + debts | ⚪ |
+| U4c4 | Sales history/returns + expenditures | ⚪ |
+| U4c5 | Stores, staff, waiters/couriers, settings | ⚪ |
+| U4c6 | Customer tabs (Sevimlilar, Profil, Qarzlarim, Yetkazishlarim) | ⚪ |
+| U4c7 | Restaurant, courier, super-admin, remaining screens | ⚪ |
 
 **U1 notes (2026-10-18):**
 - **Scoped theme:** the brand look is applied only inside the auth flow, via
@@ -1963,6 +1969,43 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 - **Not checked:** scanning (no simulator camera), parked-cart sheet (unchanged, old style),
   quick-create customer dialog (unchanged), weighable products' fractional steps, the return
   screen (U4c), Russian/English lengths.
+
+**U4c notes (2026-10-20), sweep of the remaining screens:** no new references; each sub-step
+restyles one area with the U4a/U4b look. **Use `lib/shared/widgets/dash_page.dart` for every
+restyled screen:**
+- `DashPage(title, body, actions, header, bottomBar, floatingActionButton, showBack)`: grey page,
+  no AppBar, round back + 26 px title + round actions, optional header (search/filters), body
+  fills the rest and scrolls itself.
+- `DashSearchField` (white pill, clear button calls `onChanged('')`), `DashListCard` (one row =
+  one card; `dimmed` for inactive), `DashThumb` (photo or icon in an inset box), `DashEmptyState`
+  (scrollable, so pull-to-refresh works), `DashTag` (tinted pill), `DashInfoRow`.
+- `DashFormTheme(onSheet:)`: wraps a form so every text field / dropdown is a white rounded
+  filled field with the label inside (underline-type borders; only the bottom edge shows focus or
+  error). **Fields must not pass their own `border:`** — strip `border: OutlineInputBorder()`
+  when restyling a form. `onSheet: true` uses the inset fill on white sheets.
+
+**U4c1 (products), 2026-10-20:**
+- List: scan + category-filter round buttons (filter turns yellow while active), search field,
+  removable category chip, product row cards (photo, "Qoldi: N dona" · category, price, red
+  "Tugagan" / "Faol emas" tags, inactive dimmed), yellow FAB.
+- **Real bug fixed:** the category filter sheet showed only "Barchasi" whenever nothing had loaded
+  the category tree yet (it `ref.read` the provider once). The sheet now watches
+  `categoriesProvider` itself.
+- Detail: photo strip with an add tile, price card (cost price + green "Foyda: X · N%" tag,
+  computed client-side), stock card with a yellow "Zaxira qo'shish", details card (now also unit
+  and expiry date), outlined barcode / share-to-catalog buttons; edit/delete as round buttons.
+- Form: sections (Asosiy ma'lumotlar / Narx / Ombor / Qo'shimcha), catalog source as a card,
+  currency as a pill toggle on create, sticky yellow save button. Number fields no longer show
+  "62000.0" (`_plain`). `CategoryPickerField` no longer forces an outline border (it follows the
+  surrounding theme). Stock sheet and catalog picker restyled; POS reuses `DashSearchField`.
+- New ARB keys: `productsProfitWith`, `productsExpiry`, `productsDetails`, `formBasics`,
+  `formPricing`, `formStockSection`, `formExtra`, `productsSource`.
+- **Verified:** `flutter analyze` clean, 76 unit tests; temporary on-device test (deleted) with a
+  throwaway SELLER (deleted): search, category filter on/off, detail, stock +5 (18 → 23), edit
+  price + deactivate (list shows it dimmed), create with cost price (profit tag), delete; dark
+  screenshots of list, detail, stock sheet, form.
+- **Not checked:** image upload (simulator gallery), barcode scan, catalog-linked products (the
+  local `master_products.unit` DB drift), Russian/English lengths.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

@@ -562,5 +562,13 @@
   "salesPaymentType": "Payment type",
   "salesNewSale": "New sale",
   "salesCustomerHint": "Every sale is recorded to a customer",
-  "salesDebtLeft": "Left as debt"
+  "salesDebtLeft": "Left as debt",
+  "productsProfitWith": "Profit: {amount} · {percent}%",
+  "productsExpiry": "Expiry date",
+  "productsDetails": "Details",
+  "formBasics": "Basics",
+  "formPricing": "Pricing",
+  "formStockSection": "Stock",
+  "formExtra": "More",
+  "productsSource": "Source"
 }

@@ -1996,4 +1996,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get salesDebtLeft => 'Left as debt';
+
+  @override
+  String productsProfitWith(String amount, String percent) {
+    return 'Profit: $amount · $percent%';
+  }
+
+  @override
+  String get productsExpiry => 'Expiry date';
+
+  @override
+  String get productsDetails => 'Details';
+
+  @override
+  String get formBasics => 'Basics';
+
+  @override
+  String get formPricing => 'Pricing';
+
+  @override
+  String get formStockSection => 'Stock';
+
+  @override
+  String get formExtra => 'More';
+
+  @override
+  String get productsSource => 'Source';
 }

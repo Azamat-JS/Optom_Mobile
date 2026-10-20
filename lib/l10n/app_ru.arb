@@ -562,5 +562,13 @@
   "salesPaymentType": "Тип оплаты",
   "salesNewSale": "Новая продажа",
   "salesCustomerHint": "Каждая продажа записывается на клиента",
-  "salesDebtLeft": "Останется в долг"
+  "salesDebtLeft": "Останется в долг",
+  "productsProfitWith": "Прибыль: {amount} · {percent}%",
+  "productsExpiry": "Срок годности",
+  "productsDetails": "Сведения",
+  "formBasics": "Основное",
+  "formPricing": "Цена",
+  "formStockSection": "Склад",
+  "formExtra": "Дополнительно",
+  "productsSource": "Источник"
 }

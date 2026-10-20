@@ -68,7 +68,6 @@ class CategoryPickerField extends ConsumerWidget {
           child: InputDecorator(
             decoration: InputDecoration(
               labelText: labelText ?? context.l10n.commonCategory,
-              border: const OutlineInputBorder(),
               suffixIcon: const Icon(Icons.arrow_drop_down),
               errorText: field.errorText,
             ),

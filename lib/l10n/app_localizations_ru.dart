@@ -2007,4 +2007,30 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get salesDebtLeft => 'Останется в долг';
+
+  @override
+  String productsProfitWith(String amount, String percent) {
+    return 'Прибыль: $amount · $percent%';
+  }
+
+  @override
+  String get productsExpiry => 'Срок годности';
+
+  @override
+  String get productsDetails => 'Сведения';
+
+  @override
+  String get formBasics => 'Основное';
+
+  @override
+  String get formPricing => 'Цена';
+
+  @override
+  String get formStockSection => 'Склад';
+
+  @override
+  String get formExtra => 'Дополнительно';
+
+  @override
+  String get productsSource => 'Источник';
 }

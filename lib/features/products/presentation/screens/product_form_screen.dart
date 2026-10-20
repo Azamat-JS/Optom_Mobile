@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/product_unit.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/categories/presentation/widgets/category_picker_field.dart';
 import 'package:bsmart/features/master_catalog/domain/entities/master_product.dart';
 import 'package:bsmart/features/master_catalog/presentation/screens/master_catalog_picker_screen.dart';
@@ -14,6 +17,8 @@ import 'package:bsmart/features/products/domain/entities/product_write_params.da
 import 'package:bsmart/features/products/domain/usecases/create_product_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/get_next_plu_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/update_product_usecase.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// Create-or-edit product form. On create, offers a choice between a
 /// catalog-linked product ("Add from Catalog" — name/description resolve
@@ -41,9 +46,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   DateTime? _expiryDate;
   bool _clearExpiryDate = false;
 
-  bool get _isCatalogLinked => widget.isEditing
-      ? widget.editingProduct!.isCatalogLinked
-      : _linkedCatalogEntry != null;
+  bool get _isCatalogLinked => widget.isEditing ? widget.editingProduct!.isCatalogLinked : _linkedCatalogEntry != null;
 
   @override
   void initState() {
@@ -54,8 +57,8 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     _form = FormGroup({
       'name': FormControl<String>(value: product?.name, validators: widget.isEditing ? [] : []),
       'description': FormControl<String>(value: product?.description),
-      'price': FormControl<String>(value: product?.price.toString(), validators: [Validators.required]),
-      'costPrice': FormControl<String>(value: product?.costPrice?.toString()),
+      'price': FormControl<String>(value: _plain(product?.price), validators: [Validators.required]),
+      'costPrice': FormControl<String>(value: _plain(product?.costPrice)),
       'currency': FormControl<Currency>(value: product?.currency ?? Currency.uzs),
       'stock': FormControl<String>(value: product == null ? '0' : null),
       'unit': FormControl<ProductUnit>(value: product?.unit),
@@ -67,6 +70,10 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     });
   }
 
+  /// 62000.0 → "62000", 2.5 → "2.5" (no trailing ".0" in the fields).
+  static String? _plain(double? v) =>
+      v == null ? null : (v == v.truncateToDouble() ? v.toStringAsFixed(0) : v.toString());
+
   @override
   void dispose() {
     _form.dispose();
@@ -74,9 +81,9 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   }
 
   Future<void> _pickFromCatalog() async {
-    final picked = await Navigator.of(context).push<MasterProduct>(
-      MaterialPageRoute(builder: (_) => const MasterCatalogPickerScreen()),
-    );
+    final picked = await Navigator.of(
+      context,
+    ).push<MasterProduct>(MaterialPageRoute(builder: (_) => const MasterCatalogPickerScreen()));
     if (picked == null) return;
     setState(() {
       _linkedCatalogEntry = picked;
@@ -195,184 +202,254 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.isEditing ? context.l10n.productsEditTitle : context.l10n.productsNewTitle)),
-      body: ReactiveForm(
-        formGroup: _form,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            if (!widget.isEditing) _buildSourcePicker(),
-            if (_isCatalogLinked) _buildCatalogSummary() else _buildCustomNameFields(),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: ReactiveTextField<String>(
-                    formControlName: 'price',
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: InputDecoration(labelText: context.l10n.commonPriceRequired, border: OutlineInputBorder()),
-                    validationMessages: {ValidationMessage.required: (_) => context.l10n.productsPriceRequired},
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ReactiveTextField<String>(
-                    formControlName: 'costPrice',
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: InputDecoration(labelText: context.l10n.commonCostPrice, border: OutlineInputBorder()),
-                  ),
-                ),
-              ],
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    return DashPage(
+      title: widget.isEditing ? l10n.productsEditTitle : l10n.productsNewTitle,
+      bottomBar: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+          child: FilledButton(
+            onPressed: _isSubmitting ? null : _submit,
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(56),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
             ),
-            const SizedBox(height: 12),
-            if (widget.isEditing)
-              InputDecorator(
-                decoration: InputDecoration(labelText: context.l10n.commonCurrency, border: OutlineInputBorder()),
-                child: Text((widget.editingProduct!.currency == Currency.uzs) ? context.l10n.currencyUzsLong : context.l10n.currencyUsdLong),
-              )
-            else
-              ReactiveDropdownField<Currency>(
-                formControlName: 'currency',
-                decoration: InputDecoration(labelText: context.l10n.commonCurrencyRequired, border: OutlineInputBorder()),
-                items: [
-                  DropdownMenuItem(value: Currency.uzs, child: Text(context.l10n.currencyUzsLong)),
-                  DropdownMenuItem(value: Currency.usd, child: Text(context.l10n.currencyUsdLong)),
+            child: _isSubmitting
+                ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2.5))
+                : Text(widget.isEditing ? l10n.commonSave : l10n.commonAdd),
+          ),
+        ),
+      ),
+      body: DashFormTheme(
+        child: ReactiveForm(
+          formGroup: _form,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              DashSectionTitle(l10n.formBasics, padding: const EdgeInsets.fromLTRB(4, 8, 4, 10)),
+              if (!widget.isEditing && !_isCatalogLinked) _buildSourcePicker(),
+              if (_isCatalogLinked) _buildCatalogSummary() else _buildCustomNameFields(),
+              DashSectionTitle(l10n.formPricing),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: ReactiveTextField<String>(
+                      formControlName: 'price',
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: InputDecoration(labelText: l10n.commonPriceRequired),
+                      validationMessages: {ValidationMessage.required: (_) => l10n.productsPriceRequired},
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ReactiveTextField<String>(
+                      formControlName: 'costPrice',
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: InputDecoration(labelText: l10n.commonCostPrice),
+                    ),
+                  ),
                 ],
               ),
-            const SizedBox(height: 12),
-            ReactiveDropdownField<ProductUnit>(
-              formControlName: 'unit',
-              decoration: InputDecoration(labelText: context.l10n.commonUnit, border: OutlineInputBorder()),
-              items: [for (final unit in ProductUnit.values) DropdownMenuItem(value: unit, child: Text(unit.label))],
-            ),
-            const SizedBox(height: 12),
-            if (!widget.isEditing)
-              ReactiveTextField<String>(
-                formControlName: 'stock',
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(labelText: context.l10n.productsInitialStock, border: OutlineInputBorder()),
-              )
-            else
-              InputDecorator(
-                decoration: InputDecoration(border: OutlineInputBorder(), labelText: context.l10n.commonStock),
-                child: Text(
-                  context.l10n.productsStockEditHint('${widget.editingProduct!.stock}'),
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ),
-            const SizedBox(height: 12),
-            const CategoryPickerField(formControlName: 'categoryId'),
-            const SizedBox(height: 12),
-            ReactiveTextField<String>(
-              formControlName: 'sku',
-              decoration: const InputDecoration(labelText: 'SKU', border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 12),
-            ReactiveTextField<String>(
-              formControlName: 'barcode',
-              decoration: InputDecoration(labelText: context.l10n.commonBarcode, border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: ReactiveTextField<String>(
-                    formControlName: 'plu',
-                    decoration: const InputDecoration(labelText: 'PLU', border: OutlineInputBorder()),
+              const SizedBox(height: 12),
+              if (widget.isEditing)
+                InputDecorator(
+                  decoration: InputDecoration(labelText: l10n.commonCurrency),
+                  child: Text(
+                    widget.editingProduct!.currency == Currency.uzs ? l10n.currencyUzsLong : l10n.currencyUsdLong,
+                  ),
+                )
+              else
+                ReactiveValueListenableBuilder<Currency>(
+                  formControlName: 'currency',
+                  builder: (context, control, _) => PillToggle<Currency>(
+                    values: const [Currency.uzs, Currency.usd],
+                    selected: control.value ?? Currency.uzs,
+                    expand: true,
+                    label: (c) => c == Currency.uzs ? l10n.currencyUzsLong : l10n.currencyUsdLong,
+                    onChanged: (c) => control.value = c,
                   ),
                 ),
-                const SizedBox(width: 8),
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: OutlinedButton(
+              DashSectionTitle(l10n.formStockSection),
+              ReactiveDropdownField<ProductUnit>(
+                formControlName: 'unit',
+                decoration: InputDecoration(labelText: l10n.commonUnit),
+                items: [for (final unit in ProductUnit.values) DropdownMenuItem(value: unit, child: Text(unit.label))],
+              ),
+              const SizedBox(height: 12),
+              if (!widget.isEditing)
+                ReactiveTextField<String>(
+                  formControlName: 'stock',
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: InputDecoration(labelText: l10n.productsInitialStock),
+                )
+              else
+                DashCard(
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline_rounded, color: colors.textSecondary),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          l10n.productsStockEditHint(_plain(widget.editingProduct!.stock)!),
+                          style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              DashSectionTitle(l10n.formExtra),
+              const CategoryPickerField(formControlName: 'categoryId'),
+              const SizedBox(height: 12),
+              ReactiveTextField<String>(
+                formControlName: 'barcode',
+                decoration: InputDecoration(labelText: l10n.commonBarcode),
+              ),
+              const SizedBox(height: 12),
+              ReactiveTextField<String>(
+                formControlName: 'sku',
+                decoration: const InputDecoration(labelText: 'SKU'),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: ReactiveTextField<String>(
+                      formControlName: 'plu',
+                      decoration: const InputDecoration(labelText: 'PLU'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  OutlinedButton(
                     onPressed: _isFetchingPlu ? null : _fetchNextPlu,
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(0, 56),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                    ),
                     child: _isFetchingPlu
                         ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                        : Text(context.l10n.productsPluSuggest),
+                        : Text(l10n.productsPluSuggest),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              InkWell(
+                onTap: _pickExpiryDate,
+                borderRadius: BorderRadius.circular(18),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: l10n.productsExpiryOptional,
+                    suffixIcon: _expiryDate != null
+                        ? IconButton(
+                            tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
+                            icon: const Icon(Icons.close_rounded),
+                            onPressed: () => setState(() {
+                              _expiryDate = null;
+                              _clearExpiryDate = true;
+                            }),
+                          )
+                        : const Icon(Icons.calendar_today_rounded),
+                  ),
+                  child: Text(
+                    _expiryDate != null ? DateFormat('dd.MM.yyyy').format(_expiryDate!) : l10n.commonNotSelected,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            InkWell(
-              onTap: _pickExpiryDate,
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: context.l10n.productsExpiryOptional,
-                  border: const OutlineInputBorder(),
-                  suffixIcon: _expiryDate != null
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () => setState(() {
-                            _expiryDate = null;
-                            _clearExpiryDate = true;
-                          }),
-                        )
-                      : const Icon(Icons.calendar_today_outlined),
-                ),
-                child: Text(_expiryDate != null ? _expiryDate!.toIso8601String().split('T').first : context.l10n.commonNotSelected),
               ),
-            ),
-            if (widget.isEditing) ...[
-              const SizedBox(height: 12),
-              ReactiveSwitchListTile(formControlName: 'isActive', title: Text(context.l10n.commonActive)),
+              if (widget.isEditing) ...[
+                const SizedBox(height: 12),
+                DashCard(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  child: ReactiveSwitchListTile(formControlName: 'isActive', title: Text(l10n.commonActive)),
+                ),
+              ],
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 14),
+                Text(
+                  _errorMessage!,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.w700),
+                ),
+              ],
             ],
-            if (_errorMessage != null) ...[
-              const SizedBox(height: 12),
-              Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-            ],
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: _isSubmitting ? null : _submit,
-              style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-              child: _isSubmitting
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                  : Text(widget.isEditing ? context.l10n.commonSave : context.l10n.commonAdd),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildSourcePicker() {
+    final colors = BrandColors.of(context);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        children: [
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: _pickFromCatalog,
-              icon: const Icon(Icons.inventory_2_outlined),
-              label: Text(context.l10n.productsPickFromCatalog),
+      padding: const EdgeInsets.only(bottom: 12),
+      child: DashCard(
+        onTap: _pickFromCatalog,
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: AppColors.brandYellow.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: Icon(Icons.library_books_rounded, color: colors.accentText),
             ),
-          ),
-          const SizedBox(width: 8),
-          if (_linkedCatalogEntry != null)
-            IconButton(
-              icon: const Icon(Icons.close),
-              tooltip: context.l10n.commonCancel,
-              onPressed: _clearCatalogLink,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                context.l10n.productsPickFromCatalog,
+                style: TextStyle(color: colors.textPrimary, fontSize: 15.5, fontWeight: FontWeight.w700),
+              ),
             ),
-        ],
+            Icon(Icons.chevron_right_rounded, color: colors.textMuted),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildCatalogSummary() {
+    final colors = BrandColors.of(context);
     final name = _linkedCatalogEntry?.name ?? widget.editingProduct?.name ?? '';
     final brand = _linkedCatalogEntry?.brand ?? widget.editingProduct?.brand;
-    return Card(
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      child: ListTile(
-        leading: const Icon(Icons.link),
-        title: Text(name),
-        subtitle: brand != null ? Text(brand) : null,
-        trailing: !widget.isEditing
-            ? IconButton(icon: const Icon(Icons.close), onPressed: _clearCatalogLink)
-            : null,
+    return DashCard(
+      padding: const EdgeInsets.all(14),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(color: AppColors.brandYellow, borderRadius: BorderRadius.circular(13)),
+            child: const Icon(Icons.link_rounded, color: AppColors.onBrand),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: TextStyle(color: colors.textPrimary, fontSize: 15.5, fontWeight: FontWeight.w700),
+                ),
+                if (brand != null)
+                  Text(
+                    brand,
+                    style: TextStyle(color: colors.textMuted, fontWeight: FontWeight.w600),
+                  ),
+              ],
+            ),
+          ),
+          if (!widget.isEditing)
+            IconButton(
+              tooltip: context.l10n.commonCancel,
+              icon: const Icon(Icons.close_rounded),
+              onPressed: _clearCatalogLink,
+            ),
+        ],
       ),
     );
   }
@@ -382,14 +459,14 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       children: [
         ReactiveTextField<String>(
           formControlName: 'name',
-          decoration: InputDecoration(labelText: context.l10n.productsNameRequired, border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: context.l10n.productsNameRequired),
         ),
         const SizedBox(height: 12),
         ReactiveTextField<String>(
           formControlName: 'description',
           minLines: 2,
           maxLines: 4,
-          decoration: InputDecoration(labelText: context.l10n.commonDescription, border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: context.l10n.commonDescription),
         ),
       ],
     );

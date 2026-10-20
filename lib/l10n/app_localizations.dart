@@ -3429,6 +3429,54 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Qarzga qoladi'**
   String get salesDebtLeft;
+
+  /// No description provided for @productsProfitWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Foyda: {amount} · {percent}%'**
+  String productsProfitWith(String amount, String percent);
+
+  /// No description provided for @productsExpiry.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yaroqlilik muddati'**
+  String get productsExpiry;
+
+  /// No description provided for @productsDetails.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ma\'lumotlar'**
+  String get productsDetails;
+
+  /// No description provided for @formBasics.
+  ///
+  /// In uz, this message translates to:
+  /// **'Asosiy ma\'lumotlar'**
+  String get formBasics;
+
+  /// No description provided for @formPricing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx'**
+  String get formPricing;
+
+  /// No description provided for @formStockSection.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ombor'**
+  String get formStockSection;
+
+  /// No description provided for @formExtra.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'shimcha'**
+  String get formExtra;
+
+  /// No description provided for @productsSource.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manba'**
+  String get productsSource;
 }
 
 class _AppLocalizationsDelegate

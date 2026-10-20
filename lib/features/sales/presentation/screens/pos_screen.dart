@@ -20,6 +20,7 @@ import 'package:bsmart/features/sales/presentation/screens/checkout_screen.dart'
 import 'package:bsmart/features/sales/presentation/widgets/shared_cart_sheet.dart';
 import 'package:bsmart/shared/widgets/barcode_scanner_screen.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// The POS Sell tab — search/scan the tenant's own active inventory
 /// (`GET /products`, never the buyer-facing `catalog` module — a cashier is
@@ -118,15 +119,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
   }
 
   void _onSearchChanged(String _) {
-    setState(() {}); // clear button visibility
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 400), () => _loadProducts(resetPage: true));
-  }
-
-  void _clearSearch() {
-    _searchController.clear();
-    _debounce?.cancel();
-    _loadProducts(resetPage: true);
   }
 
   Future<void> _scanBarcode() async {
@@ -238,11 +232,10 @@ class _PosScreenState extends ConsumerState<PosScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
-                child: _SearchPill(
+                child: DashSearchField(
                   controller: _searchController,
                   hint: l10n.ordersSearchProduct,
                   onChanged: _onSearchChanged,
-                  onClear: _clearSearch,
                 ),
               ),
               Expanded(child: _buildProductGrid(cart)),
@@ -313,56 +306,6 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       backgroundColor: AppColors.brandYellow,
       onRefresh: () => _loadProducts(resetPage: true),
       child: body,
-    );
-  }
-}
-
-class _SearchPill extends StatelessWidget {
-  const _SearchPill({required this.controller, required this.hint, required this.onChanged, required this.onClear});
-
-  final TextEditingController controller;
-  final String hint;
-  final ValueChanged<String> onChanged;
-  final VoidCallback onClear;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = BrandColors.of(context);
-    return Container(
-      height: 52,
-      decoration: BoxDecoration(color: DashColors.card(context), borderRadius: BorderRadius.circular(18)),
-      child: Row(
-        children: [
-          const SizedBox(width: 14),
-          Icon(Icons.search_rounded, color: colors.textSecondary),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              onChanged: onChanged,
-              textInputAction: TextInputAction.search,
-              style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600),
-              decoration: InputDecoration(
-                hintText: hint,
-                hintStyle: TextStyle(color: colors.textMuted, fontWeight: FontWeight.w500),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                filled: false,
-                isCollapsed: true,
-              ),
-            ),
-          ),
-          if (controller.text.isNotEmpty)
-            IconButton(
-              tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
-              icon: Icon(Icons.close_rounded, color: colors.textSecondary),
-              onPressed: onClear,
-            )
-          else
-            const SizedBox(width: 14),
-        ],
-      ),
     );
   }
 }

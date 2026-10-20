@@ -3,9 +3,11 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/domain/entities/product_write_params.dart';
 import 'package:bsmart/features/products/domain/usecases/receive_stock_usecase.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// Quick stock-adjust sheet — deliberately separate from the full edit form
 /// (per the implementation plan): receiving new stock is the most frequent
@@ -69,54 +71,61 @@ class _StockAdjustSheetState extends State<StockAdjustSheet> {
   @override
   Widget build(BuildContext context) {
     final isWeighable = widget.product.unit?.isWeighable ?? false;
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 16,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-      ),
-      child: ReactiveForm(
-        formGroup: _form,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(context.l10n.productsAddStock, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 4),
-            Text(
-              context.l10n.productsCurrentStock('${widget.product.stock.toStringAsFixed(isWeighable ? 2 : 0)} ${widget.product.unit?.label ?? ''}'),
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: 16),
-            ReactiveTextField<String>(
-              formControlName: 'quantity',
-              keyboardType: TextInputType.numberWithOptions(decimal: isWeighable),
-              decoration: InputDecoration(labelText: context.l10n.productsAddQuantity, border: OutlineInputBorder()),
-              validationMessages: {ValidationMessage.required: (_) => context.l10n.commonQuantityRequired},
-            ),
-            const SizedBox(height: 12),
-            ReactiveTextField<String>(
-              formControlName: 'correction',
-              keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-              decoration: InputDecoration(
-                labelText: context.l10n.productsCorrectionOptional,
-                helperText: context.l10n.productsCorrectionHint,
-                border: OutlineInputBorder(),
+    final colors = BrandColors.of(context);
+    return DashFormTheme(
+      onSheet: true,
+      child: Padding(
+        padding: EdgeInsets.only(left: 20, right: 20, top: 22, bottom: MediaQuery.of(context).viewInsets.bottom + 16),
+        child: ReactiveForm(
+          formGroup: _form,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                context.l10n.productsAddStock,
+                style: TextStyle(color: colors.textPrimary, fontSize: 20, fontWeight: FontWeight.w800),
               ),
-            ),
-            if (_errorMessage != null) ...[
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: DashTag(
+                  label: context.l10n.productsCurrentStock(
+                    '${widget.product.stock.toStringAsFixed(isWeighable ? 2 : 0)} ${widget.product.unit?.shortLabel ?? ''}',
+                  ),
+                  color: colors.accentText,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ReactiveTextField<String>(
+                formControlName: 'quantity',
+                keyboardType: TextInputType.numberWithOptions(decimal: isWeighable),
+                decoration: InputDecoration(labelText: context.l10n.productsAddQuantity),
+                validationMessages: {ValidationMessage.required: (_) => context.l10n.commonQuantityRequired},
+              ),
               const SizedBox(height: 12),
-              Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              ReactiveTextField<String>(
+                formControlName: 'correction',
+                keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                decoration: InputDecoration(
+                  labelText: context.l10n.productsCorrectionOptional,
+                  helperText: context.l10n.productsCorrectionHint,
+                ),
+              ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              ],
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: _isSubmitting ? null : _submit,
+                style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                child: _isSubmitting
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                    : Text(context.l10n.commonSave),
+              ),
             ],
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: _isSubmitting ? null : _submit,
-              child: _isSubmitting
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text(context.l10n.commonSave),
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -1,11 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/router/route_names.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/domain/usecases/assign_barcode_usecase.dart';
@@ -15,7 +17,12 @@ import 'package:bsmart/features/products/domain/usecases/get_product_usecase.dar
 import 'package:bsmart/features/products/domain/usecases/share_to_catalog_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/upload_product_image_usecase.dart';
 import 'package:bsmart/features/products/presentation/widgets/stock_adjust_sheet.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
+/// One product: photos, price (+ cost and profit), stock with a quick
+/// "add stock" sheet, details, and barcode / share-to-catalog actions.
+/// Phase 9 U4c1: `DashPage` + cards.
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key, required this.productId});
 
@@ -76,9 +83,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     if (!mounted) return;
     setState(() => _isBusy = false);
     result.fold(
-      (_) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.productsSentToCatalog)),
-      ),
+      (_) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.productsSentToCatalog))),
       (failure) => _showError(failure.message),
     );
   }
@@ -124,13 +129,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     setState(() => _isBusy = true);
     final result = await getIt<DeleteProductUseCase>().call(widget.productId);
     if (!mounted) return;
-    result.fold(
-      (_) => context.pop(),
-      (failure) {
-        setState(() => _isBusy = false);
-        _showError(failure.message);
-      },
-    );
+    result.fold((_) => context.pop(), (failure) {
+      setState(() => _isBusy = false);
+      _showError(failure.message);
+    });
   }
 
   void _showError(String message) {
@@ -141,67 +143,83 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final product = _product;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(product?.name ?? context.l10n.productsProduct),
-        actions: [
-          if (product != null)
-            IconButton(
-              icon: const Icon(Icons.edit_outlined),
-              onPressed: () async {
-                final changed = await context.push<bool>(RouteNames.productEdit(product.id), extra: product);
-                if (changed == true) _load();
-              },
-            ),
-          IconButton(icon: const Icon(Icons.delete_outline), onPressed: _confirmDelete),
-        ],
-      ),
+    return DashPage(
+      title: product?.name ?? l10n.productsProduct,
+      actions: [
+        if (product != null)
+          DashRoundButton(
+            icon: Icons.edit_rounded,
+            tooltip: l10n.commonEdit,
+            onTap: () async {
+              final changed = await context.push<bool>(RouteNames.productEdit(product.id), extra: product);
+              if (changed == true) _load();
+            },
+          ),
+        DashRoundButton(icon: Icons.delete_outline_rounded, tooltip: l10n.commonDelete, onTap: _confirmDelete),
+      ],
       body: _errorMessage != null
-          ? Center(child: Text(_errorMessage!))
+          ? DashEmptyState(
+              icon: Icons.cloud_off_rounded,
+              text: _errorMessage!,
+              action: TextButton(onPressed: _load, child: Text(l10n.commonRetry)),
+            )
           : product == null
-              ? const Center(child: CircularProgressIndicator())
-              : RefreshIndicator(
-                  onRefresh: _load,
-                  child: ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      _buildImageGallery(product),
-                      const SizedBox(height: 16),
-                      _buildInfoCard(product),
-                      const SizedBox(height: 16),
-                      _buildActions(product),
-                    ],
-                  ),
-                ),
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              color: AppColors.onBrand,
+              backgroundColor: AppColors.brandYellow,
+              onRefresh: _load,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
+                children: [
+                  _buildImageGallery(product),
+                  const SizedBox(height: 14),
+                  _buildPriceCard(product),
+                  const SizedBox(height: 12),
+                  _buildStockCard(product),
+                  DashSectionTitle(l10n.productsDetails),
+                  _buildInfoCard(product),
+                  const SizedBox(height: 16),
+                  _buildActions(product),
+                ],
+              ),
+            ),
     );
   }
 
   Widget _buildImageGallery(Product product) {
+    final colors = BrandColors.of(context);
     return SizedBox(
-      height: 100,
+      height: 112,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
           for (final image in product.images)
             Padding(
-              padding: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.only(right: 10),
               child: Stack(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: CachedNetworkImage(imageUrl: image.url, width: 100, height: 100, fit: BoxFit.cover),
-                  ),
+                  DashThumb(url: image.url, size: 112),
                   Positioned(
-                    top: 2,
-                    right: 2,
-                    child: GestureDetector(
-                      onTap: _isBusy ? null : () => _deleteImage(image.id),
-                      child: const CircleAvatar(
-                        radius: 12,
-                        backgroundColor: Colors.black54,
-                        child: Icon(Icons.close, size: 14, color: Colors.white),
+                    top: 6,
+                    right: 6,
+                    child: Material(
+                      color: Colors.black54,
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: _isBusy ? null : () => _deleteImage(image.id),
+                        child: Tooltip(
+                          message: context.l10n.commonDelete,
+                          child: const SizedBox(
+                            width: 28,
+                            height: 28,
+                            child: Icon(Icons.close_rounded, size: 16, color: Colors.white),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -209,90 +227,190 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
           if (!product.isCatalogLinked)
-            InkWell(
-              onTap: _isBusy ? null : _addImage,
-              child: Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).dividerColor),
-                  borderRadius: BorderRadius.circular(8),
+            Material(
+              color: DashColors.card(context),
+              borderRadius: BorderRadius.circular(30),
+              child: InkWell(
+                onTap: _isBusy ? null : _addImage,
+                borderRadius: BorderRadius.circular(30),
+                child: SizedBox(
+                  width: 112,
+                  height: 112,
+                  child: _isBusy
+                      ? const Center(child: CircularProgressIndicator())
+                      : Icon(Icons.add_a_photo_rounded, color: colors.textSecondary, size: 30),
                 ),
-                child: const Icon(Icons.add_a_photo_outlined),
+              ),
+            )
+          else if (product.images.isEmpty)
+            const DashThumb(size: 112),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPriceCard(Product product) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    String money(double v) => CurrencyFormatter.format(v, product.currency);
+    final cost = product.costPrice;
+    final profit = cost == null ? null : product.price - cost;
+    return DashCard(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.commonPrice,
+                  style: TextStyle(color: colors.textSecondary, fontSize: 14.5, fontWeight: FontWeight.w700),
+                ),
+              ),
+              if (!product.isActive) DashTag(label: l10n.commonInactive, color: Theme.of(context).colorScheme.error),
+              if (product.isCatalogLinked) ...[
+                const SizedBox(width: 6),
+                DashTag(label: l10n.navCatalog, color: colors.accentText),
+              ],
+            ],
+          ),
+          const SizedBox(height: 4),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              money(product.price),
+              style: TextStyle(
+                color: colors.textPrimary,
+                fontSize: 30,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.8,
               ),
             ),
+          ),
+          if (cost != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              l10n.productsCostPriceWith(money(cost)),
+              style: TextStyle(color: colors.textMuted, fontSize: 13.5, fontWeight: FontWeight.w600),
+            ),
+            if (profit != null && product.price > 0) ...[
+              const SizedBox(height: 8),
+              DashTag(
+                label: l10n.productsProfitWith(money(profit), (profit / product.price * 100).toStringAsFixed(0)),
+                color: profit >= 0 ? AppColors.success : Theme.of(context).colorScheme.error,
+              ),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStockCard(Product product) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    final weighable = product.unit?.isWeighable ?? false;
+    final out = product.stock <= 0;
+    final tint = out ? Theme.of(context).colorScheme.error : colors.accentText;
+    return DashCard(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(color: tint.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(14)),
+            child: Icon(Icons.warehouse_rounded, color: tint),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.commonStock,
+                  style: TextStyle(color: colors.textSecondary, fontSize: 13.5, fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  out
+                      ? l10n.posOutOfStock
+                      : '${product.stock.toStringAsFixed(weighable ? 2 : 0)} ${product.unit?.shortLabel ?? ''}',
+                  style: TextStyle(color: out ? tint : colors.textPrimary, fontSize: 20, fontWeight: FontWeight.w800),
+                ),
+              ],
+            ),
+          ),
+          FilledButton.icon(
+            onPressed: _isBusy ? null : _openStockSheet,
+            style: FilledButton.styleFrom(
+              minimumSize: const Size(0, 44),
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            ),
+            icon: const Icon(Icons.add_rounded, size: 20),
+            label: Text(l10n.productsAddStock),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildInfoCard(Product product) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(CurrencyFormatter.format(product.price, product.currency),
-                    style: Theme.of(context).textTheme.headlineSmall),
-                if (!product.isActive)
-                  Chip(label: Text(context.l10n.commonInactive), backgroundColor: Theme.of(context).colorScheme.errorContainer),
-              ],
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    final expiry = product.expiryDate;
+    return DashCard(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (product.category != null) DashInfoRow(label: l10n.commonCategory, value: product.category!.name),
+          if (product.unit != null) DashInfoRow(label: l10n.commonUnit, value: product.unit!.label),
+          if (product.brand != null) DashInfoRow(label: l10n.commonBrand, value: product.brand!),
+          DashInfoRow(label: l10n.commonBarcode, value: product.barcode ?? l10n.commonNone),
+          if (product.plu != null) DashInfoRow(label: 'PLU', value: product.plu!),
+          if (product.sku != null) DashInfoRow(label: 'SKU', value: product.sku!),
+          if (expiry != null)
+            DashInfoRow(label: l10n.productsExpiry, value: DateFormat('dd.MM.yyyy').format(expiry.toLocal())),
+          if (product.description != null && product.description!.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              product.description!,
+              style: TextStyle(color: colors.textSecondary, fontSize: 14.5, fontWeight: FontWeight.w500, height: 1.4),
             ),
-            if (product.costPrice != null)
-              Text(context.l10n.productsCostPriceWith(CurrencyFormatter.format(product.costPrice!, product.currency))),
-            const Divider(height: 24),
-            _infoRow(context.l10n.commonStock, '${product.stock.toStringAsFixed(product.unit?.isWeighable ?? false ? 2 : 0)} ${product.unit?.label ?? ''}'),
-            if (product.category != null) _infoRow(context.l10n.commonCategory, product.category!.name),
-            if (product.brand != null) _infoRow(context.l10n.commonBrand, product.brand!),
-            _infoRow(context.l10n.commonBarcode, product.barcode ?? context.l10n.commonNone),
-            if (product.plu != null) _infoRow('PLU', product.plu!),
-            if (product.sku != null) _infoRow('SKU', product.sku!),
-            if (product.description != null && product.description!.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(product.description!),
-            ],
+            const SizedBox(height: 6),
           ],
-        ),
+        ],
       ),
     );
   }
 
-  Widget _infoRow(String label, String value) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label, style: TextStyle(color: Theme.of(context).hintColor)),
-            Text(value),
-          ],
-        ),
-      );
-
   Widget _buildActions(Product product) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+    final l10n = context.l10n;
+    final style = OutlinedButton.styleFrom(
+      minimumSize: const Size.fromHeight(52),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        FilledButton.icon(
-          onPressed: _isBusy ? null : _openStockSheet,
-          icon: const Icon(Icons.add_box_outlined),
-          label: Text(context.l10n.productsAddStock),
-        ),
-        if (product.barcode == null)
+        if (product.barcode == null) ...[
           OutlinedButton.icon(
             onPressed: _isBusy ? null : _assignBarcode,
-            icon: const Icon(Icons.qr_code),
-            label: Text(context.l10n.productsCreateBarcode),
+            style: style,
+            icon: const Icon(Icons.qr_code_rounded),
+            label: Text(l10n.productsCreateBarcode),
           ),
+          const SizedBox(height: 10),
+        ],
         if (!product.isCatalogLinked)
           OutlinedButton.icon(
             onPressed: _isBusy ? null : _shareToCatalog,
-            icon: const Icon(Icons.share_outlined),
-            label: Text(context.l10n.productsShareToCatalog),
+            style: style,
+            icon: const Icon(Icons.share_rounded),
+            label: Text(l10n.productsShareToCatalog),
           ),
       ],
     );
