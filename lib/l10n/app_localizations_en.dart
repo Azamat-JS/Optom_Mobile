@@ -1938,4 +1938,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String otCourierBringing(String name) {
     return '$name is bringing your order';
   }
+
+  @override
+  String homeHello(String name) {
+    return 'Hi, $name!';
+  }
+
+  @override
+  String get homeSections => 'Sections';
+
+  @override
+  String get homeInventoryValue => 'Stock value';
+
+  @override
+  String homeExpectedProfit(String amount) {
+    return 'Expected profit: $amount';
+  }
+
+  @override
+  String get homeCashReceived => 'Cash received';
+
+  @override
+  String get homeAllTime => 'All time';
+
+  @override
+  String get homeOpenPos => 'Open the till';
+
+  @override
+  String get commonMonthsShort =>
+      'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec';
 }

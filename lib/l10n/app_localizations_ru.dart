@@ -1949,4 +1949,33 @@ class AppLocalizationsRu extends AppLocalizations {
   String otCourierBringing(String name) {
     return '$name везёт ваш заказ';
   }
+
+  @override
+  String homeHello(String name) {
+    return 'Привет, $name!';
+  }
+
+  @override
+  String get homeSections => 'Разделы';
+
+  @override
+  String get homeInventoryValue => 'Стоимость склада';
+
+  @override
+  String homeExpectedProfit(String amount) {
+    return 'Ожидаемая прибыль: $amount';
+  }
+
+  @override
+  String get homeCashReceived => 'Наличные';
+
+  @override
+  String get homeAllTime => 'За всё время';
+
+  @override
+  String get homeOpenPos => 'Открыть кассу';
+
+  @override
+  String get commonMonthsShort =>
+      'Янв,Фев,Мар,Апр,Май,Июн,Июл,Авг,Сен,Окт,Ноя,Дек';
 }

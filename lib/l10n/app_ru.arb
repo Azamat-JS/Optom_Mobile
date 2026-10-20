@@ -545,5 +545,13 @@
   "otRefresh": "Обновить",
   "otShowAll": "Показать всё",
   "otCourierUpdating": "Обновляем местоположение курьера…",
-  "otCourierBringing": "{name} везёт ваш заказ"
+  "otCourierBringing": "{name} везёт ваш заказ",
+  "homeHello": "Привет, {name}!",
+  "homeSections": "Разделы",
+  "homeInventoryValue": "Стоимость склада",
+  "homeExpectedProfit": "Ожидаемая прибыль: {amount}",
+  "homeCashReceived": "Наличные",
+  "homeAllTime": "За всё время",
+  "homeOpenPos": "Открыть кассу",
+  "commonMonthsShort": "Янв,Фев,Мар,Апр,Май,Июн,Июл,Авг,Сен,Окт,Ноя,Дек"
 }

@@ -1,13 +1,17 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import 'package:bsmart/core/l10n/l10n.dart';
-import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/entities/reporting_shared.dart';
+import 'package:bsmart/core/enums/currency.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
+import 'package:bsmart/core/utils/currency_formatter.dart';
+import 'package:bsmart/shared/widgets/brand_line_chart.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
 
 /// 14-day daily-total line chart — `salesTrend` from the dashboard response,
-/// already zero-filled/gap-free per day server-side.
+/// already zero-filled/gap-free per day server-side. Shows the window's
+/// total above the line (the Stripe "Gross volume" card).
 class SalesTrendChart extends StatelessWidget {
   const SalesTrendChart({super.key, required this.points, required this.currency});
 
@@ -16,52 +20,41 @@ class SalesTrendChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final maxY = points.map((p) => p.total).fold<double>(0, (a, b) => a > b ? a : b);
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 16, 16, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(context.l10n.dashSalesTrend14d, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 180,
-              child: points.every((p) => p.total == 0)
-                  ? Center(
-                      child: Text(context.l10n.commonNoData, style: TextStyle(color: Theme.of(context).hintColor)),
-                    )
-                  : LineChart(
-                      LineChartData(
-                        minY: 0,
-                        maxY: maxY == 0 ? 1 : maxY * 1.2,
-                        gridData: const FlGridData(show: true, drawVerticalLine: false),
-                        titlesData: const FlTitlesData(
-                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        ),
-                        borderData: FlBorderData(show: false),
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: [
-                              for (var i = 0; i < points.length; i++) FlSpot(i.toDouble(), points[i].total),
-                            ],
-                            isCurved: true,
-                            color: scheme.primary,
-                            barWidth: 2.5,
-                            dotData: const FlDotData(show: false),
-                            belowBarData: BarAreaData(show: true, color: scheme.primary.withValues(alpha: 0.12)),
-                          ),
-                        ],
-                      ),
-                    ),
+    final colors = BrandColors.of(context);
+    final total = points.fold<double>(0, (sum, p) => sum + p.total);
+    final range = points.isEmpty
+        ? ''
+        : '${BrandLineChart.shortDate(points.first.date)} – ${BrandLineChart.shortDate(points.last.date)}';
+    return DashCard(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            context.l10n.dashSalesTrend14d,
+            style: TextStyle(color: colors.textSecondary, fontSize: 14, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 4),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              CurrencyFormatter.format(total, currency),
+              style: TextStyle(
+                color: colors.textPrimary,
+                fontSize: 26,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+              ),
             ),
-          ],
-        ),
+          ),
+          Text(
+            range,
+            style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 14),
+          BrandLineChart(points: [for (final p in points) (date: p.date, amount: p.total)], currency: currency),
+        ],
       ),
     ).animate().fadeIn(delay: const Duration(milliseconds: 100));
   }

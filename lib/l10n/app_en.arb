@@ -545,5 +545,13 @@
   "otRefresh": "Refresh",
   "otShowAll": "Show everything",
   "otCourierUpdating": "Updating the courier's location…",
-  "otCourierBringing": "{name} is bringing your order"
+  "otCourierBringing": "{name} is bringing your order",
+  "homeHello": "Hi, {name}!",
+  "homeSections": "Sections",
+  "homeInventoryValue": "Stock value",
+  "homeExpectedProfit": "Expected profit: {amount}",
+  "homeCashReceived": "Cash received",
+  "homeAllTime": "All time",
+  "homeOpenPos": "Open the till",
+  "commonMonthsShort": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec"
 }

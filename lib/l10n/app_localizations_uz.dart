@@ -1890,4 +1890,33 @@ class AppLocalizationsUz extends AppLocalizations {
   String otCourierBringing(String name) {
     return '$name buyurtmangizni olib kelmoqda';
   }
+
+  @override
+  String homeHello(String name) {
+    return 'Salom, $name!';
+  }
+
+  @override
+  String get homeSections => 'Bo\'limlar';
+
+  @override
+  String get homeInventoryValue => 'Ombor qiymati';
+
+  @override
+  String homeExpectedProfit(String amount) {
+    return 'Kutilgan foyda: $amount';
+  }
+
+  @override
+  String get homeCashReceived => 'Naqd tushum';
+
+  @override
+  String get homeAllTime => 'Barcha vaqt';
+
+  @override
+  String get homeOpenPos => 'Kassani ochish';
+
+  @override
+  String get commonMonthsShort =>
+      'Yan,Fev,Mar,Apr,May,Iyn,Iyl,Avg,Sen,Okt,Noy,Dek';
 }

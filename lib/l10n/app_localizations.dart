@@ -3327,6 +3327,54 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'{name} buyurtmangizni olib kelmoqda'**
   String otCourierBringing(String name);
+
+  /// No description provided for @homeHello.
+  ///
+  /// In uz, this message translates to:
+  /// **'Salom, {name}!'**
+  String homeHello(String name);
+
+  /// No description provided for @homeSections.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bo\'limlar'**
+  String get homeSections;
+
+  /// No description provided for @homeInventoryValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ombor qiymati'**
+  String get homeInventoryValue;
+
+  /// No description provided for @homeExpectedProfit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kutilgan foyda: {amount}'**
+  String homeExpectedProfit(String amount);
+
+  /// No description provided for @homeCashReceived.
+  ///
+  /// In uz, this message translates to:
+  /// **'Naqd tushum'**
+  String get homeCashReceived;
+
+  /// No description provided for @homeAllTime.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barcha vaqt'**
+  String get homeAllTime;
+
+  /// No description provided for @homeOpenPos.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kassani ochish'**
+  String get homeOpenPos;
+
+  /// 12 short month names, comma-separated, January first
+  ///
+  /// In uz, this message translates to:
+  /// **'Yan,Fev,Mar,Apr,May,Iyn,Iyl,Avg,Sen,Okt,Noy,Dek'**
+  String get commonMonthsShort;
 }
 
 class _AppLocalizationsDelegate

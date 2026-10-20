@@ -1580,7 +1580,9 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 | U3a | Cart tab (Swiggy cart reference) | 🟢 Done 2026-10-18 |
 | U3b | Checkout: address step (map pin + saved/recent addresses), order summary, "Buyurtma berildi" success screen | 🟢 Done 2026-10-19 |
 | U3c | Order tracking (map + status card) | 🟢 Done 2026-10-19 |
-| U4+ | Next areas, as the user sends references | ⚪ |
+| U4a | Operator home dashboard + Reports (references: Plum, Stripe Dashboard, Revolut Business, Mailchimp, Toggl Track) | 🟢 Done 2026-10-20 |
+| U4b | POS (Kassa), no reference: matched to the U4a style | ⚪ |
+| U4c+ | Sweep of the remaining old screens (products, orders, customers, debts, sales, stores/admins/expenditures, settings, customer Sevimlilar/Profil, waiter/courier/super-admin) | ⚪ |
 
 **U1 notes (2026-10-18):**
 - **Scoped theme:** the brand look is applied only inside the auth flow, via
@@ -1886,6 +1888,41 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
     track link, and the pins hidden under the card/header.
 - **Not checked:** live courier movement / ETA on the live map (no GPS points or Routes key
   locally), dark mode, Russian/English.
+
+**U4a notes (2026-10-20), operator home + reports:**
+- The user found no POS references, so U4b (POS) and U4c+ (old screens) follow the U4a style
+  instead of their own references.
+- **Shared kit `lib/shared/widgets/dash_kit.dart`**, meant for every operator screen from now on:
+  `DashColors.page/card` (grey `#F2F3F6` page + white cards in light; sheet + field in dark),
+  `DashCard` (radius 22), `DashSectionTitle`, `PillToggle<T>` (yellow selected pill; `onDark` for
+  the ink hero; `expand`), `StatTile` (tinted icon, label, value, sub-line always reserved so
+  neighbours line up, chevron when tappable), `ShortcutTile` (56 px tile + label; `highlight` =
+  yellow), `DashRoundButton` (round header button).
+- **`lib/shared/widgets/brand_line_chart.dart`**: `BrandLineChart` (amber line, yellow fade,
+  dashed grid, first/middle/last date labels shifted inward at the edges, ink tooltip). Both
+  `SalesTrendChart` (home) and `SalesAmountChart` (reports) draw through it. The donut and the
+  income/debt bars were restyled as `DashCard`s; bar labels are short months via the new ARB
+  `commonMonthsShort` ("Yan,Fev,…", split on commas).
+- **`HomeScreen`** (no AppBar): profile initial (→ Settings, which has logout), "Salom, {name}!",
+  role · shop, `StoreSwitcher` (owners), settings button; ink hero with today's sales, UZS/USD
+  `CurrencyToggle(onDark: true)`, "Kassani ochish"; 2×2 `StatTile`s (total sales → sales list,
+  debts → debts, received payments, stock value + expected profit → products); a **visible
+  "Bo'limlar" shortcut grid replacing the old "⋯" popup menu**, with the same role gating (Wrap,
+  not a fixed-cell grid, so two-line labels never overflow); then the three charts.
+  `KpiCard` now just wraps `StatTile` (still used by `SuperAdminHomeScreen`).
+- **`ReportsScreen`**: round back + UZS/USD pill, large title, full-width period pill, revenue card
+  with the period range and the chart inside, 4 tiles (new debts, debt payments, outstanding,
+  cash), ranked top products (photo or placeholder), restyled `WorkDayCard` (status dot pill,
+  full-width start/end + Excel buttons). The period's `to` is exclusive, so the range shows `to −
+  1 ms`.
+- **Verified:** `flutter analyze` clean, 76 unit tests. A temporary on-device test (deleted) logged
+  in as a throwaway SELLER + RETAILER buyer seeded with orders over 12 days, a debt, payments and
+  POS sales (all deleted afterwards): home light/dark at four scroll positions, USD toggle, debts
+  tile → list → back, shortcut → reports, "Bu oy", scroll, back button, hero → POS. Fixed live:
+  clipped edge date labels, overlapping "2026-05" bar labels, invisible pill track on the grey
+  page, misaligned tile values, a 2.7 px overflow on two-line shortcut labels.
+- **Not checked:** Russian/English lengths, a RETAILER or restaurant owner's tile/shortcut set, a
+  multi-store owner's switcher in the new header, `_ADMIN` staff view.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
