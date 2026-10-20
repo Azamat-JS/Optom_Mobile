@@ -1045,5 +1045,21 @@
   "commonMonthsShort": "Yan,Fev,Mar,Apr,May,Iyn,Iyl,Avg,Sen,Okt,Noy,Dek",
   "@commonMonthsShort": {
     "description": "12 short month names, comma-separated, January first"
-  }
+  },
+  "posCheckout": "To'lovga o'tish",
+  "posOutOfStock": "Tugagan",
+  "posStockLeft": "Qoldi: {stock}",
+  "@posStockLeft": {
+    "placeholders": {
+      "stock": {
+        "type": "String"
+      }
+    }
+  },
+  "salesCustomer": "Mijoz",
+  "commonChange": "O'zgartirish",
+  "salesPaymentType": "To'lov turi",
+  "salesNewSale": "Yangi sotuv",
+  "salesCustomerHint": "Har bir sotuv mijoz nomiga yoziladi",
+  "salesDebtLeft": "Qarzga qoladi"
 }

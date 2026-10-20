@@ -1581,7 +1581,7 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 | U3b | Checkout: address step (map pin + saved/recent addresses), order summary, "Buyurtma berildi" success screen | 🟢 Done 2026-10-19 |
 | U3c | Order tracking (map + status card) | 🟢 Done 2026-10-19 |
 | U4a | Operator home dashboard + Reports (references: Plum, Stripe Dashboard, Revolut Business, Mailchimp, Toggl Track) | 🟢 Done 2026-10-20 |
-| U4b | POS (Kassa), no reference: matched to the U4a style | ⚪ |
+| U4b | POS (Kassa), checkout, receipt, customer picker; no reference: matched to the U4a style | 🟢 Done 2026-10-20 |
 | U4c+ | Sweep of the remaining old screens (products, orders, customers, debts, sales, stores/admins/expenditures, settings, customer Sevimlilar/Profil, waiter/courier/super-admin) | ⚪ |
 
 **U1 notes (2026-10-18):**
@@ -1923,6 +1923,46 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
   page, misaligned tile values, a 2.7 px overflow on two-line shortcut labels.
 - **Not checked:** Russian/English lengths, a RETAILER or restaurant owner's tile/shortcut set, a
   multi-store owner's switcher in the new header, `_ADMIN` staff view.
+
+**U4b notes (2026-10-20), POS:**
+- **`PosScreen`:** grey page; large "Kassa" title with round buttons: clear cart (only while the
+  cart has items, confirm dialog), parked carts (`SharedCartSheet`), yellow scan. White search pill
+  with a clear button. 2-column product grid (`mainAxisExtent` grows with the text scale): photo or
+  placeholder, name, price, "Qoldi: 12 dona" or red "Tugagan", and a `+` button. Once in the cart,
+  the card gets a yellow quantity badge and a full-width `DashStepper`. Tapping a card adds one
+  (haptic tick; the old "added" snackbar is gone; the mixed-currency refusal still shows one).
+  Dark cart bar at the bottom: item count, total, yellow "To'lovga o'tish".
+- **Real bug fixed:** after a sale the POS kept showing the old stock. Checkout replaces itself
+  with the receipt, so the POS never got the `true` result it waited for. It now reloads products
+  whenever checkout closes.
+- **`CheckoutScreen`:** customer card (yellow initial + "O'zgartirish", or a prompt that turns red
+  when confirming without a customer; foreground border because the card's Material paints over a
+  background one), item rows with photo + `DashStepper` (removing the last item pops back to the
+  POS), `PillToggle` paid/debt, down-payment field (debt), payment-method tiles (cash, card, bank,
+  Click, Payme; shown for paid, or for debt once a down payment is typed), discount + note fields,
+  bill card ("Qarzga qoladi" line for debt), sticky yellow "Tasdiqlash — total". `CreateSaleParams`
+  are unchanged.
+- **`SaleDetailScreen` (receipt; also opened from the sales list):** header card with the total,
+  tinted type/status pills, customer · date; right after checkout a yellow check + "Sotuv
+  yaratildi". Items with a dashed divider and the bill, a debt card, payments, note. Bottom:
+  "Qaytarish" (while returnable) and, right after checkout, "Yangi sotuv" (back to the POS).
+- `SaleStatusBadge`/`SaleTypeBadge` are tinted pills now (also in the sales list).
+  `CustomerPickerSheet` restyled (yellow "Yangi" button, filled search, yellow initials).
+- **Kit additions (`dash_kit.dart`):** `DashColors.inset` (recessed fill inside a card; in dark mode
+  the card is the field colour, so inset uses the page; also fixed the invisible placeholders in
+  the U4a reports rows), `DashStepper` (`expand`), and `BillRow` + `DashedDivider` moved here from
+  the storefront's `checkout_parts.dart` (which re-exports them).
+- New ARB keys: `posCheckout`, `posOutOfStock`, `posStockLeft`, `salesCustomer`, `commonChange`,
+  `salesPaymentType`, `salesNewSale`, `salesCustomerHint`, `salesDebtLeft`.
+- **Verified:** `flutter analyze` clean, 76 unit tests. A temporary on-device test (deleted) with a
+  throwaway SELLER (deleted) ran two sales: light = paid by card, dark = debt with a 100 000 cash
+  down payment. Steps: add by card taps + stepper, search + clear, confirm without customer (red
+  prompt), customer sheet, method/type choice, receipt, "Yangi sotuv" → POS with the stock reduced
+  (22 → 19 → 16). DB: PAID 1 235 000 with one CARD payment; DEBT 1 235 000 with a CASH 100 000
+  payment and a 1 135 000 debt.
+- **Not checked:** scanning (no simulator camera), parked-cart sheet (unchanged, old style),
+  quick-create customer dialog (unchanged), weighable products' fractional steps, the return
+  screen (U4c), Russian/English lengths.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

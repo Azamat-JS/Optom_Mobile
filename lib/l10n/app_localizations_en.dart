@@ -1967,4 +1967,33 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get commonMonthsShort =>
       'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec';
+
+  @override
+  String get posCheckout => 'Checkout';
+
+  @override
+  String get posOutOfStock => 'Out of stock';
+
+  @override
+  String posStockLeft(String stock) {
+    return 'Left: $stock';
+  }
+
+  @override
+  String get salesCustomer => 'Customer';
+
+  @override
+  String get commonChange => 'Change';
+
+  @override
+  String get salesPaymentType => 'Payment type';
+
+  @override
+  String get salesNewSale => 'New sale';
+
+  @override
+  String get salesCustomerHint => 'Every sale is recorded to a customer';
+
+  @override
+  String get salesDebtLeft => 'Left as debt';
 }

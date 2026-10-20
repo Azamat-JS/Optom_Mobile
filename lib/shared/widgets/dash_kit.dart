@@ -17,6 +17,11 @@ abstract final class DashColors {
   /// Card surface.
   static Color card(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark ? BrandColors.of(context).field : Colors.white;
+
+  /// Recessed fill inside a card (photo placeholders, secondary buttons).
+  /// In dark mode the card *is* the field colour, so this uses the page.
+  static Color inset(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? BrandColors.of(context).sheet : BrandColors.of(context).field;
 }
 
 /// White rounded card (raised grey in dark mode).
@@ -324,6 +329,112 @@ class DashRoundButton extends StatelessWidget {
             child: Icon(icon, color: highlight ? AppColors.onBrand : colors.textPrimary, size: 23),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// "Label ........ value" row of a bill card.
+class BillRow extends StatelessWidget {
+  const BillRow({required this.label, required this.value, this.strong = false, this.muted = false, super.key});
+
+  final String label;
+  final String value;
+  final bool strong;
+  final bool muted;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BrandColors.of(context);
+    final style = TextStyle(
+      color: muted ? colors.textSecondary : colors.textPrimary,
+      fontSize: strong ? 17 : 15.5,
+      fontWeight: strong ? FontWeight.w800 : FontWeight.w500,
+    );
+    // Label takes the free space; the value hugs the right edge and wraps
+    // inside at most 60% of the row.
+    return LayoutBuilder(
+      builder: (context, constraints) => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: Text(label, style: style)),
+          const SizedBox(width: 12),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.6),
+            child: Text(value, textAlign: TextAlign.right, style: style),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Dashed hairline between bill sections.
+class DashedDivider extends StatelessWidget {
+  const DashedDivider({required this.color, super.key});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final count = (constraints.maxWidth / 9).floor();
+        return Row(
+          children: [
+            for (var i = 0; i < count; i++)
+              Container(width: 5, height: 1.2, margin: const EdgeInsets.only(right: 4), color: color),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Compact "− 2 +" quantity stepper (yellow, like the storefront's ADD).
+class DashStepper extends StatelessWidget {
+  const DashStepper({required this.value, required this.onMinus, required this.onPlus, this.expand = false, super.key});
+
+  final String value;
+  final VoidCallback onMinus;
+  final VoidCallback onPlus;
+
+  /// Stretch to the full width, value centred between the buttons.
+  final bool expand;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget button(IconData icon, VoidCallback onTap, String tooltip) => InkWell(
+      onTap: onTap,
+      customBorder: const CircleBorder(),
+      child: Tooltip(
+        message: tooltip,
+        child: SizedBox(width: 34, height: 34, child: Icon(icon, size: 18, color: AppColors.onBrand)),
+      ),
+    );
+    return Material(
+      color: AppColors.brandYellow,
+      borderRadius: BorderRadius.circular(12),
+      child: Row(
+        mainAxisSize: expand ? MainAxisSize.max : MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          button(Icons.remove_rounded, onMinus, '−'),
+          ConstrainedBox(
+            constraints: const BoxConstraints(minWidth: 22),
+            child: Text(
+              value,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: BrandTheme.fontFamily,
+                color: AppColors.onBrand,
+                fontSize: 14.5,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          button(Icons.add_rounded, onPlus, '+'),
+        ],
       ),
     );
   }

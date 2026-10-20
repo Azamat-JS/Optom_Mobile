@@ -1978,4 +1978,33 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get commonMonthsShort =>
       'Янв,Фев,Мар,Апр,Май,Июн,Июл,Авг,Сен,Окт,Ноя,Дек';
+
+  @override
+  String get posCheckout => 'К оплате';
+
+  @override
+  String get posOutOfStock => 'Нет в наличии';
+
+  @override
+  String posStockLeft(String stock) {
+    return 'Остаток: $stock';
+  }
+
+  @override
+  String get salesCustomer => 'Клиент';
+
+  @override
+  String get commonChange => 'Изменить';
+
+  @override
+  String get salesPaymentType => 'Тип оплаты';
+
+  @override
+  String get salesNewSale => 'Новая продажа';
+
+  @override
+  String get salesCustomerHint => 'Каждая продажа записывается на клиента';
+
+  @override
+  String get salesDebtLeft => 'Останется в долг';
 }

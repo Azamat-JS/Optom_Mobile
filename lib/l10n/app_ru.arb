@@ -553,5 +553,14 @@
   "homeCashReceived": "Наличные",
   "homeAllTime": "За всё время",
   "homeOpenPos": "Открыть кассу",
-  "commonMonthsShort": "Янв,Фев,Мар,Апр,Май,Июн,Июл,Авг,Сен,Окт,Ноя,Дек"
+  "commonMonthsShort": "Янв,Фев,Мар,Апр,Май,Июн,Июл,Авг,Сен,Окт,Ноя,Дек",
+  "posCheckout": "К оплате",
+  "posOutOfStock": "Нет в наличии",
+  "posStockLeft": "Остаток: {stock}",
+  "salesCustomer": "Клиент",
+  "commonChange": "Изменить",
+  "salesPaymentType": "Тип оплаты",
+  "salesNewSale": "Новая продажа",
+  "salesCustomerHint": "Каждая продажа записывается на клиента",
+  "salesDebtLeft": "Останется в долг"
 }

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/customers/domain/entities/customer.dart';
 import 'package:bsmart/features/customers/domain/entities/customer_query.dart';
 import 'package:bsmart/features/customers/domain/entities/customer_write_params.dart';
@@ -75,6 +77,8 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
     return DraggableScrollableSheet(
       initialChildSize: 0.75,
       minChildSize: 0.4,
@@ -88,16 +92,24 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(20, 18, 16, 10),
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text(context.l10n.commonPickCustomer, style: Theme.of(context).textTheme.titleMedium),
+                        child: Text(
+                          l10n.commonPickCustomer,
+                          style: TextStyle(color: colors.textPrimary, fontSize: 20, fontWeight: FontWeight.w800),
+                        ),
                       ),
-                      TextButton.icon(
+                      FilledButton.icon(
                         onPressed: _quickCreate,
-                        icon: const Icon(Icons.person_add_alt_1, size: 18),
-                        label: Text(context.l10n.commonNew),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(0, 40),
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        ),
+                        icon: const Icon(Icons.person_add_alt_1_rounded, size: 18),
+                        label: Text(l10n.commonNew),
                       ),
                     ],
                   ),
@@ -106,11 +118,17 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: TextField(
                     controller: _searchController,
+                    style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600),
                     decoration: InputDecoration(
-                      hintText: context.l10n.salesCustomerSearchHint,
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(),
-                      isDense: true,
+                      hintText: l10n.salesCustomerSearchHint,
+                      prefixIcon: const Icon(Icons.search_rounded),
+                      filled: true,
+                      fillColor: colors.field,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
                     onChanged: _onSearchChanged,
                   ),
@@ -120,20 +138,38 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
                   child: _isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : _results.isEmpty
-                          ? Center(child: Text(context.l10n.salesCustomerNotFound))
-                          : ListView.builder(
-                              controller: scrollController,
-                              itemCount: _results.length,
-                              itemBuilder: (context, index) {
-                                final customer = _results[index];
-                                return ListTile(
-                                  leading: CircleAvatar(child: Text(customer.firstName.characters.first)),
-                                  title: Text(customer.fullName),
-                                  subtitle: Text(customer.phone ?? '—'),
-                                  onTap: () => Navigator.of(context).pop(customer),
-                                );
-                              },
-                            ),
+                      ? Center(
+                          child: Text(
+                            l10n.salesCustomerNotFound,
+                            style: TextStyle(color: colors.textMuted, fontWeight: FontWeight.w600),
+                          ),
+                        )
+                      : ListView.builder(
+                          controller: scrollController,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          itemCount: _results.length,
+                          itemBuilder: (context, index) {
+                            final customer = _results[index];
+                            return ListTile(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              leading: CircleAvatar(
+                                backgroundColor: AppColors.brandYellow,
+                                foregroundColor: AppColors.onBrand,
+                                child: Text(
+                                  customer.firstName.characters.firstOrNull?.toUpperCase() ?? '?',
+                                  style: const TextStyle(fontWeight: FontWeight.w800),
+                                ),
+                              ),
+                              title: Text(
+                                customer.fullName,
+                                style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700),
+                              ),
+                              subtitle: Text(customer.phone ?? '—', style: TextStyle(color: colors.textMuted)),
+                              trailing: Icon(Icons.chevron_right_rounded, color: colors.textMuted),
+                              onTap: () => Navigator.of(context).pop(customer),
+                            );
+                          },
+                        ),
                 ),
               ],
             ),

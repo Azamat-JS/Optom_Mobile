@@ -553,5 +553,14 @@
   "homeCashReceived": "Cash received",
   "homeAllTime": "All time",
   "homeOpenPos": "Open the till",
-  "commonMonthsShort": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec"
+  "commonMonthsShort": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+  "posCheckout": "Checkout",
+  "posOutOfStock": "Out of stock",
+  "posStockLeft": "Left: {stock}",
+  "salesCustomer": "Customer",
+  "commonChange": "Change",
+  "salesPaymentType": "Payment type",
+  "salesNewSale": "New sale",
+  "salesCustomerHint": "Every sale is recorded to a customer",
+  "salesDebtLeft": "Left as debt"
 }

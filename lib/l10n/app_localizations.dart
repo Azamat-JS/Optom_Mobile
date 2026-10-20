@@ -3375,6 +3375,60 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Yan,Fev,Mar,Apr,May,Iyn,Iyl,Avg,Sen,Okt,Noy,Dek'**
   String get commonMonthsShort;
+
+  /// No description provided for @posCheckout.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lovga o\'tish'**
+  String get posCheckout;
+
+  /// No description provided for @posOutOfStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tugagan'**
+  String get posOutOfStock;
+
+  /// No description provided for @posStockLeft.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldi: {stock}'**
+  String posStockLeft(String stock);
+
+  /// No description provided for @salesCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijoz'**
+  String get salesCustomer;
+
+  /// No description provided for @commonChange.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'zgartirish'**
+  String get commonChange;
+
+  /// No description provided for @salesPaymentType.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov turi'**
+  String get salesPaymentType;
+
+  /// No description provided for @salesNewSale.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi sotuv'**
+  String get salesNewSale;
+
+  /// No description provided for @salesCustomerHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Har bir sotuv mijoz nomiga yoziladi'**
+  String get salesCustomerHint;
+
+  /// No description provided for @salesDebtLeft.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzga qoladi'**
+  String get salesDebtLeft;
 }
 
 class _AppLocalizationsDelegate

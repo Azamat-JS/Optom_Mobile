@@ -1919,4 +1919,33 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get commonMonthsShort =>
       'Yan,Fev,Mar,Apr,May,Iyn,Iyl,Avg,Sen,Okt,Noy,Dek';
+
+  @override
+  String get posCheckout => 'To\'lovga o\'tish';
+
+  @override
+  String get posOutOfStock => 'Tugagan';
+
+  @override
+  String posStockLeft(String stock) {
+    return 'Qoldi: $stock';
+  }
+
+  @override
+  String get salesCustomer => 'Mijoz';
+
+  @override
+  String get commonChange => 'O\'zgartirish';
+
+  @override
+  String get salesPaymentType => 'To\'lov turi';
+
+  @override
+  String get salesNewSale => 'Yangi sotuv';
+
+  @override
+  String get salesCustomerHint => 'Har bir sotuv mijoz nomiga yoziladi';
+
+  @override
+  String get salesDebtLeft => 'Qarzga qoladi';
 }

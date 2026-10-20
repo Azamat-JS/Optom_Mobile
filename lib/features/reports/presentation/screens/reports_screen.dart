@@ -321,7 +321,7 @@ class _TopProductRow extends StatelessWidget {
             child: Container(
               width: 44,
               height: 44,
-              color: colors.field,
+              color: DashColors.inset(context),
               child: image == null
                   ? Icon(Icons.inventory_2_rounded, color: colors.textMuted, size: 22)
                   : CachedNetworkImage(
