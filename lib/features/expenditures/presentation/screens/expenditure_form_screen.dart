@@ -5,10 +5,15 @@ import 'package:intl/intl.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/expenditure_type.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/expenditures/domain/entities/expenditure.dart';
 import 'package:bsmart/features/expenditures/domain/entities/expenditure_write_params.dart';
 import 'package:bsmart/features/expenditures/domain/usecases/create_expenditure_usecase.dart';
 import 'package:bsmart/features/expenditures/domain/usecases/update_expenditure_usecase.dart';
+import 'package:bsmart/features/expenditures/presentation/widgets/expenditure_visuals.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// Create/edit form for a single overhead-spending entry.
 class ExpenditureFormScreen extends ConsumerStatefulWidget {
@@ -22,9 +27,7 @@ class ExpenditureFormScreen extends ConsumerStatefulWidget {
 
 class _ExpenditureFormScreenState extends ConsumerState<ExpenditureFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  late final _amountController = TextEditingController(
-    text: widget.editingExpenditure?.amount.toStringAsFixed(0),
-  );
+  late final _amountController = TextEditingController(text: widget.editingExpenditure?.amount.toStringAsFixed(0));
   late final _notesController = TextEditingController(text: widget.editingExpenditure?.notes);
   late ExpenditureType _type = widget.editingExpenditure?.type ?? ExpenditureType.other;
   late DateTime _date = widget.editingExpenditure?.date ?? DateTime.now();
@@ -81,62 +84,116 @@ class _ExpenditureFormScreenState extends ConsumerState<ExpenditureFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? context.l10n.expensesEditTitle : context.l10n.expensesNewTitle)),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            DropdownButtonFormField<ExpenditureType>(
-              initialValue: _type,
-              decoration: InputDecoration(labelText: context.l10n.expensesTypeRequired, border: OutlineInputBorder()),
-              items: [for (final t in ExpenditureType.values) DropdownMenuItem(value: t, child: Text(t.label))],
-              onChanged: (v) {
-                if (v != null) setState(() => _type = v);
-              },
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _amountController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(
-                labelText: context.l10n.expensesAmountRequired,
-                border: OutlineInputBorder(),
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    return DashPage(
+      title: _isEditing ? l10n.expensesEditTitle : l10n.expensesNewTitle,
+      bottomBar: DashBottomButton(label: l10n.commonSave, busy: _isSaving, onPressed: _submit),
+      body: DashFormTheme(
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              DashSectionTitle(l10n.expensesTypeRequired, padding: const EdgeInsets.fromLTRB(4, 8, 4, 10)),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  const gap = 8.0;
+                  final width = (constraints.maxWidth - 2 * gap) / 3;
+                  return Wrap(
+                    spacing: gap,
+                    runSpacing: gap,
+                    children: [
+                      for (final type in ExpenditureType.values)
+                        SizedBox(
+                          width: width,
+                          child: Semantics(
+                            selected: type == _type,
+                            button: true,
+                            child: Material(
+                              color: type == _type ? AppColors.brandYellow : DashColors.card(context),
+                              borderRadius: BorderRadius.circular(16),
+                              child: InkWell(
+                                onTap: () => setState(() => _type = type),
+                                borderRadius: BorderRadius.circular(16),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        expenditureIcon(type),
+                                        color: type == _type ? AppColors.onBrand : expenditureColor(type),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        type.label,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: type == _type ? AppColors.onBrand : colors.textPrimary,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
               ),
-              validator: (v) {
-                if (v == null || v.trim().isEmpty) return context.l10n.expensesAmountMissing;
-                final parsed = double.tryParse(v.trim());
-                if (parsed == null || parsed <= 0) return context.l10n.expensesAmountInvalid;
-                return null;
-              },
-            ),
-            const SizedBox(height: 12),
-            InkWell(
-              onTap: _pickDate,
-              child: InputDecorator(
-                decoration: InputDecoration(labelText: context.l10n.commonDateRequired, border: OutlineInputBorder()),
-                child: Text(DateFormat('dd.MM.yyyy').format(_date)),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _amountController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                style: TextStyle(color: colors.textPrimary, fontSize: 17, fontWeight: FontWeight.w700),
+                decoration: InputDecoration(
+                  labelText: l10n.expensesAmountRequired,
+                  prefixIcon: const Icon(Icons.payments_rounded),
+                ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return l10n.expensesAmountMissing;
+                  final parsed = double.tryParse(v.trim());
+                  if (parsed == null || parsed <= 0) return l10n.expensesAmountInvalid;
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _notesController,
-              decoration: InputDecoration(labelText: context.l10n.commonNote, border: OutlineInputBorder()),
-              maxLines: 2,
-            ),
-            if (_errorMessage != null) ...[
               const SizedBox(height: 12),
-              Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              InkWell(
+                onTap: _pickDate,
+                borderRadius: BorderRadius.circular(18),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: l10n.commonDateRequired,
+                    prefixIcon: const Icon(Icons.calendar_today_rounded),
+                  ),
+                  child: Text(DateFormat('dd.MM.yyyy').format(_date)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _notesController,
+                decoration: InputDecoration(
+                  labelText: l10n.commonNote,
+                  prefixIcon: const Icon(Icons.edit_note_rounded),
+                ),
+                maxLines: 2,
+              ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 14),
+                Text(
+                  _errorMessage!,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.w700),
+                ),
+              ],
             ],
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: _isSaving ? null : _submit,
-              child: _isSaving
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text(context.l10n.commonSave),
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -12,6 +12,7 @@ import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/sales/domain/entities/sale.dart';
 import 'package:bsmart/features/sales/domain/usecases/get_sale_usecase.dart';
+import 'package:bsmart/features/sales/presentation/providers/sales_list_notifier.dart';
 import 'package:bsmart/features/sales/presentation/screens/sale_return_screen.dart';
 import 'package:bsmart/features/sales/presentation/widgets/sale_status_badge.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
@@ -59,7 +60,11 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
     final returned = await Navigator.of(
       context,
     ).push<bool>(MaterialPageRoute(builder: (_) => SaleReturnScreen(sale: sale)));
-    if (returned == true) _load();
+    if (returned == true) {
+      _load();
+      // Keep the app-wide sales history's status pill in step.
+      ref.read(salesListProvider.notifier).refresh();
+    }
   }
 
   @override

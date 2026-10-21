@@ -4,6 +4,7 @@ import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/debts/domain/entities/debt.dart';
 import 'package:bsmart/features/debts/domain/entities/debt_query.dart';
 import 'package:bsmart/features/debts/domain/usecases/list_debts_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 /// The B2B `Debt` list — a flat fetch (limit 500, matching `DebtQueryDto`'s
 /// own max) grouped client-side by debtor/currency in the screen, not here.
@@ -15,7 +16,10 @@ class DebtsListNotifier extends AsyncNotifier<List<Debt>> {
   String? _role;
 
   @override
-  Future<List<Debt>> build() => _fetch();
+  Future<List<Debt>> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch();
+  }
 
   Future<List<Debt>> _fetch() async {
     final result = await getIt<ListDebtsUseCase>().call(DebtQuery(role: _role));

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_order.dart';
 import 'package:bsmart/features/restaurant_orders/domain/usecases/list_open_restaurant_orders_usecase.dart';
 
@@ -9,7 +10,10 @@ import 'package:bsmart/features/restaurant_orders/domain/usecases/list_open_rest
 /// backend's own `findOpen()` design for a small working set.
 class OpenRestaurantOrdersNotifier extends AsyncNotifier<List<RestaurantOrder>> {
   @override
-  Future<List<RestaurantOrder>> build() => _fetch();
+  Future<List<RestaurantOrder>> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch();
+  }
 
   Future<List<RestaurantOrder>> _fetch() async {
     final result = await getIt<ListOpenRestaurantOrdersUseCase>().call();

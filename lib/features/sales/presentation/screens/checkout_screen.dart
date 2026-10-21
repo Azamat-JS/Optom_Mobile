@@ -14,9 +14,11 @@ import 'package:bsmart/features/customers/domain/entities/customer.dart';
 import 'package:bsmart/features/sales/domain/entities/sale_write_params.dart';
 import 'package:bsmart/features/sales/domain/usecases/create_sale_usecase.dart';
 import 'package:bsmart/features/sales/presentation/providers/pos_cart_notifier.dart';
+import 'package:bsmart/features/sales/presentation/providers/sales_list_notifier.dart';
 import 'package:bsmart/features/sales/presentation/screens/sale_detail_screen.dart';
 import 'package:bsmart/features/sales/presentation/widgets/customer_picker_sheet.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/payment_method_tiles.dart';
 
 /// POS checkout — pick a customer, choose PAID (+ payment method) or DEBT
 /// (+ optional up-front `paidAmount`/due date), apply a sale-level discount,
@@ -96,6 +98,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     result.fold(
       (sale) {
         ref.read(posCartProvider.notifier).clear();
+        // The sales history is app-wide; without this it misses the new sale.
+        ref.read(salesListProvider.notifier).refresh();
         Navigator.of(
           context,
         ).pushReplacement(MaterialPageRoute(builder: (_) => SaleDetailScreen(saleId: sale.id, justCreated: true)));
@@ -202,7 +206,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 const SizedBox(height: 12),
               ],
               if (showMethods) ...[
-                _MethodGrid(selected: _paymentMethod, onSelected: (m) => setState(() => _paymentMethod = m)),
+                PaymentMethodTiles(selected: _paymentMethod, onSelected: (m) => setState(() => _paymentMethod = m)),
                 const SizedBox(height: 12),
               ],
               _AmountField(
@@ -431,75 +435,6 @@ class _LineRow extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// One selectable tile per immediate payment method (cash, card, …).
-class _MethodGrid extends StatelessWidget {
-  const _MethodGrid({required this.selected, required this.onSelected});
-
-  final PaymentMethod selected;
-  final ValueChanged<PaymentMethod> onSelected;
-
-  static IconData _icon(PaymentMethod m) => switch (m) {
-    PaymentMethod.cash => Icons.payments_rounded,
-    PaymentMethod.card => Icons.credit_card_rounded,
-    PaymentMethod.bankTransfer => Icons.account_balance_rounded,
-    PaymentMethod.click => Icons.touch_app_rounded,
-    PaymentMethod.payme => Icons.phone_iphone_rounded,
-    PaymentMethod.debt => Icons.receipt_long_rounded,
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = BrandColors.of(context);
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        const gap = 8.0;
-        final width = (constraints.maxWidth - 2 * gap) / 3;
-        return Wrap(
-          spacing: gap,
-          runSpacing: gap,
-          children: [
-            for (final m in PaymentMethod.immediateMethods)
-              SizedBox(
-                width: width,
-                child: Semantics(
-                  selected: m == selected,
-                  button: true,
-                  child: Material(
-                    color: m == selected ? AppColors.brandYellow : DashColors.card(context),
-                    borderRadius: BorderRadius.circular(16),
-                    child: InkWell(
-                      onTap: () => onSelected(m),
-                      borderRadius: BorderRadius.circular(16),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
-                        child: Column(
-                          children: [
-                            Icon(_icon(m), color: m == selected ? AppColors.onBrand : colors.textPrimary),
-                            const SizedBox(height: 4),
-                            Text(
-                              m.label,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: m == selected ? AppColors.onBrand : colors.textPrimary,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
     );
   }
 }

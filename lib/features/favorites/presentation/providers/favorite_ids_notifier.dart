@@ -4,6 +4,7 @@ import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/favorites/domain/usecases/list_favorite_ids_usecase.dart';
 import 'package:bsmart/features/favorites/domain/usecases/toggle_favorite_usecase.dart';
 import 'package:bsmart/features/favorites/presentation/providers/favorites_list_notifier.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 /// Just the set of favorited product ids — powers the heart icon on the
 /// product-detail screen without needing the full `FavoriteProduct` list.
@@ -12,6 +13,7 @@ import 'package:bsmart/features/favorites/presentation/providers/favorites_list_
 class FavoriteIdsNotifier extends AsyncNotifier<Set<String>> {
   @override
   Future<Set<String>> build() async {
+    ref.watch(currentUserIdProvider);
     final result = await getIt<ListFavoriteIdsUseCase>().call();
     return result.fold((ids) => ids.toSet(), (failure) => throw failure);
   }
@@ -26,21 +28,18 @@ class FavoriteIdsNotifier extends AsyncNotifier<Set<String>> {
     state = AsyncData(optimistic);
 
     final result = await getIt<ToggleFavoriteUseCase>().call(productId);
-    result.fold(
-      (favorited) {
-        final reconciled = Set<String>.from(state.valueOrNull ?? const {});
-        favorited ? reconciled.add(productId) : reconciled.remove(productId);
-        state = AsyncData(reconciled);
-        // This id set and the Sevimlilar tab's own `favoritesListProvider`
-        // are two independently-fetched providers with no shared cache —
-        // without this, toggling a favorite here (product detail) never
-        // shows up on/disappears from that list until something else
-        // happens to invalidate it (caught live: a freshly favorited
-        // product didn't appear in "Sevimlilar" until a manual refresh).
-        ref.invalidate(favoritesListProvider);
-      },
-      (failure) => state = AsyncData(current),
-    );
+    result.fold((favorited) {
+      final reconciled = Set<String>.from(state.valueOrNull ?? const {});
+      favorited ? reconciled.add(productId) : reconciled.remove(productId);
+      state = AsyncData(reconciled);
+      // This id set and the Sevimlilar tab's own `favoritesListProvider`
+      // are two independently-fetched providers with no shared cache —
+      // without this, toggling a favorite here (product detail) never
+      // shows up on/disappears from that list until something else
+      // happens to invalidate it (caught live: a freshly favorited
+      // product didn't appear in "Sevimlilar" until a manual refresh).
+      ref.invalidate(favoritesListProvider);
+    }, (failure) => state = AsyncData(current));
   }
 }
 

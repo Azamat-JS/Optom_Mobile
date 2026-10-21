@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/enums/sale_enums.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/app_motion.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/sales/presentation/providers/sales_list_notifier.dart';
 import 'package:bsmart/features/sales/presentation/screens/sale_detail_screen.dart';
 import 'package:bsmart/features/sales/presentation/widgets/sale_status_badge.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// POS sale history — every B2C register sale, filterable by type
 /// (PAID/DEBT). Reused by both SELLER's and RETAILER's own register, since
@@ -45,80 +51,94 @@ class _SalesListScreenState extends ConsumerState<SalesListScreen> {
   // register sales) is small enough that this stays snappy.
   void _filterByType(SaleType? type) => setState(() => _typeFilter = type);
 
+  static final _dateFormat = DateFormat('dd.MM.yyyy HH:mm');
+
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
     final listState = ref.watch(salesListProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.salesHistoryTitle)),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: Row(
-              children: [
-                ChoiceChip(
-                  label: Text(context.l10n.commonAll),
-                  selected: _typeFilter == null,
-                  onSelected: (_) => _filterByType(null),
-                ),
-                const SizedBox(width: 8),
-                ChoiceChip(
-                  label: Text(context.l10n.commonPaid),
-                  selected: _typeFilter == SaleType.paid,
-                  onSelected: (_) => _filterByType(SaleType.paid),
-                ),
-                const SizedBox(width: 8),
-                ChoiceChip(
-                  label: Text(context.l10n.commonOnCredit),
-                  selected: _typeFilter == SaleType.debt,
-                  onSelected: (_) => _filterByType(SaleType.debt),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: listState.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
-              data: (state) {
-                final items = _typeFilter == null ? state.items : state.items.where((s) => s.type == _typeFilter).toList();
-                if (items.isEmpty) return Center(child: Text(context.l10n.salesNotFound));
-                return RefreshIndicator(
-                  onRefresh: () => ref.read(salesListProvider.notifier).refresh(),
-                  child: ListView.separated(
+    return DashPage(
+      title: l10n.salesHistoryTitle,
+      header: DashChoiceChips<SaleType?>(
+        values: const [null, SaleType.paid, SaleType.debt],
+        selected: _typeFilter,
+        label: (t) => switch (t) {
+          null => l10n.commonAll,
+          SaleType.paid => l10n.commonPaid,
+          SaleType.debt => l10n.commonOnCredit,
+        },
+        onSelected: _filterByType,
+      ),
+      body: listState.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => DashEmptyState(
+          icon: Icons.cloud_off_rounded,
+          text: l10n.commonErrorWith('$error'),
+          action: TextButton(onPressed: () => ref.invalidate(salesListProvider), child: Text(l10n.commonRetry)),
+        ),
+        data: (state) {
+          final items = _typeFilter == null ? state.items : state.items.where((s) => s.type == _typeFilter).toList();
+          return RefreshIndicator(
+            color: AppColors.onBrand,
+            backgroundColor: AppColors.brandYellow,
+            onRefresh: () => ref.read(salesListProvider.notifier).refresh(),
+            child: items.isEmpty
+                ? DashEmptyState(icon: Icons.receipt_rounded, text: l10n.salesNotFound)
+                : ListView.separated(
                     physics: const AlwaysScrollableScrollPhysics(),
                     controller: _scrollController,
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
                     itemCount: items.length + (state.hasNext ? 1 : 0),
-                    separatorBuilder: (_, _) => const Divider(height: 1),
+                    separatorBuilder: (_, _) => const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       if (index >= items.length) {
-                        return const Padding(padding: EdgeInsets.all(16), child: Center(child: CircularProgressIndicator()));
+                        return const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
                       }
                       final sale = items[index];
-                      return ListTile(
-                        title: Text(sale.saleNumber),
-                        subtitle: Text(sale.customer?.fullName ?? ''),
+                      final tint = sale.type == SaleType.paid ? AppColors.success : colors.accentText;
+                      return DashListCard(
+                        leading: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: tint.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Icon(
+                            sale.type == SaleType.paid ? Icons.receipt_rounded : Icons.request_quote_rounded,
+                            color: tint,
+                          ),
+                        ),
+                        title: sale.customer?.fullName ?? sale.saleNumber,
+                        subtitle: '${_dateFormat.format(sale.createdAt.toLocal())} · ${sale.saleNumber}',
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(CurrencyFormatter.format(sale.total, sale.currency)),
+                            Text(
+                              CurrencyFormatter.format(sale.total, sale.currency),
+                              style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w800),
+                            ),
                             const SizedBox(height: 4),
-                            SaleTypeBadge(type: sale.type),
+                            // Returns matter more than the type once they happen.
+                            sale.status == SaleStatus.completed
+                                ? SaleTypeBadge(type: sale.type)
+                                : SaleStatusBadge(status: sale.status),
                           ],
                         ),
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => SaleDetailScreen(saleId: sale.id)),
-                        ),
-                      );
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(MaterialPageRoute(builder: (_) => SaleDetailScreen(saleId: sale.id))),
+                      ).animate().fadeIn(delay: (25 * (index % 12)).ms, duration: AppMotion.standard);
                     },
                   ),
-                );
-              },
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

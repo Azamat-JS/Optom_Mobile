@@ -288,7 +288,7 @@
   "debtsPayDownTitle": "Combined payment (FIFO)",
   "debtsPayDownHint": "Distributed automatically, starting with the oldest debt",
   "debtsAllocation": "Allocation:",
-  "debtsWillClose": "(will be closed)",
+  "debtsWillClose": "will close",
   "debtsExceedsTotal": "The amount exceeds the total balance",
   "debtsConfirmPayment": "Confirm payment",
   "debtsTitle": "Debts",
@@ -571,5 +571,9 @@
   "formStockSection": "Stock",
   "formExtra": "More",
   "productsSource": "Source",
-  "commonContinue": "Continue"
+  "commonContinue": "Continue",
+  "debtsSummaryTotal": "Total owed",
+  "debtsPeopleCount": "{count} people",
+  "debtsItemsTitle": "Debts",
+  "debtsOriginal": "Original amount"
 }

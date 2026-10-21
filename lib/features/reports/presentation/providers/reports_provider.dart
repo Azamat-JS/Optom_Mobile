@@ -7,6 +7,7 @@ import 'package:bsmart/features/reports/domain/entities/report_period.dart';
 import 'package:bsmart/features/reports/domain/entities/sales_chart_result.dart';
 import 'package:bsmart/features/reports/domain/usecases/get_period_stats_usecase.dart';
 import 'package:bsmart/features/reports/domain/usecases/get_sales_chart_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 /// The period selector driving both [reportsProvider]'s sections — see
 /// `ReportPeriod`'s doc comment for why only these two values are exposed.
@@ -26,6 +27,7 @@ class ReportsData {
 class ReportsNotifier extends AsyncNotifier<ReportsData> {
   @override
   Future<ReportsData> build() async {
+    ref.watch(currentUserIdProvider);
     final period = ref.watch(selectedReportPeriodProvider);
 
     final statsResult = await getIt<GetPeriodStatsUseCase>().call(period: period);

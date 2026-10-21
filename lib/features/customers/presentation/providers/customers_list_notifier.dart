@@ -5,6 +5,7 @@ import 'package:bsmart/features/customers/domain/entities/customer.dart';
 import 'package:bsmart/features/customers/domain/entities/customer_query.dart';
 import 'package:bsmart/features/customers/domain/usecases/deactivate_customer_usecase.dart';
 import 'package:bsmart/features/customers/domain/usecases/list_customers_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class CustomersListState {
   const CustomersListState({
@@ -31,7 +32,10 @@ class CustomersListState {
 
 class CustomersListNotifier extends AsyncNotifier<CustomersListState> {
   @override
-  Future<CustomersListState> build() => _fetch(const CustomerQuery());
+  Future<CustomersListState> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch(const CustomerQuery());
+  }
 
   Future<CustomersListState> _fetch(CustomerQuery query) async {
     final result = await getIt<ListCustomersUseCase>().call(query);
@@ -58,7 +62,12 @@ class CustomersListNotifier extends AsyncNotifier<CustomersListState> {
       final current = state.valueOrNull;
       if (current == null) return;
       state = AsyncData(
-        current.copyWith(items: [for (final c in current.items) if (c.id == id) updated else c]),
+        current.copyWith(
+          items: [
+            for (final c in current.items)
+              if (c.id == id) updated else c,
+          ],
+        ),
       );
     }, (failure) => throw failure);
   }

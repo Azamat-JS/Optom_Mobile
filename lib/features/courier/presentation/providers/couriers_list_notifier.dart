@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/courier/domain/entities/courier.dart';
 import 'package:bsmart/features/courier/domain/usecases/list_couriers_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class CouriersListState {
   const CouriersListState({required this.items, required this.courierLimit});
@@ -13,7 +14,10 @@ class CouriersListState {
 
 class CouriersListNotifier extends AsyncNotifier<CouriersListState> {
   @override
-  Future<CouriersListState> build() => _fetch();
+  Future<CouriersListState> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch();
+  }
 
   Future<CouriersListState> _fetch() async {
     final result = await getIt<ListCouriersUseCase>().call();
@@ -28,6 +32,4 @@ class CouriersListNotifier extends AsyncNotifier<CouriersListState> {
   }
 }
 
-final couriersListProvider = AsyncNotifierProvider<CouriersListNotifier, CouriersListState>(
-  CouriersListNotifier.new,
-);
+final couriersListProvider = AsyncNotifierProvider<CouriersListNotifier, CouriersListState>(CouriersListNotifier.new);

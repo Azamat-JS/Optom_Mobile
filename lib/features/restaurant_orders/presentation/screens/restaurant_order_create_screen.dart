@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -5,6 +7,10 @@ import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/entities/geo_point.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/restaurant_order_enums.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/app_motion.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/domain/entities/product_query.dart';
@@ -13,6 +19,8 @@ import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_ord
 import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_order_write_params.dart';
 import 'package:bsmart/features/restaurant_orders/domain/usecases/create_restaurant_order_usecase.dart';
 import 'package:bsmart/features/restaurant_tables/presentation/providers/restaurant_tables_list_notifier.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 import 'package:bsmart/shared/widgets/location_picker_field.dart';
 
 class _CartLine {
@@ -126,125 +134,215 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
     final tablesAsync = ref.watch(restaurantTablesListProvider);
+    final count = _cart.fold<int>(0, (sum, line) => sum + line.quantity);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Yangi buyurtma')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          SegmentedButton<RestaurantOrderType>(
-            segments: const [
-              ButtonSegment(value: RestaurantOrderType.dineIn, label: Text('Zalda')),
-              ButtonSegment(value: RestaurantOrderType.delivery, label: Text('Yetkazib berish')),
-            ],
-            selected: {_type},
-            onSelectionChanged: (value) => setState(() => _type = value.first),
-          ),
-          const SizedBox(height: 12),
-          if (_type == RestaurantOrderType.dineIn)
-            tablesAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Text('Xatolik: $error'),
-              data: (tables) => DropdownButtonFormField<String>(
-                initialValue: _tableId,
-                decoration: const InputDecoration(labelText: 'Stol *', border: OutlineInputBorder()),
-                items: [for (final t in tables) DropdownMenuItem(value: t.id, child: Text(t.name))],
-                onChanged: (value) => setState(() => _tableId = value),
-              ),
-            )
-          else ...[
-            TextFormField(
-              controller: _deliveryAddressController,
-              decoration: const InputDecoration(labelText: 'Manzil *', border: OutlineInputBorder()),
+    return DashPage(
+      title: 'Yangi buyurtma',
+      bottomBar: AnimatedOpacity(
+        opacity: _isSaving ? 0.6 : 1,
+        duration: AppMotion.standard,
+        child: DashCartBar(
+          count: count,
+          countLabel: l10n.commonSubtotal,
+          total: CurrencyFormatter.format(_subtotal, Currency.uzs),
+          actionLabel: 'Buyurtma berish',
+          onTap: _isSaving ? () {} : _submit,
+        ),
+      ),
+      body: DashFormTheme(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+          children: [
+            PillToggle<RestaurantOrderType>(
+              values: const [RestaurantOrderType.dineIn, RestaurantOrderType.delivery],
+              selected: _type,
+              label: (t) => t.label,
+              onChanged: (t) => setState(() => _type = t),
+              expand: true,
             ),
-            const SizedBox(height: 8),
-            LocationPickerField(
-              value: _dropoff,
-              onChanged: (p) => setState(() => _dropoff = p),
-              pickerTitle: 'Yetkazib berish joyi',
-            ),
-            const SizedBox(height: 12),
-          ],
-          TextFormField(
-            controller: _customerNameController,
-            decoration: const InputDecoration(labelText: 'Mijoz ismi', border: OutlineInputBorder()),
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _customerPhoneController,
-            keyboardType: TextInputType.phone,
-            decoration: const InputDecoration(labelText: 'Mijoz telefoni', border: OutlineInputBorder()),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Taomlar', style: Theme.of(context).textTheme.titleMedium),
-              TextButton.icon(onPressed: _addItem, icon: const Icon(Icons.add), label: const Text('Qo\'shish')),
-            ],
-          ),
-          if (_cart.isEmpty)
-            const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Text('Hali taom qo\'shilmagan'))
-          else
-            for (final line in _cart)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(line.productName),
-                subtitle: Text('${CurrencyFormatter.format(line.unitPrice, Currency.uzs)} x ${line.quantity}'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
+            if (_type == RestaurantOrderType.dineIn) ...[
+              const DashSectionTitle('Stol *'),
+              tablesAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, _) => Text(l10n.commonErrorWith('$error')),
+                data: (tables) => Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.remove_circle_outline),
-                      onPressed: () => setState(() {
-                        if (line.quantity > 1) {
-                          line.quantity -= 1;
-                        } else {
-                          _cart.remove(line);
-                        }
-                      }),
-                    ),
-                    Text('${line.quantity}'),
-                    IconButton(
-                      icon: const Icon(Icons.add_circle_outline),
-                      onPressed: () => setState(() => line.quantity += 1),
-                    ),
+                    for (final t in tables)
+                      _TablePill(
+                        name: t.name,
+                        selected: t.id == _tableId,
+                        onTap: () => setState(() => _tableId = t.id),
+                      ),
                   ],
                 ),
               ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _discountController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(labelText: 'Chegirma', border: OutlineInputBorder()),
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _notesController,
-            decoration: const InputDecoration(labelText: 'Izoh', border: OutlineInputBorder()),
-            maxLines: 2,
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Oraliq summa', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(CurrencyFormatter.format(_subtotal, Currency.uzs)),
+            ] else ...[
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _deliveryAddressController,
+                decoration: const InputDecoration(labelText: 'Manzil *'),
+              ),
+              const SizedBox(height: 10),
+              LocationPickerField(
+                value: _dropoff,
+                onChanged: (p) => setState(() => _dropoff = p),
+                pickerTitle: 'Yetkazib berish joyi',
+              ),
             ],
-          ),
-          if (_errorMessage != null) ...[
-            const SizedBox(height: 12),
-            Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _customerNameController,
+              decoration: const InputDecoration(labelText: 'Mijoz ismi'),
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
+              controller: _customerPhoneController,
+              keyboardType: TextInputType.phone,
+              decoration: const InputDecoration(labelText: 'Mijoz telefoni'),
+            ),
+            DashSectionTitle(
+              'Taomlar',
+              trailing: TextButton.icon(
+                onPressed: _addItem,
+                icon: const Icon(Icons.add_rounded),
+                label: Text(l10n.commonAdd),
+              ),
+            ),
+            if (_cart.isEmpty)
+              DashCard(
+                onTap: _addItem,
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                child: Column(
+                  children: [
+                    Icon(Icons.restaurant_menu_rounded, size: 34, color: colors.textMuted),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Hali taom qo'shilmagan",
+                      style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+              )
+            else
+              DashCard(
+                padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
+                child: Column(
+                  children: [
+                    for (final (i, line) in _cart.indexed) ...[
+                      if (i > 0) Divider(height: 20, color: colors.outline),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  line.productName,
+                                  style: TextStyle(
+                                    color: colors.textPrimary,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  CurrencyFormatter.format(line.unitPrice, Currency.uzs),
+                                  style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          DashStepper(
+                            value: '${line.quantity}',
+                            onMinus: () => setState(() {
+                              if (line.quantity > 1) {
+                                line.quantity -= 1;
+                              } else {
+                                _cart.remove(line);
+                              }
+                            }),
+                            onPlus: () => setState(() => line.quantity += 1),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _discountController,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(labelText: l10n.commonDiscount),
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
+              controller: _notesController,
+              decoration: InputDecoration(labelText: l10n.commonNote),
+              maxLines: 2,
+            ),
+            if (_errorMessage != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                _errorMessage!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.w600),
+              ),
+            ],
           ],
-          const SizedBox(height: 20),
-          FilledButton(
-            onPressed: _isSaving ? null : _submit,
-            child: _isSaving
-                ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Text('Buyurtma berish'),
+        ),
+      ),
+    );
+  }
+}
+
+/// A table to pick for a dine-in order (selected = yellow).
+class _TablePill extends StatelessWidget {
+  const _TablePill({required this.name, required this.selected, required this.onTap});
+
+  final String name;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BrandColors.of(context);
+    return Semantics(
+      selected: selected,
+      button: true,
+      child: Material(
+        color: selected ? AppColors.brandYellow : DashColors.card(context),
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.table_restaurant_rounded,
+                  size: 18,
+                  color: selected ? AppColors.onBrand : colors.textSecondary,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  name,
+                  style: TextStyle(
+                    color: selected ? AppColors.onBrand : colors.textPrimary,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -259,8 +357,9 @@ class _MenuSearchSheet extends StatefulWidget {
 
 class _MenuSearchSheetState extends State<_MenuSearchSheet> {
   final _searchController = TextEditingController();
+  Timer? _debounce;
   List<Product> _results = const [];
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -270,6 +369,7 @@ class _MenuSearchSheetState extends State<_MenuSearchSheet> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -284,8 +384,15 @@ class _MenuSearchSheetState extends State<_MenuSearchSheet> {
     });
   }
 
+  void _onSearchChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () => _runSearch(value));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -294,26 +401,66 @@ class _MenuSearchSheetState extends State<_MenuSearchSheet> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    l10n.navMenu,
+                    style: TextStyle(color: colors.textPrimary, fontSize: 20, fontWeight: FontWeight.w800),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
                   controller: _searchController,
                   autofocus: true,
-                  decoration: const InputDecoration(hintText: 'Menyudan qidirish...', border: OutlineInputBorder()),
-                  onChanged: _runSearch,
+                  style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600),
+                  decoration: InputDecoration(
+                    hintText: 'Menyudan qidirish...',
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    filled: true,
+                    fillColor: colors.field,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  onChanged: _onSearchChanged,
                 ),
               ),
-              if (_isLoading) const LinearProgressIndicator(),
+              const SizedBox(height: 8),
               Expanded(
-                child: _results.isEmpty
-                    ? const Center(child: Text('Hech narsa topilmadi'))
-                    : ListView.separated(
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _results.isEmpty
+                    ? Center(
+                        child: Text(
+                          l10n.commonNothingFound,
+                          style: TextStyle(color: colors.textMuted, fontWeight: FontWeight.w600),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
                         itemCount: _results.length,
-                        separatorBuilder: (_, _) => const Divider(height: 1),
                         itemBuilder: (context, index) {
                           final product = _results[index];
                           return ListTile(
-                            title: Text(product.name),
-                            trailing: Text(CurrencyFormatter.format(product.price, product.currency)),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            leading: DashThumb(
+                              url: product.primaryImage?.url,
+                              icon: Icons.restaurant_menu_rounded,
+                              size: 44,
+                            ),
+                            title: Text(
+                              product.name,
+                              style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700),
+                            ),
+                            trailing: Text(
+                              CurrencyFormatter.format(product.price, product.currency),
+                              style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w800),
+                            ),
                             onTap: () => Navigator.of(context).pop(product),
                           );
                         },

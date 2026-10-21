@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/domain/usecases/get_best_selling_products_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 /// The Reports hub's "Eng ko'p sotilgan mahsulotlar" section — reuses
 /// `features/products`' own `bestSelling()` repository method (built but
@@ -11,6 +12,7 @@ import 'package:bsmart/features/products/domain/usecases/get_best_selling_produc
 class BestSellingProductsNotifier extends AsyncNotifier<List<Product>> {
   @override
   Future<List<Product>> build() async {
+    ref.watch(currentUserIdProvider);
     final result = await getIt<GetBestSellingProductsUseCase>().call(limit: 10);
     return result.fold((d) => d, (failure) => throw failure);
   }

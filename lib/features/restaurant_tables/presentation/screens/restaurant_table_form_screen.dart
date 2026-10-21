@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/features/restaurant_tables/domain/entities/restaurant_table.dart';
 import 'package:bsmart/features/restaurant_tables/domain/entities/restaurant_table_write_params.dart';
 import 'package:bsmart/features/restaurant_tables/domain/usecases/create_restaurant_table_usecase.dart';
 import 'package:bsmart/features/restaurant_tables/domain/usecases/update_restaurant_table_usecase.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 class RestaurantTableFormScreen extends StatefulWidget {
   const RestaurantTableFormScreen({super.key, this.editingTable});
@@ -19,12 +21,15 @@ class _RestaurantTableFormScreenState extends State<RestaurantTableFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late final _nameController = TextEditingController(text: widget.editingTable?.name);
   late final _percentController = TextEditingController(
-    text: widget.editingTable != null ? widget.editingTable!.percent.toString() : '0',
+    text: widget.editingTable != null ? _plain(widget.editingTable!.percent) : '0',
   );
   bool _isSaving = false;
   String? _errorMessage;
 
   bool get _isEditing => widget.editingTable != null;
+
+  /// "10" rather than "10.0" in the field.
+  static String _plain(double v) => v == v.truncateToDouble() ? v.toStringAsFixed(0) : v.toString();
 
   @override
   void dispose() {
@@ -61,46 +66,38 @@ class _RestaurantTableFormScreenState extends State<RestaurantTableFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? 'Stolni tahrirlash' : 'Yangi stol')),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Nomi *', hintText: '5', border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Nomini kiriting' : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _percentController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                labelText: 'Xizmat haqi (%) *',
-                hintText: '10',
-                border: OutlineInputBorder(),
+    return DashPage(
+      title: _isEditing ? 'Stolni tahrirlash' : 'Yangi stol',
+      bottomBar: DashBottomButton(label: context.l10n.commonSave, busy: _isSaving, onPressed: _submit),
+      body: DashFormTheme(
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: 'Nomi *', hintText: '5'),
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Nomini kiriting' : null,
               ),
-              validator: (v) {
-                final value = double.tryParse((v ?? '').trim());
-                if (value == null) return 'Foizni kiriting';
-                if (value < 0 || value > 100) return '0 dan 100 gacha bo\'lishi kerak';
-                return null;
-              },
-            ),
-            if (_errorMessage != null) ...[
               const SizedBox(height: 12),
-              Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              TextFormField(
+                controller: _percentController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(labelText: 'Xizmat haqi (%) *', hintText: '10', suffixText: '%'),
+                validator: (v) {
+                  final value = double.tryParse((v ?? '').trim());
+                  if (value == null) return 'Foizni kiriting';
+                  if (value < 0 || value > 100) return '0 dan 100 gacha bo\'lishi kerak';
+                  return null;
+                },
+              ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              ],
             ],
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: _isSaving ? null : _submit,
-              child: _isSaving
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Saqlash'),
-            ),
-          ],
+          ),
         ),
       ),
     );

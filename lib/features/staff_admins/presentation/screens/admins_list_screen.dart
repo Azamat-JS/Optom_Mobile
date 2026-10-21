@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
+
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/staff_admins/domain/entities/admin.dart';
@@ -18,9 +22,9 @@ class AdminsListScreen extends ConsumerWidget {
   const AdminsListScreen({super.key});
 
   Future<void> _openForm(BuildContext context, WidgetRef ref, {Admin? editing}) async {
-    final saved = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => AdminFormScreen(editingAdmin: editing)),
-    );
+    final saved = await Navigator.of(
+      context,
+    ).push<bool>(MaterialPageRoute(builder: (_) => AdminFormScreen(editingAdmin: editing)));
     if (saved == true) ref.read(adminsListProvider.notifier).refresh();
   }
 
@@ -59,67 +63,78 @@ class AdminsListScreen extends ConsumerWidget {
     final adminsAsync = ref.watch(adminsListProvider);
     final storesAsync = ref.watch(storesListProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.staffTitle)),
+    return DashPage(
+      title: context.l10n.staffTitle,
+      floatingActionButton: FloatingActionButton(
+        tooltip: context.l10n.staffNewTitle,
+        onPressed: () => _openForm(context, ref),
+        child: const Icon(Icons.person_add_alt_1_rounded),
+      ),
       body: adminsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
+        error: (error, _) =>
+            DashEmptyState(icon: Icons.cloud_off_rounded, text: context.l10n.commonErrorWith('$error')),
         data: (admins) {
-          if (admins.isEmpty) return Center(child: Text(context.l10n.staffNotFound));
           final storeNames = {for (final s in storesAsync.valueOrNull ?? []) s.id: s.name};
+          final items = admins;
           return RefreshIndicator(
+            color: AppColors.onBrand,
+            backgroundColor: AppColors.brandYellow,
             onRefresh: () => ref.read(adminsListProvider.notifier).refresh(),
-            child: ListView.separated(
+            child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: admins.length,
-              separatorBuilder: (_, _) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                final admin = admins[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: admin.isActive ? null : Theme.of(context).disabledColor,
-                    child: Text(admin.firstName.characters.first),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
+              children: [
+                if (items.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 60),
+                    child: Text(
+                      context.l10n.staffNotFound,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: BrandColors.of(context).textSecondary, fontWeight: FontWeight.w600),
+                    ),
                   ),
-                  title: Row(
-                    children: [
-                      Flexible(child: Text(admin.fullName)),
-                      if (!admin.isActive) ...[
-                        const SizedBox(width: 6),
-                        Chip(label: Text(context.l10n.commonInactiveShort), visualDensity: VisualDensity.compact),
+                for (final (i, admin) in items.indexed) ...[
+                  if (i > 0) const SizedBox(height: 10),
+                  DashListCard(
+                    dimmed: !admin.isActive,
+                    leading: DashAvatar(name: admin.firstName, active: admin.isActive),
+                    title: admin.fullName,
+                    subtitle: [admin.phone, storeNames[admin.storeId] ?? admin.storeId].join(' · '),
+                    trailing: DashMenuButton(
+                      items: [
+                        (value: 'edit', icon: Icons.edit_rounded, label: context.l10n.commonEdit, destructive: false),
+                        (
+                          value: 'toggle',
+                          icon: admin.isActive ? Icons.block_rounded : Icons.check_circle_rounded,
+                          label: admin.isActive ? context.l10n.commonDeactivate : context.l10n.commonActivate,
+                          destructive: false,
+                        ),
+                        (
+                          value: 'delete',
+                          icon: Icons.delete_outline_rounded,
+                          label: context.l10n.commonDelete,
+                          destructive: true,
+                        ),
                       ],
-                    ],
+                      onSelected: (action) {
+                        switch (action) {
+                          case 'edit':
+                            _openForm(context, ref, editing: admin);
+                          case 'toggle':
+                            _toggleActive(context, ref, admin);
+                          case 'delete':
+                            _delete(context, ref, admin);
+                        }
+                      },
+                    ),
+                    onTap: () => _openForm(context, ref, editing: admin),
                   ),
-                  subtitle: Text('${admin.phone} · ${storeNames[admin.storeId] ?? admin.storeId}'),
-                  trailing: PopupMenuButton<String>(
-                    onSelected: (action) {
-                      switch (action) {
-                        case 'edit':
-                          _openForm(context, ref, editing: admin);
-                        case 'toggle':
-                          _toggleActive(context, ref, admin);
-                        case 'delete':
-                          _delete(context, ref, admin);
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(value: 'edit', child: Text(context.l10n.commonEdit)),
-                      PopupMenuItem(
-                        value: 'toggle',
-                        child: Text(admin.isActive ? context.l10n.commonDeactivate : context.l10n.commonActivate),
-                      ),
-                      PopupMenuItem(value: 'delete', child: Text(context.l10n.commonDelete)),
-                    ],
-                  ),
-                  onTap: () => _openForm(context, ref, editing: admin),
-                );
-              },
+                ],
+              ],
             ),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _openForm(context, ref),
-        child: const Icon(Icons.person_add_alt_1),
       ),
     );
   }

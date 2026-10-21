@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/payment_method.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/debts/domain/entities/payment_write_params.dart';
 import 'package:bsmart/features/debts/domain/usecases/close_debt_usecase.dart';
@@ -12,6 +15,9 @@ import 'package:bsmart/features/debts/domain/usecases/pay_down_usecase.dart';
 import 'package:bsmart/features/debts/presentation/widgets/debt_like.dart';
 import 'package:bsmart/features/debts/presentation/widgets/debt_status_badge.dart';
 import 'package:bsmart/features/debts/presentation/widgets/record_payment_sheet.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
+import 'package:bsmart/shared/widgets/payment_method_tiles.dart';
 
 /// One person's (or notes-identified debtor's) aggregated debts in one
 /// currency. Two ways to pay: a lump sum via FIFO (`POST /payments/pay-down`,
@@ -19,6 +25,9 @@ import 'package:bsmart/features/debts/presentation/widgets/record_payment_sheet.
 /// order client-side so the "preview" shown before confirming is always
 /// correct, not just illustrative) or a payment against one specific debt
 /// (`RecordPaymentSheet`, `POST /payments`).
+///
+/// Phase 9 U4c3: balance card, pay-down (amount with "Barchasi", method
+/// tiles, allocation preview with "yopiladi" tags), one card per debt.
 class DebtGroupDetailScreen extends StatefulWidget {
   const DebtGroupDetailScreen({super.key, required this.group});
 
@@ -85,6 +94,7 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
         personPhone: _group.personPhone,
         currency: _group.currency,
         items: updatedItems,
+        viewerIsDebtor: _group.viewerIsDebtor,
       );
     });
   }
@@ -112,9 +122,9 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
         setState(() => _isPayingDown = false);
         await _refreshGroup();
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.debtsPaymentsApplied(payDownResult.paymentCount))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.debtsPaymentsApplied(payDownResult.paymentCount))));
       },
       (failure) => setState(() {
         _isPayingDown = false;
@@ -133,9 +143,7 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(context.l10n.debtsCloseTitle),
-        content: Text(
-          context.l10n.debtsCloseConfirm(CurrencyFormatter.format(item.balance, item.currency)),
-        ),
+        content: Text(context.l10n.debtsCloseConfirm(CurrencyFormatter.format(item.balance, item.currency))),
         actions: [
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
           FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonClose)),
@@ -151,162 +159,246 @@ class _DebtGroupDetailScreenState extends State<DebtGroupDetailScreen> {
     );
   }
 
+  static final _dateFormat = DateFormat('dd.MM.yyyy');
+
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    final error = Theme.of(context).colorScheme.error;
     final amount = double.tryParse(_payDownAmountController.text.trim());
     final preview = (amount != null && amount > 0) ? _previewAllocation(amount) : const <(DebtLike, double)>[];
     final totalActiveBalance = _activeItemsOldestFirst.fold<double>(0, (sum, i) => sum + i.balance);
+    String money(double v) => CurrencyFormatter.format(v, _group.currency);
+    final canPay = totalActiveBalance > 0 && !_group.viewerIsDebtor;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(_group.personName)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (_group.personPhone != null) Text(_group.personPhone!),
-                  const SizedBox(height: 4),
-                  Text(
-                    context.l10n.debtsTotalBalance(CurrencyFormatter.format(totalActiveBalance, _group.currency)),
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (totalActiveBalance > 0 && !_group.viewerIsDebtor) ...[
-            const SizedBox(height: 16),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
+    return DashPage(
+      title: _group.personName,
+      body: DashFormTheme(
+        child: RefreshIndicator(
+          color: AppColors.onBrand,
+          backgroundColor: AppColors.brandYellow,
+          onRefresh: _refreshGroup,
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              DashCard(
+                padding: const EdgeInsets.all(18),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(context.l10n.debtsPayDownTitle, style: Theme.of(context).textTheme.titleMedium),
+                    Text(
+                      l10n.commonBalance,
+                      style: TextStyle(color: colors.textSecondary, fontSize: 14.5, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 4),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        money(totalActiveBalance),
+                        style: TextStyle(
+                          color: totalActiveBalance > 0 ? error : AppColors.success,
+                          fontSize: 32,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -1,
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     Text(
-                      context.l10n.debtsPayDownHint,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: _payDownAmountController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: InputDecoration(labelText: context.l10n.commonAmount, border: OutlineInputBorder(), isDense: true),
-                      onChanged: (_) => setState(() {}),
-                    ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<PaymentMethod>(
-                      initialValue: _payDownMethod,
-                      decoration: InputDecoration(labelText: context.l10n.commonPaymentMethod, border: OutlineInputBorder(), isDense: true),
-                      items: [
-                        for (final method in PaymentMethod.immediateMethods)
-                          DropdownMenuItem(value: method, child: Text(method.label)),
-                      ],
-                      onChanged: (value) => setState(() => _payDownMethod = value ?? _payDownMethod),
-                    ),
-                    if (preview.isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      Text(context.l10n.debtsAllocation, style: Theme.of(context).textTheme.labelLarge),
-                      for (final (item, applied) in preview)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${item.createdAt.toLocal()}'.split(' ').first,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                              Text(
-                                '${CurrencyFormatter.format(applied, item.currency)}'
-                                '${applied >= item.balance ? ' ${context.l10n.debtsWillClose}' : ''}',
-                              ),
-                            ],
-                          ),
-                        ),
-                      if (amount != null && amount > totalActiveBalance)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Text(
-                            context.l10n.debtsExceedsTotal,
-                            style: TextStyle(color: Theme.of(context).colorScheme.error),
-                          ),
-                        ),
-                    ],
-                    if (_payDownError != null) ...[
-                      const SizedBox(height: 8),
-                      Text(_payDownError!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-                    ],
-                    const SizedBox(height: 12),
-                    FilledButton(
-                      onPressed: (_isPayingDown || amount == null || amount <= 0 || amount > totalActiveBalance)
-                          ? null
-                          : () => _submitPayDown(amount),
-                      style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                      child: _isPayingDown
-                          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                          : Text(context.l10n.debtsConfirmPayment),
+                      [
+                        l10n.debtsActiveCount(_activeItemsOldestFirst.length),
+                        if (_group.personPhone != null) _group.personPhone!,
+                      ].join(' · '),
+                      style: TextStyle(color: colors.textMuted, fontSize: 13.5, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
-          const SizedBox(height: 20),
-          Text(context.l10n.debtsTitle, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
-          for (final item in _group.items)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              if (canPay) ...[
+                DashSectionTitle(l10n.debtsPayDownTitle),
+                Text(
+                  l10n.debtsPayDownHint,
+                  style: TextStyle(color: colors.textMuted, fontSize: 13.5, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _payDownAmountController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  style: TextStyle(color: colors.textPrimary, fontSize: 17, fontWeight: FontWeight.w700),
+                  decoration: InputDecoration(
+                    labelText: l10n.commonAmount,
+                    prefixIcon: const Icon(Icons.payments_rounded),
+                    suffixIcon: TextButton(
+                      onPressed: () => setState(
+                        () => _payDownAmountController.text = totalActiveBalance.toStringAsFixed(
+                          totalActiveBalance == totalActiveBalance.truncateToDouble() ? 0 : 2,
+                        ),
+                      ),
+                      child: Text(l10n.commonAll),
+                    ),
+                  ),
+                  onChanged: (_) => setState(() {}),
+                ),
+                const SizedBox(height: 12),
+                PaymentMethodTiles(selected: _payDownMethod, onSelected: (m) => setState(() => _payDownMethod = m)),
+                if (preview.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  DashCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          '${item.createdAt.toLocal()}'.split('.').first,
-                          style: Theme.of(context).textTheme.bodySmall,
+                          l10n.debtsAllocation,
+                          style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w800),
                         ),
-                        DebtStatusBadge(status: item.status),
+                        const SizedBox(height: 8),
+                        for (final (item, applied) in preview)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Row(
+                              children: [
+                                Text(
+                                  _dateFormat.format(item.createdAt.toLocal()),
+                                  style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600),
+                                ),
+                                const Spacer(),
+                                if (applied >= item.balance) ...[
+                                  DashTag(label: l10n.debtsWillClose, color: AppColors.success),
+                                  const SizedBox(width: 8),
+                                ],
+                                Text(
+                                  money(applied),
+                                  style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w800),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (amount != null && amount > totalActiveBalance)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Text(
+                              l10n.debtsExceedsTotal,
+                              style: TextStyle(color: error, fontWeight: FontWeight.w700),
+                            ),
+                          ),
                       ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(context.l10n.commonTotalWith(CurrencyFormatter.format(item.originalAmount, item.currency))),
-                    Text(
-                      context.l10n.commonBalanceWith(CurrencyFormatter.format(item.balance, item.currency)),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    if (item.dueDate != null)
-                      Text(
-                        context.l10n.commonDueWith('${item.dueDate!.toLocal()}'.split(' ').first),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    if (!item.isSettled && !_group.viewerIsDebtor) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          OutlinedButton(
-                            onPressed: () => _recordSinglePayment(item),
-                            child: Text(context.l10n.debtsPayment),
-                          ),
-                          if (item.kind == DebtKind.b2b) ...[
-                            const SizedBox(width: 8),
-                            OutlinedButton(onPressed: () => _closeDebt(item), child: Text(context.l10n.commonClose)),
-                          ],
-                        ],
-                      ),
-                    ],
-                  ],
+                  ),
+                ],
+                if (_payDownError != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    _payDownError!,
+                    style: TextStyle(color: error, fontWeight: FontWeight.w700),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                FilledButton(
+                  onPressed: (_isPayingDown || amount == null || amount <= 0 || amount > totalActiveBalance)
+                      ? null
+                      : () => _submitPayDown(amount),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(54),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                  ),
+                  child: _isPayingDown
+                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                      : Text(l10n.debtsConfirmPayment),
+                ),
+              ],
+              DashSectionTitle(l10n.debtsItemsTitle),
+              for (final (i, item) in _group.items.indexed) ...[
+                if (i > 0) const SizedBox(height: 10),
+                _DebtItemCard(
+                  item: item,
+                  canAct: !item.isSettled && !_group.viewerIsDebtor,
+                  onPay: () => _recordSinglePayment(item),
+                  onClose: item.kind == DebtKind.b2b ? () => _closeDebt(item) : null,
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// One debt: date + status, original amount, balance, due date, and (for the
+/// creditor) "To'lov" / "Yopish".
+class _DebtItemCard extends StatelessWidget {
+  const _DebtItemCard({required this.item, required this.canAct, required this.onPay, this.onClose});
+
+  final DebtLike item;
+  final bool canAct;
+  final VoidCallback onPay;
+  final VoidCallback? onClose;
+
+  static final _dateFormat = DateFormat('dd.MM.yyyy HH:mm');
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    String money(double v) => CurrencyFormatter.format(v, item.currency);
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(14));
+    return DashCard(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  _dateFormat.format(item.createdAt.toLocal()),
+                  style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
                 ),
               ),
+              DebtStatusBadge(status: item.status),
+            ],
+          ),
+          const SizedBox(height: 10),
+          BillRow(label: l10n.debtsOriginal, value: money(item.originalAmount), muted: true),
+          const SizedBox(height: 4),
+          BillRow(label: l10n.commonBalance, value: money(item.balance), strong: true),
+          if (item.dueDate != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              l10n.commonDueWith(DateFormat('dd.MM.yyyy').format(item.dueDate!.toLocal())),
+              style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
             ),
+          ],
+          if (canAct) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: onPay,
+                    style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(44), shape: shape),
+                    icon: const Icon(Icons.payments_rounded, size: 18),
+                    label: Text(l10n.debtsPayment),
+                  ),
+                ),
+                if (onClose != null) ...[
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: onClose,
+                      style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(44), shape: shape),
+                      icon: const Icon(Icons.done_all_rounded, size: 18),
+                      label: Text(l10n.commonClose),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ],
         ],
       ),
     );

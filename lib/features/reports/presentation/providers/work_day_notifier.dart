@@ -5,6 +5,7 @@ import 'package:bsmart/features/reports/domain/entities/work_day.dart';
 import 'package:bsmart/features/reports/domain/usecases/end_work_day_usecase.dart';
 import 'package:bsmart/features/reports/domain/usecases/get_current_work_day_usecase.dart';
 import 'package:bsmart/features/reports/domain/usecases/start_work_day_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 /// The current shift — `null` before any shift has ever been started for
 /// this tenant, `WorkDay.status == open/closed` afterward (see
@@ -14,6 +15,7 @@ import 'package:bsmart/features/reports/domain/usecases/start_work_day_usecase.d
 class WorkDayNotifier extends AsyncNotifier<WorkDay?> {
   @override
   Future<WorkDay?> build() async {
+    ref.watch(currentUserIdProvider);
     final result = await getIt<GetCurrentWorkDayUseCase>().call();
     return result.fold((d) => d, (failure) => throw failure);
   }

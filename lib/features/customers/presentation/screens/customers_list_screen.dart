@@ -33,6 +33,10 @@ class _CustomersListScreenState extends ConsumerState<CustomersListScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    // The list provider is app-wide and keeps its filters after this screen
+    // closes; show them again instead of an empty field over a filtered list.
+    final query = ref.read(customersListProvider).valueOrNull?.query;
+    _searchController.text = query?.search ?? '';
   }
 
   @override
@@ -57,10 +61,12 @@ class _CustomersListScreenState extends ConsumerState<CustomersListScreen> {
   }
 
   Future<void> _openForm({Customer? editing}) async {
+    // The form pops the saved Customer (the checkout picker uses it); waiting
+    // for a bool here made every save from this list throw a TypeError.
     final saved = await Navigator.of(
       context,
-    ).push<bool>(MaterialPageRoute(builder: (_) => CustomerFormScreen(editingCustomer: editing)));
-    if (saved == true) ref.read(customersListProvider.notifier).refresh();
+    ).push<Customer>(MaterialPageRoute(builder: (_) => CustomerFormScreen(editingCustomer: editing)));
+    if (saved != null) ref.read(customersListProvider.notifier).refresh();
   }
 
   Future<void> _deactivate(Customer customer) async {

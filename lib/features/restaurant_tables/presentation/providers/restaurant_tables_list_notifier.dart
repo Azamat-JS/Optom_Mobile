@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 import 'package:bsmart/features/restaurant_tables/domain/entities/restaurant_table.dart';
 import 'package:bsmart/features/restaurant_tables/domain/usecases/list_restaurant_tables_usecase.dart';
 
@@ -8,7 +9,10 @@ import 'package:bsmart/features/restaurant_tables/domain/usecases/list_restauran
 /// pagination, same precedent as `StoresListNotifier`/`AdminsListNotifier`.
 class RestaurantTablesListNotifier extends AsyncNotifier<List<RestaurantTable>> {
   @override
-  Future<List<RestaurantTable>> build() => _fetch();
+  Future<List<RestaurantTable>> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch();
+  }
 
   Future<List<RestaurantTable>> _fetch() async {
     final result = await getIt<ListRestaurantTablesUseCase>().call();
@@ -20,7 +24,6 @@ class RestaurantTablesListNotifier extends AsyncNotifier<List<RestaurantTable>> 
   }
 }
 
-final restaurantTablesListProvider =
-    AsyncNotifierProvider<RestaurantTablesListNotifier, List<RestaurantTable>>(
+final restaurantTablesListProvider = AsyncNotifierProvider<RestaurantTablesListNotifier, List<RestaurantTable>>(
   RestaurantTablesListNotifier.new,
 );

@@ -1082,7 +1082,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get debtsAllocation => 'Распределение:';
 
   @override
-  String get debtsWillClose => '(будет закрыт)';
+  String get debtsWillClose => 'будет закрыт';
 
   @override
   String get debtsExceedsTotal => 'Сумма превышает общий остаток';
@@ -2036,4 +2036,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get commonContinue => 'Далее';
+
+  @override
+  String get debtsSummaryTotal => 'Общий долг';
+
+  @override
+  String debtsPeopleCount(int count) {
+    return '$count чел.';
+  }
+
+  @override
+  String get debtsItemsTitle => 'Список долгов';
+
+  @override
+  String get debtsOriginal => 'Исходная сумма';
 }

@@ -1584,10 +1584,10 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 | U4b | POS (Kassa), checkout, receipt, customer picker; no reference: matched to the U4a style | 🟢 Done 2026-10-20 |
 | U4c1 | Products: list, detail, form, stock sheet, catalog picker + shared page kit (`dash_page.dart`) | 🟢 Done 2026-10-20 |
 | U4c2 | Orders (list, detail, review, catalog browse, seller picker) | 🟢 Done 2026-10-21 |
-| U4c3 | Customers + debts | ⚪ |
-| U4c4 | Sales history/returns + expenditures | ⚪ |
-| U4c5 | Stores, staff, waiters/couriers, settings | ⚪ |
-| U4c6 | Customer tabs (Sevimlilar, Profil, Qarzlarim, Yetkazishlarim) | ⚪ |
+| U4c3 | Customers + debts | 🟢 Done 2026-10-21 |
+| U4c4 | Sales history/returns + expenditures | 🟢 Done 2026-10-21 |
+| U4c5 | Stores, staff, waiters/couriers, settings | 🟢 Done 2026-10-21 |
+| U4c6 | Customer tabs (Sevimlilar, Profil, Qarzlarim, Yetkazishlarim) | 🟢 Done 2026-10-21 |
 | U4c7 | Restaurant, courier, super-admin, remaining screens | ⚪ |
 
 **U1 notes (2026-10-18):**
@@ -2036,6 +2036,119 @@ restyled screen:**
   Tasdiqlangan / Yetkazilgan; dark detail and list.
 - **Not checked:** rejecting with a reason, multi-branch sellers' branch chips, a B2C order with
   courier assignment (the delivery card only changed its frame), Russian/English lengths.
+
+**U4c3 (customers + debts), 2026-10-21:**
+- **Customers list:** search, rows with a yellow initial (grey when inactive, dimmed + "Faol emas"),
+  phone · address, a block button to deactivate, FAB. **Form:** sections (Asosiy / Qo'shimcha),
+  icon-prefixed fields under `DashFormTheme`, sticky save.
+- **Real bugs fixed (pre-existing):**
+  1. Saving a customer from the list crashed: the list pushed the form as `push<bool>` but the form
+     pops the saved `Customer` (for the POS picker) → "type 'Customer' is not a subtype of type
+     'bool?'". The list now pushes `push<Customer>` and refreshes when a customer comes back.
+  2. Reopening the customers or products list showed an empty search field over a list still
+     filtered by the previous search (the list providers are app-wide and keep their query). Both
+     screens now restore the field (and the products category) from the provider's query.
+- **Debts list:** "B2B / Mijozlar" pill toggle (the two lists stay built in an `IndexedStack`),
+  retailers' "Menga qarzdorlar / Mening qarzim" chips (`''` sentinel → `setRole(null)`), a dark
+  summary card (total per currency, never summed across currencies, + "N kishi"), person cards
+  (red-tinted initial, "N ta faol qarz · phone", balance in red).
+- **Debt detail:** balance card (red, green at 0), pay-down section (amount with a "Barchasi"
+  button that fills the full balance, payment-method tiles, allocation preview card with green
+  "yopiladi" tags, confirm button), "Qarzlar ro'yxati" with one card per debt (date, status pill,
+  original amount, balance, due date, "To'lov" / "Yopish"). `_refreshGroup` now keeps
+  `viewerIsDebtor`. **Payment sheet** restyled (`DashFormTheme(onSheet: true)`, balance tag,
+  method tiles).
+- **Shared:** `PaymentMethodTiles` moved from the POS checkout to
+  `lib/shared/widgets/payment_method_tiles.dart` (`onSheet` variant); `DebtStatusBadge` is a tinted
+  pill. ARB: `debtsSummaryTotal`, `debtsPeopleCount`, `debtsItemsTitle`, `debtsOriginal`;
+  `debtsWillClose` lost its parentheses (now shown as a tag).
+- **Verified:** `flutter analyze` clean, 76 unit tests. Temporary on-device test (deleted) with a
+  throwaway SELLER + RETAILER + seeded B2B and customer debts (deleted): customer create
+  (validation errors, then save), search, deactivate; B2B pay-down 500 000 by card (preview: the
+  older 400 000 closes), single payment 30 000, close the rest; customer debts paid in full via
+  "Barchasi"; restored search in dark mode. DB: CARD 400 000 + CARD 100 000 + CASH 30 000 + CASH
+  600 000 (close) on the B2B debts, CASH 150 000 + 200 000 on the sale debts, all SETTLED.
+- **Not checked:** the retailer "Mening qarzim" view (no pay buttons), USD debts, the customer
+  storefront's Qarzlarim screen (U4c6), Russian/English lengths.
+
+**U4c4 (sales history, returns, expenses), 2026-10-21:**
+- **Sales history:** `DashChoiceChips` (Barchasi / To'langan / Qarzga; still a client-side filter),
+  sale cards (green receipt icon for paid, gold for debt; customer; "date time · number"; total;
+  the type pill, or the status pill once a sale has returns).
+- **Return:** sale card, item rows with `DashStepper` capped at what is still returnable
+  ("price · Qoldi: N"), refund-method tiles for paid sales (`PaymentMethodTiles`), reason field,
+  return-total card, sticky "Qaytarishni tasdiqlash" (disabled until something is picked).
+- **Real bug fixed:** the app-wide sales history never showed a sale just made at the POS, or a
+  return's new status, until a pull-to-refresh. Checkout now refreshes `salesListProvider` after a
+  sale, and the receipt refreshes it after a return.
+- **Expenses:** type chips in the header ('' sentinel for "Barchasi"; selection kept locally
+  because the provider is briefly loading after a change), a dark total card (the filter-aware
+  `meta.totalAmount`), rows with a type icon/tint, date · note, amount, delete. **Form:** the
+  type dropdown became a 3-column grid of icon tiles; amount, date and note fields under
+  `DashFormTheme`; sticky save. Icons/tints per type live in
+  `features/expenditures/presentation/widgets/expenditure_visuals.dart`.
+- **Verified:** `flutter analyze` clean, 76 unit tests. Temporary on-device test (deleted) with a
+  throwaway SELLER (deleted): history + Qarzga filter; a POS sale of 2 × Guruch → receipt →
+  return 1 by card with a reason → "Qisman qaytarilgan"; expenses: add Gaz 250 000 and Elektr
+  120 000 (total 370 000), Gaz filter (250 000), Barchasi, delete one; dark: expenses, the form,
+  and the history showing the new partially returned sale.
+- **Not checked:** returning a debt sale (no refund method, debt reduced), weighable quantities,
+  editing an expense, the date picker, Russian/English lengths.
+
+**U4c5 (stores, staff, waiters, couriers, settings), 2026-10-21:**
+- **Lists** (stores, staff, waiters, couriers): `DashPage` + one card per row (`DashAvatar` yellow
+  initial, grey when inactive; stores get a yellow storefront tile for the default branch), the
+  phone · branch · extra info line, and a `DashMenuButton` ("⋯" → Tahrirlash / (De)activate /
+  red O'chirish). Waiters and couriers show a `DashUsageCard` ("1 / 3 … ishlatilmoqda" with a
+  progress bar that turns red at the limit).
+- **Forms** (staff, waiter, courier): `DashPage` + `DashFormTheme`, sticky "Saqlash"
+  (`DashBottomButton`). The store create/edit dialog keeps its dialog but uses
+  `DashFormTheme(onSheet: true)`.
+- **Settings:** profile card (initial, name, role · phone), languages as rows in a card (code
+  tile, name, check), red outlined "Chiqish". `LanguageOptionsList` is no longer used here.
+- **Kit additions (`dash_page.dart`):** `DashAvatar`, `DashMenuButton` / `DashMenuItem`,
+  `DashUsageCard`.
+- **Real bug fixed (pre-existing, app-wide):** none of the app-wide per-account providers reset on
+  an account switch, so after logout → login as someone else the lists (stores, products,
+  customers, orders, sales, debts, staff, waiters, couriers, expenses, favourites, platform users),
+  the POS and order carts, parked carts and the reports kept the **previous account's data** until
+  refreshed. Found live: the restaurant owner's waiter form offered the wholesaler's "Bosh filial".
+  New `currentUserIdProvider` (in `session_notifier.dart`); every one of those notifiers watches
+  it in `build()`, so they start over for the next account. **Any new app-wide provider holding
+  one account's data must watch `currentUserIdProvider` too.**
+- **Verified:** `flutter analyze` clean, 76 unit tests. Temporary on-device test (deleted) with a
+  throwaway SELLER and RESTAURANT RETAILER (both deleted, with the staff created): store create →
+  deactivate (dimmed, menu shows Faollashtirish) → delete; staff create → deactivate → delete;
+  settings language switch to English and back; then, as the restaurant owner after the account
+  switch, waiter and courier create (usage card 1 / 3); dark: couriers, the courier form, settings,
+  stores.
+- **Not checked:** editing (forms reopen with data but weren't saved), the store map pin and
+  handover switch in the dialog, the limit reached (red bar), Russian/English lengths. Waiter and
+  courier screens still have hard-coded Uzbek text (Phase 8 I8).
+
+**U4c6 (customer tabs), 2026-10-21:**
+- **Storefront shell:** the old AppBar is gone; Sevimlilar and Profil are `DashPage`s
+  (`showBack: false`) wrapped in the brand theme like the catalog and cart.
+- **Sevimlilar:** a 2-column grid of cards (big `DashThumb`, red heart that unfavourites in place,
+  category, name, price). Empty → heart + a button that switches to the catalog tab
+  (`FavoritesTab(onStartShopping:)`); guest → login prompt.
+- **Profil:** guest card (Kirish / Ro'yxatdan o'tish) + settings row; logged in: profile card
+  (`DashAvatar`, name, phone, green "Raqam tasdiqlangan" tag), the verify banner when needed, a menu
+  card (orders, deliveries, debts), Telegram notifications + settings, red outlined logout.
+- **Verify banner** (`VerifyPhoneBanner`): a `DashCard` with a Telegram-blue icon and full-width
+  button; still renders nothing once the phone is verified.
+- **Qarzlarim:** banner, a dark per-currency total card (`debtsSummaryTotal`), then debt rows
+  (`DashListCard`: red/green storefront icon, shop, date, balance + status badge).
+  **Yetkazishlarim:** banner + status-tinted rows opening the tracking screen.
+- **Kit:** `DashThumb` takes an optional `radius` (default `size * 0.27`, too round for big tiles).
+- **Verified:** `flutter analyze` clean, 76 unit tests. Temporary on-device test (deleted) with a
+  throwaway CUSTOMER (deleted; the host script verified the phone mid-test): guest Sevimlilar and
+  Profil; unverified profile with the banner and empty Qarzlarim; after verifying, the tag, debts
+  total 180 000 over 2 shops, empty deliveries; unfavourite (3 → 2 cards); dark: favourites,
+  profile, debts.
+- **Not checked:** a customer with deliveries in progress (rows), favourites with real images,
+  Russian/English lengths. The Telegram notifications tile is the shared ListTile and wraps on
+  narrow phones.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

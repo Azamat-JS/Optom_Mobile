@@ -4,10 +4,14 @@ import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/debts/domain/entities/debt.dart';
 import 'package:bsmart/features/debts/domain/entities/debt_query.dart';
 import 'package:bsmart/features/debts/domain/usecases/list_sale_debts_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class SaleDebtsListNotifier extends AsyncNotifier<List<SaleDebt>> {
   @override
-  Future<List<SaleDebt>> build() => _fetch();
+  Future<List<SaleDebt>> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch();
+  }
 
   Future<List<SaleDebt>> _fetch() async {
     final result = await getIt<ListSaleDebtsUseCase>().call(const SaleDebtQuery());
@@ -19,6 +23,4 @@ class SaleDebtsListNotifier extends AsyncNotifier<List<SaleDebt>> {
   }
 }
 
-final saleDebtsListProvider = AsyncNotifierProvider<SaleDebtsListNotifier, List<SaleDebt>>(
-  SaleDebtsListNotifier.new,
-);
+final saleDebtsListProvider = AsyncNotifierProvider<SaleDebtsListNotifier, List<SaleDebt>>(SaleDebtsListNotifier.new);

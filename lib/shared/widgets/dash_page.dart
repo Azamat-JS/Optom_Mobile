@@ -163,18 +163,22 @@ class _DashSearchFieldState extends State<DashSearchField> {
 
 /// Square photo (or icon) in a recessed rounded box.
 class DashThumb extends StatelessWidget {
-  const DashThumb({this.url, this.icon = Icons.inventory_2_rounded, this.size = 48, super.key});
+  const DashThumb({this.url, this.icon = Icons.inventory_2_rounded, this.size = 48, this.radius, super.key});
 
   final String? url;
   final IconData icon;
   final double size;
+
+  /// Corner radius; defaults to a share of [size] (fine for small thumbs,
+  /// too round for big tiles, which pass a fixed one).
+  final double? radius;
 
   @override
   Widget build(BuildContext context) {
     final colors = BrandColors.of(context);
     final placeholder = Icon(icon, color: colors.textMuted, size: size * 0.46);
     return ClipRRect(
-      borderRadius: BorderRadius.circular(size * 0.27),
+      borderRadius: BorderRadius.circular(radius ?? size * 0.27),
       child: Container(
         width: size,
         height: size,
@@ -462,6 +466,130 @@ class DashBottomButton extends StatelessWidget {
         child: icon == null || busy
             ? FilledButton(onPressed: busy ? null : onPressed, style: style, child: content)
             : FilledButton.icon(onPressed: onPressed, style: style, icon: Icon(icon), label: content),
+      ),
+    );
+  }
+}
+
+/// Round yellow initial (grey when [active] is false) for people rows.
+class DashAvatar extends StatelessWidget {
+  const DashAvatar({required this.name, this.active = true, this.size = 48, super.key});
+
+  final String name;
+  final bool active;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BrandColors.of(context);
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: active ? AppColors.brandYellow : DashColors.inset(context),
+        shape: BoxShape.circle,
+      ),
+      child: Text(
+        name.trim().characters.firstOrNull?.toUpperCase() ?? '?',
+        style: TextStyle(
+          color: active ? AppColors.onBrand : colors.textSecondary,
+          fontSize: size * 0.4,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+}
+
+/// One entry of a [DashMenuButton].
+typedef DashMenuItem = ({String value, IconData icon, String label, bool destructive});
+
+/// "⋯" button opening a rounded menu of row actions (edit, (de)activate,
+/// delete); destructive entries are red.
+class DashMenuButton extends StatelessWidget {
+  const DashMenuButton({required this.items, required this.onSelected, super.key});
+
+  final List<DashMenuItem> items;
+  final ValueChanged<String> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BrandColors.of(context);
+    final error = Theme.of(context).colorScheme.error;
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.more_horiz_rounded, color: colors.textSecondary),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      color: DashColors.card(context),
+      onSelected: onSelected,
+      itemBuilder: (context) => [
+        for (final item in items)
+          PopupMenuItem(
+            value: item.value,
+            child: Row(
+              children: [
+                Icon(item.icon, size: 20, color: item.destructive ? error : colors.textSecondary),
+                const SizedBox(width: 12),
+                Text(
+                  item.label,
+                  style: TextStyle(color: item.destructive ? error : colors.textPrimary, fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// "3 / 5 … in use" card with a progress bar (waiter / courier limits).
+class DashUsageCard extends StatelessWidget {
+  const DashUsageCard({required this.label, required this.used, required this.limit, required this.icon, super.key});
+
+  final String label;
+  final int used;
+  final int limit;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BrandColors.of(context);
+    final full = limit > 0 && used >= limit;
+    return DashCard(
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.brandYellow.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: colors.accentText),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: limit <= 0 ? 0 : (used / limit).clamp(0, 1).toDouble(),
+                    minHeight: 7,
+                    backgroundColor: DashColors.inset(context),
+                    color: full ? Theme.of(context).colorScheme.error : AppColors.brandYellow,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

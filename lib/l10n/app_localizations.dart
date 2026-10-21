@@ -1831,7 +1831,7 @@ abstract class AppLocalizations {
   /// No description provided for @debtsWillClose.
   ///
   /// In uz, this message translates to:
-  /// **'(yopiladi)'**
+  /// **'yopiladi'**
   String get debtsWillClose;
 
   /// No description provided for @debtsExceedsTotal.
@@ -3483,6 +3483,30 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Davom etish'**
   String get commonContinue;
+
+  /// No description provided for @debtsSummaryTotal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami qarz'**
+  String get debtsSummaryTotal;
+
+  /// No description provided for @debtsPeopleCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} kishi'**
+  String debtsPeopleCount(int count);
+
+  /// No description provided for @debtsItemsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzlar ro\'yxati'**
+  String get debtsItemsTitle;
+
+  /// No description provided for @debtsOriginal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dastlabki summa'**
+  String get debtsOriginal;
 }
 
 class _AppLocalizationsDelegate

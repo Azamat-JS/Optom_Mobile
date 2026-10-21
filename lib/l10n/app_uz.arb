@@ -530,7 +530,7 @@
   "debtsPayDownTitle": "Umumiy to'lov (FIFO)",
   "debtsPayDownHint": "Eng eski qarzdan boshlab avtomatik taqsimlanadi",
   "debtsAllocation": "Taqsimlanishi:",
-  "debtsWillClose": "(yopiladi)",
+  "debtsWillClose": "yopiladi",
   "debtsExceedsTotal": "Summa jami qoldiqdan oshib ketmoqda",
   "debtsConfirmPayment": "To'lovni tasdiqlash",
   "debtsTitle": "Qarzlar",
@@ -1080,5 +1080,16 @@
   "formStockSection": "Ombor",
   "formExtra": "Qo'shimcha",
   "productsSource": "Manba",
-  "commonContinue": "Davom etish"
+  "commonContinue": "Davom etish",
+  "debtsSummaryTotal": "Jami qarz",
+  "debtsPeopleCount": "{count} kishi",
+  "@debtsPeopleCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsItemsTitle": "Qarzlar ro'yxati",
+  "debtsOriginal": "Dastlabki summa"
 }

@@ -8,6 +8,7 @@ import 'package:bsmart/features/staff_admins/domain/entities/admin_write_params.
 import 'package:bsmart/features/staff_admins/domain/usecases/create_admin_usecase.dart';
 import 'package:bsmart/features/staff_admins/domain/usecases/update_admin_usecase.dart';
 import 'package:bsmart/features/stores/presentation/providers/stores_list_notifier.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// Create/edit a panel admin. The store picker is mandatory and prominent
 /// (first field, per the original milestone plan) — locking a new admin to
@@ -93,73 +94,63 @@ class _AdminFormScreenState extends ConsumerState<AdminFormScreen> {
   Widget build(BuildContext context) {
     final storesAsync = ref.watch(storesListProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? context.l10n.staffEditTitle : context.l10n.staffNewTitle)),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            storesAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Text(context.l10n.commonErrorWith('$error')),
-              data: (stores) => DropdownButtonFormField<String>(
-                initialValue: _selectedStoreId,
-                decoration: InputDecoration(labelText: context.l10n.staffStoreLabel, border: OutlineInputBorder()),
-                items: [
-                  for (final store in stores) DropdownMenuItem(value: store.id, child: Text(store.name)),
-                ],
-                onChanged: (value) => setState(() => _selectedStoreId = value),
+    return DashPage(
+      title: _isEditing ? context.l10n.staffEditTitle : context.l10n.staffNewTitle,
+      bottomBar: DashBottomButton(label: context.l10n.commonSave, busy: _isSaving, onPressed: _submit),
+      body: DashFormTheme(
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+            children: [
+              storesAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, _) => Text(context.l10n.commonErrorWith('$error')),
+                data: (stores) => DropdownButtonFormField<String>(
+                  initialValue: _selectedStoreId,
+                  decoration: InputDecoration(labelText: context.l10n.staffStoreLabel),
+                  items: [for (final store in stores) DropdownMenuItem(value: store.id, child: Text(store.name))],
+                  onChanged: (value) => setState(() => _selectedStoreId = value),
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _firstNameController,
-              decoration: InputDecoration(labelText: context.l10n.commonFirstNameRequired, border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonFirstNameMissing : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _lastNameController,
-              decoration: InputDecoration(labelText: context.l10n.commonLastNameRequired, border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonLastNameMissing : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                labelText: context.l10n.commonPhoneRequired,
-                hintText: '+998901234567',
-                border: OutlineInputBorder(),
-              ),
-              validator: (v) {
-                if (v == null || v.trim().isEmpty) return context.l10n.commonPhoneMissing;
-                if (!RegExp(r'^\+998\d{9}$').hasMatch(v.trim())) return context.l10n.authPhoneFormat;
-                return null;
-              },
-            ),
-            if (!_isEditing) ...[
               const SizedBox(height: 12),
               TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(labelText: context.l10n.commonPasswordRequired, border: OutlineInputBorder()),
-                validator: (v) => (v == null || v.length < 6) ? context.l10n.loginPasswordMinLength : null,
+                controller: _firstNameController,
+                decoration: InputDecoration(labelText: context.l10n.commonFirstNameRequired),
+                validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonFirstNameMissing : null,
               ),
-            ],
-            if (_errorMessage != null) ...[
               const SizedBox(height: 12),
-              Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              TextFormField(
+                controller: _lastNameController,
+                decoration: InputDecoration(labelText: context.l10n.commonLastNameRequired),
+                validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonLastNameMissing : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(labelText: context.l10n.commonPhoneRequired, hintText: '+998901234567'),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return context.l10n.commonPhoneMissing;
+                  if (!RegExp(r'^\+998\d{9}$').hasMatch(v.trim())) return context.l10n.authPhoneFormat;
+                  return null;
+                },
+              ),
+              if (!_isEditing) ...[
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(labelText: context.l10n.commonPasswordRequired),
+                  validator: (v) => (v == null || v.length < 6) ? context.l10n.loginPasswordMinLength : null,
+                ),
+              ],
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              ],
             ],
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: _isSaving ? null : _submit,
-              child: _isSaving
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text(context.l10n.commonSave),
-            ),
-          ],
+          ),
         ),
       ),
     );

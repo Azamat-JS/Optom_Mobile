@@ -2,9 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/features/catalog/domain/entities/catalog_product.dart';
 import 'package:bsmart/features/catalog/domain/entities/catalog_seller.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class CreateOrderCartLine {
-  const CreateOrderCartLine({required this.product, required this.quantity, required this.unitPrice, this.discount = 0});
+  const CreateOrderCartLine({
+    required this.product,
+    required this.quantity,
+    required this.unitPrice,
+    this.discount = 0,
+  });
 
   final CatalogProduct product;
   final double quantity;
@@ -42,7 +48,10 @@ class CreateOrderCartState {
 
 class CreateOrderCartNotifier extends Notifier<CreateOrderCartState> {
   @override
-  CreateOrderCartState build() => const CreateOrderCartState();
+  CreateOrderCartState build() {
+    ref.watch(currentUserIdProvider);
+    return const CreateOrderCartState();
+  }
 
   void selectSeller(CatalogSeller seller) => state = CreateOrderCartState(seller: seller);
 

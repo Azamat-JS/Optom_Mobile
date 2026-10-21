@@ -1055,7 +1055,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get debtsAllocation => 'Taqsimlanishi:';
 
   @override
-  String get debtsWillClose => '(yopiladi)';
+  String get debtsWillClose => 'yopiladi';
 
   @override
   String get debtsExceedsTotal => 'Summa jami qoldiqdan oshib ketmoqda';
@@ -1977,4 +1977,18 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get commonContinue => 'Davom etish';
+
+  @override
+  String get debtsSummaryTotal => 'Jami qarz';
+
+  @override
+  String debtsPeopleCount(int count) {
+    return '$count kishi';
+  }
+
+  @override
+  String get debtsItemsTitle => 'Qarzlar ro\'yxati';
+
+  @override
+  String get debtsOriginal => 'Dastlabki summa';
 }

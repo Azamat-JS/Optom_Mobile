@@ -82,6 +82,12 @@ class SessionNotifier extends AsyncNotifier<AuthState> {
   }
 }
 
-final sessionNotifierProvider = AsyncNotifierProvider<SessionNotifier, AuthState>(
-  SessionNotifier.new,
+final sessionNotifierProvider = AsyncNotifierProvider<SessionNotifier, AuthState>(SessionNotifier.new);
+
+/// The signed-in user's id (null when logged out). App-wide providers that
+/// hold one account's data (lists, carts, reports) watch this in `build()`
+/// so they start over for the next account instead of showing the previous
+/// one's data after a logout/login.
+final currentUserIdProvider = Provider<String?>(
+  (ref) => ref.watch(sessionNotifierProvider.select((s) => s.valueOrNull?.session?.userId)),
 );

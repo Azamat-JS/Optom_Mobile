@@ -6,6 +6,7 @@ import 'package:bsmart/features/expenditures/domain/entities/expenditure.dart';
 import 'package:bsmart/features/expenditures/domain/entities/expenditure_query.dart';
 import 'package:bsmart/features/expenditures/domain/usecases/delete_expenditure_usecase.dart';
 import 'package:bsmart/features/expenditures/domain/usecases/list_expenditures_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class ExpendituresListState {
   const ExpendituresListState({
@@ -41,17 +42,16 @@ class ExpendituresListState {
 
 class ExpendituresListNotifier extends AsyncNotifier<ExpendituresListState> {
   @override
-  Future<ExpendituresListState> build() => _fetch(const ExpenditureQuery());
+  Future<ExpendituresListState> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch(const ExpenditureQuery());
+  }
 
   Future<ExpendituresListState> _fetch(ExpenditureQuery query) async {
     final result = await getIt<ListExpendituresUseCase>().call(query);
     return result.fold(
-      (page) => ExpendituresListState(
-        items: page.data,
-        query: query,
-        totalAmount: page.totalAmount,
-        hasNext: page.hasNext,
-      ),
+      (page) =>
+          ExpendituresListState(items: page.data, query: query, totalAmount: page.totalAmount, hasNext: page.hasNext),
       (failure) => throw failure,
     );
   }
@@ -64,9 +64,7 @@ class ExpendituresListNotifier extends AsyncNotifier<ExpendituresListState> {
   Future<void> setTypeFilter(ExpenditureType? type) async {
     final current = state.valueOrNull?.query ?? const ExpenditureQuery();
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => _fetch(current.copyWith(page: 1, type: type, clearType: type == null)),
-    );
+    state = await AsyncValue.guard(() => _fetch(current.copyWith(page: 1, type: type, clearType: type == null)));
   }
 
   Future<void> loadMore() async {

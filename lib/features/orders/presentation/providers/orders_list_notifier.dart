@@ -5,6 +5,7 @@ import 'package:bsmart/core/enums/order_status.dart';
 import 'package:bsmart/features/orders/domain/entities/order.dart';
 import 'package:bsmart/features/orders/domain/entities/order_query.dart';
 import 'package:bsmart/features/orders/domain/usecases/list_orders_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class OrdersListState {
   const OrdersListState({required this.items, required this.query, this.hasNext = false, this.isLoadingMore = false});
@@ -31,7 +32,10 @@ class OrdersListState {
 /// comment).
 class OrdersListNotifier extends AsyncNotifier<OrdersListState> {
   @override
-  Future<OrdersListState> build() => _fetch(const OrderQuery());
+  Future<OrdersListState> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch(const OrderQuery());
+  }
 
   Future<OrdersListState> _fetch(OrderQuery query) async {
     final result = await getIt<ListOrdersUseCase>().call(query);
@@ -48,9 +52,7 @@ class OrdersListNotifier extends AsyncNotifier<OrdersListState> {
 
   Future<void> filterByStatus(OrderStatus? status) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => _fetch(OrderQuery(status: status, page: 1)),
-    );
+    state = await AsyncValue.guard(() => _fetch(OrderQuery(status: status, page: 1)));
   }
 
   /// RETAILER-only toggle (see `OrderQuery.view`'s doc comment) — `null`
@@ -59,9 +61,7 @@ class OrdersListNotifier extends AsyncNotifier<OrdersListState> {
   /// [filterByStatus], since it's effectively a different list.
   Future<void> setView(String? view) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => _fetch(OrderQuery(view: view, page: 1)),
-    );
+    state = await AsyncValue.guard(() => _fetch(OrderQuery(view: view, page: 1)));
   }
 
   Future<void> loadMore() async {
@@ -85,6 +85,4 @@ class OrdersListNotifier extends AsyncNotifier<OrdersListState> {
   }
 }
 
-final ordersListProvider = AsyncNotifierProvider<OrdersListNotifier, OrdersListState>(
-  OrdersListNotifier.new,
-);
+final ordersListProvider = AsyncNotifierProvider<OrdersListNotifier, OrdersListState>(OrdersListNotifier.new);

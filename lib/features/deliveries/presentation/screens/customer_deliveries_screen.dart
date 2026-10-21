@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
+
 import 'package:bsmart/features/auth/presentation/widgets/verify_phone_banner.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery.dart';
 import 'package:bsmart/features/deliveries/presentation/providers/customer_deliveries_notifier.dart';
@@ -19,12 +24,15 @@ class CustomerDeliveriesScreen extends ConsumerWidget {
     final deliveries = ref.watch(customerDeliveriesProvider);
     final notifier = ref.read(customerDeliveriesProvider.notifier);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Yetkazishlarim')),
+    return DashPage(
+      title: 'Yetkazishlarim',
       body: RefreshIndicator(
+        color: AppColors.onBrand,
+        backgroundColor: AppColors.brandYellow,
         onRefresh: notifier.refresh,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
           children: [
             VerifyPhoneBanner(message: context.l10n.verifyBannerDeliveries),
             ...deliveries.when(
@@ -41,13 +49,34 @@ class CustomerDeliveriesScreen extends ConsumerWidget {
                 ),
               ],
               data: (items) => items.isEmpty
-                  ? const [
+                  ? [
                       Padding(
-                        padding: EdgeInsets.fromLTRB(24, 96, 24, 0),
-                        child: Text('Hozircha yetkazishlar yo‘q', textAlign: TextAlign.center),
+                        padding: const EdgeInsets.only(top: 80),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 76,
+                              height: 76,
+                              decoration: BoxDecoration(color: DashColors.card(context), shape: BoxShape.circle),
+                              child: Icon(Icons.moped_rounded, size: 36, color: BrandColors.of(context).textMuted),
+                            ),
+                            const SizedBox(height: 14),
+                            Text(
+                              'Hozircha yetkazishlar yo‘q',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: BrandColors.of(context).textSecondary,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ]
-                  : [for (final d in items) _DeliveryTile(delivery: d)],
+                  : [
+                      for (final d in items) ...[const SizedBox(height: 10), _DeliveryTile(delivery: d)],
+                    ],
             ),
           ],
         ),
@@ -65,18 +94,21 @@ class _DeliveryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final d = delivery;
     final eta = d.eta;
+    final tint = DeliveryStatusBadge.colorOf(d.status, Theme.of(context).colorScheme);
     final subtitle = [
       if (d.source == DeliverySource.restaurantOrder) 'Restoran buyurtmasi',
       d.label,
       if (d.status.isActive && eta != null) '~${(eta.seconds / 60).ceil()} daqiqa',
     ].join(' · ');
-    return ListTile(
-      leading: Icon(
-        d.status.isActive ? Icons.delivery_dining : Icons.inventory_2_outlined,
-        color: d.status.isActive ? Theme.of(context).colorScheme.primary : null,
+    return DashListCard(
+      leading: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(color: tint.withValues(alpha: 0.13), borderRadius: BorderRadius.circular(14)),
+        child: Icon(d.status.isActive ? Icons.moped_rounded : Icons.inventory_2_rounded, color: tint),
       ),
-      title: Text(d.storeName ?? 'Yetkazish'),
-      subtitle: Text(subtitle),
+      title: d.storeName ?? 'Yetkazish',
+      subtitle: subtitle,
       trailing: DeliveryStatusBadge(status: d.status),
       onTap: () =>
           Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => DeliveryTrackingScreen(deliveryId: d.id))),

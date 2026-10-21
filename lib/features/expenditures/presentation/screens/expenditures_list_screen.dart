@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/app_motion.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/expenditure_type.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/expenditures/domain/entities/expenditure.dart';
 import 'package:bsmart/features/expenditures/presentation/providers/expenditures_list_notifier.dart';
 import 'package:bsmart/features/expenditures/presentation/screens/expenditure_form_screen.dart';
+import 'package:bsmart/features/expenditures/presentation/widgets/expenditure_visuals.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// Owner-only overhead-spending log ("Harajatlarim") — full CRUD, no
 /// `_ADMIN` access at all (see `CLAUDE.md` "Expenditures"). Deliberately no
@@ -24,10 +30,15 @@ class _ExpendituresListScreenState extends ConsumerState<ExpendituresListScreen>
   final _scrollController = ScrollController();
   static final _dateFormat = DateFormat('dd.MM.yyyy');
 
+  /// Selected type chip ('' = all). Local, because the provider is briefly
+  /// loading (no query to read) right after a change.
+  String _typeWire = '';
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _typeWire = ref.read(expendituresListProvider).valueOrNull?.query.type?.toWire() ?? '';
   }
 
   @override
@@ -77,112 +88,154 @@ class _ExpendituresListScreenState extends ConsumerState<ExpendituresListScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
     final listState = ref.watch(expendituresListProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.expensesTitle),
-        actions: [
-          // PopupMenuButton<T?> can't be used with a null-valued item here:
-          // Flutter's own showButtonMenu() treats a null result as "menu
-          // dismissed without a selection" and never calls onSelected in
-          // that case (popup_menu.dart) — so a `PopupMenuItem(value: null,
-          // ...)` for "Barchasi" would be silently unselectable. Sidestepped
-          // by keying the button on the wire string instead, with a
-          // non-null '' sentinel for "no filter".
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.filter_list),
-            tooltip: context.l10n.expensesFilterByType,
-            onSelected: (value) => ref
-                .read(expendituresListProvider.notifier)
-                .setTypeFilter(value.isEmpty ? null : ExpenditureType.fromWire(value)),
-            itemBuilder: (context) => [
-              PopupMenuItem(value: '', child: Text(context.l10n.commonAll)),
-              for (final type in ExpenditureType.values)
-                PopupMenuItem(value: type.toWire(), child: Text(type.label)),
-            ],
-          ),
-        ],
+    return DashPage(
+      title: l10n.expensesTitle,
+      // A non-null '' sentinel keeps "Barchasi" selectable (see the
+      // PopupMenuButton note in `CLAUDE.md`: never key a choice on null).
+      header: DashChoiceChips<String>(
+        values: ['', for (final type in ExpenditureType.values) type.toWire()],
+        selected: _typeWire,
+        label: (w) => w.isEmpty ? l10n.commonAll : ExpenditureType.fromWire(w).label,
+        onSelected: (w) {
+          setState(() => _typeWire = w);
+          ref.read(expendituresListProvider.notifier).setTypeFilter(w.isEmpty ? null : ExpenditureType.fromWire(w));
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        tooltip: l10n.expensesNewTitle,
+        onPressed: () => _openForm(),
+        child: const Icon(Icons.add_rounded),
       ),
       body: listState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
-        data: (state) {
-          return Column(
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                color: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        error: (error, _) => DashEmptyState(
+          icon: Icons.cloud_off_rounded,
+          text: l10n.commonErrorWith('$error'),
+          action: TextButton(onPressed: () => ref.invalidate(expendituresListProvider), child: Text(l10n.commonRetry)),
+        ),
+        data: (state) => RefreshIndicator(
+          color: AppColors.onBrand,
+          backgroundColor: AppColors.brandYellow,
+          onRefresh: () => ref.read(expendituresListProvider.notifier).refresh(),
+          child: ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
+            controller: _scrollController,
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
+            // Total card + rows (or the empty message) + the paging spinner.
+            itemCount: 1 + (state.items.isEmpty ? 1 : state.items.length) + (state.hasNext ? 1 : 0),
+            separatorBuilder: (_, _) => const SizedBox(height: 10),
+            itemBuilder: (context, index) {
+              if (index == 0) return _TotalCard(total: state.totalAmount, label: l10n.expensesTotal);
+              if (state.items.isEmpty) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 60),
+                  child: Text(
+                    l10n.expensesNotFound,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600),
+                  ),
+                );
+              }
+              final i = index - 1;
+              if (i >= state.items.length) {
+                return const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              final expenditure = state.items[i];
+              final tint = expenditureColor(expenditure.type);
+              return DashListCard(
+                leading: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: tint.withValues(alpha: 0.13),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(expenditureIcon(expenditure.type), color: tint),
+                ),
+                title: expenditure.type.label,
+                subtitle: [
+                  _dateFormat.format(expenditure.date),
+                  if (expenditure.notes?.isNotEmpty ?? false) expenditure.notes!,
+                ].join(' · '),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(context.l10n.expensesTotal),
                     Text(
-                      CurrencyFormatter.format(state.totalAmount, Currency.uzs),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      CurrencyFormatter.format(expenditure.amount, Currency.uzs),
+                      style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w800),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete_outline_rounded, color: colors.textMuted),
+                      tooltip: l10n.commonDelete,
+                      onPressed: () => _delete(expenditure),
                     ),
                   ],
                 ),
-              ),
-              Expanded(
-                child: state.items.isEmpty
-                    ? RefreshIndicator(
-                        onRefresh: () => ref.read(expendituresListProvider.notifier).refresh(),
-                        child: ListView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          children: [
-                            Padding(padding: EdgeInsets.only(top: 96), child: Center(child: Text(context.l10n.expensesNotFound))),
-                          ],
-                        ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: () => ref.read(expendituresListProvider.notifier).refresh(),
-                        child: ListView.separated(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          controller: _scrollController,
-                          itemCount: state.items.length + (state.hasNext ? 1 : 0),
-                          separatorBuilder: (_, _) => const Divider(height: 1),
-                          itemBuilder: (context, index) {
-                            if (index >= state.items.length) {
-                              return const Padding(
-                                padding: EdgeInsets.all(16),
-                                child: Center(child: CircularProgressIndicator()),
-                              );
-                            }
-                            final expenditure = state.items[index];
-                            return ListTile(
-                              leading: const CircleAvatar(child: Icon(Icons.receipt_long_outlined)),
-                              title: Text(expenditure.type.label),
-                              subtitle: Text(
-                                [_dateFormat.format(expenditure.date), if (expenditure.notes?.isNotEmpty ?? false) expenditure.notes]
-                                    .join(' • '),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    CurrencyFormatter.format(expenditure.amount, Currency.uzs),
-                                    style: Theme.of(context).textTheme.titleSmall,
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete_outline),
-                                    tooltip: context.l10n.commonDelete,
-                                    onPressed: () => _delete(expenditure),
-                                  ),
-                                ],
-                              ),
-                              onTap: () => _openForm(editing: expenditure),
-                            );
-                          },
-                        ),
-                      ),
-              ),
-            ],
-          );
-        },
+                onTap: () => _openForm(editing: expenditure),
+              ).animate().fadeIn(delay: (25 * (i % 12)).ms, duration: AppMotion.standard);
+            },
+          ),
+        ),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () => _openForm(), child: const Icon(Icons.add)),
+    );
+  }
+}
+
+/// Dark card with the filter-aware total (`meta.totalAmount`).
+class _TotalCard extends StatelessWidget {
+  const _TotalCard({required this.total, required this.label});
+
+  final double total;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.ink, Color(0xFF2A2108)],
+        ),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: BrandTheme.fontFamily,
+              color: Colors.white.withValues(alpha: 0.7),
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 6),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              CurrencyFormatter.format(total, Currency.uzs),
+              style: const TextStyle(
+                fontFamily: BrandTheme.fontFamily,
+                color: Colors.white,
+                fontSize: 30,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.8,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

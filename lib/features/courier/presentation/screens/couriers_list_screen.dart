@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
+
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/courier/domain/entities/courier.dart';
 import 'package:bsmart/features/courier/domain/usecases/delete_courier_usecase.dart';
@@ -18,9 +23,9 @@ class CouriersListScreen extends ConsumerWidget {
   const CouriersListScreen({super.key});
 
   Future<void> _openForm(BuildContext context, WidgetRef ref, {Courier? editing}) async {
-    final saved = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => CourierFormScreen(editingCourier: editing)),
-    );
+    final saved = await Navigator.of(
+      context,
+    ).push<bool>(MaterialPageRoute(builder: (_) => CourierFormScreen(editingCourier: editing)));
     if (saved == true) ref.read(couriersListProvider.notifier).refresh();
   }
 
@@ -59,86 +64,83 @@ class CouriersListScreen extends ConsumerWidget {
     final couriersAsync = ref.watch(couriersListProvider);
     final storesAsync = ref.watch(storesListProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Kuryerlar')),
-      body: couriersAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Xatolik: $error')),
-        data: (state) {
-          final storeNames = {for (final s in storesAsync.valueOrNull ?? []) s.id: s.name};
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '${state.items.length} / ${state.courierLimit} kuryer ishlatilmoqda',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: state.items.isEmpty
-                    ? const Center(child: Text('Kuryerlar topilmadi'))
-                    : RefreshIndicator(
-                        onRefresh: () => ref.read(couriersListProvider.notifier).refresh(),
-                        child: ListView.separated(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount: state.items.length,
-                          separatorBuilder: (_, _) => const Divider(height: 1),
-                          itemBuilder: (context, index) {
-                            final courier = state.items[index];
-                            return ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor:
-                                    courier.isActive ? null : Theme.of(context).colorScheme.surfaceContainerHighest,
-                                child: Text(courier.firstName.isNotEmpty ? courier.firstName.characters.first : '?'),
-                              ),
-                              title: Text(courier.fullName),
-                              subtitle: Text(
-                                [
-                                  courier.phone,
-                                  storeNames[courier.storeId] ?? courier.storeId,
-                                  'Bugun: ${courier.todayOrderCount} ta yetkazish',
-                                  if (!courier.isActive) 'Faolsiz',
-                                ].join(' • '),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              trailing: PopupMenuButton<String>(
-                                onSelected: (action) {
-                                  switch (action) {
-                                    case 'edit':
-                                      _openForm(context, ref, editing: courier);
-                                    case 'toggle':
-                                      _toggleActive(context, ref, courier);
-                                    case 'delete':
-                                      _delete(context, ref, courier);
-                                  }
-                                },
-                                itemBuilder: (context) => [
-                                  const PopupMenuItem(value: 'edit', child: Text('Tahrirlash')),
-                                  PopupMenuItem(
-                                    value: 'toggle',
-                                    child: Text(courier.isActive ? 'Faolsizlantirish' : 'Faollashtirish'),
-                                  ),
-                                  const PopupMenuItem(value: 'delete', child: Text("O'chirish")),
-                                ],
-                              ),
-                              onTap: () => _openForm(context, ref, editing: courier),
-                            );
-                          },
-                        ),
-                      ),
-              ),
-            ],
-          );
-        },
-      ),
+    return DashPage(
+      title: 'Kuryerlar',
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openForm(context, ref),
-        child: const Icon(Icons.person_add_alt_1),
+        child: const Icon(Icons.person_add_alt_1_rounded),
+      ),
+      body: couriersAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) =>
+            DashEmptyState(icon: Icons.cloud_off_rounded, text: context.l10n.commonErrorWith('$error')),
+        data: (state) {
+          final storeNames = {for (final s in storesAsync.valueOrNull ?? []) s.id: s.name};
+          final items = state.items;
+          return RefreshIndicator(
+            color: AppColors.onBrand,
+            backgroundColor: AppColors.brandYellow,
+            onRefresh: () => ref.read(couriersListProvider.notifier).refresh(),
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
+              children: [
+                DashUsageCard(
+                  label: '${state.items.length} / ${state.courierLimit} kuryer ishlatilmoqda',
+                  used: state.items.length,
+                  limit: state.courierLimit,
+                  icon: Icons.moped_rounded,
+                ),
+                const SizedBox(height: 12),
+                if (items.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 60),
+                    child: Text(
+                      'Kuryerlar topilmadi',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: BrandColors.of(context).textSecondary, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                for (final (i, courier) in items.indexed) ...[
+                  if (i > 0) const SizedBox(height: 10),
+                  DashListCard(
+                    dimmed: !courier.isActive,
+                    leading: DashAvatar(name: courier.firstName, active: courier.isActive),
+                    title: courier.fullName,
+                    subtitle: [
+                      courier.phone,
+                      storeNames[courier.storeId] ?? courier.storeId,
+                      'Bugun: ${courier.todayOrderCount} ta yetkazish',
+                    ].join(' · '),
+                    trailing: DashMenuButton(
+                      items: [
+                        (value: 'edit', icon: Icons.edit_rounded, label: 'Tahrirlash', destructive: false),
+                        (
+                          value: 'toggle',
+                          icon: courier.isActive ? Icons.block_rounded : Icons.check_circle_rounded,
+                          label: courier.isActive ? 'Faolsizlantirish' : 'Faollashtirish',
+                          destructive: false,
+                        ),
+                        (value: 'delete', icon: Icons.delete_outline_rounded, label: "O'chirish", destructive: true),
+                      ],
+                      onSelected: (action) {
+                        switch (action) {
+                          case 'edit':
+                            _openForm(context, ref, editing: courier);
+                          case 'toggle':
+                            _toggleActive(context, ref, courier);
+                          case 'delete':
+                            _delete(context, ref, courier);
+                        }
+                      },
+                    ),
+                    onTap: () => _openForm(context, ref, editing: courier),
+                  ),
+                ],
+              ],
+            ),
+          );
+        },
       ),
     );
   }

@@ -6,6 +6,7 @@ import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/features/platform_users/domain/entities/platform_user.dart';
 import 'package:bsmart/features/platform_users/domain/entities/platform_user_query.dart';
 import 'package:bsmart/features/platform_users/domain/usecases/list_platform_users_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class PlatformUsersListState {
   const PlatformUsersListState({
@@ -40,7 +41,10 @@ class PlatformUsersListState {
 /// [setRole]/[setBusinessType]/[search], never a per-role notifier.
 class PlatformUsersListNotifier extends AsyncNotifier<PlatformUsersListState> {
   @override
-  Future<PlatformUsersListState> build() => _fetch(const PlatformUserQuery());
+  Future<PlatformUsersListState> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch(const PlatformUserQuery());
+  }
 
   Future<PlatformUsersListState> _fetch(PlatformUserQuery query) async {
     final result = await getIt<ListPlatformUsersUseCase>().call(query);
@@ -57,9 +61,7 @@ class PlatformUsersListNotifier extends AsyncNotifier<PlatformUsersListState> {
 
   Future<void> setRole(UserRole? role) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => _fetch(PlatformUserQuery(role: role, page: 1)),
-    );
+    state = await AsyncValue.guard(() => _fetch(PlatformUserQuery(role: role, page: 1)));
   }
 
   Future<void> setBusinessType(BusinessType? businessType) async {

@@ -4,10 +4,14 @@ import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/staff_admins/domain/entities/admin.dart';
 import 'package:bsmart/features/staff_admins/domain/entities/admin_query.dart';
 import 'package:bsmart/features/staff_admins/domain/usecases/list_admins_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class AdminsListNotifier extends AsyncNotifier<List<Admin>> {
   @override
-  Future<List<Admin>> build() => _fetch();
+  Future<List<Admin>> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch();
+  }
 
   Future<List<Admin>> _fetch() async {
     final result = await getIt<ListAdminsUseCase>().call(const AdminQuery());

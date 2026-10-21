@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/stores/domain/entities/store.dart';
 import 'package:bsmart/features/stores/domain/usecases/list_stores_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 /// The owner's full store roster — no pagination, matching `GET /stores`'s
 /// own small-working-set design. Powers both `StoresListScreen` and
@@ -10,7 +11,10 @@ import 'package:bsmart/features/stores/domain/usecases/list_stores_usecase.dart'
 /// the fetch).
 class StoresListNotifier extends AsyncNotifier<List<Store>> {
   @override
-  Future<List<Store>> build() => _fetch();
+  Future<List<Store>> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch();
+  }
 
   Future<List<Store>> _fetch() async {
     final result = await getIt<ListStoresUseCase>().call();

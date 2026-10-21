@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
 
 /// Phase 6 prompt for a CUSTOMER whose phone isn't Telegram-verified yet. The
 /// backend only shows phone-matched data (restaurant deliveries staff entered
@@ -22,37 +24,49 @@ class VerifyPhoneBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(sessionNotifierProvider).valueOrNull?.user;
     if (user == null || !user.needsPhoneVerification) return const SizedBox.shrink();
-    final scheme = Theme.of(context).colorScheme;
-    return Card(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      color: scheme.tertiaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 8, 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.verified_user_outlined, color: scheme.onTertiaryContainer),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    message,
-                    style: TextStyle(color: scheme.onTertiaryContainer),
-                  ),
+    final colors = BrandColors.of(context);
+    const telegramBlue = Color(0xFF229ED9);
+    // Phase 9: a white card with a Telegram-blue icon tile and a filled
+    // "verify" button; it sits inside a page's own padding (no margin).
+    return DashCard(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: telegramBlue.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ],
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton.icon(
-                onPressed: () => context.push(RouteNames.customerVerifyPhone),
-                icon: const Icon(Icons.telegram),
-                label: Text(context.l10n.verifyBannerAction),
+                child: const Icon(Icons.verified_user_rounded, color: telegramBlue),
               ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  message,
+                  style: TextStyle(color: colors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600, height: 1.35),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          FilledButton.icon(
+            onPressed: () => context.push(RouteNames.customerVerifyPhone),
+            style: FilledButton.styleFrom(
+              backgroundColor: telegramBlue,
+              foregroundColor: Colors.white,
+              minimumSize: const Size.fromHeight(44),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             ),
-          ],
-        ),
+            icon: const Icon(Icons.telegram),
+            label: Text(context.l10n.verifyBannerAction),
+          ),
+        ],
       ),
     );
   }

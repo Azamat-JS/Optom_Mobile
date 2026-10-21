@@ -38,6 +38,11 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    // The list provider is app-wide and keeps its filters after this screen
+    // closes; show them again instead of an empty field over a filtered list.
+    final query = ref.read(productsListProvider).valueOrNull?.query;
+    _searchController.text = query?.search ?? '';
+    _selectedCategoryId = query?.categoryId;
   }
 
   @override

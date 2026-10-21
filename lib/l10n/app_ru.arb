@@ -288,7 +288,7 @@
   "debtsPayDownTitle": "Общий платёж (FIFO)",
   "debtsPayDownHint": "Распределяется автоматически, начиная с самого старого долга",
   "debtsAllocation": "Распределение:",
-  "debtsWillClose": "(будет закрыт)",
+  "debtsWillClose": "будет закрыт",
   "debtsExceedsTotal": "Сумма превышает общий остаток",
   "debtsConfirmPayment": "Подтвердить платёж",
   "debtsTitle": "Долги",
@@ -571,5 +571,9 @@
   "formStockSection": "Склад",
   "formExtra": "Дополнительно",
   "productsSource": "Источник",
-  "commonContinue": "Далее"
+  "commonContinue": "Далее",
+  "debtsSummaryTotal": "Общий долг",
+  "debtsPeopleCount": "{count} чел.",
+  "debtsItemsTitle": "Список долгов",
+  "debtsOriginal": "Исходная сумма"
 }

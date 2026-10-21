@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/restaurant_staff/domain/entities/waiter.dart';
 import 'package:bsmart/features/restaurant_staff/domain/usecases/list_waiters_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class WaitersListState {
   const WaitersListState({required this.items, required this.waiterLimit});
@@ -13,7 +14,10 @@ class WaitersListState {
 
 class WaitersListNotifier extends AsyncNotifier<WaitersListState> {
   @override
-  Future<WaitersListState> build() => _fetch();
+  Future<WaitersListState> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch();
+  }
 
   Future<WaitersListState> _fetch() async {
     final result = await getIt<ListWaitersUseCase>().call();
@@ -28,6 +32,4 @@ class WaitersListNotifier extends AsyncNotifier<WaitersListState> {
   }
 }
 
-final waitersListProvider = AsyncNotifierProvider<WaitersListNotifier, WaitersListState>(
-  WaitersListNotifier.new,
-);
+final waitersListProvider = AsyncNotifierProvider<WaitersListNotifier, WaitersListState>(WaitersListNotifier.new);

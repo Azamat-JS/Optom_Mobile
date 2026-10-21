@@ -1,31 +1,25 @@
 import 'package:flutter/material.dart';
 
 import 'package:bsmart/core/enums/restaurant_order_enums.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
+/// Tinted status pill (Phase 9).
 class RestaurantOrderStatusBadge extends StatelessWidget {
   const RestaurantOrderStatusBadge({super.key, required this.status});
 
   final RestaurantOrderStatus status;
 
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final (background, foreground) = switch (status) {
-      RestaurantOrderStatus.newOrder => (scheme.primaryContainer, scheme.onPrimaryContainer),
-      RestaurantOrderStatus.preparing => (Colors.orange.shade100, Colors.orange.shade900),
-      RestaurantOrderStatus.ready => (Colors.blue.shade100, Colors.blue.shade900),
-      RestaurantOrderStatus.served => (Colors.green.shade100, Colors.green.shade900),
-      RestaurantOrderStatus.delivered => (Colors.green.shade100, Colors.green.shade900),
-      RestaurantOrderStatus.cancelled => (scheme.errorContainer, scheme.onErrorContainer),
-    };
+  /// Shared with the board rows' icon tint.
+  static Color colorOf(BuildContext context, RestaurantOrderStatus status) => switch (status) {
+    RestaurantOrderStatus.newOrder => BrandColors.of(context).accentText,
+    RestaurantOrderStatus.preparing => const Color(0xFFD9822B),
+    RestaurantOrderStatus.ready => const Color(0xFF3D6FD6),
+    RestaurantOrderStatus.served || RestaurantOrderStatus.delivered => AppColors.success,
+    RestaurantOrderStatus.cancelled => Theme.of(context).colorScheme.error,
+  };
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(6)),
-      child: Text(
-        status.label,
-        style: TextStyle(color: foreground, fontSize: 12, fontWeight: FontWeight.w600),
-      ),
-    );
-  }
+  @override
+  Widget build(BuildContext context) => DashTag(label: status.label, color: colorOf(context, status));
 }

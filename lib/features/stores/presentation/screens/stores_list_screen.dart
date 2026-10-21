@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/entities/geo_point.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 import 'package:bsmart/features/stores/domain/entities/store.dart';
 import 'package:bsmart/features/stores/domain/entities/store_write_params.dart';
@@ -12,6 +14,8 @@ import 'package:bsmart/features/stores/domain/usecases/delete_store_usecase.dart
 import 'package:bsmart/features/stores/domain/usecases/set_store_active_usecase.dart';
 import 'package:bsmart/features/stores/domain/usecases/update_store_usecase.dart';
 import 'package:bsmart/features/stores/presentation/providers/stores_list_notifier.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 import 'package:bsmart/shared/widgets/location_picker_field.dart';
 
 /// Owner-only store/branch roster — create, rename, activate/deactivate,
@@ -69,35 +73,60 @@ class StoresListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final storesAsync = ref.watch(storesListProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.storesTitle)),
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    return DashPage(
+      title: l10n.storesTitle,
+      floatingActionButton: FloatingActionButton(
+        tooltip: l10n.storesNewTitle,
+        onPressed: () => _openForm(context, ref),
+        child: const Icon(Icons.add_business_rounded),
+      ),
       body: storesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
+        error: (error, _) => DashEmptyState(icon: Icons.cloud_off_rounded, text: l10n.commonErrorWith('$error')),
         data: (stores) => RefreshIndicator(
+          color: AppColors.onBrand,
+          backgroundColor: AppColors.brandYellow,
           onRefresh: () => ref.read(storesListProvider.notifier).refresh(),
           child: ListView.separated(
             physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
             itemCount: stores.length,
-            separatorBuilder: (_, _) => const Divider(height: 1),
+            separatorBuilder: (_, _) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
               final store = stores[index];
-              return ListTile(
-                leading: Icon(
-                  Icons.storefront_outlined,
-                  color: store.isActive ? null : Theme.of(context).disabledColor,
+              return DashListCard(
+                dimmed: !store.isActive,
+                leading: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: store.isDefault ? AppColors.brandYellow : DashColors.inset(context),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(
+                    Icons.storefront_rounded,
+                    color: store.isDefault ? AppColors.onBrand : colors.textSecondary,
+                  ),
                 ),
-                title: Row(
-                  children: [
-                    Flexible(child: Text(store.name)),
-                    if (store.isDefault) ...[
-                      const SizedBox(width: 6),
-                      Chip(label: Text(context.l10n.storesDefault), visualDensity: VisualDensity.compact),
-                    ],
+                title: store.name,
+                subtitle: [
+                  if (store.isDefault) l10n.storesDefault,
+                  if (!store.isActive) l10n.commonInactiveShort,
+                  store.address ?? '—',
+                ].join(' · '),
+                trailing: DashMenuButton(
+                  items: [
+                    (value: 'edit', icon: Icons.edit_rounded, label: l10n.commonEdit, destructive: false),
+                    (
+                      value: 'toggle',
+                      icon: store.isActive ? Icons.block_rounded : Icons.check_circle_rounded,
+                      label: store.isActive ? l10n.commonDeactivate : l10n.commonActivate,
+                      destructive: false,
+                    ),
+                    (value: 'delete', icon: Icons.delete_outline_rounded, label: l10n.commonDelete, destructive: true),
                   ],
-                ),
-                subtitle: Text(store.address ?? '—'),
-                trailing: PopupMenuButton<String>(
                   onSelected: (action) {
                     switch (action) {
                       case 'edit':
@@ -108,20 +137,12 @@ class StoresListScreen extends ConsumerWidget {
                         _delete(context, ref, store);
                     }
                   },
-                  itemBuilder: (context) => [
-                    PopupMenuItem(value: 'edit', child: Text(context.l10n.commonEdit)),
-                    PopupMenuItem(value: 'toggle', child: Text(store.isActive ? context.l10n.commonDeactivate : context.l10n.commonActivate)),
-                    PopupMenuItem(value: 'delete', child: Text(context.l10n.commonDelete)),
-                  ],
                 ),
+                onTap: () => _openForm(context, ref, editing: store),
               );
             },
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _openForm(context, ref),
-        child: const Icon(Icons.add),
       ),
     );
   }
@@ -191,57 +212,60 @@ class _StoreFormDialogState extends State<_StoreFormDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      scrollable: true,
-      title: Text(_isEditing ? context.l10n.storesEditTitle : context.l10n.storesNewTitle),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: context.l10n.commonNameRequired),
-              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonNameMissing : null,
-            ),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _addressController,
-              decoration: InputDecoration(labelText: context.l10n.commonAddress),
-            ),
-            const SizedBox(height: 12),
-            LocationPickerField(
-              value: _location,
-              onChanged: (p) => setState(() => _location = p),
-              label: context.l10n.storesMapLocation,
-              pickerTitle: context.l10n.storesLocationTitle,
-              helper: context.l10n.storesLocationHint,
-            ),
-            // Only on edit: the backend sets it via UpdateStoreDto (new stores start with it off).
-            if (_isEditing && widget.showHandoverSetting)
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                value: _requireHandoverCode,
-                onChanged: (v) => setState(() => _requireHandoverCode = v),
-                title: Text(context.l10n.storesHandoverCode),
-                subtitle: Text(context.l10n.storesHandoverCodeHint),
+    return DashFormTheme(
+      onSheet: true,
+      child: AlertDialog(
+        scrollable: true,
+        title: Text(_isEditing ? context.l10n.storesEditTitle : context.l10n.storesNewTitle),
+        content: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(labelText: context.l10n.commonNameRequired),
+                validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonNameMissing : null,
               ),
-            if (_errorMessage != null) ...[
               const SizedBox(height: 8),
-              Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              TextFormField(
+                controller: _addressController,
+                decoration: InputDecoration(labelText: context.l10n.commonAddress),
+              ),
+              const SizedBox(height: 12),
+              LocationPickerField(
+                value: _location,
+                onChanged: (p) => setState(() => _location = p),
+                label: context.l10n.storesMapLocation,
+                pickerTitle: context.l10n.storesLocationTitle,
+                helper: context.l10n.storesLocationHint,
+              ),
+              // Only on edit: the backend sets it via UpdateStoreDto (new stores start with it off).
+              if (_isEditing && widget.showHandoverSetting)
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: _requireHandoverCode,
+                  onChanged: (v) => setState(() => _requireHandoverCode = v),
+                  title: Text(context.l10n.storesHandoverCode),
+                  subtitle: Text(context.l10n.storesHandoverCodeHint),
+                ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 8),
+                Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              ],
             ],
-          ],
+          ),
         ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(context.l10n.commonCancel)),
+          FilledButton(
+            onPressed: _isSaving ? null : _submit,
+            child: _isSaving
+                ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                : Text(context.l10n.commonSave),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(context.l10n.commonCancel)),
-        FilledButton(
-          onPressed: _isSaving ? null : _submit,
-          child: _isSaving
-              ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2))
-              : Text(context.l10n.commonSave),
-        ),
-      ],
     );
   }
 }

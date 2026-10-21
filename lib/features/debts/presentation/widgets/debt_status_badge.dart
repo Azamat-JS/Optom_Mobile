@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:bsmart/core/enums/sale_enums.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
+/// Tinted status pill (Phase 9).
 class DebtStatusBadge extends StatelessWidget {
   const DebtStatusBadge({super.key, required this.status});
 
@@ -9,22 +13,13 @@ class DebtStatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final (background, foreground) = switch (status) {
-      DebtStatus.active => (scheme.errorContainer, scheme.onErrorContainer),
-      DebtStatus.partial => (Colors.orange.shade100, Colors.orange.shade900),
-      DebtStatus.settled => (Colors.green.shade100, Colors.green.shade900),
-      DebtStatus.overdue => (Colors.red.shade200, Colors.red.shade900),
-      DebtStatus.writtenOff => (Colors.grey.shade300, Colors.grey.shade800),
+    final error = Theme.of(context).colorScheme.error;
+    final color = switch (status) {
+      DebtStatus.active || DebtStatus.overdue => error,
+      DebtStatus.partial => BrandColors.of(context).accentText,
+      DebtStatus.settled => AppColors.success,
+      DebtStatus.writtenOff => BrandColors.of(context).textMuted,
     };
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(6)),
-      child: Text(
-        status.label,
-        style: TextStyle(color: foreground, fontSize: 12, fontWeight: FontWeight.w600),
-      ),
-    );
+    return DashTag(label: status.label, color: color);
   }
 }

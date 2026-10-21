@@ -4,26 +4,17 @@ import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/domain/entities/product_query.dart';
 import 'package:bsmart/features/products/domain/usecases/list_products_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class ProductsListState {
-  const ProductsListState({
-    required this.items,
-    required this.query,
-    this.hasNext = false,
-    this.isLoadingMore = false,
-  });
+  const ProductsListState({required this.items, required this.query, this.hasNext = false, this.isLoadingMore = false});
 
   final List<Product> items;
   final ProductQuery query;
   final bool hasNext;
   final bool isLoadingMore;
 
-  ProductsListState copyWith({
-    List<Product>? items,
-    ProductQuery? query,
-    bool? hasNext,
-    bool? isLoadingMore,
-  }) {
+  ProductsListState copyWith({List<Product>? items, ProductQuery? query, bool? hasNext, bool? isLoadingMore}) {
     return ProductsListState(
       items: items ?? this.items,
       query: query ?? this.query,
@@ -39,7 +30,10 @@ class ProductsListState {
 /// paging/filter logic in one place.
 class ProductsListNotifier extends AsyncNotifier<ProductsListState> {
   @override
-  Future<ProductsListState> build() => _fetch(const ProductQuery());
+  Future<ProductsListState> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch(const ProductQuery());
+  }
 
   Future<ProductsListState> _fetch(ProductQuery query) async {
     final result = await getIt<ListProductsUseCase>().call(query);
@@ -63,18 +57,14 @@ class ProductsListNotifier extends AsyncNotifier<ProductsListState> {
   Future<void> filterByCategory(String? categoryId) async {
     final current = state.valueOrNull?.query ?? const ProductQuery();
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => _fetch(ProductQuery(page: 1, search: current.search, categoryId: categoryId)),
-    );
+    state = await AsyncValue.guard(() => _fetch(ProductQuery(page: 1, search: current.search, categoryId: categoryId)));
   }
 
   Future<void> filterByActive(bool? isActive) async {
     final current = state.valueOrNull?.query ?? const ProductQuery();
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => _fetch(
-        ProductQuery(page: 1, search: current.search, categoryId: current.categoryId, isActive: isActive),
-      ),
+      () => _fetch(ProductQuery(page: 1, search: current.search, categoryId: current.categoryId, isActive: isActive)),
     );
   }
 
@@ -99,6 +89,4 @@ class ProductsListNotifier extends AsyncNotifier<ProductsListState> {
   }
 }
 
-final productsListProvider = AsyncNotifierProvider<ProductsListNotifier, ProductsListState>(
-  ProductsListNotifier.new,
-);
+final productsListProvider = AsyncNotifierProvider<ProductsListNotifier, ProductsListState>(ProductsListNotifier.new);

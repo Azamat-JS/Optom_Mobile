@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/favorites/domain/entities/favorite_product.dart';
 import 'package:bsmart/features/favorites/domain/usecases/list_favorites_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class FavoritesListNotifier extends AsyncNotifier<List<FavoriteProduct>> {
   @override
   Future<List<FavoriteProduct>> build() async {
+    ref.watch(currentUserIdProvider);
     final result = await getIt<ListFavoritesUseCase>().call();
     return result.fold((d) => d, (failure) => throw failure);
   }

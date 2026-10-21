@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class PosCartLine {
   const PosCartLine({required this.product, required this.quantity, this.discount = 0});
@@ -35,7 +36,10 @@ class PosCartState {
 
 class PosCartNotifier extends Notifier<PosCartState> {
   @override
-  PosCartState build() => const PosCartState();
+  PosCartState build() {
+    ref.watch(currentUserIdProvider);
+    return const PosCartState();
+  }
 
   /// Returns `false` (leaving the cart unchanged) if [product] would mix
   /// currencies with what's already in the cart — the caller should surface
@@ -81,10 +85,7 @@ class PosCartNotifier extends Notifier<PosCartState> {
   /// currency set. Any product that no longer exists must be filtered out
   /// by the caller before calling this (see `SharedCartSheet._restore`).
   void loadCart(List<PosCartLine> lines, {double saleDiscount = 0}) {
-    state = PosCartState(
-      lines: {for (final line in lines) line.product.id: line},
-      saleDiscount: saleDiscount,
-    );
+    state = PosCartState(lines: {for (final line in lines) line.product.id: line}, saleDiscount: saleDiscount);
   }
 }
 

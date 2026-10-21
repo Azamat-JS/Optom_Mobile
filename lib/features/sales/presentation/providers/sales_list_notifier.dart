@@ -4,14 +4,10 @@ import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/sales/domain/entities/sale.dart';
 import 'package:bsmart/features/sales/domain/entities/sale_query.dart';
 import 'package:bsmart/features/sales/domain/usecases/list_sales_usecase.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class SalesListState {
-  const SalesListState({
-    required this.items,
-    required this.query,
-    this.hasNext = false,
-    this.isLoadingMore = false,
-  });
+  const SalesListState({required this.items, required this.query, this.hasNext = false, this.isLoadingMore = false});
 
   final List<Sale> items;
   final SaleQuery query;
@@ -30,7 +26,10 @@ class SalesListState {
 
 class SalesListNotifier extends AsyncNotifier<SalesListState> {
   @override
-  Future<SalesListState> build() => _fetch(const SaleQuery());
+  Future<SalesListState> build() {
+    ref.watch(currentUserIdProvider);
+    return _fetch(const SaleQuery());
+  }
 
   Future<SalesListState> _fetch(SaleQuery query) async {
     final result = await getIt<ListSalesUseCase>().call(query);

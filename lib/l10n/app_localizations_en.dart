@@ -1078,7 +1078,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debtsAllocation => 'Allocation:';
 
   @override
-  String get debtsWillClose => '(will be closed)';
+  String get debtsWillClose => 'will close';
 
   @override
   String get debtsExceedsTotal => 'The amount exceeds the total balance';
@@ -2025,4 +2025,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonContinue => 'Continue';
+
+  @override
+  String get debtsSummaryTotal => 'Total owed';
+
+  @override
+  String debtsPeopleCount(int count) {
+    return '$count people';
+  }
+
+  @override
+  String get debtsItemsTitle => 'Debts';
+
+  @override
+  String get debtsOriginal => 'Original amount';
 }
