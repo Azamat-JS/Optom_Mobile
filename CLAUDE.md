@@ -1583,7 +1583,7 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 | U4a | Operator home dashboard + Reports (references: Plum, Stripe Dashboard, Revolut Business, Mailchimp, Toggl Track) | 🟢 Done 2026-10-20 |
 | U4b | POS (Kassa), checkout, receipt, customer picker; no reference: matched to the U4a style | 🟢 Done 2026-10-20 |
 | U4c1 | Products: list, detail, form, stock sheet, catalog picker + shared page kit (`dash_page.dart`) | 🟢 Done 2026-10-20 |
-| U4c2 | Orders (list, detail, review, catalog browse, seller picker) | ⚪ |
+| U4c2 | Orders (list, detail, review, catalog browse, seller picker) | 🟢 Done 2026-10-21 |
 | U4c3 | Customers + debts | ⚪ |
 | U4c4 | Sales history/returns + expenditures | ⚪ |
 | U4c5 | Stores, staff, waiters/couriers, settings | ⚪ |
@@ -2006,6 +2006,36 @@ restyled screen:**
   screenshots of list, detail, stock sheet, form.
 - **Not checked:** image upload (simulator gallery), barcode scan, catalog-linked products (the
   local `master_products.unit` DB drift), Russian/English lengths.
+
+**U4c2 (orders), 2026-10-21:**
+- **List:** retailers get a full-width pill toggle (Chiqarilgan / Kelgan, still wired to
+  `setView`), everyone gets status filter chips (Barchasi / Yangi / Tasdiqlangan / Yetkazilgan /
+  Rad etilgan → the existing `filterByStatus`), order rows as cards (status-tinted receipt icon,
+  counterpart, "date · N ta mahsulot · number", total + status pill), yellow FAB for retailers.
+- **Detail:** header card (status pill, date, big total, item count), parties card (seller with a
+  yellow icon, buyer), items + bill with a dashed divider, the courier `OrderDeliveryCard` (now a
+  `DashCard`), rejection reason in red, address/note card, and a vertical status timeline
+  (coloured dot per status, joined by a line). Approve/reject (two buttons) or "Yetkazildi" are
+  sticky at the bottom; the dialogs are unchanged.
+- **Create flow:** wholesaler picker (cards with a yellow initial), catalog (search, branch chips,
+  rows with photo, "price · Qoldi: N" / "Tugagan", `+` → `DashStepper`; the "added" snackbar is
+  gone; dark `DashCartBar` → "Davom etish"), review (seller card, items with steppers, address and
+  note fields under `DashFormTheme`, total card, sticky "Buyurtma berish · total").
+- **Real bug fixed (pre-existing):** placing an order clears the cart while the catalog screen is
+  still under the review screen; its rebuild hit `seller!` and threw "Null check operator used on a
+  null value". The catalog now renders an empty page when the cart has no seller.
+- `OrderStatusBadge` is a tinted pill (`OrderStatusBadge.colorOf` also tints the list icons and
+  the timeline dots; it is shared with the restaurant screens).
+- **Kit additions:** `DashCartBar` (moved out of the POS, which now uses it), `DashChoiceChips<T>`
+  and `DashBottomButton` in `dash_page.dart`. New ARB key `commonContinue`.
+- **Verified:** `flutter analyze` clean, 76 unit tests. Temporary on-device test (deleted) with a
+  throwaway SELLER + RETAILER (deleted): retailer list, toggle to Kelgan and back, "Yangi" filter,
+  a seeded order's detail, FAB → picker → catalog (tap, stepper +, second product) → cart bar →
+  review (address + note) → order placed (detail shows NEW); then as the seller: "Yangi" filter →
+  detail with actions → approve (confirm) → "Yetkazildi" (confirm) → timeline Yangi /
+  Tasdiqlangan / Yetkazilgan; dark detail and list.
+- **Not checked:** rejecting with a reason, multi-branch sellers' branch chips, a B2C order with
+  courier assignment (the delivery card only changed its frame), Russian/English lengths.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

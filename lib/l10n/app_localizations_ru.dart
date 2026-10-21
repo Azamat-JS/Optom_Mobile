@@ -2033,4 +2033,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get productsSource => 'Источник';
+
+  @override
+  String get commonContinue => 'Далее';
 }

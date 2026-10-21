@@ -1,13 +1,15 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/router/route_names.dart';
+import 'package:bsmart/core/theme/app_motion.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/catalog/domain/entities/catalog_product.dart';
 import 'package:bsmart/features/catalog/domain/entities/catalog_query.dart';
@@ -15,6 +17,8 @@ import 'package:bsmart/features/catalog/domain/entities/catalog_seller.dart';
 import 'package:bsmart/features/catalog/domain/usecases/browse_catalog_usecase.dart';
 import 'package:bsmart/features/catalog/domain/usecases/list_seller_stores_usecase.dart';
 import 'package:bsmart/features/orders/presentation/providers/create_order_cart_notifier.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// Step 2 of the RETAILER create-order flow: browse the selected seller's
 /// active products (`GET /catalog?sellerId=&storeId=`) and build a cart.
@@ -90,13 +94,10 @@ class _OrderCatalogBrowseScreenState extends ConsumerState<OrderCatalogBrowseScr
     if (!mounted) return;
     setState(() {
       _isLoadingProducts = false;
-      result.fold(
-        (page) {
-          _products = page.data;
-          _hasNext = page.meta.hasNext;
-        },
-        (failure) => _errorMessage = failure.message,
-      );
+      result.fold((page) {
+        _products = page.data;
+        _hasNext = page.meta.hasNext;
+      }, (failure) => _errorMessage = failure.message);
     });
   }
 
@@ -138,122 +139,107 @@ class _OrderCatalogBrowseScreenState extends ConsumerState<OrderCatalogBrowseScr
     if (!added) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(content: Text(context.l10n.ordersSingleCurrency)),
-        );
+        ..showSnackBar(SnackBar(content: Text(context.l10n.ordersSingleCurrency)));
       return;
     }
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(context.l10n.ordersAddedToCart(product.name)), duration: const Duration(milliseconds: 800)));
+    // The row's stepper confirms the add; only a refusal shows a message.
+    HapticFeedback.selectionClick();
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final cart = ref.watch(createOrderCartProvider);
+    final stores = _stores;
+    // Placing the order clears the cart (and its seller) while this screen is
+    // still under the review screen; it must not rebuild into a null check.
+    final seller = cart.seller;
+    if (seller == null) return Scaffold(backgroundColor: DashColors.page(context));
 
-    return Scaffold(
-      appBar: AppBar(title: Text(_seller.fullName)),
-      body: Column(
+    return DashPage(
+      title: seller.fullName,
+      header: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: context.l10n.ordersSearchProduct,
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
-              onChanged: _onSearchChanged,
+          DashSearchField(controller: _searchController, hint: l10n.ordersSearchProduct, onChanged: _onSearchChanged),
+          if (stores != null && stores.length > 1) ...[
+            const SizedBox(height: 10),
+            DashChoiceChips<CatalogStore?>(
+              values: [null, ...stores],
+              selected: stores.where((s) => s.id == cart.store?.id).firstOrNull,
+              label: (store) => store?.name ?? l10n.ordersAllBranches,
+              onSelected: _onStoreSelected,
             ),
-          ),
-          if (_stores != null && _stores!.length > 1)
-            SizedBox(
-              height: 44,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: ChoiceChip(
-                      label: Text(context.l10n.ordersAllBranches),
-                      selected: cart.store == null,
-                      onSelected: (_) => _onStoreSelected(null),
-                    ),
-                  ),
-                  for (final store in _stores!)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: ChoiceChip(
-                        label: Text(store.name),
-                        selected: cart.store?.id == store.id,
-                        onSelected: (_) => _onStoreSelected(store),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          Expanded(child: _buildProductList(cart)),
+          ],
         ],
       ),
-      bottomNavigationBar: cart.isEmpty
-          ? null
-          : SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: FilledButton(
-                  onPressed: () => context.push(RouteNames.orderReview),
-                  style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                  child: Text(
-                    context.l10n.ordersCartSummary(cart.itemCount, CurrencyFormatter.format(cart.total, cart.lines.values.first.product.currency)),
-                  ),
-                ),
+      bottomBar: AnimatedSwitcher(
+        duration: AppMotion.standard,
+        transitionBuilder: (child, animation) => SizeTransition(sizeFactor: animation, child: child),
+        child: cart.isEmpty
+            ? const SizedBox.shrink()
+            : DashCartBar(
+                count: cart.itemCount,
+                countLabel: l10n.commonProductCount(cart.itemCount),
+                total: CurrencyFormatter.format(cart.total, cart.lines.values.first.product.currency),
+                actionLabel: l10n.commonContinue,
+                onTap: () => context.push(RouteNames.orderReview),
               ),
-            ),
+      ),
+      body: _buildProductList(cart),
     );
   }
 
   Widget _buildProductList(CreateOrderCartState cart) {
-    if (_errorMessage != null) return Center(child: Text(_errorMessage!));
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    if (_errorMessage != null) return DashEmptyState(icon: Icons.cloud_off_rounded, text: _errorMessage!);
     if (_isLoadingProducts) return const Center(child: CircularProgressIndicator());
-    if (_products.isEmpty) return Center(child: Text(context.l10n.productsNotFound));
+    if (_products.isEmpty) return DashEmptyState(icon: Icons.inventory_2_rounded, text: l10n.productsNotFound);
 
     return ListView.separated(
       controller: _scrollController,
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
       itemCount: _products.length + (_hasNext ? 1 : 0),
-      separatorBuilder: (_, _) => const Divider(height: 1),
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
         if (index >= _products.length) {
-          return const Padding(padding: EdgeInsets.all(16), child: Center(child: CircularProgressIndicator()));
+          return const Padding(
+            padding: EdgeInsets.all(16),
+            child: Center(child: CircularProgressIndicator()),
+          );
         }
         final product = _products[index];
-        final inCart = cart.lines[product.id];
-        return ListTile(
-          leading: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: SizedBox(
-              width: 44,
-              height: 44,
-              child: product.imageUrl != null
-                  ? CachedNetworkImage(imageUrl: product.imageUrl!, fit: BoxFit.cover)
-                  : Container(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      child: const Icon(Icons.inventory_2_outlined, size: 20),
-                    ),
-            ),
-          ),
-          title: Text(product.name, maxLines: 1, overflow: TextOverflow.ellipsis),
-          subtitle: Text(CurrencyFormatter.format(product.price, product.currency)),
-          trailing: inCart != null
-              ? Chip(label: Text(context.l10n.commonPieces(inCart.quantity.toStringAsFixed(0))))
-              : IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  onPressed: () => _addToCart(product),
+        final line = cart.lines[product.id];
+        final weighable = product.unit?.isWeighable ?? false;
+        String qty(double v) => v.toStringAsFixed(weighable && v != v.truncateToDouble() ? 2 : 0);
+        return DashListCard(
+          leading: DashThumb(url: product.imageUrl, size: 52),
+          title: product.name,
+          subtitle: [
+            CurrencyFormatter.format(product.price, product.currency),
+            product.stock <= 0
+                ? l10n.posOutOfStock
+                : l10n.posStockLeft('${qty(product.stock)} ${product.unit?.shortLabel ?? ''}'.trim()),
+          ].join(' · '),
+          onTap: line == null ? () => _addToCart(product) : null,
+          trailing: line != null
+              ? DashStepper(
+                  value: qty(line.quantity),
+                  onMinus: () =>
+                      ref.read(createOrderCartProvider.notifier).updateQuantity(product.id, line.quantity - 1),
+                  onPlus: () =>
+                      ref.read(createOrderCartProvider.notifier).updateQuantity(product.id, line.quantity + 1),
+                )
+              : Material(
+                  color: DashColors.inset(context),
+                  borderRadius: BorderRadius.circular(12),
+                  child: InkWell(
+                    onTap: () => _addToCart(product),
+                    borderRadius: BorderRadius.circular(12),
+                    child: SizedBox(width: 40, height: 34, child: Icon(Icons.add_rounded, color: colors.textPrimary)),
+                  ),
                 ),
-          onTap: () => _addToCart(product),
         );
       },
     );

@@ -570,5 +570,6 @@
   "formPricing": "Pricing",
   "formStockSection": "Stock",
   "formExtra": "More",
-  "productsSource": "Source"
+  "productsSource": "Source",
+  "commonContinue": "Continue"
 }

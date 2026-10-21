@@ -1079,5 +1079,6 @@
   "formPricing": "Narx",
   "formStockSection": "Ombor",
   "formExtra": "Qo'shimcha",
-  "productsSource": "Manba"
+  "productsSource": "Manba",
+  "commonContinue": "Davom etish"
 }

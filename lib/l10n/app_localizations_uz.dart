@@ -1974,4 +1974,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get productsSource => 'Manba';
+
+  @override
+  String get commonContinue => 'Davom etish';
 }

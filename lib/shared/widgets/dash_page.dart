@@ -377,3 +377,92 @@ class DashFormTheme extends StatelessWidget {
     );
   }
 }
+
+/// Horizontal row of filter pills (selected = yellow), e.g. order statuses.
+class DashChoiceChips<T> extends StatelessWidget {
+  const DashChoiceChips({
+    required this.values,
+    required this.selected,
+    required this.label,
+    required this.onSelected,
+    super.key,
+  });
+
+  final List<T> values;
+  final T selected;
+  final String Function(T) label;
+  final ValueChanged<T> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = BrandColors.of(context);
+    return SizedBox(
+      height: 40,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: values.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemBuilder: (context, i) {
+          final value = values[i];
+          final isSelected = value == selected;
+          return Semantics(
+            selected: isSelected,
+            button: true,
+            child: Material(
+              color: isSelected ? AppColors.brandYellow : DashColors.card(context),
+              borderRadius: BorderRadius.circular(20),
+              child: InkWell(
+                onTap: () => onSelected(value),
+                borderRadius: BorderRadius.circular(20),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Center(
+                    child: Text(
+                      label(value),
+                      style: TextStyle(
+                        color: isSelected ? AppColors.onBrand : colors.textSecondary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Sticky full-width yellow button for a page's `bottomBar` (save, place
+/// order …). [child] replaces the label, e.g. with a spinner.
+class DashBottomButton extends StatelessWidget {
+  const DashBottomButton({required this.label, required this.onPressed, this.icon, this.busy = false, super.key});
+
+  final String label;
+  final VoidCallback? onPressed;
+  final IconData? icon;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = FilledButton.styleFrom(
+      minimumSize: const Size.fromHeight(56),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+    );
+    final Widget content = busy
+        ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2.5))
+        : Text(label);
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+        child: icon == null || busy
+            ? FilledButton(onPressed: busy ? null : onPressed, style: style, child: content)
+            : FilledButton.icon(onPressed: onPressed, style: style, icon: Icon(icon), label: content),
+      ),
+    );
+  }
+}

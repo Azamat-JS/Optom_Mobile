@@ -3477,6 +3477,12 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Manba'**
   String get productsSource;
+
+  /// No description provided for @commonContinue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davom etish'**
+  String get commonContinue;
 }
 
 class _AppLocalizationsDelegate

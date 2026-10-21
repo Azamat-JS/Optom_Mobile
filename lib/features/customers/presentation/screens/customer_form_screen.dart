@@ -7,6 +7,8 @@ import 'package:bsmart/features/customers/domain/entities/customer.dart';
 import 'package:bsmart/features/customers/domain/entities/customer_write_params.dart';
 import 'package:bsmart/features/customers/domain/usecases/create_customer_usecase.dart';
 import 'package:bsmart/features/customers/domain/usecases/update_customer_usecase.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// Create/edit form, also used as a quick "Yangi mijoz" entry point from
 /// POS's checkout customer picker (pushed for its `pop(true)`/`Customer`
@@ -82,62 +84,79 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? context.l10n.customersEditTitle : context.l10n.customersNewTitle)),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            TextFormField(
-              controller: _firstNameController,
-              decoration: InputDecoration(labelText: context.l10n.commonFirstNameRequired, border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonFirstNameMissing : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _lastNameController,
-              decoration: InputDecoration(labelText: context.l10n.commonLastNameRequired, border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonLastNameMissing : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                labelText: context.l10n.commonPhoneRequired,
-                hintText: '+998901234567',
-                border: OutlineInputBorder(),
+    final l10n = context.l10n;
+    return DashPage(
+      title: _isEditing ? l10n.customersEditTitle : l10n.customersNewTitle,
+      bottomBar: DashBottomButton(label: l10n.commonSave, busy: _isSaving, onPressed: _submit),
+      body: DashFormTheme(
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              DashSectionTitle(l10n.formBasics, padding: const EdgeInsets.fromLTRB(4, 8, 4, 10)),
+              TextFormField(
+                controller: _firstNameController,
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  labelText: l10n.commonFirstNameRequired,
+                  prefixIcon: const Icon(Icons.person_rounded),
+                ),
+                validator: (v) => (v == null || v.trim().isEmpty) ? l10n.commonFirstNameMissing : null,
               ),
-              validator: (v) {
-                if (v == null || v.trim().isEmpty) return context.l10n.commonPhoneMissing;
-                if (!RegExp(r'^\+?[0-9]{9,15}$').hasMatch(v.trim())) return context.l10n.commonInvalidFormat;
-                return null;
-              },
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _addressController,
-              decoration: InputDecoration(labelText: context.l10n.commonAddress, border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _notesController,
-              decoration: InputDecoration(labelText: context.l10n.commonNote, border: OutlineInputBorder()),
-              maxLines: 2,
-            ),
-            if (_errorMessage != null) ...[
               const SizedBox(height: 12),
-              Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              TextFormField(
+                controller: _lastNameController,
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  labelText: l10n.commonLastNameRequired,
+                  prefixIcon: const Icon(Icons.badge_rounded),
+                ),
+                validator: (v) => (v == null || v.trim().isEmpty) ? l10n.commonLastNameMissing : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  labelText: l10n.commonPhoneRequired,
+                  hintText: '+998901234567',
+                  prefixIcon: const Icon(Icons.phone_rounded),
+                ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return l10n.commonPhoneMissing;
+                  if (!RegExp(r'^\+?[0-9]{9,15}$').hasMatch(v.trim())) return l10n.commonInvalidFormat;
+                  return null;
+                },
+              ),
+              DashSectionTitle(l10n.formExtra),
+              TextFormField(
+                controller: _addressController,
+                decoration: InputDecoration(
+                  labelText: l10n.commonAddress,
+                  prefixIcon: const Icon(Icons.location_on_rounded),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _notesController,
+                decoration: InputDecoration(
+                  labelText: l10n.commonNote,
+                  prefixIcon: const Icon(Icons.edit_note_rounded),
+                ),
+                maxLines: 2,
+              ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 14),
+                Text(
+                  _errorMessage!,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.w700),
+                ),
+              ],
             ],
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: _isSaving ? null : _submit,
-              child: _isSaving
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text(context.l10n.commonSave),
-            ),
-          ],
+          ),
         ),
       ),
     );

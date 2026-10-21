@@ -439,3 +439,117 @@ class DashStepper extends StatelessWidget {
     );
   }
 }
+
+/// Dark bar with a cart's size and total; tapping it (or the yellow pill)
+/// moves on — POS checkout, order review.
+class DashCartBar extends StatelessWidget {
+  const DashCartBar({
+    required this.count,
+    required this.countLabel,
+    required this.total,
+    required this.actionLabel,
+    required this.onTap,
+    super.key,
+  });
+
+  final int count;
+  final String countLabel;
+  final String total;
+  final String actionLabel;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
+        child: Material(
+          color: AppColors.ink,
+          borderRadius: BorderRadius.circular(24),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(24),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 10, 12),
+              child: Row(
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Text(
+                      '$count',
+                      style: const TextStyle(
+                        fontFamily: BrandTheme.fontFamily,
+                        color: AppColors.brandYellow,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          countLabel,
+                          style: TextStyle(
+                            fontFamily: BrandTheme.fontFamily,
+                            color: Colors.white.withValues(alpha: 0.65),
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            total,
+                            style: const TextStyle(
+                              fontFamily: BrandTheme.fontFamily,
+                              color: Colors.white,
+                              fontSize: 19,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(color: AppColors.brandYellow, borderRadius: BorderRadius.circular(16)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          actionLabel,
+                          style: const TextStyle(
+                            fontFamily: BrandTheme.fontFamily,
+                            color: AppColors.onBrand,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        const Icon(Icons.arrow_forward_rounded, color: AppColors.onBrand, size: 18),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

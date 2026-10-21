@@ -14,6 +14,7 @@ import 'package:bsmart/features/deliveries/presentation/widgets/assign_courier_s
 import 'package:bsmart/features/deliveries/presentation/widgets/delivery_outcome_section.dart';
 import 'package:bsmart/features/deliveries/presentation/widgets/delivery_status_badge.dart';
 import 'package:bsmart/features/deliveries/presentation/widgets/handover_code_card.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
 
 /// Courier-delivery summary on an order's detail screen, with "Kuryerni
 /// kuzatish" while the courier is on the way.
@@ -68,10 +69,11 @@ class OrderDeliveryCard extends ConsumerWidget {
     final trackable = delivery.status.isActive;
 
     return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Card(
+      padding: const EdgeInsets.only(top: 12),
+      child: DashCard(
+        padding: EdgeInsets.zero,
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -163,8 +165,8 @@ class OrderDeliveryCard extends ConsumerWidget {
   }
 
   Widget _shell({required Widget child}) => Padding(
-        padding: const EdgeInsets.only(top: 16),
-        child: Card(child: Padding(padding: const EdgeInsets.all(14), child: child)),
+        padding: const EdgeInsets.only(top: 12),
+        child: DashCard(child: child),
       ).animate().fadeIn(duration: AppMotion.standard).slideY(begin: 0.1, curve: AppMotion.emphasized);
 
   /// New delivery (or reopen a cancelled one) when [existing] is null, else reassign it.

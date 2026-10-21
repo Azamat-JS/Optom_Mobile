@@ -245,7 +245,15 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         bottomNavigationBar: AnimatedSwitcher(
           duration: AppMotion.standard,
           transitionBuilder: (child, animation) => SizeTransition(sizeFactor: animation, child: child),
-          child: cart.isEmpty ? const SizedBox.shrink() : _CartBar(cart: cart, onCheckout: _openCheckout),
+          child: cart.isEmpty
+              ? const SizedBox.shrink()
+              : DashCartBar(
+                  count: cart.itemCount,
+                  countLabel: l10n.commonProductCount(cart.itemCount),
+                  total: CurrencyFormatter.format(cart.total, cart.currency!),
+                  actionLabel: l10n.posCheckout,
+                  onTap: _openCheckout,
+                ),
         ),
       ),
     );
@@ -431,110 +439,6 @@ class _PosProductCard extends StatelessWidget {
                   ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Dark bar with the cart size and total; the yellow pill opens checkout.
-class _CartBar extends StatelessWidget {
-  const _CartBar({required this.cart, required this.onCheckout});
-
-  final PosCartState cart;
-  final VoidCallback onCheckout;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
-        child: Material(
-          color: AppColors.ink,
-          borderRadius: BorderRadius.circular(24),
-          child: InkWell(
-            onTap: onCheckout,
-            borderRadius: BorderRadius.circular(24),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 10, 12),
-              child: Row(
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Text(
-                      '${cart.itemCount}',
-                      style: const TextStyle(
-                        fontFamily: BrandTheme.fontFamily,
-                        color: AppColors.brandYellow,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          l10n.commonProductCount(cart.itemCount),
-                          style: TextStyle(
-                            fontFamily: BrandTheme.fontFamily,
-                            color: Colors.white.withValues(alpha: 0.65),
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            CurrencyFormatter.format(cart.total, cart.currency!),
-                            style: const TextStyle(
-                              fontFamily: BrandTheme.fontFamily,
-                              color: Colors.white,
-                              fontSize: 19,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(color: AppColors.brandYellow, borderRadius: BorderRadius.circular(16)),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          l10n.posCheckout,
-                          style: const TextStyle(
-                            fontFamily: BrandTheme.fontFamily,
-                            color: AppColors.onBrand,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        const Icon(Icons.arrow_forward_rounded, color: AppColors.onBrand, size: 18),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

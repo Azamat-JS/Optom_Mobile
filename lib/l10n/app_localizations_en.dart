@@ -2022,4 +2022,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get productsSource => 'Source';
+
+  @override
+  String get commonContinue => 'Continue';
 }

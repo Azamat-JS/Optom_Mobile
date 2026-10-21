@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/order_status.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 import 'package:bsmart/features/deliveries/presentation/widgets/order_delivery_card.dart';
@@ -13,7 +16,12 @@ import 'package:bsmart/features/orders/domain/usecases/get_order_usecase.dart';
 import 'package:bsmart/features/orders/domain/usecases/update_order_status_usecase.dart';
 import 'package:bsmart/features/orders/presentation/providers/orders_list_notifier.dart';
 import 'package:bsmart/features/orders/presentation/widgets/order_status_badge.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
+/// One order: status, total, parties, items + bill, courier delivery,
+/// address/note, status history; the seller approves/rejects/delivers from
+/// sticky bottom buttons. Phase 9 U4c2: `DashPage` + cards.
 class OrderDetailScreen extends ConsumerStatefulWidget {
   const OrderDetailScreen({super.key, required this.orderId});
 
@@ -98,7 +106,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
         title: Text(context.l10n.ordersRejectTitle),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(labelText: context.l10n.commonReasonOptional, border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: context.l10n.commonReasonOptional),
           maxLines: 3,
         ),
         actions: [
@@ -145,235 +153,355 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     final tenantId = session?.managedUserId ?? session?.userId;
     final isSellerTenant = order != null && tenantId != null && order.seller?.id == tenantId;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(order?.orderNumber ?? context.l10n.ordersOrder)),
+    final l10n = context.l10n;
+    final showActions = order != null && isSeller && (order.canApproveOrReject || order.canMarkDelivered);
+
+    return DashPage(
+      title: order?.orderNumber ?? l10n.ordersOrder,
+      bottomBar: showActions ? _buildActions(order) : null,
       body: _errorMessage != null
-          ? Center(child: Text(_errorMessage!))
+          ? DashEmptyState(
+              icon: Icons.cloud_off_rounded,
+              text: _errorMessage!,
+              action: TextButton(onPressed: _load, child: Text(l10n.commonRetry)),
+            )
           : order == null
-              ? const Center(child: CircularProgressIndicator())
-              : RefreshIndicator(
-                  onRefresh: _load,
-                  child: ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(order.orderNumber, style: Theme.of(context).textTheme.titleLarge),
-                          OrderStatusBadge(status: order.status),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${order.createdAt.toLocal()}'.split('.').first,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildPartiesCard(order),
-                      const SizedBox(height: 16),
-                      _buildItemsCard(order),
-                      const SizedBox(height: 16),
-                      _buildTotalsCard(order),
-                      // Courier delivery (only approved/delivered orders can have one).
-                      if (order.status == OrderStatus.approved || order.status == OrderStatus.delivered)
-                        OrderDeliveryCard(
-                          orderId: order.id,
-                          canManage: isSellerTenant && order.type == OrderType.b2c,
-                          canAssign: order.status == OrderStatus.approved,
-                        ),
-                      if (order.notes != null || order.deliveryAddress != null) ...[
-                        const SizedBox(height: 16),
-                        _buildNotesCard(order),
-                      ],
-                      if (order.rejectionReason != null) ...[
-                        const SizedBox(height: 16),
-                        Card(
-                          color: Theme.of(context).colorScheme.errorContainer,
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Text(context.l10n.ordersRejectionReason(order.rejectionReason ?? '')),
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 16),
-                      _buildStatusTimeline(order),
-                      if (isSeller && (order.canApproveOrReject || order.canMarkDelivered)) ...[
-                        const SizedBox(height: 20),
-                        _buildActions(order),
-                      ],
-                    ],
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              color: AppColors.onBrand,
+              backgroundColor: AppColors.brandYellow,
+              onRefresh: _load,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
+                children: [
+                  _buildHeaderCard(order),
+                  const SizedBox(height: 12),
+                  _buildPartiesCard(order),
+                  DashSectionTitle(
+                    l10n.commonProducts,
+                    trailing: Text(
+                      l10n.commonProductCount(order.items.length),
+                      style: TextStyle(color: BrandColors.of(context).textMuted, fontWeight: FontWeight.w700),
+                    ),
                   ),
-                ),
+                  _buildItemsCard(order),
+                  // Courier delivery (only approved/delivered orders can have one).
+                  if (order.status == OrderStatus.approved || order.status == OrderStatus.delivered)
+                    OrderDeliveryCard(
+                      orderId: order.id,
+                      canManage: isSellerTenant && order.type == OrderType.b2c,
+                      canAssign: order.status == OrderStatus.approved,
+                    ),
+                  if (order.rejectionReason != null) ...[const SizedBox(height: 12), _buildRejectionCard(order)],
+                  if (order.notes != null || order.deliveryAddress != null) ...[
+                    const SizedBox(height: 12),
+                    _buildNotesCard(order),
+                  ],
+                  if (order.statusHistory.isNotEmpty) ...[
+                    DashSectionTitle(l10n.ordersHistory),
+                    _buildStatusTimeline(order),
+                  ],
+                ],
+              ),
+            ),
+    );
+  }
+
+  static final _dateFormat = DateFormat('dd.MM.yyyy HH:mm');
+
+  Widget _buildHeaderCard(Order order) {
+    final colors = BrandColors.of(context);
+    return DashCard(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              OrderStatusBadge(status: order.status),
+              const Spacer(),
+              Text(
+                _dateFormat.format(order.createdAt.toLocal()),
+                style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              CurrencyFormatter.format(order.total, order.currency),
+              style: TextStyle(color: colors.textPrimary, fontSize: 32, fontWeight: FontWeight.w800, letterSpacing: -1),
+            ),
+          ),
+          Text(
+            context.l10n.commonProductCount(order.itemCount),
+            style: TextStyle(color: colors.textMuted, fontSize: 13.5, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildPartiesCard(Order order) {
-    return Card(
+    final colors = BrandColors.of(context);
+    Widget party(IconData icon, String name, String role, {bool highlight = false}) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: highlight ? AppColors.brandYellow : DashColors.inset(context),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 21, color: highlight ? AppColors.onBrand : colors.textSecondary),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: colors.textPrimary, fontSize: 15.5, fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  role,
+                  style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    return DashCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         children: [
+          // Deliberately generic, not "Optomchi" (Wholesaler) — the
+          // seller side of a B2C order (Phase 2: a CUSTOMER buying from
+          // a RETAILER's storefront) is a retailer, not a wholesaler.
           if (order.seller != null)
-            ListTile(
-              leading: const Icon(Icons.storefront_outlined),
-              title: Text(order.seller!.fullName),
-              // Deliberately generic, not "Optomchi" (Wholesaler) — the
-              // seller side of a B2C order (Phase 2: a CUSTOMER buying from
-              // a RETAILER's storefront) is a retailer, not a wholesaler.
-              subtitle: Text(context.l10n.ordersSeller),
-              dense: true,
-            ),
-          if (order.buyer != null)
-            ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: Text(order.buyer!.fullName),
-              subtitle: Text(context.l10n.ordersBuyer),
-              dense: true,
-            ),
+            party(Icons.storefront_rounded, order.seller!.fullName, context.l10n.ordersSeller, highlight: true),
+          if (order.seller != null && order.buyer != null) Divider(height: 8, indent: 54, color: colors.outline),
+          if (order.buyer != null) party(Icons.person_rounded, order.buyer!.fullName, context.l10n.ordersBuyer),
         ],
       ),
     );
   }
 
   Widget _buildItemsCard(Order order) {
-    return Card(
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    String money(double v) => CurrencyFormatter.format(v, order.currency);
+    String qty(double v) => v.toStringAsFixed(v == v.truncateToDouble() ? 0 : 2);
+    return DashCard(
+      padding: const EdgeInsets.all(18),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
-            child: Text(context.l10n.commonProducts, style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          for (final item in order.items)
-            ListTile(
-              dense: true,
-              title: Text(item.productName),
-              subtitle: Text('${item.quantity.toStringAsFixed(0)} × ${CurrencyFormatter.format(item.unitPrice, order.currency)}'),
-              trailing: Text(CurrencyFormatter.format(item.total, order.currency)),
+          for (final (i, item) in order.items.indexed) ...[
+            if (i > 0) const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.productName,
+                        style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700),
+                      ),
+                      Text(
+                        '${qty(item.quantity)} × ${money(item.unitPrice)}',
+                        style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  money(item.total),
+                  style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w800),
+                ),
+              ],
             ),
-          const SizedBox(height: 8),
+          ],
+          const SizedBox(height: 16),
+          DashedDivider(color: colors.outline),
+          const SizedBox(height: 14),
+          BillRow(label: l10n.commonSubtotal, value: money(order.subtotal), muted: true),
+          if (order.discount > 0) ...[
+            const SizedBox(height: 6),
+            BillRow(label: l10n.commonDiscount, value: '−${money(order.discount)}', muted: true),
+          ],
+          const SizedBox(height: 10),
+          BillRow(label: l10n.commonTotal, value: money(order.total), strong: true),
         ],
       ),
     );
   }
 
-  Widget _buildTotalsCard(Order order) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _totalRow(context.l10n.commonSubtotal, order.subtotal, order.currency),
-            if (order.discount > 0) _totalRow(context.l10n.commonDiscount, -order.discount, order.currency),
-            const Divider(),
-            _totalRow(context.l10n.commonTotal, order.total, order.currency, isBold: true),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _totalRow(String label, double amount, dynamic currency, {bool isBold = false}) {
-    final style = isBold ? const TextStyle(fontWeight: FontWeight.bold, fontSize: 16) : null;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+  Widget _buildRejectionCard(Order order) {
+    final error = Theme.of(context).colorScheme.error;
+    return DashCard(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: style),
-          Text(CurrencyFormatter.format(amount, currency), style: style),
+          Icon(Icons.block_rounded, color: error),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              context.l10n.ordersRejectionReason(order.rejectionReason ?? ''),
+              style: TextStyle(color: error, fontSize: 14.5, fontWeight: FontWeight.w700),
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildNotesCard(Order order) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (order.deliveryAddress != null) ...[
-              Text(context.l10n.commonDeliveryAddress, style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(order.deliveryAddress!),
-              const SizedBox(height: 8),
-            ],
-            if (order.notes != null) ...[
-              Text(context.l10n.commonNote, style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(order.notes!),
-            ],
-          ],
-        ),
+    final colors = BrandColors.of(context);
+    Widget row(IconData icon, String label, String value) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: colors.textSecondary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(color: colors.textMuted, fontSize: 12.5, fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  value,
+                  style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    return DashCard(
+      child: Column(
+        children: [
+          if (order.deliveryAddress != null)
+            row(Icons.location_on_rounded, context.l10n.commonDeliveryAddress, order.deliveryAddress!),
+          if (order.notes != null) row(Icons.sticky_note_2_rounded, context.l10n.commonNote, order.notes!),
+        ],
       ),
     );
   }
 
+  /// Vertical stepper: a coloured dot per status change, joined by a line.
   Widget _buildStatusTimeline(Order order) {
-    if (order.statusHistory.isEmpty) return const SizedBox.shrink();
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(context.l10n.ordersHistory, style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            for (final entry in order.statusHistory)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 4, right: 8),
-                      child: Icon(Icons.circle, size: 8),
+    final colors = BrandColors.of(context);
+    final entries = order.statusHistory;
+    return DashCard(
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 8),
+      child: Column(
+        children: [
+          for (final (i, entry) in entries.indexed)
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    width: 18,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 14,
+                          height: 14,
+                          margin: const EdgeInsets.only(top: 3),
+                          decoration: BoxDecoration(
+                            color: OrderStatusBadge.colorOf(context, entry.toStatus),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        if (i < entries.length - 1) Expanded(child: Container(width: 2, color: colors.outline)),
+                      ],
                     ),
-                    Expanded(
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 14),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(entry.toStatus.label, style: const TextStyle(fontWeight: FontWeight.w600)),
                           Text(
-                            '${entry.createdAt.toLocal()}'.split('.').first,
-                            style: Theme.of(context).textTheme.bodySmall,
+                            entry.toStatus.label,
+                            style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700),
                           ),
-                          if (entry.comment != null) Text(entry.comment!),
+                          Text(
+                            _dateFormat.format(entry.createdAt.toLocal()),
+                            style: TextStyle(color: colors.textMuted, fontSize: 12.5, fontWeight: FontWeight.w600),
+                          ),
+                          if (entry.comment != null)
+                            Text(entry.comment!, style: TextStyle(color: colors.textSecondary, fontSize: 13.5)),
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }
 
   Widget _buildActions(Order order) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        if (order.canApproveOrReject) ...[
-          FilledButton.icon(
-            onPressed: _isBusy ? null : _confirmApprove,
-            icon: const Icon(Icons.check),
-            label: Text(context.l10n.commonConfirm),
-          ),
-          OutlinedButton.icon(
-            onPressed: _isBusy ? null : _rejectWithReason,
-            icon: const Icon(Icons.close),
-            label: Text(context.l10n.commonReject),
-          ),
-        ],
-        if (order.canMarkDelivered)
-          FilledButton.icon(
-            onPressed: _isBusy ? null : _confirmDeliver,
-            icon: const Icon(Icons.local_shipping_outlined),
-            label: Text(context.l10n.ordersDelivered),
-          ),
-      ],
+    final l10n = context.l10n;
+    if (order.canMarkDelivered) {
+      return DashBottomButton(
+        label: l10n.ordersDelivered,
+        icon: Icons.local_shipping_rounded,
+        busy: _isBusy,
+        onPressed: _confirmDeliver,
+      );
+    }
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(18));
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+        child: Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: _isBusy ? null : _rejectWithReason,
+                style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(56), shape: shape),
+                icon: const Icon(Icons.close_rounded),
+                label: Text(l10n.commonReject),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: _isBusy ? null : _confirmApprove,
+                style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(56), shape: shape),
+                icon: const Icon(Icons.check_rounded),
+                label: Text(l10n.commonConfirm),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

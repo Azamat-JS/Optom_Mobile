@@ -570,5 +570,6 @@
   "formPricing": "Цена",
   "formStockSection": "Склад",
   "formExtra": "Дополнительно",
-  "productsSource": "Источник"
+  "productsSource": "Источник",
+  "commonContinue": "Далее"
 }
