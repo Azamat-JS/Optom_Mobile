@@ -9,8 +9,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:bsmart/core/location/location_fix.dart';
 import 'package:bsmart/core/maps/animated_position.dart';
 import 'package:bsmart/core/maps/map_icons.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/maps/polyline_codec.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery_route.dart';
 import 'package:bsmart/features/deliveries/domain/repositories/deliveries_repository.dart';
@@ -22,6 +25,9 @@ import 'package:bsmart/features/deliveries/presentation/widgets/delivery_status_
 import 'package:bsmart/features/tracking/presentation/providers/tracking_notifier.dart';
 import 'package:bsmart/features/tracking/presentation/tracking_actions.dart';
 import 'package:bsmart/features/tracking/presentation/widgets/tracking_status_pill.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
+import 'package:bsmart/shared/widgets/map_overlay.dart';
 
 /// The courier's own delivery map: pickup + drop-off pins, their own
 /// smoothly-moving position (from the live GPS stream), a guide line to the
@@ -45,6 +51,8 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
   StreamSubscription<LocationFix>? _fixes;
   GoogleMapController? _map;
   BitmapDescriptor? _courierIcon;
+  BitmapDescriptor? _shopIcon;
+  BitmapDescriptor? _homeIcon;
   bool _fitted = false;
   bool _busy = false;
   Timer? _tick;
@@ -58,14 +66,29 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
     final tracking = ref.read(trackingNotifierProvider.notifier);
     final last = tracking.lastFix;
     if (last != null) _courier.moveTo(LatLng(last.lat, last.lng), heading: last.heading);
-    _fixes = tracking.fixes.listen((f) => _courier.moveTo(LatLng(f.lat, f.lng), heading: (f.speed ?? 0) > 1 ? f.heading : null));
+    _fixes = tracking.fixes.listen(
+      (f) => _courier.moveTo(LatLng(f.lat, f.lng), heading: (f.speed ?? 0) > 1 ? f.heading : null),
+    );
     // Re-renders the ETA countdown between server updates.
     _tick = Timer.periodic(const Duration(seconds: 20), (_) {
       if (mounted) setState(() {});
     });
-    MapIcons.courier(const Color(0xFF1D6E4F)).then((icon) {
+    // Same pins as the customer's tracking map (Phase 9 U3c).
+    MapIcons.courier(AppColors.ink).then((icon) {
       if (mounted) setState(() => _courierIcon = icon);
     });
+    MapIcons.pin(
+      Icons.storefront_rounded,
+      fill: AppColors.ink,
+      ring: AppColors.brandYellow,
+      glyphColor: AppColors.brandYellow,
+    ).then((icon) => mounted ? setState(() => _shopIcon = icon) : null);
+    MapIcons.pin(
+      Icons.near_me_rounded,
+      fill: AppColors.ink,
+      ring: Colors.white,
+      glyphColor: Colors.white,
+    ).then((icon) => mounted ? setState(() => _homeIcon = icon) : null);
   }
 
   @override
@@ -80,10 +103,10 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
   LatLng _ll(LatLngPoint p) => LatLng(p.lat, p.lng);
 
   List<LatLng> _points(Delivery d) => [
-        if (d.pickup != null) _ll(d.pickup!),
-        if (d.dropoff != null) _ll(d.dropoff!),
-        if (_courier.value != null) _courier.value!.position,
-      ];
+    if (d.pickup != null) _ll(d.pickup!),
+    if (d.dropoff != null) _ll(d.dropoff!),
+    if (_courier.value != null) _courier.value!.position,
+  ];
 
   Future<void> _fitAll(Delivery d) async {
     final pts = _points(d);
@@ -142,17 +165,16 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
     final choice = await FailDeliverySheet.show(context);
     if (choice == null || !mounted) return;
     setState(() => _busy = true);
-    final failure =
-        await ref.read(deliveryDetailProvider(widget.deliveryId).notifier).fail(choice.$1, note: choice.$2);
+    final failure = await ref.read(deliveryDetailProvider(widget.deliveryId).notifier).fail(choice.$1, note: choice.$2);
     if (!mounted) return;
     setState(() => _busy = false);
     if (failure != null) {
       DeliveryActions.showError(context, failure.message);
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Belgilandi: yetkazib bo'lmadi. Buyurtmani do'konga qaytaring.")),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Belgilandi: yetkazib bo'lmadi. Buyurtmani do'konga qaytaring.")));
     Navigator.of(context).pop();
   }
 
@@ -164,59 +186,71 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
       _decodedFor = route.encodedPolyline;
       _routePoints = decodePolyline(route.encodedPolyline);
     }
+    final title = delivery.valueOrNull?.label ?? 'Yetkazish';
+    final d = delivery.valueOrNull;
+    if (d != null && !_fitted && _map != null) {
+      _fitted = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _fitAll(d));
+    }
     return Scaffold(
-      appBar: AppBar(
-        title: Text(delivery.valueOrNull?.label ?? 'Yetkazish'),
-        actions: const [TrackingStatusPill()],
-      ),
-      body: delivery.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Xatolik: $e')),
-        data: (d) {
-          if (!_fitted && _map != null) {
-            _fitted = true;
-            WidgetsBinding.instance.addPostFrameCallback((_) => _fitAll(d));
-          }
-          return Stack(
-            children: [
-              Positioned.fill(child: _buildMap(d, route)),
-              Positioned(top: 12, left: 12, right: 12, child: _OfflineBanner(delivery: d)),
-              Positioned(
-                right: 12,
-                bottom: 12 + _BottomPanel.estimatedHeight,
-                child: Column(
-                  children: [
-                    FloatingActionButton.small(
-                      heroTag: 'fit',
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: delivery.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => DashEmptyState(icon: Icons.cloud_off_rounded, text: context.l10n.commonErrorWith('$e')),
+              data: (d) => _buildMap(d, route),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                MapTopBar(
+                  title: title,
+                  actions: [
+                    MapRoundButton(
+                      icon: Icons.zoom_out_map_rounded,
                       tooltip: "Hammasini ko'rsatish",
-                      onPressed: () => _fitAll(d),
-                      child: const Icon(Icons.zoom_out_map),
-                    ),
-                    const SizedBox(height: 8),
-                    FloatingActionButton.small(
-                      heroTag: 'me',
-                      tooltip: 'Mening joylashuvim',
-                      onPressed: () {
-                        final me = _courier.value;
-                        if (me != null) _map?.animateCamera(CameraUpdate.newLatLngZoom(me.position, 16));
-                      },
-                      child: const Icon(Icons.my_location),
+                      onTap: d == null ? null : () => _fitAll(d),
                     ),
                   ],
                 ),
+                if (d != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                    child: _OfflineBanner(delivery: d),
+                  ),
+              ],
+            ),
+          ),
+          if (d != null) ...[
+            Positioned(
+              right: 16,
+              bottom: 12 + _BottomPanel.estimatedHeight,
+              child: MapRoundButton(
+                icon: Icons.my_location_rounded,
+                tooltip: 'Mening joylashuvim',
+                onTap: () {
+                  final me = _courier.value;
+                  if (me != null) _map?.animateCamera(CameraUpdate.newLatLngZoom(me.position, 16));
+                },
               ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: _BottomPanel(delivery: d, route: route, busy: _busy, onAction: _run, onFail: _fail)
-                    .animate()
-                    .slideY(begin: 0.3, duration: AppMotion.standard, curve: AppMotion.emphasized)
-                    .fadeIn(duration: AppMotion.standard),
-              ),
-            ],
-          );
-        },
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: _BottomPanel(delivery: d, route: route, busy: _busy, onAction: _run, onFail: _fail)
+                  .animate()
+                  .slideY(begin: 0.3, duration: AppMotion.standard, curve: AppMotion.emphasized)
+                  .fadeIn(duration: AppMotion.standard),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -228,7 +262,10 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
       builder: (context, me, _) {
         final next = d.nextStop;
         return GoogleMap(
-          initialCameraPosition: CameraPosition(target: initial != null ? _ll(initial) : (me?.position ?? _tashkent), zoom: 13),
+          initialCameraPosition: CameraPosition(
+            target: initial != null ? _ll(initial) : (me?.position ?? _tashkent),
+            zoom: 13,
+          ),
           onMapCreated: (c) {
             _map = c;
             if (!_fitted) {
@@ -239,21 +276,24 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
           myLocationButtonEnabled: false,
           zoomControlsEnabled: false,
           mapToolbarEnabled: false,
-          // Top inset leaves room for the offline banner so fit-to-bounds never hides a pin under it.
-          padding: const EdgeInsets.only(top: 88, bottom: _BottomPanel.estimatedHeight),
+          // Top inset leaves room for the top bar + offline banner so fit-to-bounds never hides a
+          // pin under them.
+          padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top + 130, bottom: _BottomPanel.estimatedHeight),
           markers: {
             if (d.pickup != null)
               Marker(
                 markerId: const MarkerId('pickup'),
                 position: _ll(d.pickup!),
-                icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+                icon: _shopIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+                anchor: const Offset(0.5, 1),
                 infoWindow: InfoWindow(title: 'Olib ketish', snippet: d.storeName),
               ),
             if (d.dropoff != null)
               Marker(
                 markerId: const MarkerId('dropoff'),
                 position: _ll(d.dropoff!),
-                icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+                icon: _homeIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
+                anchor: const Offset(0.5, 1),
                 infoWindow: InfoWindow(title: 'Mijoz', snippet: d.dropoffAddress),
               ),
             if (me != null && _courierIcon != null)
@@ -270,11 +310,16 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
           polylines: {
             if (route != null && _routePoints.length > 1 && !d.status.isTerminal) ...[
               // White casing under the route reads well on every map background.
-              Polyline(polylineId: const PolylineId('route-casing'), points: _routePoints, color: Colors.white, width: 9),
+              Polyline(
+                polylineId: const PolylineId('route-casing'),
+                points: _routePoints,
+                color: Colors.white,
+                width: 9,
+              ),
               Polyline(
                 polylineId: const PolylineId('route'),
                 points: _routePoints,
-                color: Theme.of(context).colorScheme.primary,
+                color: AppColors.ink,
                 width: 5,
                 zIndex: 1,
               ),
@@ -282,7 +327,7 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
               Polyline(
                 polylineId: const PolylineId('guide'),
                 points: [me.position, _ll(next)],
-                color: Theme.of(context).colorScheme.primary,
+                color: AppColors.ink,
                 width: 4,
                 patterns: [PatternItem.dash(18), PatternItem.gap(10)],
               ),
@@ -302,20 +347,38 @@ class _OfflineBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final online = ref.watch(trackingNotifierProvider.select((t) => t.isOnline));
     final show = !online && (delivery.status.isActive || delivery.status.isOffer);
+    final theme = Theme.of(context);
     return AnimatedSwitcher(
       duration: AppMotion.standard,
+      // Online: the live sharing pill; offline: a prompt to go online.
       child: !show
-          ? const SizedBox.shrink()
+          ? Align(alignment: Alignment.centerLeft, child: online ? const TrackingStatusPill() : const SizedBox.shrink())
           : Material(
               elevation: 3,
-              borderRadius: BorderRadius.circular(14),
-              color: Theme.of(context).colorScheme.tertiaryContainer,
-              child: ListTile(
-                dense: true,
-                leading: const Icon(Icons.location_off_outlined),
-                title: const Text('Siz oflaynsiz'),
-                subtitle: const Text("Joylashuvingiz ko'rinmayapti"),
-                trailing: FilledButton(onPressed: () => TrackingActions.goOnline(context, ref), child: const Text('Onlayn')),
+              shadowColor: Colors.black26,
+              borderRadius: BorderRadius.circular(20),
+              color: theme.colorScheme.surface,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
+                child: Row(
+                  children: [
+                    Icon(Icons.location_off_rounded, color: theme.colorScheme.error),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Siz oflaynsiz',
+                            style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                          ),
+                          Text("Joylashuvingiz ko'rinmayapti", style: theme.textTheme.bodySmall),
+                        ],
+                      ),
+                    ),
+                    FilledButton(onPressed: () => TrackingActions.goOnline(context, ref), child: const Text('Onlayn')),
+                  ],
+                ),
               ),
             ),
     );
@@ -340,39 +403,43 @@ class _BottomPanel extends ConsumerWidget {
   final Future<void> Function() onFail;
 
   static String _title(Delivery d, bool toPickup) => switch (d.status) {
-        DeliveryStatus.failed => "Yetkazib bo'lmadi",
-        DeliveryStatus.cancelled => 'Yetkazish bekor qilindi',
-        _ when d.status.isTerminal => 'Yetkazish yakunlangan',
-        _ => toPickup ? "Do'konga boring" : 'Mijozga yetkazing',
-      };
+    DeliveryStatus.failed => "Yetkazib bo'lmadi",
+    DeliveryStatus.cancelled => 'Yetkazish bekor qilindi',
+    _ when d.status.isTerminal => 'Yetkazish yakunlangan',
+    _ => toPickup ? "Do'konga boring" : 'Mijozga yetkazing',
+  };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final colors = BrandColors.of(context);
     final d = delivery;
     final toPickup = d.status.isOffer || d.status == DeliveryStatus.accepted;
     final next = d.nextStop;
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(18));
 
     return Material(
       elevation: 12,
       color: theme.colorScheme.surface,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Text(
                       _title(d, toPickup),
-                      style: theme.textTheme.titleMedium,
+                      style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800, height: 1.15),
                     ),
                   ),
+                  const SizedBox(width: 8),
                   DeliveryStatusBadge(status: d.status),
                 ],
               ),
@@ -387,54 +454,61 @@ class _BottomPanel extends ConsumerWidget {
                 ),
               if (d.handover.pending && d.status.isWithCourier)
                 Padding(
-                  padding: const EdgeInsets.only(top: 6),
+                  padding: const EdgeInsets.only(top: 8),
                   child: Row(
                     children: [
-                      Icon(Icons.pin_outlined, size: 18, color: theme.colorScheme.tertiary),
+                      Icon(Icons.pin_rounded, size: 18, color: colors.accentText),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
                           d.handover.locked
                               ? "Kod bloklangan — do'konga qo'ng'iroq qiling"
                               : "Topshirishda mijozdan 4 xonali kodni so'rang",
-                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.tertiary),
+                          style: TextStyle(color: colors.accentText, fontSize: 13, fontWeight: FontWeight.w700),
                         ),
                       ),
                     ],
                   ),
                 ),
-              const SizedBox(height: 10),
-              _Stop(
-                icon: Icons.storefront_outlined,
-                color: Colors.orange,
-                title: d.storeName ?? "Do'kon",
-                done: !toPickup,
-              ),
-              _Stop(
-                icon: Icons.place_outlined,
-                color: Colors.green,
-                title: d.dropoffAddress ?? "Manzil ko'rsatilmagan",
-                subtitle: d.customerName,
-                done: d.status == DeliveryStatus.delivered,
-                trailing: d.customerPhone == null
-                    ? null
-                    : IconButton.filledTonal(
-                        tooltip: "Qo'ng'iroq",
-                        onPressed: () => DeliveryActions.call(context, d.customerPhone),
-                        icon: const Icon(Icons.call),
+              const SizedBox(height: 14),
+              Container(
+                padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
+                decoration: BoxDecoration(color: DashColors.inset(context), borderRadius: BorderRadius.circular(20)),
+                child: Column(
+                  children: [
+                    _Stop(icon: Icons.storefront_rounded, title: d.storeName ?? "Do'kon", done: !toPickup),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 17),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(width: 2, height: 10, color: colors.outline),
                       ),
+                    ),
+                    _Stop(
+                      icon: Icons.near_me_rounded,
+                      highlight: true,
+                      title: d.dropoffAddress ?? "Manzil ko'rsatilmagan",
+                      subtitle: d.customerName,
+                      done: d.status == DeliveryStatus.delivered,
+                      trailing: d.customerPhone == null
+                          ? null
+                          : MapCallButton(onPressed: () => DeliveryActions.call(context, d.customerPhone)),
+                    ),
+                  ],
+                ),
               ),
               if (!d.status.isTerminal) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Row(
                   children: [
                     if (next != null && !d.status.isOffer) ...[
                       OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(minimumSize: const Size(0, 56), shape: shape),
                         onPressed: () => DeliveryActions.navigate(context, next),
-                        icon: const Icon(Icons.navigation_outlined),
+                        icon: const Icon(Icons.navigation_rounded),
                         label: const Text('Navigator'),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 10),
                     ],
                     Expanded(child: _primary(context, ref)),
                   ],
@@ -445,7 +519,7 @@ class _BottomPanel extends ConsumerWidget {
                       TextButton.icon(
                         style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
                         onPressed: busy ? null : onFail,
-                        icon: const Icon(Icons.report_outlined, size: 18),
+                        icon: const Icon(Icons.report_rounded, size: 18),
                         label: const Text("Yetkazib bo'lmadi"),
                       ),
                       const Spacer(),
@@ -467,15 +541,23 @@ class _BottomPanel extends ConsumerWidget {
   Widget _primary(BuildContext context, WidgetRef ref) {
     final (label, icon, run) = switch (delivery.status) {
       DeliveryStatus.pending || DeliveryStatus.assigned => (
-          'Qabul qilish',
-          Icons.check,
-          () => DeliveryActions.accept(context, ref, delivery),
-        ),
-      DeliveryStatus.accepted => ('Buyurtmani oldim', Icons.shopping_bag_outlined, () => onAction(DeliveryAction.pickup)),
+        'Qabul qilish',
+        Icons.check_rounded,
+        () => DeliveryActions.accept(context, ref, delivery),
+      ),
+      DeliveryStatus.accepted => (
+        'Buyurtmani oldim',
+        Icons.shopping_bag_outlined,
+        () => onAction(DeliveryAction.pickup),
+      ),
       DeliveryStatus.pickedUp => ('Yetib keldim', Icons.flag_outlined, () => onAction(DeliveryAction.arrive)),
       _ => ('Topshirdim', Icons.task_alt, () => onAction(DeliveryAction.complete)),
     };
     return FilledButton.icon(
+      style: FilledButton.styleFrom(
+        minimumSize: const Size.fromHeight(56),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      ),
       onPressed: busy ? null : run,
       icon: busy ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : Icon(icon),
       label: Text(label),
@@ -484,41 +566,68 @@ class _BottomPanel extends ConsumerWidget {
 }
 
 class _Stop extends StatelessWidget {
-  const _Stop({required this.icon, required this.color, required this.title, this.subtitle, this.done = false, this.trailing});
+  const _Stop({
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    this.done = false,
+    this.highlight = false,
+    this.trailing,
+  });
 
   final IconData icon;
-  final Color color;
   final String title;
   final String? subtitle;
   final bool done;
+
+  /// The customer's stop: yellow circle (the store's is ink).
+  final bool highlight;
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
-    final muted = Theme.of(context).colorScheme.outline;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        children: [
-          Icon(done ? Icons.check_circle : icon, color: done ? muted : color),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: done ? muted : null, decoration: done ? TextDecoration.lineThrough : null),
-                ),
-                if (subtitle != null) Text(subtitle!, style: Theme.of(context).textTheme.bodySmall),
-              ],
-            ),
+    final colors = BrandColors.of(context);
+    return Row(
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: done ? colors.outline : (highlight ? AppColors.brandYellow : AppColors.ink),
+            shape: BoxShape.circle,
           ),
-          ?trailing,
-        ],
-      ),
+          child: Icon(
+            done ? Icons.check_rounded : icon,
+            size: 19,
+            color: done ? colors.textMuted : (highlight ? AppColors.onBrand : AppColors.brandYellow),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: done ? colors.textMuted : colors.textPrimary,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  decoration: done ? TextDecoration.lineThrough : null,
+                ),
+              ),
+              if (subtitle != null)
+                Text(
+                  subtitle!,
+                  style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
+                ),
+            ],
+          ),
+        ),
+        ?trailing,
+      ],
     );
   }
 }
@@ -543,20 +652,25 @@ class _EtaRow extends StatelessWidget {
       if (toCustomer != null) 'Mijozgacha ${_minutes(toCustomer)}',
       '${km.toStringAsFixed(1).replaceAll('.', ',')} km',
     ];
-    final theme = Theme.of(context);
+    const green = AppColors.success;
     return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Row(
-        children: [
-          Icon(Icons.schedule, size: 18, color: theme.colorScheme.primary),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              parts.join(' · '),
-              style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary, fontWeight: FontWeight.w600),
+      padding: const EdgeInsets.only(top: 10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(color: green.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(12)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.schedule_rounded, size: 17, color: green),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                parts.join(' · '),
+                style: const TextStyle(color: green, fontSize: 13.5, fontWeight: FontWeight.w700),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ).animate(key: ValueKey(route.computedAt)).fadeIn(duration: AppMotion.standard);
   }

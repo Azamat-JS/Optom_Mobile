@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:bsmart/core/enums/business_type.dart';
 import 'package:bsmart/core/enums/user_role.dart';
@@ -9,9 +10,10 @@ import 'package:bsmart/features/deliveries/presentation/providers/courier_delive
 import 'package:bsmart/features/deliveries/presentation/screens/courier_deliveries_tab.dart';
 import 'package:bsmart/features/restaurant_orders/presentation/screens/restaurant_orders_board_screen.dart';
 import 'package:bsmart/features/tracking/presentation/widgets/courier_online_card.dart';
-import 'package:bsmart/features/tracking/presentation/widgets/tracking_status_pill.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
-import 'package:bsmart/shared/widgets/settings_action_button.dart';
+import 'package:bsmart/core/router/route_names.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// A courier's own home. For a RESTAURANT-vertical owner's courier, this is
 /// the real, working delivery-claiming flow — the same order board every
@@ -21,93 +23,83 @@ import 'package:bsmart/shared/widgets/settings_action_button.dart';
 /// client-side filtering is needed here.
 ///
 /// Every courier (any vertical) also gets the live-location controls: the
-/// online/offline [CourierOnlineCard] on top and the AppBar
-/// [TrackingStatusPill] (see CLAUDE.md "Courier Delivery & Live Tracking").
+/// online/offline [CourierOnlineCard] on top, which carries the live
+/// `TrackingStatusPill` while online (see CLAUDE.md "Courier Delivery & Live
+/// Tracking").
 ///
 /// Deliveries (`/deliveries`, see CLAUDE.md "Courier Delivery & Live Tracking")
 /// are the courier's main list for every vertical; a restaurant courier also
-/// keeps the existing order board as a second tab (restaurant deliveries are
-/// accepted there and then show up under "Yetkazishlar").
+/// keeps the existing order board behind a Yetkazishlar / Buyurtmalar pill
+/// toggle (restaurant deliveries are accepted there and then show up under
+/// "Yetkazishlar").
 ///
 /// Historical note: for every other vertical, no delivery/order-assignment
 /// concept existed on the backend at all before Phase 5 — matching the reference web app's own explicit,
 /// documented scope decision (`CLAUDE.md` "Courier Feature (Cross-Vertical)":
 /// "account management only... courier-home is a static placeholder"), this
 /// shows the equivalent placeholder rather than an empty/broken board.
-class CourierHomeScreen extends ConsumerWidget {
+class CourierHomeScreen extends ConsumerStatefulWidget {
   const CourierHomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final session = ref.watch(sessionNotifierProvider).valueOrNull?.session;
-    final isRestaurantCourier =
-        session?.ownerRole == UserRole.retailer && session?.businessType == BusinessType.restaurant;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(UserRole.courier.localizedLabel(context.l10n)),
-        actions: [
-          const TrackingStatusPill(),
-          const CourierAlertsButton(),
-          const SettingsActionButton(),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: context.l10n.commonLogout,
-            onPressed: () => ref.read(sessionNotifierProvider.notifier).logout(),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          const CourierOnlineCard(),
-          Expanded(child: isRestaurantCourier ? const _RestaurantCourierTabs() : const CourierDeliveriesTab()),
-        ],
-      ),
-    );
-  }
+  ConsumerState<CourierHomeScreen> createState() => _CourierHomeScreenState();
 }
 
-/// Restaurant couriers: Yetkazishlar + the existing order board. Restaurant
-/// deliveries are accepted on the board and then appear under Yetkazishlar, so
-/// switching back to that tab refreshes it.
-class _RestaurantCourierTabs extends ConsumerStatefulWidget {
-  const _RestaurantCourierTabs();
+class _CourierHomeScreenState extends ConsumerState<CourierHomeScreen> {
+  /// Restaurant couriers only: 0 = Yetkazishlar, 1 = the order board.
+  int _tab = 0;
 
-  @override
-  ConsumerState<_RestaurantCourierTabs> createState() => _RestaurantCourierTabsState();
-}
-
-class _RestaurantCourierTabsState extends ConsumerState<_RestaurantCourierTabs> with SingleTickerProviderStateMixin {
-  late final _tabs = TabController(length: 2, vsync: this)..addListener(_onTab);
-
-  void _onTab() {
-    if (!_tabs.indexIsChanging && _tabs.index == 0) ref.read(courierDeliveriesProvider.notifier).refresh();
-  }
-
-  @override
-  void dispose() {
-    _tabs.dispose();
-    super.dispose();
+  void _selectTab(int tab) {
+    // Restaurant deliveries are accepted on the board and then appear under
+    // Yetkazishlar, so switching back refreshes it.
+    if (tab == 0 && _tab != 0) ref.read(courierDeliveriesProvider.notifier).refresh();
+    setState(() => _tab = tab);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TabBar(
-          controller: _tabs,
-          tabs: [
-            Tab(text: context.l10n.navDeliveries),
-            Tab(text: context.l10n.navOrders),
-          ],
+    final l10n = context.l10n;
+    final session = ref.watch(sessionNotifierProvider).valueOrNull?.session;
+    final isRestaurantCourier =
+        session?.ownerRole == UserRole.retailer && session?.businessType == BusinessType.restaurant;
+
+    return DashPage(
+      title: UserRole.courier.localizedLabel(l10n),
+      showBack: false,
+      actions: [
+        const CourierAlertsButton(),
+        DashRoundButton(
+          icon: Icons.settings_outlined,
+          tooltip: l10n.commonSettings,
+          onTap: () => context.push(RouteNames.settings),
         ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabs,
-            children: const [CourierDeliveriesTab(), RestaurantOrdersBoardScreen(showAppBar: false)],
-          ),
+        DashRoundButton(
+          icon: Icons.logout_rounded,
+          tooltip: l10n.commonLogout,
+          onTap: () => ref.read(sessionNotifierProvider.notifier).logout(),
         ),
       ],
+      header: Column(
+        children: [
+          const CourierOnlineCard(),
+          if (isRestaurantCourier) ...[
+            const SizedBox(height: 12),
+            PillToggle<int>(
+              values: const [0, 1],
+              selected: _tab,
+              label: (i) => i == 0 ? l10n.navDeliveries : l10n.navOrders,
+              onChanged: _selectTab,
+              expand: true,
+            ),
+          ],
+        ],
+      ),
+      body: isRestaurantCourier
+          ? IndexedStack(
+              index: _tab,
+              children: const [CourierDeliveriesTab(), RestaurantOrdersBoardScreen(showAppBar: false)],
+            )
+          : const CourierDeliveriesTab(),
     );
   }
 }

@@ -1588,7 +1588,9 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 | U4c4 | Sales history/returns + expenditures | 🟢 Done 2026-10-21 |
 | U4c5 | Stores, staff, waiters/couriers, settings | 🟢 Done 2026-10-21 |
 | U4c6 | Customer tabs (Sevimlilar, Profil, Qarzlarim, Yetkazishlarim) | 🟢 Done 2026-10-21 |
-| U4c7 | Restaurant, courier, super-admin, remaining screens | ⚪ |
+| U4c7a | Restaurant: order board, order create/detail, tables + form, waiter shell + menu | 🟢 Done 2026-10-21 |
+| U4c7b | Courier: home, deliveries tab, delivery screen, tracking disclosure, fleet map | 🟢 Done 2026-10-21 |
+| U4c7c | Super-admin: home, platform users + form, categories + form, master catalog + form | ⚪ |
 
 **U1 notes (2026-10-18):**
 - **Scoped theme:** the brand look is applied only inside the auth flow, via
@@ -2149,6 +2151,69 @@ restyled screen:**
 - **Not checked:** a customer with deliveries in progress (rows), favourites with real images,
   Russian/English lengths. The Telegram notifications tile is the shared ListTile and wraps on
   narrow phones.
+
+**U4c7a (restaurant), 2026-10-21:** U4c7 was split into a (restaurant), b (courier + fleet map)
+and c (super-admin) after the survey found ~18 old-style screens (auth and delivery tracking were
+already done in U1/U3c).
+- **Order board:** `DashPage` rows (status-tinted table/moped icon, table or customer, time · dishes
+  · waiter/courier, total + badge). Embedded (`showAppBar: false`, waiter and courier tabs) it's
+  just the list + FAB on a transparent background. `RestaurantOrderStatusBadge` is a `DashTag` with
+  `colorOf` (new = amber text, preparing = orange, ready = blue, served/delivered = green,
+  cancelled = red).
+- **Order detail:** like the U4c2 order detail: header card (badge, date, big total, type · table),
+  info rows (address, customer, phone, waiter, created by, notes), dishes with bill rows (service
+  charge, waiter commission), courier card (assign / tracking link / delivery status + outcome /
+  revoke links), sticky actions (red outlined "Bekor qilish" left, next step filled right; courier:
+  "Qabul qilish").
+- **Order create:** Zalda / Yetkazib berish `PillToggle`, tables as yellow-when-selected pills
+  (was a dropdown), dishes card with `DashStepper`s, dark `DashCartBar` (count, subtotal,
+  "Buyurtma berish"); the menu sheet got the U4b picker-sheet look and a debounced search.
+- **Tables:** 2-column card grid (yellow icon tile, name, "Xizmat haqi", ⋯ menu); form on
+  `DashFormTheme` with sticky save ("10", not "10.0", when editing).
+- **Waiter shell:** one `DashPage` (title = tab, round settings + logout) with the storefront's
+  yellow-pill `StorefrontBottomNav`; Menu tab = `DashListCard`s with `DashThumb`.
+- **Real bug fixed:** `openRestaurantOrdersProvider` and `restaurantTablesListProvider` were missed
+  by the U4c5 account reset, so an account switch on the same phone showed the previous
+  restaurant's board and tables. Both now watch `currentUserIdProvider`.
+- **Verified:** `flutter analyze` clean, 76 unit tests. Temporary on-device test (deleted) with a
+  throwaway RESTAURANT retailer + waiter (seeded menu, 3 tables, 2 open orders; all deleted):
+  table add (12 %) → delete; board; delivery order detail → "Tayyorlashni boshlash" →
+  Tayyorlanmoqda; new dine-in order on VIP with 2 × Manti (64 000) → on the board; waiter shell
+  orders + menu; dark: waiter menu/orders, dine-in detail (service charge + waiter commission),
+  create, tables.
+- **Not checked:** delivery create with a map pin, courier assignment and the tracking link,
+  accepting as a courier (U4c7b's courier home embeds the board), editing a table, Russian/English
+  lengths. These screens still carry hard-coded Uzbek (Phase 8 I8); no new strings were added.
+
+**U4c7b (courier + fleet map), 2026-10-21:**
+- **Shared map overlay** (`lib/shared/widgets/map_overlay.dart`): `MapRoundButton`, `MapTopBar`
+  (back button, title pill, round actions; keeps the status-bar icons **dark** because the map stays
+  light in dark mode; they used to vanish there) and `MapCallButton` (ink, yellow in dark mode). The
+  U3c `DeliveryTrackingScreen` now uses them instead of its private copies.
+- **Courier home:** `DashPage` "Kuryer" with round alerts (`CourierAlertsButton` is now a
+  `DashRoundButton`), settings, logout. Header: `CourierOnlineCard` as a brand card (state circle,
+  Onlayn/Oflayn, switch; tinted and carrying the live `TrackingStatusPill` while online; the
+  AppBar pill is gone). Restaurant couriers switch Yetkazishlar / Buyurtmalar with a `PillToggle`
+  (was a `TabBar`), still refreshing deliveries when switching back.
+- **Deliveries tab:** `DashCard`s (status-tinted moped tile, label, badge, store / address /
+  customer lines, 48 px "Qabul qilish" on offers), yellow "Faol yetkazish bor" go-online banner,
+  `DashEmptyState`.
+- **Courier delivery map:** like U3c: no AppBar, `MapTopBar` + fit, the offline banner (or the live
+  pill when online) under it, brand pins (ink/yellow shop, ink/white customer), ink courier and
+  route. Bottom panel: big step title + badge, green ETA chip, the two stops in an inset card
+  (ink store / yellow customer circles, call button), 56 px Navigator + primary step buttons,
+  "Yetkazib bo'lmadi" / "Topshirdim" row unchanged.
+- **Disclosure:** `DashPage` with a yellow icon, the four items in a `DashCard` with icon tiles,
+  sticky "Hozir emas" / "Roziman" (or "Yopish").
+- **Fleet map:** `MapTopBar` with refresh + fit (the FAB is gone), legend chips under it, courier
+  cards at the bottom, restyled courier sheet.
+- **Verified:** `flutter analyze` clean, 76 unit tests. Temporary on-device test (deleted) with a
+  throwaway restaurant courier (seeded: store pin, an accepted restaurant delivery, an open B2C
+  offer, an open tracking session; all deleted): courier home, Buyurtmalar toggle, disclosure,
+  delivery map; owner fleet map with the stale courier + its sheet; then all of it in dark.
+- **Not checked:** going online for real (OS location prompt), live ETA/route (no Routes key
+  locally), the handover-code and fail sheets, a fleet with online/busy couriers. These screens
+  still have hard-coded Uzbek (Phase 8 I8); no new strings were added.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

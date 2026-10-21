@@ -22,6 +22,7 @@ import 'package:bsmart/features/deliveries/presentation/providers/delivery_detai
 import 'package:bsmart/features/deliveries/presentation/providers/delivery_route_notifier.dart';
 import 'package:bsmart/features/deliveries/presentation/widgets/handover_code_card.dart';
 import 'package:bsmart/features/deliveries/presentation/widgets/order_delivery_card.dart';
+import 'package:bsmart/shared/widgets/map_overlay.dart';
 
 /// "Where is my courier?" — the viewer's live map of one delivery (customer,
 /// and equally usable by owner/admin staff).
@@ -218,40 +219,11 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
               top: 0,
               left: 0,
               right: 0,
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                  child: Row(
-                    children: [
-                      _MapButton(
-                        icon: Icons.arrow_back_rounded,
-                        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                        onTap: () => Navigator.of(context).maybePop(),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Container(
-                          height: 48,
-                          alignment: Alignment.center,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.95),
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: const [BoxShadow(color: Color(0x1A000000), blurRadius: 10)],
-                          ),
-                          child: Text(
-                            title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      _MapButton(icon: Icons.zoom_out_map_rounded, tooltip: "Hammasini ko'rsatish", onTap: _fit),
-                    ],
-                  ),
-                ),
+              child: MapTopBar(
+                title: title,
+                actions: [
+                  MapRoundButton(icon: Icons.zoom_out_map_rounded, tooltip: "Hammasini ko'rsatish", onTap: _fit),
+                ],
               ),
             ),
             Positioned(
@@ -417,33 +389,6 @@ class _InfoPanel extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _MapButton extends StatelessWidget {
-  const _MapButton({required this.icon, required this.tooltip, required this.onTap});
-
-  final IconData icon;
-  final String tooltip;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Material(
-      color: scheme.surface,
-      shape: const CircleBorder(),
-      elevation: 3,
-      shadowColor: Colors.black26,
-      child: InkWell(
-        customBorder: const CircleBorder(),
-        onTap: onTap,
-        child: Tooltip(
-          message: tooltip,
-          child: SizedBox(width: 48, height: 48, child: Icon(icon, color: scheme.onSurface)),
         ),
       ),
     );

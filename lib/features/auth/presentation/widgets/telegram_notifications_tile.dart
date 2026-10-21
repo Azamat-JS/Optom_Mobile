@@ -6,6 +6,7 @@ import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/features/auth/domain/entities/telegram_notification_settings.dart';
 import 'package:bsmart/features/auth/presentation/providers/telegram_notifications_notifier.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
 
 /// "Telegram bildirishnomalari" in Profil (Phase 7 N3): a switch once the verify bot can message
 /// this account; otherwise a way to link it — verifying the phone through the bot links the chat
@@ -65,7 +66,7 @@ class TelegramNotificationsTile extends ConsumerWidget {
   }
 }
 
-/// Courier AppBar bell (Phase 7 N4): shows whether job alerts reach Telegram and opens the
+/// Courier header bell (Phase 7 N4; round since Phase 9): shows whether job alerts reach Telegram and opens the
 /// switch / "Ulash" in a sheet.
 class CourierAlertsButton extends ConsumerWidget {
   const CourierAlertsButton({super.key});
@@ -80,10 +81,10 @@ class CourierAlertsButton extends ConsumerWidget {
       TelegramNotificationSettings(enabled: true) => (Icons.notifications_active, l10n.tgNotifEnabled),
       _ => (Icons.notifications_off_outlined, l10n.tgNotifDisabled),
     };
-    return IconButton(
-      icon: Icon(icon),
+    return DashRoundButton(
+      icon: icon,
       tooltip: tooltip,
-      onPressed: () {
+      onTap: () {
         // Fresh state each time: the link can drop server-side (bot blocked → chat cleared).
         ref.invalidate(telegramNotificationsProvider);
         showModalBottomSheet<void>(
