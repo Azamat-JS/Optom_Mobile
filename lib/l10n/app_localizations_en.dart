@@ -2039,4 +2039,271 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debtsOriginal => 'Original amount';
+
+  @override
+  String get commonYes => 'Yes';
+
+  @override
+  String get commonNo => 'No';
+
+  @override
+  String get commonPhone => 'Phone';
+
+  @override
+  String get commonAddressRequired => 'Address *';
+
+  @override
+  String get restNeedDish => 'Add at least one dish';
+
+  @override
+  String get restPickTable => 'Choose a table';
+
+  @override
+  String get restAddressMissing => 'Enter the delivery address';
+
+  @override
+  String get restNewOrder => 'New order';
+
+  @override
+  String get restPlaceOrder => 'Place order';
+
+  @override
+  String get restTableRequired => 'Table *';
+
+  @override
+  String get restDeliveryPoint => 'Delivery location';
+
+  @override
+  String get restCustomerName => 'Customer name';
+
+  @override
+  String get restCustomerPhone => 'Customer phone';
+
+  @override
+  String get restDishes => 'Dishes';
+
+  @override
+  String get restNoDishesYet => 'No dishes added yet';
+
+  @override
+  String get restMenuSearchHint => 'Search the menu...';
+
+  @override
+  String restDishCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dishes',
+      one: '1 dish',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String restTableWith(String name) {
+    return 'Table: $name';
+  }
+
+  @override
+  String get restCreatedBy => 'Created by';
+
+  @override
+  String restServiceChargeWith(String percent) {
+    return 'Service charge ($percent%)';
+  }
+
+  @override
+  String restWaiterCommissionWith(String percent) {
+    return 'Waiter commission ($percent%)';
+  }
+
+  @override
+  String get restNoCourier => 'No courier assigned';
+
+  @override
+  String restCourierPending(String name) {
+    return '$name (pending)';
+  }
+
+  @override
+  String get restAwaitingAccept => 'Waiting for acceptance';
+
+  @override
+  String get restAssign => 'Assign';
+
+  @override
+  String get restPickCourier => 'Choose a courier';
+
+  @override
+  String get restUnassignedAll => '— Unassigned (offer to all couriers) —';
+
+  @override
+  String get restTrackingLink => 'Tracking link';
+
+  @override
+  String get restRevokeLinks => 'Revoke tracking links';
+
+  @override
+  String get restRevokeLinksTitle => 'Revoke the tracking links?';
+
+  @override
+  String get restRevokeLinksBody =>
+      'Every link sent to the customer stops working and open pages disconnect. You can send a new one if needed.';
+
+  @override
+  String get restRevoke => 'Revoke';
+
+  @override
+  String get restNoActiveLinks => 'There were no active links';
+
+  @override
+  String restLinksRevoked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count links revoked',
+      one: '1 link revoked',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String restShareTrackText(String order, String url) {
+    return 'Track your order $order on the map: $url';
+  }
+
+  @override
+  String get restShareTrackSubject => 'Order tracking';
+
+  @override
+  String get restCourierNotAccepted =>
+      'The courier hasn\'t accepted the order yet.';
+
+  @override
+  String get restActionPreparing => 'Start preparing';
+
+  @override
+  String get restActionReady => 'Mark as ready';
+
+  @override
+  String get restActionServed => 'Mark as served';
+
+  @override
+  String get restActionDelivered => 'Mark as delivered';
+
+  @override
+  String get restCancelOrder => 'Cancel order';
+
+  @override
+  String get restAccept => 'Accept';
+
+  @override
+  String get restCancelOrderTitle => 'Cancel the order';
+
+  @override
+  String get restCancelOrderConfirm => 'Do you want to cancel this order?';
+
+  @override
+  String get restNoOpenOrders => 'No open orders';
+
+  @override
+  String get restMenuEmpty => 'The menu is empty';
+
+  @override
+  String get tablesEditTitle => 'Edit table';
+
+  @override
+  String get tablesNewTitle => 'New table';
+
+  @override
+  String get tablesServiceChargeRequired => 'Service charge (%) *';
+
+  @override
+  String get tablesPercentMissing => 'Enter the percent';
+
+  @override
+  String get tablesPercentRange => 'Must be between 0 and 100';
+
+  @override
+  String get tablesDeleteTitle => 'Delete table';
+
+  @override
+  String tablesDeleteConfirm(String name) {
+    return 'Delete $name? If it has open orders, this will fail.';
+  }
+
+  @override
+  String get tablesNotFound => 'No tables found';
+
+  @override
+  String tablesServiceCharge(String percent) {
+    return 'Service charge: $percent%';
+  }
+
+  @override
+  String get staffStoreBranchRequired => 'Store (branch) *';
+
+  @override
+  String get waitersEditTitle => 'Edit waiter';
+
+  @override
+  String get waitersNewTitle => 'New waiter';
+
+  @override
+  String get waitersDeleteTitle => 'Delete waiter';
+
+  @override
+  String get waitersNotFound => 'No waiters found';
+
+  @override
+  String waitersUsage(String used, String limit) {
+    return '$used / $limit waiters in use';
+  }
+
+  @override
+  String get waitersCommissionOptional => 'Commission (%) — optional';
+
+  @override
+  String waitersCommission(String percent) {
+    return 'Commission: $percent%';
+  }
+
+  @override
+  String waitersToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Today: $count orders',
+      one: 'Today: 1 order',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get couriersEditTitle => 'Edit courier';
+
+  @override
+  String get couriersNewTitle => 'New courier';
+
+  @override
+  String get couriersDeleteTitle => 'Delete courier';
+
+  @override
+  String get couriersNotFound => 'No couriers found';
+
+  @override
+  String couriersUsage(String used, String limit) {
+    return '$used / $limit couriers in use';
+  }
+
+  @override
+  String couriersToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Today: $count deliveries',
+      one: 'Today: 1 delivery',
+    );
+    return '$_temp0';
+  }
 }

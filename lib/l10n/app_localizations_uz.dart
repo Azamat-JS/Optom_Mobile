@@ -1991,4 +1991,247 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get debtsOriginal => 'Dastlabki summa';
+
+  @override
+  String get commonYes => 'Ha';
+
+  @override
+  String get commonNo => 'Yo\'q';
+
+  @override
+  String get commonPhone => 'Telefon';
+
+  @override
+  String get commonAddressRequired => 'Manzil *';
+
+  @override
+  String get restNeedDish => 'Kamida bitta taom qo\'shing';
+
+  @override
+  String get restPickTable => 'Stolni tanlang';
+
+  @override
+  String get restAddressMissing => 'Yetkazib berish manzilini kiriting';
+
+  @override
+  String get restNewOrder => 'Yangi buyurtma';
+
+  @override
+  String get restPlaceOrder => 'Buyurtma berish';
+
+  @override
+  String get restTableRequired => 'Stol *';
+
+  @override
+  String get restDeliveryPoint => 'Yetkazib berish joyi';
+
+  @override
+  String get restCustomerName => 'Mijoz ismi';
+
+  @override
+  String get restCustomerPhone => 'Mijoz telefoni';
+
+  @override
+  String get restDishes => 'Taomlar';
+
+  @override
+  String get restNoDishesYet => 'Hali taom qo\'shilmagan';
+
+  @override
+  String get restMenuSearchHint => 'Menyudan qidirish...';
+
+  @override
+  String restDishCount(int count) {
+    return '$count ta taom';
+  }
+
+  @override
+  String restTableWith(String name) {
+    return 'Stol: $name';
+  }
+
+  @override
+  String get restCreatedBy => 'Yaratdi';
+
+  @override
+  String restServiceChargeWith(String percent) {
+    return 'Xizmat haqi ($percent%)';
+  }
+
+  @override
+  String restWaiterCommissionWith(String percent) {
+    return 'Ofitsiant xizmat haqi ($percent%)';
+  }
+
+  @override
+  String get restNoCourier => 'Kuryer tayinlanmagan';
+
+  @override
+  String restCourierPending(String name) {
+    return '$name (kutilmoqda)';
+  }
+
+  @override
+  String get restAwaitingAccept => 'Qabul qilinishi kutilmoqda';
+
+  @override
+  String get restAssign => 'Tayinlash';
+
+  @override
+  String get restPickCourier => 'Kuryerni tanlang';
+
+  @override
+  String get restUnassignedAll => '— Tayinlanmagan (barcha kuryerlarga) —';
+
+  @override
+  String get restTrackingLink => 'Kuzatish havolasi';
+
+  @override
+  String get restRevokeLinks => 'Kuzatish havolalarini bekor qilish';
+
+  @override
+  String get restRevokeLinksTitle => 'Kuzatish havolalarini bekor qilish?';
+
+  @override
+  String get restRevokeLinksBody =>
+      'Mijozga yuborilgan barcha havolalar ishlamay qoladi, ochiq sahifalar ham uziladi. Kerak bo\'lsa yangisini yuborishingiz mumkin.';
+
+  @override
+  String get restRevoke => 'Bekor qilish';
+
+  @override
+  String get restNoActiveLinks => 'Faol havola yo\'q edi';
+
+  @override
+  String restLinksRevoked(int count) {
+    return '$count ta havola bekor qilindi';
+  }
+
+  @override
+  String restShareTrackText(String order, String url) {
+    return '$order buyurtmangizni xaritada kuzating: $url';
+  }
+
+  @override
+  String get restShareTrackSubject => 'Buyurtmani kuzatish';
+
+  @override
+  String get restCourierNotAccepted => 'Kuryer buyurtmani hali qabul qilmagan.';
+
+  @override
+  String get restActionPreparing => 'Tayyorlashni boshlash';
+
+  @override
+  String get restActionReady => 'Tayyor deb belgilash';
+
+  @override
+  String get restActionServed => 'Berildi deb belgilash';
+
+  @override
+  String get restActionDelivered => 'Yetkazildi deb belgilash';
+
+  @override
+  String get restCancelOrder => 'Bekor qilish';
+
+  @override
+  String get restAccept => 'Qabul qilish';
+
+  @override
+  String get restCancelOrderTitle => 'Buyurtmani bekor qilish';
+
+  @override
+  String get restCancelOrderConfirm =>
+      'Bu buyurtmani bekor qilishni tasdiqlaysizmi?';
+
+  @override
+  String get restNoOpenOrders => 'Ochiq buyurtmalar yo\'q';
+
+  @override
+  String get restMenuEmpty => 'Menyu bo\'sh';
+
+  @override
+  String get tablesEditTitle => 'Stolni tahrirlash';
+
+  @override
+  String get tablesNewTitle => 'Yangi stol';
+
+  @override
+  String get tablesServiceChargeRequired => 'Xizmat haqi (%) *';
+
+  @override
+  String get tablesPercentMissing => 'Foizni kiriting';
+
+  @override
+  String get tablesPercentRange => '0 dan 100 gacha bo\'lishi kerak';
+
+  @override
+  String get tablesDeleteTitle => 'Stolni o\'chirish';
+
+  @override
+  String tablesDeleteConfirm(String name) {
+    return '$name o\'chirilsinmi? Ochiq buyurtmasi bo\'lsa, xatolik qaytadi.';
+  }
+
+  @override
+  String get tablesNotFound => 'Stollar topilmadi';
+
+  @override
+  String tablesServiceCharge(String percent) {
+    return 'Xizmat haqi: $percent%';
+  }
+
+  @override
+  String get staffStoreBranchRequired => 'Do\'kon (filial) *';
+
+  @override
+  String get waitersEditTitle => 'Ofitsiantni tahrirlash';
+
+  @override
+  String get waitersNewTitle => 'Yangi ofitsiant';
+
+  @override
+  String get waitersDeleteTitle => 'Ofitsiantni o\'chirish';
+
+  @override
+  String get waitersNotFound => 'Ofitsiantlar topilmadi';
+
+  @override
+  String waitersUsage(String used, String limit) {
+    return '$used / $limit ofitsiant ishlatilmoqda';
+  }
+
+  @override
+  String get waitersCommissionOptional => 'Komissiya (%) — ixtiyoriy';
+
+  @override
+  String waitersCommission(String percent) {
+    return 'Komissiya: $percent%';
+  }
+
+  @override
+  String waitersToday(int count) {
+    return 'Bugun: $count ta buyurtma';
+  }
+
+  @override
+  String get couriersEditTitle => 'Kuryerni tahrirlash';
+
+  @override
+  String get couriersNewTitle => 'Yangi kuryer';
+
+  @override
+  String get couriersDeleteTitle => 'Kuryerni o\'chirish';
+
+  @override
+  String get couriersNotFound => 'Kuryerlar topilmadi';
+
+  @override
+  String couriersUsage(String used, String limit) {
+    return '$used / $limit kuryer ishlatilmoqda';
+  }
+
+  @override
+  String couriersToday(int count) {
+    return 'Bugun: $count ta yetkazish';
+  }
 }

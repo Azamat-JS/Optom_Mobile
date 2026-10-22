@@ -67,7 +67,7 @@ class _RestaurantTableFormScreenState extends State<RestaurantTableFormScreen> {
   @override
   Widget build(BuildContext context) {
     return DashPage(
-      title: _isEditing ? 'Stolni tahrirlash' : 'Yangi stol',
+      title: _isEditing ? context.l10n.tablesEditTitle : context.l10n.tablesNewTitle,
       bottomBar: DashBottomButton(label: context.l10n.commonSave, busy: _isSaving, onPressed: _submit),
       body: DashFormTheme(
         child: Form(
@@ -77,18 +77,22 @@ class _RestaurantTableFormScreenState extends State<RestaurantTableFormScreen> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nomi *', hintText: '5'),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Nomini kiriting' : null,
+                decoration: InputDecoration(labelText: context.l10n.commonNameRequired, hintText: '5'),
+                validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonNameMissing : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _percentController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Xizmat haqi (%) *', hintText: '10', suffixText: '%'),
+                decoration: InputDecoration(
+                  labelText: context.l10n.tablesServiceChargeRequired,
+                  hintText: '10',
+                  suffixText: '%',
+                ),
                 validator: (v) {
                   final value = double.tryParse((v ?? '').trim());
-                  if (value == null) return 'Foizni kiriting';
-                  if (value < 0 || value > 100) return '0 dan 100 gacha bo\'lishi kerak';
+                  if (value == null) return context.l10n.tablesPercentMissing;
+                  if (value < 0 || value > 100) return context.l10n.tablesPercentRange;
                   return null;
                 },
               ),

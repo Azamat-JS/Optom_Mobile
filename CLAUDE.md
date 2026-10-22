@@ -1427,7 +1427,9 @@ Settings + the registration/login flow. Backend error messages and Telegram bot 
 | I5 | Web role pages: wholesaler + retailer (incl. restaurant/POS) | 🟢 Done 2026-10-11: the remaining page files (admins, categories, dashboards, debts, my-debts, payments, orders, products, catalog, customer-orders, customers, restaurant-orders) converted; 1864 keys, parity OK, `tsc` clean. Verified in headless Chromium in ru and en with temporary SELLER and RESTAURANT RETAILER accounts (since deleted): no leftover Uzbek, no next-intl errors (see "Phase 8 I5 notes") |
 | I6 | Web role pages: customer + super-admin + courier; leftover-string sweep | 🟢 Done 2026-10-11: customer (dashboard, catalog, orders, debts) and super-admin (dashboard, users, wholesalers, categories, master products) pages converted; courier screens were already covered by I4 components. A vocabulary-based sweep over `app/` + `src/` found and fixed leftovers in shared POS/product components. Unused `*_LABELS` maps and `formatProductUnit` deleted. 1969 keys, parity OK, `tsc` clean. Verified in headless Chromium in ru and en with temporary CUSTOMER, SUPER_ADMIN, RESTAURANT RETAILER and COURIER accounts (since deleted) (see "Phase 8 I6 notes") |
 | I7 | Mobile features batch 1: operator core (products, categories, orders, sales/POS, customers, debts, stores/admins, expenditures, reports, dashboard) | 🟢 Done 2026-10-11: the operator feature folders plus master catalog and the shared scanner/location widgets converted; core enum labels, `ApiException` fallbacks and the currency suffix are localized through `appL10n`. 395 ARB keys with uz/ru/en parity, `flutter analyze` clean, 46 tests (5 new). Verified on the Pixel_9a emulator with a temporary SELLER account (since deleted) in ru and en: home, all drawer screens, product detail/form, stock sheet, POS → checkout, orders, and the create forms (see "Phase 8 I7 notes") |
-| I8 | Mobile features batch 2: customer storefront/favorites, super-admin, restaurant, courier/deliveries/tracking; leftover-string sweep | ⚪ |
+| I8a | Mobile batch 2a: restaurant (order board, create, detail, waiter menu), tables, the owner's waiter and courier management | 🟢 Done 2026-10-22: 71 new ARB keys (639, uz/ru/en parity), `flutter analyze` clean, 76 tests. Verified on the iPhone 17 simulator in ru and en with a temporary restaurant owner + waiter (deleted): board, both order details, create + menu sheet, tables + delete dialog + form, waiters/couriers lists + forms with validation errors, waiter shell (see "Phase 8 I8 notes") |
+| I8b | Mobile batch 2b: courier home, deliveries, delivery map + sheets, tracking (online card, pill, details sheet, disclosure, notification text), fleet map, customer deliveries/tracking | ⚪ |
+| I8c | Mobile batch 2c: super-admin (home, users, forms), storefront/favorites leftovers, core enum fallbacks; final leftover-string sweep | ⚪ |
 
 **Phase 8 I2 notes (bsmart, 2026-10-10):**
 - **Setup:**
@@ -1558,6 +1560,29 @@ Settings + the registration/login flow. Backend error messages and Telegram bot 
 - **Web fix, same day:** switching the web language behind a host-rewriting proxy failed with "This
   page couldn't load … `@E80`". `useChangeLocale` now writes the cookie client-side and calls
   `router.refresh()` instead of using a Server Action; see Optom_Savdo/CLAUDE.md i18n.
+
+**Phase 8 I8 notes (bsmart, 2026-10-22):**
+- I8 was split after a scan found ~340 hard-coded strings in 52 files: I8a restaurant + staff
+  management, I8b courier/deliveries/tracking/fleet, I8c super-admin, storefront leftovers, core
+  enums and the final sweep.
+- **Key prefixes:** `rest*` (restaurant orders), `tables*`, `waiters*`, `couriers*`, plus a few new
+  common keys (`commonYes`, `commonNo`, `commonPhone`, `commonAddressRequired`,
+  `staffStoreBranchRequired`). Existing keys were reused wherever the wording matched (name /
+  phone / password fields, cancel / delete / edit, (de)activate, `commonDeletePermanentlyConfirm`,
+  `authPhoneFormat`, `loginPasswordMinLength`, `navWaiters`/`navCouriers`/`navTables`, role labels
+  via `UserRole.x.label`).
+- Russian and English counts are ICU plurals (`restDishCount`, `restLinksRevoked`, `waitersToday`,
+  `couriersToday`); Uzbek keeps one form ("{count} ta …").
+- The shared tracking link text ("… buyurtmangizni xaritada kuzating: url") now follows the
+  staff's language, since the customer gets it from the staff member's own share sheet.
+- **Toolkit (session scratchpad, not committed; recreate if lost):** `scan.py` (string literals
+  that look like Uzbek UI text, per file), `arbadd.py` (adds keys to all three ARBs; `@key`
+  placeholder metadata in uz, `int` when any language uses a plural; the ARBs round-trip
+  byte-identically through it), `rep.py` (exact-substring replacements per file, each with an
+  expected count, adds the l10n import).
+- **Device check pattern:** log in with the app in Uzbek (the login finders use Uzbek text), then
+  `localeProvider.notifier.setLanguage('ru'|'en')`, and switch back to `uz` at the end; the choice
+  is persisted.
 
 ### Phase 9 — UI redesign from user-supplied references (mobile only)
 

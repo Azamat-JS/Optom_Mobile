@@ -1091,5 +1091,183 @@
     }
   },
   "debtsItemsTitle": "Qarzlar ro'yxati",
-  "debtsOriginal": "Dastlabki summa"
+  "debtsOriginal": "Dastlabki summa",
+  "commonYes": "Ha",
+  "commonNo": "Yo'q",
+  "commonPhone": "Telefon",
+  "commonAddressRequired": "Manzil *",
+  "restNeedDish": "Kamida bitta taom qo'shing",
+  "restPickTable": "Stolni tanlang",
+  "restAddressMissing": "Yetkazib berish manzilini kiriting",
+  "restNewOrder": "Yangi buyurtma",
+  "restPlaceOrder": "Buyurtma berish",
+  "restTableRequired": "Stol *",
+  "restDeliveryPoint": "Yetkazib berish joyi",
+  "restCustomerName": "Mijoz ismi",
+  "restCustomerPhone": "Mijoz telefoni",
+  "restDishes": "Taomlar",
+  "restNoDishesYet": "Hali taom qo'shilmagan",
+  "restMenuSearchHint": "Menyudan qidirish...",
+  "restDishCount": "{count} ta taom",
+  "@restDishCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "restTableWith": "Stol: {name}",
+  "@restTableWith": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "restCreatedBy": "Yaratdi",
+  "restServiceChargeWith": "Xizmat haqi ({percent}%)",
+  "@restServiceChargeWith": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "restWaiterCommissionWith": "Ofitsiant xizmat haqi ({percent}%)",
+  "@restWaiterCommissionWith": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "restNoCourier": "Kuryer tayinlanmagan",
+  "restCourierPending": "{name} (kutilmoqda)",
+  "@restCourierPending": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "restAwaitingAccept": "Qabul qilinishi kutilmoqda",
+  "restAssign": "Tayinlash",
+  "restPickCourier": "Kuryerni tanlang",
+  "restUnassignedAll": "— Tayinlanmagan (barcha kuryerlarga) —",
+  "restTrackingLink": "Kuzatish havolasi",
+  "restRevokeLinks": "Kuzatish havolalarini bekor qilish",
+  "restRevokeLinksTitle": "Kuzatish havolalarini bekor qilish?",
+  "restRevokeLinksBody": "Mijozga yuborilgan barcha havolalar ishlamay qoladi, ochiq sahifalar ham uziladi. Kerak bo'lsa yangisini yuborishingiz mumkin.",
+  "restRevoke": "Bekor qilish",
+  "restNoActiveLinks": "Faol havola yo'q edi",
+  "restLinksRevoked": "{count} ta havola bekor qilindi",
+  "@restLinksRevoked": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "restShareTrackText": "{order} buyurtmangizni xaritada kuzating: {url}",
+  "@restShareTrackText": {
+    "placeholders": {
+      "order": {
+        "type": "String"
+      },
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "restShareTrackSubject": "Buyurtmani kuzatish",
+  "restCourierNotAccepted": "Kuryer buyurtmani hali qabul qilmagan.",
+  "restActionPreparing": "Tayyorlashni boshlash",
+  "restActionReady": "Tayyor deb belgilash",
+  "restActionServed": "Berildi deb belgilash",
+  "restActionDelivered": "Yetkazildi deb belgilash",
+  "restCancelOrder": "Bekor qilish",
+  "restAccept": "Qabul qilish",
+  "restCancelOrderTitle": "Buyurtmani bekor qilish",
+  "restCancelOrderConfirm": "Bu buyurtmani bekor qilishni tasdiqlaysizmi?",
+  "restNoOpenOrders": "Ochiq buyurtmalar yo'q",
+  "restMenuEmpty": "Menyu bo'sh",
+  "tablesEditTitle": "Stolni tahrirlash",
+  "tablesNewTitle": "Yangi stol",
+  "tablesServiceChargeRequired": "Xizmat haqi (%) *",
+  "tablesPercentMissing": "Foizni kiriting",
+  "tablesPercentRange": "0 dan 100 gacha bo'lishi kerak",
+  "tablesDeleteTitle": "Stolni o'chirish",
+  "tablesDeleteConfirm": "{name} o'chirilsinmi? Ochiq buyurtmasi bo'lsa, xatolik qaytadi.",
+  "@tablesDeleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tablesNotFound": "Stollar topilmadi",
+  "tablesServiceCharge": "Xizmat haqi: {percent}%",
+  "@tablesServiceCharge": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "staffStoreBranchRequired": "Do'kon (filial) *",
+  "waitersEditTitle": "Ofitsiantni tahrirlash",
+  "waitersNewTitle": "Yangi ofitsiant",
+  "waitersDeleteTitle": "Ofitsiantni o'chirish",
+  "waitersNotFound": "Ofitsiantlar topilmadi",
+  "waitersUsage": "{used} / {limit} ofitsiant ishlatilmoqda",
+  "@waitersUsage": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "waitersCommissionOptional": "Komissiya (%) — ixtiyoriy",
+  "waitersCommission": "Komissiya: {percent}%",
+  "@waitersCommission": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "waitersToday": "Bugun: {count} ta buyurtma",
+  "@waitersToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "couriersEditTitle": "Kuryerni tahrirlash",
+  "couriersNewTitle": "Yangi kuryer",
+  "couriersDeleteTitle": "Kuryerni o'chirish",
+  "couriersNotFound": "Kuryerlar topilmadi",
+  "couriersUsage": "{used} / {limit} kuryer ishlatilmoqda",
+  "@couriersUsage": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "couriersToday": "Bugun: {count} ta yetkazish",
+  "@couriersToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

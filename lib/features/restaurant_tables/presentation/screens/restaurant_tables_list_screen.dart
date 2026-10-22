@@ -31,11 +31,11 @@ class RestaurantTablesListScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Stolni o'chirish"),
-        content: Text('${table.name} oʻchirilsinmi? Ochiq buyurtmasi bo\'lsa, xatolik qaytadi.'),
+        title: Text(context.l10n.tablesDeleteTitle),
+        content: Text(context.l10n.tablesDeleteConfirm(table.name)),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("O'chirish")),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -75,7 +75,7 @@ class RestaurantTablesListScreen extends ConsumerWidget {
           backgroundColor: AppColors.brandYellow,
           onRefresh: () => ref.read(restaurantTablesListProvider.notifier).refresh(),
           child: tables.isEmpty
-              ? const DashEmptyState(icon: Icons.table_restaurant_rounded, text: 'Stollar topilmadi')
+              ? DashEmptyState(icon: Icons.table_restaurant_rounded, text: l10n.tablesNotFound)
               // A Wrap rather than a grid: cards take the height of their
               // text, so a long name or a large text scale never overflows.
               : LayoutBuilder(
@@ -155,7 +155,7 @@ class _TableCard extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            'Xizmat haqi: $percent%',
+            l10n.tablesServiceCharge(percent),
             style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
           ),
         ],

@@ -73,7 +73,7 @@ class RestaurantOrdersBoardScreen extends ConsumerWidget {
         backgroundColor: AppColors.brandYellow,
         onRefresh: () => ref.read(openRestaurantOrdersProvider.notifier).refresh(),
         child: orders.isEmpty
-            ? const DashEmptyState(icon: Icons.dining_rounded, text: "Ochiq buyurtmalar yo'q")
+            ? DashEmptyState(icon: Icons.dining_rounded, text: l10n.restNoOpenOrders)
             : ListView.separated(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
@@ -94,16 +94,16 @@ class RestaurantOrdersBoardScreen extends ConsumerWidget {
                       child: Icon(dineIn ? Icons.table_restaurant_rounded : Icons.moped_rounded, color: tint),
                     ),
                     title: dineIn
-                        ? 'Stol: ${order.tableNumber ?? order.table?.name ?? '—'}'
+                        ? l10n.restTableWith(order.tableNumber ?? order.table?.name ?? '—')
                         : (order.customerName?.isNotEmpty == true ? order.customerName! : order.orderNumber),
                     subtitle: [
                       _timeFormat.format(order.createdAt.toLocal()),
-                      '${order.items.length} ta taom',
+                      l10n.restDishCount(order.items.length),
                       if (order.waiter != null) order.waiter!.fullName,
                       if (!dineIn)
                         order.isCourierAssignmentPending
-                            ? '${order.courier?.fullName ?? ''} (kutilmoqda)'
-                            : (order.courier?.fullName ?? 'Kuryer tayinlanmagan'),
+                            ? l10n.restCourierPending(order.courier?.fullName ?? '')
+                            : (order.courier?.fullName ?? l10n.restNoCourier),
                     ].join(' · '),
                     trailing: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,

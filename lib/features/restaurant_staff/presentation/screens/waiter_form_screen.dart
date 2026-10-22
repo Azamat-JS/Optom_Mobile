@@ -54,7 +54,7 @@ class _WaiterFormScreenState extends ConsumerState<WaiterFormScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedStoreId == null) {
-      setState(() => _errorMessage = "Do'kon tanlanishi shart");
+      setState(() => _errorMessage = context.l10n.staffStoreRequired);
       return;
     }
     setState(() {
@@ -99,7 +99,7 @@ class _WaiterFormScreenState extends ConsumerState<WaiterFormScreen> {
     final storesAsync = ref.watch(storesListProvider);
 
     return DashPage(
-      title: _isEditing ? 'Ofitsiantni tahrirlash' : 'Yangi ofitsiant',
+      title: _isEditing ? context.l10n.waitersEditTitle : context.l10n.waitersNewTitle,
       bottomBar: DashBottomButton(label: context.l10n.commonSave, busy: _isSaving, onPressed: _submit),
       body: DashFormTheme(
         child: Form(
@@ -109,10 +109,10 @@ class _WaiterFormScreenState extends ConsumerState<WaiterFormScreen> {
             children: [
               storesAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, _) => Text('Xatolik: $error'),
+                error: (error, _) => Text(context.l10n.commonErrorWith('$error')),
                 data: (stores) => DropdownButtonFormField<String>(
                   initialValue: _selectedStoreId,
-                  decoration: const InputDecoration(labelText: "Do'kon (filial) *"),
+                  decoration: InputDecoration(labelText: context.l10n.staffStoreBranchRequired),
                   items: [for (final store in stores) DropdownMenuItem(value: store.id, child: Text(store.name))],
                   onChanged: (value) => setState(() => _selectedStoreId = value),
                 ),
@@ -120,23 +120,23 @@ class _WaiterFormScreenState extends ConsumerState<WaiterFormScreen> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _firstNameController,
-                decoration: const InputDecoration(labelText: 'Ism *'),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Ismni kiriting' : null,
+                decoration: InputDecoration(labelText: context.l10n.commonFirstNameRequired),
+                validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonFirstNameMissing : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _lastNameController,
-                decoration: const InputDecoration(labelText: 'Familiya *'),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Familiyani kiriting' : null,
+                decoration: InputDecoration(labelText: context.l10n.commonLastNameRequired),
+                validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonLastNameMissing : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(labelText: 'Telefon *', hintText: '+998901234567'),
+                decoration: InputDecoration(labelText: context.l10n.commonPhoneRequired, hintText: '+998901234567'),
                 validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'Telefon raqamini kiriting';
-                  if (!RegExp(r'^\+998\d{9}$').hasMatch(v.trim())) return 'Format: +998XXXXXXXXX';
+                  if (v == null || v.trim().isEmpty) return context.l10n.commonPhoneMissing;
+                  if (!RegExp(r'^\+998\d{9}$').hasMatch(v.trim())) return context.l10n.authPhoneFormat;
                   return null;
                 },
               ),
@@ -144,15 +144,15 @@ class _WaiterFormScreenState extends ConsumerState<WaiterFormScreen> {
               TextFormField(
                 controller: _commissionController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Komissiya (%) — ixtiyoriy', hintText: '5'),
+                decoration: InputDecoration(labelText: context.l10n.waitersCommissionOptional, hintText: '5'),
               ),
               if (!_isEditing) ...[
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Parol *'),
-                  validator: (v) => (v == null || v.length < 6) ? 'Kamida 6 ta belgi' : null,
+                  decoration: InputDecoration(labelText: context.l10n.commonPasswordRequired),
+                  validator: (v) => (v == null || v.length < 6) ? context.l10n.loginPasswordMinLength : null,
                 ),
               ],
               if (_errorMessage != null) ...[

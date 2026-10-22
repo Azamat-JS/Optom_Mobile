@@ -86,13 +86,11 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Kuzatish havolalarini bekor qilish?'),
-        content: const Text(
-          "Mijozga yuborilgan barcha havolalar ishlamay qoladi, ochiq sahifalar ham uziladi. Kerak bo'lsa yangisini yuborishingiz mumkin.",
-        ),
+        title: Text(context.l10n.restRevokeLinksTitle),
+        content: Text(context.l10n.restRevokeLinksBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text("Yo'q")),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Bekor qilish')),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonNo)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.restRevoke)),
         ],
       ),
     );
@@ -102,9 +100,9 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
     if (!mounted) return;
     setState(() => _isBusy = false);
     result.fold(
-      (count) => ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(count == 0 ? "Faol havola yo'q edi" : '$count ta havola bekor qilindi'))),
+      (count) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(count == 0 ? context.l10n.restNoActiveLinks : context.l10n.restLinksRevoked(count))),
+      ),
       (failure) => _showError(failure.message),
     );
   }
@@ -137,11 +135,11 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
     setState(() => _isBusy = false);
     await result.fold(
       (link) => Share.share(
-        '${order.orderNumber} buyurtmangizni xaritada kuzating: ${link.url}',
-        subject: 'Buyurtmani kuzatish',
+        context.l10n.restShareTrackText(order.orderNumber, link.url),
+        subject: context.l10n.restShareTrackSubject,
       ),
       (failure) async =>
-          _showError(failure is NotFoundApiException ? 'Kuryer buyurtmani hali qabul qilmagan.' : failure.message),
+          _showError(failure is NotFoundApiException ? context.l10n.restCourierNotAccepted : failure.message),
     );
   }
 
@@ -156,11 +154,11 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
     final selected = await showDialog<String?>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Kuryerni tanlang'),
+        title: Text(context.l10n.restPickCourier),
         children: [
           SimpleDialogOption(
             onPressed: () => Navigator.of(context).pop(null),
-            child: const Text('— Tayinlanmagan (barcha kuryerlarga) —'),
+            child: Text(context.l10n.restUnassignedAll),
           ),
           for (final courier in couriers)
             SimpleDialogOption(onPressed: () => Navigator.of(context).pop(courier.id), child: Text(courier.fullName)),
@@ -183,11 +181,11 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
   }
 
   String _statusActionLabel(RestaurantOrderStatus status) => switch (status) {
-    RestaurantOrderStatus.preparing => 'Tayyorlashni boshlash',
-    RestaurantOrderStatus.ready => 'Tayyor deb belgilash',
-    RestaurantOrderStatus.served => 'Berildi deb belgilash',
-    RestaurantOrderStatus.delivered => 'Yetkazildi deb belgilash',
-    RestaurantOrderStatus.cancelled => 'Bekor qilish',
+    RestaurantOrderStatus.preparing => context.l10n.restActionPreparing,
+    RestaurantOrderStatus.ready => context.l10n.restActionReady,
+    RestaurantOrderStatus.served => context.l10n.restActionServed,
+    RestaurantOrderStatus.delivered => context.l10n.restActionDelivered,
+    RestaurantOrderStatus.cancelled => context.l10n.restCancelOrder,
     RestaurantOrderStatus.newOrder => '',
   };
 
@@ -207,7 +205,7 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
         (getStatusActions(order, role, userId).isNotEmpty || canAcceptOrder(order, role, userId));
 
     return DashPage(
-      title: order?.orderNumber ?? 'Buyurtma',
+      title: order?.orderNumber ?? l10n.ordersOrder,
       bottomBar: showActions ? _buildActions(order, role, userId) : null,
       body: _errorMessage != null && order == null
           ? DashEmptyState(
@@ -229,9 +227,9 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
                   const SizedBox(height: 12),
                   _buildInfoCard(order),
                   DashSectionTitle(
-                    'Taomlar',
+                    l10n.restDishes,
                     trailing: Text(
-                      '${order.items.length} ta taom',
+                      l10n.restDishCount(order.items.length),
                       style: TextStyle(color: BrandColors.of(context).textMuted, fontWeight: FontWeight.w700),
                     ),
                   ),
@@ -284,7 +282,10 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  [order.type.label, if (dineIn) 'Stol: ${order.tableNumber ?? order.table?.name ?? '—'}'].join(' · '),
+                  [
+                    order.type.label,
+                    if (dineIn) context.l10n.restTableWith(order.tableNumber ?? order.table?.name ?? '—'),
+                  ].join(' · '),
                   style: TextStyle(color: colors.textSecondary, fontSize: 14, fontWeight: FontWeight.w700),
                 ),
               ),
@@ -296,6 +297,7 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
   }
 
   Widget _buildInfoCard(RestaurantOrder order) {
+    final l10n = context.l10n;
     final colors = BrandColors.of(context);
     Widget row(IconData icon, String label, String value) => Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -323,12 +325,13 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
       ),
     );
     final rows = [
-      if (order.type == RestaurantOrderType.delivery) row(Icons.place_rounded, 'Manzil', order.deliveryAddress ?? '—'),
-      if (order.customerName?.isNotEmpty == true) row(Icons.person_rounded, 'Mijoz', order.customerName!),
-      if (order.customerPhone?.isNotEmpty == true) row(Icons.phone_rounded, 'Telefon', order.customerPhone!),
-      if (order.waiter != null) row(Icons.room_service_rounded, 'Ofitsiant', order.waiter!.fullName),
-      if (order.createdBy != null) row(Icons.badge_rounded, 'Yaratdi', order.createdBy!.fullName),
-      if (order.notes?.isNotEmpty == true) row(Icons.notes_rounded, 'Izoh', order.notes!),
+      if (order.type == RestaurantOrderType.delivery)
+        row(Icons.place_rounded, l10n.commonAddress, order.deliveryAddress ?? '—'),
+      if (order.customerName?.isNotEmpty == true) row(Icons.person_rounded, l10n.salesCustomer, order.customerName!),
+      if (order.customerPhone?.isNotEmpty == true) row(Icons.phone_rounded, l10n.commonPhone, order.customerPhone!),
+      if (order.waiter != null) row(Icons.room_service_rounded, UserRole.waiter.label, order.waiter!.fullName),
+      if (order.createdBy != null) row(Icons.badge_rounded, l10n.restCreatedBy, order.createdBy!.fullName),
+      if (order.notes?.isNotEmpty == true) row(Icons.notes_rounded, l10n.commonNote, order.notes!),
     ];
     if (rows.isEmpty) return const SizedBox.shrink();
     return DashCard(
@@ -384,7 +387,7 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
           if (order.serviceChargeAmount > 0) ...[
             const SizedBox(height: 6),
             BillRow(
-              label: 'Xizmat haqi (${order.serviceChargePercent.toStringAsFixed(0)}%)',
+              label: l10n.restServiceChargeWith(order.serviceChargePercent.toStringAsFixed(0)),
               value: money(order.serviceChargeAmount),
               muted: true,
             ),
@@ -392,7 +395,7 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
           if (order.waiterCommissionAmount > 0) ...[
             const SizedBox(height: 6),
             BillRow(
-              label: 'Ofitsiant xizmat haqi (${order.waiterCommissionPercent.toStringAsFixed(0)}%)',
+              label: l10n.restWaiterCommissionWith(order.waiterCommissionPercent.toStringAsFixed(0)),
               value: money(order.waiterCommissionAmount),
               muted: true,
             ),
@@ -438,12 +441,12 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      order.courier?.fullName ?? 'Kuryer tayinlanmagan',
+                      order.courier?.fullName ?? context.l10n.restNoCourier,
                       style: TextStyle(color: colors.textPrimary, fontSize: 15.5, fontWeight: FontWeight.w700),
                     ),
                     if (order.courier != null)
                       Text(
-                        order.isCourierAssignmentPending ? 'Qabul qilinishi kutilmoqda' : 'Kuryer',
+                        order.isCourierAssignmentPending ? context.l10n.restAwaitingAccept : UserRole.courier.label,
                         style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
                       ),
                   ],
@@ -463,14 +466,14 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
                     onPressed: _assignCourier,
                     style: buttonStyle,
                     icon: const Icon(Icons.person_add_alt_1_rounded, size: 18),
-                    label: const Text('Tayinlash'),
+                    label: Text(context.l10n.restAssign),
                   ),
                 if (canShare)
                   OutlinedButton.icon(
                     onPressed: _isBusy ? null : () => _shareTrackingLink(order),
                     style: buttonStyle,
                     icon: const Icon(Icons.share_location_rounded, size: 18),
-                    label: const Text('Kuzatish havolasi'),
+                    label: Text(context.l10n.restTrackingLink),
                   ),
               ],
             ),
@@ -480,7 +483,7 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
             TextButton.icon(
               onPressed: _isBusy ? null : () => _revokeTrackingLinks(delivery),
               icon: const Icon(Icons.link_off_rounded, size: 18),
-              label: const Text('Kuzatish havolalarini bekor qilish'),
+              label: Text(context.l10n.restRevokeLinks),
             ),
           ],
         ],
@@ -508,7 +511,7 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
             foregroundColor: error,
             side: BorderSide(color: error.withValues(alpha: 0.5)),
           ),
-          child: const Text('Bekor qilish', maxLines: 1, overflow: TextOverflow.ellipsis),
+          child: Text(context.l10n.restCancelOrder, maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
     ];
     final forward = [
@@ -517,7 +520,7 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
           onPressed: _isBusy ? null : _accept,
           style: FilledButton.styleFrom(minimumSize: height, shape: shape),
           icon: const Icon(Icons.check_rounded),
-          label: const Text('Qabul qilish'),
+          label: Text(context.l10n.restAccept),
         ),
       for (final status in actions)
         if (status != RestaurantOrderStatus.cancelled)
@@ -549,11 +552,11 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Buyurtmani bekor qilish'),
-        content: const Text('Bu buyurtmani bekor qilishni tasdiqlaysizmi?'),
+        title: Text(context.l10n.restCancelOrderTitle),
+        content: Text(context.l10n.restCancelOrderConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text("Yo'q")),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Ha')),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonNo)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonYes)),
         ],
       ),
     );

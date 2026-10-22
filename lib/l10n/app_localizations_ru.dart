@@ -2050,4 +2050,274 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get debtsOriginal => 'Исходная сумма';
+
+  @override
+  String get commonYes => 'Да';
+
+  @override
+  String get commonNo => 'Нет';
+
+  @override
+  String get commonPhone => 'Телефон';
+
+  @override
+  String get commonAddressRequired => 'Адрес *';
+
+  @override
+  String get restNeedDish => 'Добавьте хотя бы одно блюдо';
+
+  @override
+  String get restPickTable => 'Выберите стол';
+
+  @override
+  String get restAddressMissing => 'Введите адрес доставки';
+
+  @override
+  String get restNewOrder => 'Новый заказ';
+
+  @override
+  String get restPlaceOrder => 'Оформить заказ';
+
+  @override
+  String get restTableRequired => 'Стол *';
+
+  @override
+  String get restDeliveryPoint => 'Место доставки';
+
+  @override
+  String get restCustomerName => 'Имя клиента';
+
+  @override
+  String get restCustomerPhone => 'Телефон клиента';
+
+  @override
+  String get restDishes => 'Блюда';
+
+  @override
+  String get restNoDishesYet => 'Блюда ещё не добавлены';
+
+  @override
+  String get restMenuSearchHint => 'Поиск по меню...';
+
+  @override
+  String restDishCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count блюд',
+      few: '$count блюда',
+      one: '$count блюдо',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String restTableWith(String name) {
+    return 'Стол: $name';
+  }
+
+  @override
+  String get restCreatedBy => 'Создал';
+
+  @override
+  String restServiceChargeWith(String percent) {
+    return 'Обслуживание ($percent%)';
+  }
+
+  @override
+  String restWaiterCommissionWith(String percent) {
+    return 'Комиссия официанта ($percent%)';
+  }
+
+  @override
+  String get restNoCourier => 'Курьер не назначен';
+
+  @override
+  String restCourierPending(String name) {
+    return '$name (ожидает)';
+  }
+
+  @override
+  String get restAwaitingAccept => 'Ожидает принятия';
+
+  @override
+  String get restAssign => 'Назначить';
+
+  @override
+  String get restPickCourier => 'Выберите курьера';
+
+  @override
+  String get restUnassignedAll => '— Не назначен (всем курьерам) —';
+
+  @override
+  String get restTrackingLink => 'Ссылка для отслеживания';
+
+  @override
+  String get restRevokeLinks => 'Отменить ссылки отслеживания';
+
+  @override
+  String get restRevokeLinksTitle => 'Отменить ссылки отслеживания?';
+
+  @override
+  String get restRevokeLinksBody =>
+      'Все ссылки, отправленные клиенту, перестанут работать, открытые страницы тоже отключатся. При необходимости можно отправить новую.';
+
+  @override
+  String get restRevoke => 'Отменить';
+
+  @override
+  String get restNoActiveLinks => 'Активных ссылок не было';
+
+  @override
+  String restLinksRevoked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Отменено $count ссылок',
+      few: 'Отменены $count ссылки',
+      one: 'Отменена $count ссылка',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String restShareTrackText(String order, String url) {
+    return 'Отслеживайте заказ $order на карте: $url';
+  }
+
+  @override
+  String get restShareTrackSubject => 'Отслеживание заказа';
+
+  @override
+  String get restCourierNotAccepted => 'Курьер ещё не принял заказ.';
+
+  @override
+  String get restActionPreparing => 'Начать готовить';
+
+  @override
+  String get restActionReady => 'Отметить готовым';
+
+  @override
+  String get restActionServed => 'Отметить поданным';
+
+  @override
+  String get restActionDelivered => 'Отметить доставленным';
+
+  @override
+  String get restCancelOrder => 'Отменить';
+
+  @override
+  String get restAccept => 'Принять';
+
+  @override
+  String get restCancelOrderTitle => 'Отмена заказа';
+
+  @override
+  String get restCancelOrderConfirm => 'Подтверждаете отмену этого заказа?';
+
+  @override
+  String get restNoOpenOrders => 'Нет открытых заказов';
+
+  @override
+  String get restMenuEmpty => 'Меню пусто';
+
+  @override
+  String get tablesEditTitle => 'Редактировать стол';
+
+  @override
+  String get tablesNewTitle => 'Новый стол';
+
+  @override
+  String get tablesServiceChargeRequired => 'Обслуживание (%) *';
+
+  @override
+  String get tablesPercentMissing => 'Введите процент';
+
+  @override
+  String get tablesPercentRange => 'Должно быть от 0 до 100';
+
+  @override
+  String get tablesDeleteTitle => 'Удалить стол';
+
+  @override
+  String tablesDeleteConfirm(String name) {
+    return 'Удалить $name? Если у стола есть открытые заказы, будет ошибка.';
+  }
+
+  @override
+  String get tablesNotFound => 'Столы не найдены';
+
+  @override
+  String tablesServiceCharge(String percent) {
+    return 'Обслуживание: $percent%';
+  }
+
+  @override
+  String get staffStoreBranchRequired => 'Магазин (филиал) *';
+
+  @override
+  String get waitersEditTitle => 'Редактировать официанта';
+
+  @override
+  String get waitersNewTitle => 'Новый официант';
+
+  @override
+  String get waitersDeleteTitle => 'Удалить официанта';
+
+  @override
+  String get waitersNotFound => 'Официанты не найдены';
+
+  @override
+  String waitersUsage(String used, String limit) {
+    return 'Используется официантов: $used / $limit';
+  }
+
+  @override
+  String get waitersCommissionOptional => 'Комиссия (%) — необязательно';
+
+  @override
+  String waitersCommission(String percent) {
+    return 'Комиссия: $percent%';
+  }
+
+  @override
+  String waitersToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Сегодня: $count заказов',
+      few: 'Сегодня: $count заказа',
+      one: 'Сегодня: $count заказ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get couriersEditTitle => 'Редактировать курьера';
+
+  @override
+  String get couriersNewTitle => 'Новый курьер';
+
+  @override
+  String get couriersDeleteTitle => 'Удалить курьера';
+
+  @override
+  String get couriersNotFound => 'Курьеры не найдены';
+
+  @override
+  String couriersUsage(String used, String limit) {
+    return 'Используется курьеров: $used / $limit';
+  }
+
+  @override
+  String couriersToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Сегодня: $count доставок',
+      few: 'Сегодня: $count доставки',
+      one: 'Сегодня: $count доставка',
+    );
+    return '$_temp0';
+  }
 }

@@ -42,11 +42,11 @@ class CouriersListScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Kuryerni o'chirish"),
-        content: Text('${courier.fullName} butunlay oʻchirilsinmi?'),
+        title: Text(context.l10n.couriersDeleteTitle),
+        content: Text(context.l10n.commonDeletePermanentlyConfirm(courier.fullName)),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("O'chirish")),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -65,7 +65,7 @@ class CouriersListScreen extends ConsumerWidget {
     final storesAsync = ref.watch(storesListProvider);
 
     return DashPage(
-      title: 'Kuryerlar',
+      title: context.l10n.navCouriers,
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openForm(context, ref),
         child: const Icon(Icons.person_add_alt_1_rounded),
@@ -86,7 +86,7 @@ class CouriersListScreen extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
               children: [
                 DashUsageCard(
-                  label: '${state.items.length} / ${state.courierLimit} kuryer ishlatilmoqda',
+                  label: context.l10n.couriersUsage('${state.items.length}', '${state.courierLimit}'),
                   used: state.items.length,
                   limit: state.courierLimit,
                   icon: Icons.moped_rounded,
@@ -96,7 +96,7 @@ class CouriersListScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 60),
                     child: Text(
-                      'Kuryerlar topilmadi',
+                      context.l10n.couriersNotFound,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: BrandColors.of(context).textSecondary, fontWeight: FontWeight.w600),
                     ),
@@ -110,18 +110,23 @@ class CouriersListScreen extends ConsumerWidget {
                     subtitle: [
                       courier.phone,
                       storeNames[courier.storeId] ?? courier.storeId,
-                      'Bugun: ${courier.todayOrderCount} ta yetkazish',
+                      context.l10n.couriersToday(courier.todayOrderCount),
                     ].join(' · '),
                     trailing: DashMenuButton(
                       items: [
-                        (value: 'edit', icon: Icons.edit_rounded, label: 'Tahrirlash', destructive: false),
+                        (value: 'edit', icon: Icons.edit_rounded, label: context.l10n.commonEdit, destructive: false),
                         (
                           value: 'toggle',
                           icon: courier.isActive ? Icons.block_rounded : Icons.check_circle_rounded,
-                          label: courier.isActive ? 'Faolsizlantirish' : 'Faollashtirish',
+                          label: courier.isActive ? context.l10n.commonDeactivate : context.l10n.commonActivate,
                           destructive: false,
                         ),
-                        (value: 'delete', icon: Icons.delete_outline_rounded, label: "O'chirish", destructive: true),
+                        (
+                          value: 'delete',
+                          icon: Icons.delete_outline_rounded,
+                          label: context.l10n.commonDelete,
+                          destructive: true,
+                        ),
                       ],
                       onSelected: (action) {
                         switch (action) {

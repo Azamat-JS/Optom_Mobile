@@ -36,7 +36,7 @@ class WaiterMenuTab extends ConsumerWidget {
         backgroundColor: AppColors.brandYellow,
         onRefresh: () => ref.read(productsListProvider.notifier).refresh(),
         child: state.items.isEmpty
-            ? const DashEmptyState(icon: Icons.restaurant_menu_rounded, text: "Menyu bo'sh")
+            ? DashEmptyState(icon: Icons.restaurant_menu_rounded, text: l10n.restMenuEmpty)
             : ListView.separated(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),

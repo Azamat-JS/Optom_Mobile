@@ -39,11 +39,11 @@ class WaitersListScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Ofitsiantni o'chirish"),
-        content: Text('${waiter.fullName} butunlay oʻchirilsinmi?'),
+        title: Text(context.l10n.waitersDeleteTitle),
+        content: Text(context.l10n.commonDeletePermanentlyConfirm(waiter.fullName)),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("O'chirish")),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -62,7 +62,7 @@ class WaitersListScreen extends ConsumerWidget {
     final storesAsync = ref.watch(storesListProvider);
 
     return DashPage(
-      title: 'Ofitsiantlar',
+      title: context.l10n.navWaiters,
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openForm(context, ref),
         child: const Icon(Icons.person_add_alt_1_rounded),
@@ -83,7 +83,7 @@ class WaitersListScreen extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
               children: [
                 DashUsageCard(
-                  label: '${state.items.length} / ${state.waiterLimit} ofitsiant ishlatilmoqda',
+                  label: context.l10n.waitersUsage('${state.items.length}', '${state.waiterLimit}'),
                   used: state.items.length,
                   limit: state.waiterLimit,
                   icon: Icons.room_service_rounded,
@@ -93,7 +93,7 @@ class WaitersListScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 60),
                     child: Text(
-                      'Ofitsiantlar topilmadi',
+                      context.l10n.waitersNotFound,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: BrandColors.of(context).textSecondary, fontWeight: FontWeight.w600),
                     ),
@@ -108,19 +108,24 @@ class WaitersListScreen extends ConsumerWidget {
                       waiter.phone,
                       storeNames[waiter.storeId] ?? waiter.storeId,
                       if (waiter.commissionPercent != null && waiter.commissionPercent! > 0)
-                        'Komissiya: ${waiter.commissionPercent!.toStringAsFixed(0)}%',
-                      'Bugun: ${waiter.todayOrderCount} ta buyurtma',
+                        context.l10n.waitersCommission(waiter.commissionPercent!.toStringAsFixed(0)),
+                      context.l10n.waitersToday(waiter.todayOrderCount),
                     ].join(' · '),
                     trailing: DashMenuButton(
                       items: [
-                        (value: 'edit', icon: Icons.edit_rounded, label: 'Tahrirlash', destructive: false),
+                        (value: 'edit', icon: Icons.edit_rounded, label: context.l10n.commonEdit, destructive: false),
                         (
                           value: 'toggle',
                           icon: waiter.isActive ? Icons.block_rounded : Icons.check_circle_rounded,
-                          label: waiter.isActive ? 'Faolsizlantirish' : 'Faollashtirish',
+                          label: waiter.isActive ? context.l10n.commonDeactivate : context.l10n.commonActivate,
                           destructive: false,
                         ),
-                        (value: 'delete', icon: Icons.delete_outline_rounded, label: "O'chirish", destructive: true),
+                        (
+                          value: 'delete',
+                          icon: Icons.delete_outline_rounded,
+                          label: context.l10n.commonDelete,
+                          destructive: true,
+                        ),
                       ],
                       onSelected: (action) {
                         switch (action) {

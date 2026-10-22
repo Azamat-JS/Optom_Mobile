@@ -3507,6 +3507,432 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Dastlabki summa'**
   String get debtsOriginal;
+
+  /// No description provided for @commonYes.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ha'**
+  String get commonYes;
+
+  /// No description provided for @commonNo.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yo\'q'**
+  String get commonNo;
+
+  /// No description provided for @commonPhone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon'**
+  String get commonPhone;
+
+  /// No description provided for @commonAddressRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manzil *'**
+  String get commonAddressRequired;
+
+  /// No description provided for @restNeedDish.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kamida bitta taom qo\'shing'**
+  String get restNeedDish;
+
+  /// No description provided for @restPickTable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Stolni tanlang'**
+  String get restPickTable;
+
+  /// No description provided for @restAddressMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib berish manzilini kiriting'**
+  String get restAddressMissing;
+
+  /// No description provided for @restNewOrder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi buyurtma'**
+  String get restNewOrder;
+
+  /// No description provided for @restPlaceOrder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma berish'**
+  String get restPlaceOrder;
+
+  /// No description provided for @restTableRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Stol *'**
+  String get restTableRequired;
+
+  /// No description provided for @restDeliveryPoint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib berish joyi'**
+  String get restDeliveryPoint;
+
+  /// No description provided for @restCustomerName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijoz ismi'**
+  String get restCustomerName;
+
+  /// No description provided for @restCustomerPhone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijoz telefoni'**
+  String get restCustomerPhone;
+
+  /// No description provided for @restDishes.
+  ///
+  /// In uz, this message translates to:
+  /// **'Taomlar'**
+  String get restDishes;
+
+  /// No description provided for @restNoDishesYet.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali taom qo\'shilmagan'**
+  String get restNoDishesYet;
+
+  /// No description provided for @restMenuSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Menyudan qidirish...'**
+  String get restMenuSearchHint;
+
+  /// No description provided for @restDishCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta taom'**
+  String restDishCount(int count);
+
+  /// No description provided for @restTableWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Stol: {name}'**
+  String restTableWith(String name);
+
+  /// No description provided for @restCreatedBy.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yaratdi'**
+  String get restCreatedBy;
+
+  /// No description provided for @restServiceChargeWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xizmat haqi ({percent}%)'**
+  String restServiceChargeWith(String percent);
+
+  /// No description provided for @restWaiterCommissionWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ofitsiant xizmat haqi ({percent}%)'**
+  String restWaiterCommissionWith(String percent);
+
+  /// No description provided for @restNoCourier.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer tayinlanmagan'**
+  String get restNoCourier;
+
+  /// No description provided for @restCourierPending.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} (kutilmoqda)'**
+  String restCourierPending(String name);
+
+  /// No description provided for @restAwaitingAccept.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qabul qilinishi kutilmoqda'**
+  String get restAwaitingAccept;
+
+  /// No description provided for @restAssign.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tayinlash'**
+  String get restAssign;
+
+  /// No description provided for @restPickCourier.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryerni tanlang'**
+  String get restPickCourier;
+
+  /// No description provided for @restUnassignedAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'— Tayinlanmagan (barcha kuryerlarga) —'**
+  String get restUnassignedAll;
+
+  /// No description provided for @restTrackingLink.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuzatish havolasi'**
+  String get restTrackingLink;
+
+  /// No description provided for @restRevokeLinks.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuzatish havolalarini bekor qilish'**
+  String get restRevokeLinks;
+
+  /// No description provided for @restRevokeLinksTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuzatish havolalarini bekor qilish?'**
+  String get restRevokeLinksTitle;
+
+  /// No description provided for @restRevokeLinksBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozga yuborilgan barcha havolalar ishlamay qoladi, ochiq sahifalar ham uziladi. Kerak bo\'lsa yangisini yuborishingiz mumkin.'**
+  String get restRevokeLinksBody;
+
+  /// No description provided for @restRevoke.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilish'**
+  String get restRevoke;
+
+  /// No description provided for @restNoActiveLinks.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faol havola yo\'q edi'**
+  String get restNoActiveLinks;
+
+  /// No description provided for @restLinksRevoked.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta havola bekor qilindi'**
+  String restLinksRevoked(int count);
+
+  /// No description provided for @restShareTrackText.
+  ///
+  /// In uz, this message translates to:
+  /// **'{order} buyurtmangizni xaritada kuzating: {url}'**
+  String restShareTrackText(String order, String url);
+
+  /// No description provided for @restShareTrackSubject.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani kuzatish'**
+  String get restShareTrackSubject;
+
+  /// No description provided for @restCourierNotAccepted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer buyurtmani hali qabul qilmagan.'**
+  String get restCourierNotAccepted;
+
+  /// No description provided for @restActionPreparing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tayyorlashni boshlash'**
+  String get restActionPreparing;
+
+  /// No description provided for @restActionReady.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tayyor deb belgilash'**
+  String get restActionReady;
+
+  /// No description provided for @restActionServed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Berildi deb belgilash'**
+  String get restActionServed;
+
+  /// No description provided for @restActionDelivered.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazildi deb belgilash'**
+  String get restActionDelivered;
+
+  /// No description provided for @restCancelOrder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilish'**
+  String get restCancelOrder;
+
+  /// No description provided for @restAccept.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qabul qilish'**
+  String get restAccept;
+
+  /// No description provided for @restCancelOrderTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani bekor qilish'**
+  String get restCancelOrderTitle;
+
+  /// No description provided for @restCancelOrderConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu buyurtmani bekor qilishni tasdiqlaysizmi?'**
+  String get restCancelOrderConfirm;
+
+  /// No description provided for @restNoOpenOrders.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ochiq buyurtmalar yo\'q'**
+  String get restNoOpenOrders;
+
+  /// No description provided for @restMenuEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Menyu bo\'sh'**
+  String get restMenuEmpty;
+
+  /// No description provided for @tablesEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Stolni tahrirlash'**
+  String get tablesEditTitle;
+
+  /// No description provided for @tablesNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi stol'**
+  String get tablesNewTitle;
+
+  /// No description provided for @tablesServiceChargeRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xizmat haqi (%) *'**
+  String get tablesServiceChargeRequired;
+
+  /// No description provided for @tablesPercentMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Foizni kiriting'**
+  String get tablesPercentMissing;
+
+  /// No description provided for @tablesPercentRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'0 dan 100 gacha bo\'lishi kerak'**
+  String get tablesPercentRange;
+
+  /// No description provided for @tablesDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Stolni o\'chirish'**
+  String get tablesDeleteTitle;
+
+  /// No description provided for @tablesDeleteConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} o\'chirilsinmi? Ochiq buyurtmasi bo\'lsa, xatolik qaytadi.'**
+  String tablesDeleteConfirm(String name);
+
+  /// No description provided for @tablesNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Stollar topilmadi'**
+  String get tablesNotFound;
+
+  /// No description provided for @tablesServiceCharge.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xizmat haqi: {percent}%'**
+  String tablesServiceCharge(String percent);
+
+  /// No description provided for @staffStoreBranchRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon (filial) *'**
+  String get staffStoreBranchRequired;
+
+  /// No description provided for @waitersEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ofitsiantni tahrirlash'**
+  String get waitersEditTitle;
+
+  /// No description provided for @waitersNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi ofitsiant'**
+  String get waitersNewTitle;
+
+  /// No description provided for @waitersDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ofitsiantni o\'chirish'**
+  String get waitersDeleteTitle;
+
+  /// No description provided for @waitersNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ofitsiantlar topilmadi'**
+  String get waitersNotFound;
+
+  /// No description provided for @waitersUsage.
+  ///
+  /// In uz, this message translates to:
+  /// **'{used} / {limit} ofitsiant ishlatilmoqda'**
+  String waitersUsage(String used, String limit);
+
+  /// No description provided for @waitersCommissionOptional.
+  ///
+  /// In uz, this message translates to:
+  /// **'Komissiya (%) — ixtiyoriy'**
+  String get waitersCommissionOptional;
+
+  /// No description provided for @waitersCommission.
+  ///
+  /// In uz, this message translates to:
+  /// **'Komissiya: {percent}%'**
+  String waitersCommission(String percent);
+
+  /// No description provided for @waitersToday.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bugun: {count} ta buyurtma'**
+  String waitersToday(int count);
+
+  /// No description provided for @couriersEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryerni tahrirlash'**
+  String get couriersEditTitle;
+
+  /// No description provided for @couriersNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi kuryer'**
+  String get couriersNewTitle;
+
+  /// No description provided for @couriersDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryerni o\'chirish'**
+  String get couriersDeleteTitle;
+
+  /// No description provided for @couriersNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryerlar topilmadi'**
+  String get couriersNotFound;
+
+  /// No description provided for @couriersUsage.
+  ///
+  /// In uz, this message translates to:
+  /// **'{used} / {limit} kuryer ishlatilmoqda'**
+  String couriersUsage(String used, String limit);
+
+  /// No description provided for @couriersToday.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bugun: {count} ta yetkazish'**
+  String couriersToday(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -89,15 +89,15 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
 
   Future<void> _submit() async {
     if (_cart.isEmpty) {
-      setState(() => _errorMessage = 'Kamida bitta taom qo\'shing');
+      setState(() => _errorMessage = context.l10n.restNeedDish);
       return;
     }
     if (_type == RestaurantOrderType.dineIn && _tableId == null) {
-      setState(() => _errorMessage = 'Stolni tanlang');
+      setState(() => _errorMessage = context.l10n.restPickTable);
       return;
     }
     if (_type == RestaurantOrderType.delivery && _deliveryAddressController.text.trim().isEmpty) {
-      setState(() => _errorMessage = 'Yetkazib berish manzilini kiriting');
+      setState(() => _errorMessage = context.l10n.restAddressMissing);
       return;
     }
 
@@ -140,7 +140,7 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
     final count = _cart.fold<int>(0, (sum, line) => sum + line.quantity);
 
     return DashPage(
-      title: 'Yangi buyurtma',
+      title: l10n.restNewOrder,
       bottomBar: AnimatedOpacity(
         opacity: _isSaving ? 0.6 : 1,
         duration: AppMotion.standard,
@@ -148,7 +148,7 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
           count: count,
           countLabel: l10n.commonSubtotal,
           total: CurrencyFormatter.format(_subtotal, Currency.uzs),
-          actionLabel: 'Buyurtma berish',
+          actionLabel: l10n.restPlaceOrder,
           onTap: _isSaving ? () {} : _submit,
         ),
       ),
@@ -164,7 +164,7 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
               expand: true,
             ),
             if (_type == RestaurantOrderType.dineIn) ...[
-              const DashSectionTitle('Stol *'),
+              DashSectionTitle(l10n.restTableRequired),
               tablesAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text(l10n.commonErrorWith('$error')),
@@ -185,28 +185,28 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
               const SizedBox(height: 16),
               TextFormField(
                 controller: _deliveryAddressController,
-                decoration: const InputDecoration(labelText: 'Manzil *'),
+                decoration: InputDecoration(labelText: l10n.commonAddressRequired),
               ),
               const SizedBox(height: 10),
               LocationPickerField(
                 value: _dropoff,
                 onChanged: (p) => setState(() => _dropoff = p),
-                pickerTitle: 'Yetkazib berish joyi',
+                pickerTitle: l10n.restDeliveryPoint,
               ),
             ],
             const SizedBox(height: 16),
             TextFormField(
               controller: _customerNameController,
-              decoration: const InputDecoration(labelText: 'Mijoz ismi'),
+              decoration: InputDecoration(labelText: l10n.restCustomerName),
             ),
             const SizedBox(height: 10),
             TextFormField(
               controller: _customerPhoneController,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(labelText: 'Mijoz telefoni'),
+              decoration: InputDecoration(labelText: l10n.restCustomerPhone),
             ),
             DashSectionTitle(
-              'Taomlar',
+              l10n.restDishes,
               trailing: TextButton.icon(
                 onPressed: _addItem,
                 icon: const Icon(Icons.add_rounded),
@@ -222,7 +222,7 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
                     Icon(Icons.restaurant_menu_rounded, size: 34, color: colors.textMuted),
                     const SizedBox(height: 8),
                     Text(
-                      "Hali taom qo'shilmagan",
+                      l10n.restNoDishesYet,
                       style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w700),
                     ),
                   ],
@@ -417,7 +417,7 @@ class _MenuSearchSheetState extends State<_MenuSearchSheet> {
                   autofocus: true,
                   style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600),
                   decoration: InputDecoration(
-                    hintText: 'Menyudan qidirish...',
+                    hintText: l10n.restMenuSearchHint,
                     prefixIcon: const Icon(Icons.search_rounded),
                     filled: true,
                     fillColor: colors.field,
