@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
+import 'package:bsmart/core/l10n/app_l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/network/result.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
@@ -34,16 +36,7 @@ class OrderDeliveryCard extends ConsumerWidget {
   /// The order is APPROVED (a delivery can be created/reopened).
   final bool canAssign;
 
-  static String headline(DeliveryStatus status) => switch (status) {
-        DeliveryStatus.pending => 'Kuryer qidirilmoqda',
-        DeliveryStatus.assigned => 'Kuryer tayinlandi, tasdiqlashini kutmoqda',
-        DeliveryStatus.accepted => "Kuryer do'konga bormoqda",
-        DeliveryStatus.pickedUp => "Kuryer yo'lda",
-        DeliveryStatus.arrived => 'Kuryer yetib keldi!',
-        DeliveryStatus.delivered => 'Buyurtma topshirildi',
-        DeliveryStatus.cancelled => 'Yetkazish bekor qilindi',
-        DeliveryStatus.failed => "Yetkazib bo'lmadi",
-      };
+  static String headline(DeliveryStatus status) => appL10n.dlvHeadline(status.name);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,11 +49,11 @@ class OrderDeliveryCard extends ConsumerWidget {
           children: [
             Icon(Icons.delivery_dining, color: theme.colorScheme.primary),
             const SizedBox(width: 10),
-            const Expanded(child: Text('Kuryer biriktirilmagan')),
+            Expanded(child: Text(context.l10n.restNoCourier)),
             FilledButton.icon(
               onPressed: () => _assign(context, ref, null),
               icon: const Icon(Icons.moped_outlined),
-              label: const Text('Kuryerga berish'),
+              label: Text(context.l10n.dlvAssignTitle),
             ),
           ],
         ),
@@ -87,7 +80,7 @@ class OrderDeliveryCard extends ConsumerWidget {
               ),
               if (delivery.courier != null) ...[
                 const SizedBox(height: 6),
-                Text('Kuryer: ${delivery.courier!.firstName}', style: theme.textTheme.bodyMedium),
+                Text(context.l10n.dlvCourierWith(delivery.courier!.firstName), style: theme.textTheme.bodyMedium),
               ],
               if (canManage)
                 DeliveryOutcomeSection(
@@ -102,7 +95,7 @@ class OrderDeliveryCard extends ConsumerWidget {
                 if (delivery.status == DeliveryStatus.failed) ...[
                   const SizedBox(height: 6),
                   Text(
-                    "${delivery.failReason?.label ?? 'Topshirib bo\'lmadi'}. Do'kon siz bilan bog'lanadi.",
+                    context.l10n.dlvFailedCustomer(delivery.failReason?.label ?? context.l10n.dlvFailedFallback),
                     style: theme.textTheme.bodyMedium,
                   ),
                 ],
@@ -114,11 +107,11 @@ class OrderDeliveryCard extends ConsumerWidget {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () => _assign(context, ref, delivery),
-                        child: const Text("Kuryerni o'zgartirish"),
+                        child: Text(context.l10n.dlvChangeCourier),
                       ),
                     ),
                     const SizedBox(width: 8),
-                    TextButton(onPressed: () => _cancel(context, ref, delivery), child: const Text('Bekor qilish')),
+                    TextButton(onPressed: () => _cancel(context, ref, delivery), child: Text(context.l10n.dlvCancel)),
                   ],
                 ),
               ],
@@ -134,12 +127,12 @@ class OrderDeliveryCard extends ConsumerWidget {
                       child: FilledButton.tonalIcon(
                         onPressed: () => _assign(context, ref, null),
                         icon: const Icon(Icons.replay),
-                        label: const Text('Qayta kuryerga berish'),
+                        label: Text(context.l10n.dlvReassign),
                       ),
                     ),
                     if (delivery.status == DeliveryStatus.failed) ...[
                       const SizedBox(width: 8),
-                      TextButton(onPressed: () => _cancel(context, ref, delivery), child: const Text('Bekor qilish')),
+                      TextButton(onPressed: () => _cancel(context, ref, delivery), child: Text(context.l10n.dlvCancel)),
                     ],
                   ],
                 ),
@@ -149,11 +142,11 @@ class OrderDeliveryCard extends ConsumerWidget {
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton.icon(
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => DeliveryTrackingScreen(deliveryId: delivery.id)),
-                    ),
+                    onPressed: () => Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute(builder: (_) => DeliveryTrackingScreen(deliveryId: delivery.id))),
                     icon: const Icon(Icons.map_outlined),
-                    label: const Text('Kuryerni kuzatish'),
+                    label: Text(context.l10n.dlvTrackCourier),
                   ),
                 ),
               ],
@@ -165,9 +158,9 @@ class OrderDeliveryCard extends ConsumerWidget {
   }
 
   Widget _shell({required Widget child}) => Padding(
-        padding: const EdgeInsets.only(top: 12),
-        child: DashCard(child: child),
-      ).animate().fadeIn(duration: AppMotion.standard).slideY(begin: 0.1, curve: AppMotion.emphasized);
+    padding: const EdgeInsets.only(top: 12),
+    child: DashCard(child: child),
+  ).animate().fadeIn(duration: AppMotion.standard).slideY(begin: 0.1, curve: AppMotion.emphasized);
 
   /// New delivery (or reopen a cancelled one) when [existing] is null, else reassign it.
   Future<void> _assign(BuildContext context, WidgetRef ref, Delivery? existing) async {
@@ -180,7 +173,7 @@ class OrderDeliveryCard extends ConsumerWidget {
     if (!context.mounted) return;
     result.fold(
       (_) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(choice.courierId == null ? 'Barcha kuryerlarga taklif qilindi' : 'Kuryerga berildi')),
+        SnackBar(content: Text(choice.courierId == null ? context.l10n.dlvOfferedAll : context.l10n.dlvAssigned)),
       ),
       (failure) => DeliveryActions.showError(context, failure.message),
     );
@@ -216,23 +209,23 @@ class _CancelReasonDialogState extends State<_CancelReasonDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: const Text('Yetkazishni bekor qilish?'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Kuryer bu buyurtmani endi ko'rmaydi. Keyin qayta berishingiz mumkin."),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _reason,
-              maxLength: 300,
-              decoration: const InputDecoration(labelText: 'Sabab (ixtiyoriy)', border: OutlineInputBorder()),
-            ),
-          ],
+    title: Text(context.l10n.dlvCancelTitle),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(context.l10n.dlvCancelBody),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _reason,
+          maxLength: 300,
+          decoration: InputDecoration(labelText: context.l10n.commonReasonOptional, border: const OutlineInputBorder()),
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Yo'q")),
-          FilledButton(onPressed: () => Navigator.pop(context, _reason.text.trim()), child: const Text('Bekor qilish')),
-        ],
-      );
+      ],
+    ),
+    actions: [
+      TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonNo)),
+      FilledButton(onPressed: () => Navigator.pop(context, _reason.text.trim()), child: Text(context.l10n.dlvCancel)),
+    ],
+  );
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/theme/app_colors.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
 
@@ -27,11 +28,11 @@ class HandoverCodeCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Topshirish kodi',
+                      context.l10n.dlvHandoverCode,
                       style: theme.textTheme.labelLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.w800),
                     ),
                     Text(
-                      'Buyurtmani olganingizda kuryerga ayting. Boshqa hech kimga bermang.',
+                      context.l10n.dlvHandoverCodeHint,
                       style: theme.textTheme.bodySmall?.copyWith(color: Colors.white.withValues(alpha: 0.72)),
                     ),
                   ],
@@ -39,7 +40,7 @@ class HandoverCodeCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Semantics(
-                label: 'Kod ${code.split('').join(' ')}',
+                label: context.l10n.dlvCodeSemantics(code.split('').join(' ')),
                 child: Text(
                   code,
                   style: theme.textTheme.headlineSmall?.copyWith(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/app_l10n.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/features/tracking/data/tracking_disclosure_storage.dart';
 import 'package:bsmart/features/tracking/presentation/providers/tracking_notifier.dart';
@@ -28,16 +30,17 @@ abstract final class TrackingActions {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Oflayn bo'lish"),
+        title: Text(context.l10n.trkGoOfflineTitle),
         content: Text(
           active == null
-              ? "Joylashuvingizni ulashish to'xtatiladi — biznes egangiz sizni xaritada ko'rmaydi."
-              : "Sizda faol yetkazish bor ($active). Joylashuv ulashish to'xtatilsa, "
-                  "${tracking.customerWatches ? 'mijoz va ' : ''}biznes egangiz sizni xaritada ko'rmay qoladi.",
+              ? context.l10n.trkGoOfflineBody
+              : tracking.customerWatches
+              ? context.l10n.trkGoOfflineActiveCustomer(active)
+              : context.l10n.trkGoOfflineActiveOwner(active),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text("To'xtatish")),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(context.l10n.trkStop)),
         ],
       ),
     );
@@ -45,11 +48,12 @@ abstract final class TrackingActions {
   }
 }
 
-/// "5 soniya oldin"-style label for the last successful send.
+/// "5 s ago"-style label for the last successful send (no BuildContext: also used
+/// outside widgets).
 String trackingAgoLabel(DateTime? at, DateTime now) {
-  if (at == null) return 'hali yuborilmagan';
+  if (at == null) return appL10n.trkNotSentYet;
   final seconds = now.difference(at).inSeconds;
-  if (seconds < 5) return 'hozirgina';
-  if (seconds < 60) return '$seconds soniya oldin';
-  return '${seconds ~/ 60} daqiqa oldin';
+  if (seconds < 5) return appL10n.trkJustNow;
+  if (seconds < 60) return appL10n.trkSecondsAgo('$seconds');
+  return appL10n.trkMinutesAgo('${seconds ~/ 60}');
 }

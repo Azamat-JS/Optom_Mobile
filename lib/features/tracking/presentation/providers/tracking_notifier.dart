@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart'
     show Geolocator, LocationServiceDisabledException, PermissionDeniedException, ServiceStatus;
 import 'package:logger/logger.dart';
 
+import 'package:bsmart/core/l10n/app_l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/location/location_fix.dart';
 import 'package:bsmart/core/location/location_outbox.dart';
@@ -120,12 +121,10 @@ class TrackingNotifier extends Notifier<TrackingState> {
     final label = state.activeDeliveryLabel;
     _fixes = _tracker
         .watch(
-          notificationTitle: 'bsmart joylashuvingizni ulashmoqda',
+          notificationTitle: appL10n.trkNotificationTitle,
           notificationText: label != null
-              ? (state.customerWatches
-                  ? "Faol yetkazish: $label — mijoz va biznes egangiz ko'radi"
-                  : "Faol yetkazish: $label — biznes egangiz ko'radi")
-              : "Onlayn — joylashuvingiz biznes egasiga ko'rinadi",
+              ? (state.customerWatches ? appL10n.trkNotifActiveCustomer(label) : appL10n.trkNotifActiveOwner(label))
+              : appL10n.trkNotifOnline,
         )
         .listen(_onFix, onError: _onGpsError);
   }
@@ -200,11 +199,9 @@ class TrackingNotifier extends Notifier<TrackingState> {
     try {
       while (_sessionActive && state.isOnline && _outbox.isNotEmpty) {
         final batch = _outbox.nextBatch();
-        final ack = await _socket.request(
-          'location:batch',
-          {'points': batch.map((f) => f.toJson()).toList()},
-          const Duration(seconds: 15),
-        );
+        final ack = await _socket.request('location:batch', {
+          'points': batch.map((f) => f.toJson()).toList(),
+        }, const Duration(seconds: 15));
         if (ack == null) return; // no connection — try again on the next (re)connect
         if (ack['ok'] == true) {
           // Rejected points were bad data (too old, jump) — dropped server-side, same as live.

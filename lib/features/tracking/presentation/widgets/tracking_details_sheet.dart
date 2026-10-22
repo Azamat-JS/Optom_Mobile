@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/location/location_tracker.dart';
 import 'package:bsmart/features/tracking/presentation/providers/tracking_notifier.dart';
@@ -16,11 +17,11 @@ class TrackingDetailsSheet extends ConsumerWidget {
   const TrackingDetailsSheet({super.key});
 
   static Future<void> show(BuildContext context) => showModalBottomSheet<void>(
-        context: context,
-        showDragHandle: true,
-        isScrollControlled: true,
-        builder: (_) => const TrackingDetailsSheet(),
-      );
+    context: context,
+    showDragHandle: true,
+    isScrollControlled: true,
+    builder: (_) => const TrackingDetailsSheet(),
+  );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,36 +46,31 @@ class TrackingDetailsSheet extends ConsumerWidget {
             const SizedBox(height: 16),
             _Row(
               icon: Icons.access_time,
-              title: 'Oxirgi yuborilgan joylashuv',
+              title: context.l10n.trkLastSent,
               value: trackingAgoLabel(tracking.lastSentAt, DateTime.now()),
             ),
-            _Row(
-              icon: Icons.visibility_outlined,
-              title: "Hozir kim ko'radi",
-              value: tracking.watchersLabel,
-            ),
+            _Row(icon: Icons.visibility_outlined, title: context.l10n.trkWhoNow, value: tracking.watchersLabel),
             if (tracking.notificationsDenied)
-              const _Row(
+              _Row(
                 icon: Icons.notifications_off_outlined,
-                title: "Bildirishnoma ruxsati yo'q",
-                value: "Kuzatuv davom etadi, lekin bildirishnoma panelida ko'rinmaydi.",
+                title: context.l10n.trkNoNotifPermission,
+                value: context.l10n.trkNoNotifPermissionBody,
               ),
             if (Platform.isAndroid && tracking.isOnline)
               _Row(
                 icon: Icons.battery_alert_outlined,
-                title: 'Batareya tejash rejimi',
-                value: "Ba'zi telefonlar fondagi ilovalarni to'xtatadi. Muammo bo'lsa, bsmart uchun "
-                    "batareya cheklovini o'chiring.",
+                title: context.l10n.trkBatterySaver,
+                value: context.l10n.trkBatterySaverBody,
                 action: TextButton(
                   onPressed: () => getIt<LocationTracker>().openAppSettings(),
-                  child: const Text('Sozlamalar'),
+                  child: Text(context.l10n.commonSettings),
                 ),
               ),
             const SizedBox(height: 8),
             TextButton.icon(
               onPressed: () => TrackingDisclosureScreen.show(context, readOnly: true),
               icon: const Icon(Icons.info_outline),
-              label: const Text('Joylashuv ulashish haqida'),
+              label: Text(context.l10n.trkAboutSharing),
             ),
             if (tracking.isOnline) ...[
               const SizedBox(height: 8),
@@ -86,7 +82,7 @@ class TrackingDetailsSheet extends ConsumerWidget {
                     if (context.mounted && !ref.read(trackingNotifierProvider).isOnline) Navigator.pop(context);
                   },
                   icon: const Icon(Icons.stop_circle_outlined),
-                  label: const Text("To'xtatish"),
+                  label: Text(context.l10n.trkStop),
                 ),
               ),
             ],

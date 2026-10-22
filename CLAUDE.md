@@ -1428,7 +1428,7 @@ Settings + the registration/login flow. Backend error messages and Telegram bot 
 | I6 | Web role pages: customer + super-admin + courier; leftover-string sweep | 🟢 Done 2026-10-11: customer (dashboard, catalog, orders, debts) and super-admin (dashboard, users, wholesalers, categories, master products) pages converted; courier screens were already covered by I4 components. A vocabulary-based sweep over `app/` + `src/` found and fixed leftovers in shared POS/product components. Unused `*_LABELS` maps and `formatProductUnit` deleted. 1969 keys, parity OK, `tsc` clean. Verified in headless Chromium in ru and en with temporary CUSTOMER, SUPER_ADMIN, RESTAURANT RETAILER and COURIER accounts (since deleted) (see "Phase 8 I6 notes") |
 | I7 | Mobile features batch 1: operator core (products, categories, orders, sales/POS, customers, debts, stores/admins, expenditures, reports, dashboard) | 🟢 Done 2026-10-11: the operator feature folders plus master catalog and the shared scanner/location widgets converted; core enum labels, `ApiException` fallbacks and the currency suffix are localized through `appL10n`. 395 ARB keys with uz/ru/en parity, `flutter analyze` clean, 46 tests (5 new). Verified on the Pixel_9a emulator with a temporary SELLER account (since deleted) in ru and en: home, all drawer screens, product detail/form, stock sheet, POS → checkout, orders, and the create forms (see "Phase 8 I7 notes") |
 | I8a | Mobile batch 2a: restaurant (order board, create, detail, waiter menu), tables, the owner's waiter and courier management | 🟢 Done 2026-10-22: 71 new ARB keys (639, uz/ru/en parity), `flutter analyze` clean, 76 tests. Verified on the iPhone 17 simulator in ru and en with a temporary restaurant owner + waiter (deleted): board, both order details, create + menu sheet, tables + delete dialog + form, waiters/couriers lists + forms with validation errors, waiter shell (see "Phase 8 I8 notes") |
-| I8b | Mobile batch 2b: courier home, deliveries, delivery map + sheets, tracking (online card, pill, details sheet, disclosure, notification text), fleet map, customer deliveries/tracking | ⚪ |
+| I8b | Mobile batch 2b: courier home, deliveries, delivery map + sheets, tracking (online card, pill, details sheet, disclosure, notification text), fleet map, customer deliveries/tracking | 🟢 Done 2026-10-22: 148 new ARB keys (787, uz/ru/en parity), `flutter analyze` clean, 76 tests. Verified on the iPhone 17 simulator in ru and en with a temporary restaurant owner, courier and verified customer (deleted): courier home, disclosure, tracking sheet, delivery map, handover-code and fail sheets; owner fleet map + courier sheet, a failed and an offered B2C order's delivery card, the assign sheet; customer deliveries list + tracking screen with the code (see "Phase 8 I8 notes") |
 | I8c | Mobile batch 2c: super-admin (home, users, forms), storefront/favorites leftovers, core enum fallbacks; final leftover-string sweep | ⚪ |
 
 **Phase 8 I2 notes (bsmart, 2026-10-10):**
@@ -1580,6 +1580,15 @@ Settings + the registration/login flow. Backend error messages and Telegram bot 
   placeholder metadata in uz, `int` when any language uses a plural; the ARBs round-trip
   byte-identically through it), `rep.py` (exact-substring replacements per file, each with an
   expected count, adds the l10n import).
+- **I8b:** prefixes `dlv*` (deliveries), `trk*` (tracking), `fleet*`, `map*`, plus `commonCall`,
+  `commonRefresh`, `commonKm`, `commonMeters`. Code without a `BuildContext` uses `appL10n`:
+  `DeliveryStatus` / `DeliveryFailReason` labels are now getters over the ARB selects
+  `enumDeliveryStatus` / `enumDeliveryFailReason` (the enums lost their Uzbek `label` field),
+  `OrderDeliveryCard.headline` reads `dlvHeadline`, and `TrackingState.watchersLabel`,
+  `trackingAgoLabel`, `TrackingStatusStyle` (no longer `const`), the delivery label fallback, the
+  courier notification title/text and the Android notification channel name all follow the app
+  language. The disclosure's four items became `_items(l10n)`. Distances use `commonKm` /
+  `commonMeters` but keep the comma decimal ("1,2 km") in every language.
 - **Device check pattern:** log in with the app in Uzbek (the login finders use Uzbek text), then
   `localeProvider.notifier.setLanguage('ru'|'en')`, and switch back to `uz` at the end; the choice
   is persisted.

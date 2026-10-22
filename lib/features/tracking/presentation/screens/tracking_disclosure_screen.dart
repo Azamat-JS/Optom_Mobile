@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/theme/app_colors.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/core/theme/brand_theme.dart';
@@ -22,29 +23,11 @@ class TrackingDisclosureScreen extends StatelessWidget {
     );
   }
 
-  static const _items = [
-    (
-      Icons.my_location_rounded,
-      'Nima ulashiladi',
-      "Telefoningizning GPS joylashuvi: koordinatalar, tezlik va harakat yo'nalishi.",
-    ),
-    (
-      Icons.schedule_rounded,
-      'Qachon',
-      "Faqat siz «Onlayn» bo'lganingizda yoki faol yetkazish paytida — ilova fonda yoki ekran "
-          "o'chiq bo'lsa ham. Bu vaqtda bildirishnomalar panelida doimiy xabar turadi.",
-    ),
-    (
-      Icons.visibility_rounded,
-      "Kim ko'radi",
-      'Biznes egangiz va uning administratorlari, hamda faol yetkazish buyurtmasining mijozi.',
-    ),
-    (
-      Icons.pause_circle_rounded,
-      "Qanday to'xtatiladi",
-      "Istalgan vaqtda «Oflayn» ga o'ting — joylashuv yuborish darhol to'xtaydi. Oflayn paytida "
-          'joylashuvingiz yuborilmaydi.',
-    ),
+  static List<(IconData, String, String)> _items(AppLocalizations l10n) => [
+    (Icons.my_location_rounded, l10n.trkWhatTitle, l10n.trkWhatBody),
+    (Icons.schedule_rounded, l10n.trkWhenTitle, l10n.trkWhenBody),
+    (Icons.visibility_rounded, l10n.trkWhoTitle, l10n.trkWhoBody),
+    (Icons.pause_circle_rounded, l10n.trkStopTitle, l10n.trkStopBody),
   ];
 
   @override
@@ -53,7 +36,7 @@ class TrackingDisclosureScreen extends StatelessWidget {
     final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(18));
     const height = Size.fromHeight(56);
     return DashPage(
-      title: 'Joylashuvni ulashish',
+      title: context.l10n.trkShareTitle,
       bottomBar: SafeArea(
         top: false,
         child: Padding(
@@ -62,7 +45,7 @@ class TrackingDisclosureScreen extends StatelessWidget {
               ? OutlinedButton(
                   style: OutlinedButton.styleFrom(minimumSize: height, shape: shape),
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Yopish'),
+                  child: Text(context.l10n.commonClose),
                 )
               : Row(
                   children: [
@@ -70,7 +53,7 @@ class TrackingDisclosureScreen extends StatelessWidget {
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(minimumSize: height, shape: shape),
                         onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Hozir emas'),
+                        child: Text(context.l10n.trkNotNow),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -78,7 +61,7 @@ class TrackingDisclosureScreen extends StatelessWidget {
                       child: FilledButton(
                         style: FilledButton.styleFrom(minimumSize: height, shape: shape),
                         onPressed: () => Navigator.pop(context, true),
-                        child: const Text('Roziman'),
+                        child: Text(context.l10n.trkAgree),
                       ),
                     ),
                   ],
@@ -98,7 +81,7 @@ class TrackingDisclosureScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Yetkazishlarni kuzatish uchun bsmart joylashuvingizdan foydalanadi',
+            context.l10n.trkDisclosureLead,
             textAlign: TextAlign.center,
             style: TextStyle(color: colors.textPrimary, fontSize: 18, fontWeight: FontWeight.w800, height: 1.25),
           ),
@@ -106,7 +89,7 @@ class TrackingDisclosureScreen extends StatelessWidget {
           DashCard(
             child: Column(
               children: [
-                for (final (i, item) in _items.indexed)
+                for (final (i, item) in _items(context.l10n).indexed)
                   Padding(
                         padding: EdgeInsets.only(top: i == 0 ? 0 : 16),
                         child: Row(

@@ -2306,4 +2306,588 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String enumDeliveryStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'pending': 'Pending',
+      'assigned': 'Assigned',
+      'accepted': 'Accepted',
+      'pickedUp': 'On the way',
+      'arrived': 'Arrived',
+      'delivered': 'Delivered',
+      'cancelled': 'Cancelled',
+      'failed': 'Not delivered',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumDeliveryFailReason(String reason) {
+    String _temp0 = intl.Intl.selectLogic(reason, {
+      'notHome': 'Customer not at the address',
+      'refused': 'Customer refused',
+      'wrongAddress': 'Wrong address',
+      'other': 'Other reason',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String dlvHeadline(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'pending': 'Looking for a courier',
+      'assigned': 'Courier assigned, waiting for confirmation',
+      'accepted': 'The courier is heading to the store',
+      'pickedUp': 'The courier is on the way',
+      'arrived': 'The courier has arrived!',
+      'delivered': 'Order delivered',
+      'cancelled': 'Delivery cancelled',
+      'failed': 'Couldn\'t deliver',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get dlvLabelFallback => 'Delivery';
+
+  @override
+  String get dlvConfirmHandoverTitle => 'Order handed over?';
+
+  @override
+  String dlvConfirmHandoverBody(String label) {
+    return 'Confirm that $label was handed to the customer.';
+  }
+
+  @override
+  String get dlvYesHandedOver => 'Yes, handed over';
+
+  @override
+  String get dlvCallFailed => 'Couldn\'t place the call';
+
+  @override
+  String get dlvNavigatorFailed => 'Couldn\'t open the navigator';
+
+  @override
+  String dlvCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count deliveries',
+      one: '1 delivery',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dlvNone => 'No deliveries yet';
+
+  @override
+  String get dlvActiveSection => 'Active deliveries';
+
+  @override
+  String get dlvOffersSection => 'New offers';
+
+  @override
+  String get dlvActiveBannerTitle => 'You have an active delivery';
+
+  @override
+  String get dlvActiveBannerCustomer =>
+      'Go online so the customer and your business owner can see you on the map.';
+
+  @override
+  String get dlvActiveBannerOwner =>
+      'Go online so your business owner can see you on the map.';
+
+  @override
+  String get dlvNoAddress => 'No address given';
+
+  @override
+  String get dlvCompleted => 'Delivery completed';
+
+  @override
+  String get dlvFailedMarked =>
+      'Marked as not delivered. Return the order to the store.';
+
+  @override
+  String get mapFitAll => 'Show everything';
+
+  @override
+  String get mapMyLocation => 'My location';
+
+  @override
+  String get dlvPickup => 'Pickup';
+
+  @override
+  String get dlvYouAreOffline => 'You\'re offline';
+
+  @override
+  String get dlvLocationHidden => 'Your location isn\'t visible';
+
+  @override
+  String get dlvFailed => 'Couldn\'t deliver';
+
+  @override
+  String get dlvCancelledTitle => 'Delivery cancelled';
+
+  @override
+  String get dlvFinishedTitle => 'Delivery finished';
+
+  @override
+  String get dlvGoToStore => 'Go to the store';
+
+  @override
+  String get dlvDeliverToCustomer => 'Deliver to the customer';
+
+  @override
+  String get dlvCodeLockedHint => 'Code locked — call the store';
+
+  @override
+  String get dlvAskCode => 'Ask the customer for the 4-digit code at handover';
+
+  @override
+  String get dlvStoreFallback => 'Store';
+
+  @override
+  String get dlvNavigator => 'Navigate';
+
+  @override
+  String get dlvHandedOver => 'Handed over';
+
+  @override
+  String get dlvPickedUp => 'Picked up the order';
+
+  @override
+  String get dlvArrived => 'I\'ve arrived';
+
+  @override
+  String dlvMinutesShort(String minutes) {
+    return '~$minutes min';
+  }
+
+  @override
+  String dlvToStore(String time) {
+    return 'To the store $time';
+  }
+
+  @override
+  String dlvToCustomer(String time) {
+    return 'To the customer $time';
+  }
+
+  @override
+  String commonKm(String km) {
+    return '$km km';
+  }
+
+  @override
+  String commonMeters(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String get dlvRestaurantOrder => 'Restaurant order';
+
+  @override
+  String dlvMinutesLong(String minutes) {
+    return '~$minutes min';
+  }
+
+  @override
+  String dlvFailedCustomer(String reason) {
+    return '$reason. The store will contact you.';
+  }
+
+  @override
+  String get dlvFailedFallback => 'Couldn\'t hand over';
+
+  @override
+  String get dlvCourierUpdating => 'Updating the courier\'s location…';
+
+  @override
+  String get dlvYourCourier => 'Your courier';
+
+  @override
+  String get commonCall => 'Call';
+
+  @override
+  String get dlvAssignTitle => 'Assign a courier';
+
+  @override
+  String get dlvOfferAll => 'Offer to all couriers';
+
+  @override
+  String get dlvOfferAllHint => 'The first courier to accept gets it';
+
+  @override
+  String get dlvNoActiveCouriers => 'No active couriers';
+
+  @override
+  String dlvActiveDeliveries(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count active deliveries',
+      one: '1 active delivery',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dlvCodeFourDigits => 'The code has 4 digits';
+
+  @override
+  String get dlvCodeLocked => 'Code locked';
+
+  @override
+  String get dlvWaivedTitle => 'The store allowed handover without a code';
+
+  @override
+  String get dlvHandoverCode => 'Handover code';
+
+  @override
+  String get dlvTooManyTries =>
+      'Too many wrong attempts. Call the store — they can allow handover without a code.';
+
+  @override
+  String get dlvConfirmHandedOver =>
+      'Confirm that you handed the order to the customer.';
+
+  @override
+  String get dlvAskCodeLong =>
+      'Ask the customer for the 4-digit code. It\'s in their app and on Telegram.';
+
+  @override
+  String dlvAttemptsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count attempts left',
+      one: '1 attempt left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dlvRecheck => 'Check again';
+
+  @override
+  String get dlvWhyFailed => 'Why couldn\'t you hand it over?';
+
+  @override
+  String get dlvFailNotice =>
+      'The customer and the store will be notified. Return the order to the store.';
+
+  @override
+  String get dlvNoteRequired => 'Note (required)';
+
+  @override
+  String get dlvWaiveTitle => 'Allow handover without a code?';
+
+  @override
+  String get dlvWaiveBody =>
+      'The courier will be able to hand over without the customer\'s code. Allow it only after talking to the customer and making sure they got the order.';
+
+  @override
+  String get dlvWaiveConfirm => 'Allow';
+
+  @override
+  String get dlvWaived => 'Allowed — the courier can hand over without a code';
+
+  @override
+  String dlvReasonWith(String reason) {
+    return 'Reason: $reason';
+  }
+
+  @override
+  String dlvDistanceFromDropoff(String distance) {
+    return 'The courier was $distance from the customer\'s address';
+  }
+
+  @override
+  String dlvCancelReasonWith(String reason) {
+    return 'Cancellation reason: $reason';
+  }
+
+  @override
+  String get dlvCodeLockedStaff =>
+      'Code locked: the courier entered a wrong code too many times';
+
+  @override
+  String dlvCodeWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Waiting for the customer\'s code ($count attempts left)',
+      one: 'Waiting for the customer\'s code (1 attempt left)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dlvWaivedStaff => 'Handover without a code is allowed';
+
+  @override
+  String get dlvWaiveButton => 'Allow without a code';
+
+  @override
+  String get dlvHandoverCodeHint =>
+      'Tell it to the courier when you get your order. Don\'t share it with anyone else.';
+
+  @override
+  String dlvCodeSemantics(String digits) {
+    return 'Code $digits';
+  }
+
+  @override
+  String dlvCourierWith(String name) {
+    return 'Courier: $name';
+  }
+
+  @override
+  String get dlvChangeCourier => 'Change courier';
+
+  @override
+  String get dlvCancel => 'Cancel delivery';
+
+  @override
+  String get dlvReassign => 'Assign again';
+
+  @override
+  String get dlvTrackCourier => 'Track the courier';
+
+  @override
+  String get dlvOfferedAll => 'Offered to all couriers';
+
+  @override
+  String get dlvAssigned => 'Assigned to the courier';
+
+  @override
+  String get dlvCancelTitle => 'Cancel the delivery?';
+
+  @override
+  String get dlvCancelBody =>
+      'The courier won\'t see this order anymore. You can assign it again later.';
+
+  @override
+  String get commonRefresh => 'Refresh';
+
+  @override
+  String fleetOnline(String count) {
+    return '$count online';
+  }
+
+  @override
+  String fleetBusy(String count) {
+    return '$count delivering';
+  }
+
+  @override
+  String fleetStale(String count) {
+    return '$count no signal';
+  }
+
+  @override
+  String get fleetNoSignal => 'No signal';
+
+  @override
+  String get fleetDelivering => 'Delivering';
+
+  @override
+  String get fleetFree => 'Free';
+
+  @override
+  String get fleetNoneOnline => 'No couriers online yet';
+
+  @override
+  String fleetLastLocation(String ago) {
+    return 'last location $ago';
+  }
+
+  @override
+  String get fleetViewDelivery => 'View delivery';
+
+  @override
+  String fleetViewDeliveryN(String n) {
+    return 'View delivery ($n)';
+  }
+
+  @override
+  String get trkOnline => 'Online';
+
+  @override
+  String get trkOffline => 'Offline';
+
+  @override
+  String get trkNotificationTitle => 'bsmart is sharing your location';
+
+  @override
+  String trkNotifActiveCustomer(String label) {
+    return 'Active delivery: $label — visible to the customer and your business owner';
+  }
+
+  @override
+  String trkNotifActiveOwner(String label) {
+    return 'Active delivery: $label — visible to your business owner';
+  }
+
+  @override
+  String get trkNotifOnline =>
+      'Online — your business owner can see your location';
+
+  @override
+  String get trkShareTitle => 'Location sharing';
+
+  @override
+  String get trkWatchersNone => 'Nobody — your location isn\'t being sent';
+
+  @override
+  String trkWatchersWithCustomer(String label) {
+    return 'Your business owner, admins and the customer ($label)';
+  }
+
+  @override
+  String get trkWatchersOwner => 'Your business owner and admins';
+
+  @override
+  String get trkWhatTitle => 'What is shared';
+
+  @override
+  String get trkWhatBody =>
+      'Your phone\'s GPS location: coordinates, speed and direction of travel.';
+
+  @override
+  String get trkWhenTitle => 'When';
+
+  @override
+  String get trkWhenBody =>
+      'Only while you\'re \"Online\" or on an active delivery — even with the app in the background or the screen off. A persistent notification stays in the notification panel during this time.';
+
+  @override
+  String get trkWhoTitle => 'Who sees it';
+
+  @override
+  String get trkWhoBody =>
+      'Your business owner and their admins, plus the customer of an active delivery.';
+
+  @override
+  String get trkStopTitle => 'How to stop it';
+
+  @override
+  String get trkStopBody =>
+      'Switch to \"Offline\" at any time — sending stops right away. While offline, your location isn\'t sent.';
+
+  @override
+  String get trkDisclosureLead =>
+      'bsmart uses your location to track deliveries';
+
+  @override
+  String get trkNotNow => 'Not now';
+
+  @override
+  String get trkAgree => 'I agree';
+
+  @override
+  String get trkGoOfflineTitle => 'Go offline';
+
+  @override
+  String get trkGoOfflineBody =>
+      'Location sharing stops — your business owner won\'t see you on the map.';
+
+  @override
+  String trkGoOfflineActiveCustomer(String label) {
+    return 'You have an active delivery ($label). If you stop sharing, the customer and your business owner won\'t see you on the map.';
+  }
+
+  @override
+  String trkGoOfflineActiveOwner(String label) {
+    return 'You have an active delivery ($label). If you stop sharing, your business owner won\'t see you on the map.';
+  }
+
+  @override
+  String get trkStop => 'Stop';
+
+  @override
+  String get trkNotSentYet => 'not sent yet';
+
+  @override
+  String trkSecondsAgo(String seconds) {
+    return '$seconds s ago';
+  }
+
+  @override
+  String trkMinutesAgo(String minutes) {
+    return '$minutes min ago';
+  }
+
+  @override
+  String trkWatchersWith(String who) {
+    return 'Visible to: $who';
+  }
+
+  @override
+  String get trkGoOnlineHint => 'Go online to start working';
+
+  @override
+  String get trkGpsOffBanner => 'GPS (location) is off on your phone.';
+
+  @override
+  String get trkTurnOnGps => 'Turn on GPS';
+
+  @override
+  String get trkDeniedForever =>
+      'Location permission was denied. Allow it in Settings.';
+
+  @override
+  String get trkOpenSettings => 'Open Settings';
+
+  @override
+  String get trkPermissionNeeded =>
+      'Location permission is needed to go online.';
+
+  @override
+  String get trkLastSent => 'Last location sent';
+
+  @override
+  String get trkWhoNow => 'Who can see you now';
+
+  @override
+  String get trkNoNotifPermission => 'No notification permission';
+
+  @override
+  String get trkNoNotifPermissionBody =>
+      'Tracking continues, but it won\'t show in the notification panel.';
+
+  @override
+  String get trkBatterySaver => 'Battery saver';
+
+  @override
+  String get trkBatterySaverBody =>
+      'Some phones stop apps running in the background. If you have problems, turn off battery restrictions for bsmart.';
+
+  @override
+  String get trkAboutSharing => 'About location sharing';
+
+  @override
+  String get trkSharing => 'Sharing location';
+
+  @override
+  String get trkConnecting => 'Connecting…';
+
+  @override
+  String get trkNoGps => 'No GPS signal';
+
+  @override
+  String get trkReconnecting => 'Reconnecting…';
+
+  @override
+  String get trkDenied => 'No permission';
+
+  @override
+  String get trkGpsOff => 'GPS is off';
+
+  @override
+  String get trkJustNow => 'just now';
 }

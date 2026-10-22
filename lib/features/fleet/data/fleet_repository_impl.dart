@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/core/entities/geo_point.dart';
 import 'package:bsmart/core/network/dio_error_mapper.dart';
 import 'package:bsmart/core/network/result.dart';
@@ -27,7 +28,7 @@ class FleetRepositoryImpl implements FleetRepository {
     final ctx = json['context'] as Map<String, dynamic>? ?? const {};
     return FleetCourier(
       id: json['subjectId'] as String,
-      name: json['name'] as String? ?? 'Kuryer',
+      name: json['name'] as String? ?? UserRole.courier.label,
       phone: json['phone'] as String?,
       location: loc == null ? null : GeoPoint((loc['lat'] as num).toDouble(), (loc['lng'] as num).toDouble()),
       heading: (loc?['heading'] as num?)?.toDouble(),

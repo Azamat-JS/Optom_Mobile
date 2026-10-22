@@ -2234,4 +2234,565 @@ class AppLocalizationsUz extends AppLocalizations {
   String couriersToday(int count) {
     return 'Bugun: $count ta yetkazish';
   }
+
+  @override
+  String enumDeliveryStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'pending': 'Kutilmoqda',
+      'assigned': 'Biriktirilgan',
+      'accepted': 'Qabul qilingan',
+      'pickedUp': 'Yo\'lda',
+      'arrived': 'Yetib keldi',
+      'delivered': 'Topshirildi',
+      'cancelled': 'Bekor qilingan',
+      'failed': 'Yetkazib bo\'lmadi',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumDeliveryFailReason(String reason) {
+    String _temp0 = intl.Intl.selectLogic(reason, {
+      'notHome': 'Mijoz manzilda yo\'q',
+      'refused': 'Mijoz qabul qilmadi',
+      'wrongAddress': 'Manzil noto\'g\'ri',
+      'other': 'Boshqa sabab',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String dlvHeadline(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'pending': 'Kuryer qidirilmoqda',
+      'assigned': 'Kuryer tayinlandi, tasdiqlashini kutmoqda',
+      'accepted': 'Kuryer do\'konga bormoqda',
+      'pickedUp': 'Kuryer yo\'lda',
+      'arrived': 'Kuryer yetib keldi!',
+      'delivered': 'Buyurtma topshirildi',
+      'cancelled': 'Yetkazish bekor qilindi',
+      'failed': 'Yetkazib bo\'lmadi',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get dlvLabelFallback => 'Yetkazish';
+
+  @override
+  String get dlvConfirmHandoverTitle => 'Buyurtma topshirildimi?';
+
+  @override
+  String dlvConfirmHandoverBody(String label) {
+    return '$label mijozga topshirilganini tasdiqlang.';
+  }
+
+  @override
+  String get dlvYesHandedOver => 'Ha, topshirdim';
+
+  @override
+  String get dlvCallFailed => 'Qo\'ng\'iroq qilib bo\'lmadi';
+
+  @override
+  String get dlvNavigatorFailed => 'Navigatorni ochib bo\'lmadi';
+
+  @override
+  String dlvCount(int count) {
+    return '$count ta yetkazish';
+  }
+
+  @override
+  String get dlvNone => 'Hozircha yetkazish yo\'q';
+
+  @override
+  String get dlvActiveSection => 'Faol yetkazishlar';
+
+  @override
+  String get dlvOffersSection => 'Yangi takliflar';
+
+  @override
+  String get dlvActiveBannerTitle => 'Faol yetkazish bor';
+
+  @override
+  String get dlvActiveBannerCustomer =>
+      'Mijoz va biznes egangiz sizni xaritada ko\'rishi uchun onlayn bo\'ling.';
+
+  @override
+  String get dlvActiveBannerOwner =>
+      'Biznes egangiz sizni xaritada ko\'rishi uchun onlayn bo\'ling.';
+
+  @override
+  String get dlvNoAddress => 'Manzil ko\'rsatilmagan';
+
+  @override
+  String get dlvCompleted => 'Yetkazish yakunlandi';
+
+  @override
+  String get dlvFailedMarked =>
+      'Belgilandi: yetkazib bo\'lmadi. Buyurtmani do\'konga qaytaring.';
+
+  @override
+  String get mapFitAll => 'Hammasini ko\'rsatish';
+
+  @override
+  String get mapMyLocation => 'Mening joylashuvim';
+
+  @override
+  String get dlvPickup => 'Olib ketish';
+
+  @override
+  String get dlvYouAreOffline => 'Siz oflaynsiz';
+
+  @override
+  String get dlvLocationHidden => 'Joylashuvingiz ko\'rinmayapti';
+
+  @override
+  String get dlvFailed => 'Yetkazib bo\'lmadi';
+
+  @override
+  String get dlvCancelledTitle => 'Yetkazish bekor qilindi';
+
+  @override
+  String get dlvFinishedTitle => 'Yetkazish yakunlangan';
+
+  @override
+  String get dlvGoToStore => 'Do\'konga boring';
+
+  @override
+  String get dlvDeliverToCustomer => 'Mijozga yetkazing';
+
+  @override
+  String get dlvCodeLockedHint =>
+      'Kod bloklangan — do\'konga qo\'ng\'iroq qiling';
+
+  @override
+  String get dlvAskCode => 'Topshirishda mijozdan 4 xonali kodni so\'rang';
+
+  @override
+  String get dlvStoreFallback => 'Do\'kon';
+
+  @override
+  String get dlvNavigator => 'Navigator';
+
+  @override
+  String get dlvHandedOver => 'Topshirdim';
+
+  @override
+  String get dlvPickedUp => 'Buyurtmani oldim';
+
+  @override
+  String get dlvArrived => 'Yetib keldim';
+
+  @override
+  String dlvMinutesShort(String minutes) {
+    return '~$minutes daq';
+  }
+
+  @override
+  String dlvToStore(String time) {
+    return 'Do\'kongacha $time';
+  }
+
+  @override
+  String dlvToCustomer(String time) {
+    return 'Mijozgacha $time';
+  }
+
+  @override
+  String commonKm(String km) {
+    return '$km km';
+  }
+
+  @override
+  String commonMeters(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String get dlvRestaurantOrder => 'Restoran buyurtmasi';
+
+  @override
+  String dlvMinutesLong(String minutes) {
+    return '~$minutes daqiqa';
+  }
+
+  @override
+  String dlvFailedCustomer(String reason) {
+    return '$reason. Do\'kon siz bilan bog\'lanadi.';
+  }
+
+  @override
+  String get dlvFailedFallback => 'Topshirib bo\'lmadi';
+
+  @override
+  String get dlvCourierUpdating => 'Kuryer joylashuvi yangilanmoqda…';
+
+  @override
+  String get dlvYourCourier => 'Sizning kuryeringiz';
+
+  @override
+  String get commonCall => 'Qo\'ng\'iroq';
+
+  @override
+  String get dlvAssignTitle => 'Kuryerga berish';
+
+  @override
+  String get dlvOfferAll => 'Barcha kuryerlarga taklif qilish';
+
+  @override
+  String get dlvOfferAllHint => 'Birinchi qabul qilgan kuryer oladi';
+
+  @override
+  String get dlvNoActiveCouriers => 'Faol kuryer yo\'q';
+
+  @override
+  String dlvActiveDeliveries(int count) {
+    return '$count ta faol yetkazish';
+  }
+
+  @override
+  String get dlvCodeFourDigits => 'Kod 4 ta raqamdan iborat';
+
+  @override
+  String get dlvCodeLocked => 'Kod bloklandi';
+
+  @override
+  String get dlvWaivedTitle => 'Do\'kon kodsiz topshirishga ruxsat berdi';
+
+  @override
+  String get dlvHandoverCode => 'Topshirish kodi';
+
+  @override
+  String get dlvTooManyTries =>
+      'Noto\'g\'ri urinishlar juda ko\'p. Do\'konga qo\'ng\'iroq qiling — ular kodsiz topshirishga ruxsat beradi.';
+
+  @override
+  String get dlvConfirmHandedOver =>
+      'Buyurtmani mijozga topshirganingizni tasdiqlang.';
+
+  @override
+  String get dlvAskCodeLong =>
+      'Mijozdan 4 xonali kodni so\'rang. Kod mijozning ilovasida va Telegramida.';
+
+  @override
+  String dlvAttemptsLeft(int count) {
+    return 'Urinishlar: $count ta qoldi';
+  }
+
+  @override
+  String get dlvRecheck => 'Qayta tekshirish';
+
+  @override
+  String get dlvWhyFailed => 'Nima uchun topshirib bo\'lmadi?';
+
+  @override
+  String get dlvFailNotice =>
+      'Mijoz va do\'kon xabardor qilinadi. Buyurtmani do\'konga qaytaring.';
+
+  @override
+  String get dlvNoteRequired => 'Izoh (majburiy)';
+
+  @override
+  String get dlvWaiveTitle => 'Kodsiz topshirishga ruxsat berilsinmi?';
+
+  @override
+  String get dlvWaiveBody =>
+      'Kuryer buyurtmani mijoz kodisiz topshira oladi. Faqat mijoz bilan gaplashib, buyurtmani olganiga ishonch hosil qilsangiz ruxsat bering.';
+
+  @override
+  String get dlvWaiveConfirm => 'Ruxsat berish';
+
+  @override
+  String get dlvWaived => 'Ruxsat berildi — kuryer kodsiz topshira oladi';
+
+  @override
+  String dlvReasonWith(String reason) {
+    return 'Sabab: $reason';
+  }
+
+  @override
+  String dlvDistanceFromDropoff(String distance) {
+    return 'Kuryer mijoz manzilidan $distance uzoqlikda edi';
+  }
+
+  @override
+  String dlvCancelReasonWith(String reason) {
+    return 'Bekor qilish sababi: $reason';
+  }
+
+  @override
+  String get dlvCodeLockedStaff =>
+      'Kod bloklandi: kuryer noto\'g\'ri kodni ko\'p kiritdi';
+
+  @override
+  String dlvCodeWaiting(int count) {
+    return 'Mijoz kodi kutilmoqda ($count urinish qoldi)';
+  }
+
+  @override
+  String get dlvWaivedStaff => 'Kodsiz topshirishga ruxsat berilgan';
+
+  @override
+  String get dlvWaiveButton => 'Kodsiz topshirishga ruxsat';
+
+  @override
+  String get dlvHandoverCodeHint =>
+      'Buyurtmani olganingizda kuryerga ayting. Boshqa hech kimga bermang.';
+
+  @override
+  String dlvCodeSemantics(String digits) {
+    return 'Kod $digits';
+  }
+
+  @override
+  String dlvCourierWith(String name) {
+    return 'Kuryer: $name';
+  }
+
+  @override
+  String get dlvChangeCourier => 'Kuryerni o\'zgartirish';
+
+  @override
+  String get dlvCancel => 'Bekor qilish';
+
+  @override
+  String get dlvReassign => 'Qayta kuryerga berish';
+
+  @override
+  String get dlvTrackCourier => 'Kuryerni kuzatish';
+
+  @override
+  String get dlvOfferedAll => 'Barcha kuryerlarga taklif qilindi';
+
+  @override
+  String get dlvAssigned => 'Kuryerga berildi';
+
+  @override
+  String get dlvCancelTitle => 'Yetkazishni bekor qilish?';
+
+  @override
+  String get dlvCancelBody =>
+      'Kuryer bu buyurtmani endi ko\'rmaydi. Keyin qayta berishingiz mumkin.';
+
+  @override
+  String get commonRefresh => 'Yangilash';
+
+  @override
+  String fleetOnline(String count) {
+    return '$count onlayn';
+  }
+
+  @override
+  String fleetBusy(String count) {
+    return '$count yetkazishda';
+  }
+
+  @override
+  String fleetStale(String count) {
+    return '$count aloqasiz';
+  }
+
+  @override
+  String get fleetNoSignal => 'Aloqa yo\'q';
+
+  @override
+  String get fleetDelivering => 'Yetkazishda';
+
+  @override
+  String get fleetFree => 'Bo\'sh';
+
+  @override
+  String get fleetNoneOnline => 'Hozircha onlayn kuryer yo\'q';
+
+  @override
+  String fleetLastLocation(String ago) {
+    return 'oxirgi joylashuv $ago';
+  }
+
+  @override
+  String get fleetViewDelivery => 'Yetkazishni ko\'rish';
+
+  @override
+  String fleetViewDeliveryN(String n) {
+    return 'Yetkazishni ko\'rish ($n)';
+  }
+
+  @override
+  String get trkOnline => 'Onlayn';
+
+  @override
+  String get trkOffline => 'Oflayn';
+
+  @override
+  String get trkNotificationTitle => 'bsmart joylashuvingizni ulashmoqda';
+
+  @override
+  String trkNotifActiveCustomer(String label) {
+    return 'Faol yetkazish: $label — mijoz va biznes egangiz ko\'radi';
+  }
+
+  @override
+  String trkNotifActiveOwner(String label) {
+    return 'Faol yetkazish: $label — biznes egangiz ko\'radi';
+  }
+
+  @override
+  String get trkNotifOnline =>
+      'Onlayn — joylashuvingiz biznes egasiga ko\'rinadi';
+
+  @override
+  String get trkShareTitle => 'Joylashuvni ulashish';
+
+  @override
+  String get trkWatchersNone => 'Hech kim — joylashuv yuborilmayapti';
+
+  @override
+  String trkWatchersWithCustomer(String label) {
+    return 'Biznes egangiz, administratorlar va mijoz ($label)';
+  }
+
+  @override
+  String get trkWatchersOwner => 'Biznes egangiz va administratorlar';
+
+  @override
+  String get trkWhatTitle => 'Nima ulashiladi';
+
+  @override
+  String get trkWhatBody =>
+      'Telefoningizning GPS joylashuvi: koordinatalar, tezlik va harakat yo\'nalishi.';
+
+  @override
+  String get trkWhenTitle => 'Qachon';
+
+  @override
+  String get trkWhenBody =>
+      'Faqat siz «Onlayn» bo\'lganingizda yoki faol yetkazish paytida — ilova fonda yoki ekran o\'chiq bo\'lsa ham. Bu vaqtda bildirishnomalar panelida doimiy xabar turadi.';
+
+  @override
+  String get trkWhoTitle => 'Kim ko\'radi';
+
+  @override
+  String get trkWhoBody =>
+      'Biznes egangiz va uning administratorlari, hamda faol yetkazish buyurtmasining mijozi.';
+
+  @override
+  String get trkStopTitle => 'Qanday to\'xtatiladi';
+
+  @override
+  String get trkStopBody =>
+      'Istalgan vaqtda «Oflayn» ga o\'ting — joylashuv yuborish darhol to\'xtaydi. Oflayn paytida joylashuvingiz yuborilmaydi.';
+
+  @override
+  String get trkDisclosureLead =>
+      'Yetkazishlarni kuzatish uchun bsmart joylashuvingizdan foydalanadi';
+
+  @override
+  String get trkNotNow => 'Hozir emas';
+
+  @override
+  String get trkAgree => 'Roziman';
+
+  @override
+  String get trkGoOfflineTitle => 'Oflayn bo\'lish';
+
+  @override
+  String get trkGoOfflineBody =>
+      'Joylashuvingizni ulashish to\'xtatiladi — biznes egangiz sizni xaritada ko\'rmaydi.';
+
+  @override
+  String trkGoOfflineActiveCustomer(String label) {
+    return 'Sizda faol yetkazish bor ($label). Joylashuv ulashish to\'xtatilsa, mijoz va biznes egangiz sizni xaritada ko\'rmay qoladi.';
+  }
+
+  @override
+  String trkGoOfflineActiveOwner(String label) {
+    return 'Sizda faol yetkazish bor ($label). Joylashuv ulashish to\'xtatilsa, biznes egangiz sizni xaritada ko\'rmay qoladi.';
+  }
+
+  @override
+  String get trkStop => 'To\'xtatish';
+
+  @override
+  String get trkNotSentYet => 'hali yuborilmagan';
+
+  @override
+  String trkSecondsAgo(String seconds) {
+    return '$seconds soniya oldin';
+  }
+
+  @override
+  String trkMinutesAgo(String minutes) {
+    return '$minutes daqiqa oldin';
+  }
+
+  @override
+  String trkWatchersWith(String who) {
+    return 'Ko\'radi: $who';
+  }
+
+  @override
+  String get trkGoOnlineHint => 'Ishni boshlash uchun onlayn bo\'ling';
+
+  @override
+  String get trkGpsOffBanner => 'Telefoningizda GPS (joylashuv) o\'chirilgan.';
+
+  @override
+  String get trkTurnOnGps => 'GPS ni yoqish';
+
+  @override
+  String get trkDeniedForever =>
+      'Joylashuv ruxsati rad etilgan. Sozlamalardan ruxsat bering.';
+
+  @override
+  String get trkOpenSettings => 'Sozlamalarni ochish';
+
+  @override
+  String get trkPermissionNeeded =>
+      'Onlayn bo\'lish uchun joylashuv ruxsati kerak.';
+
+  @override
+  String get trkLastSent => 'Oxirgi yuborilgan joylashuv';
+
+  @override
+  String get trkWhoNow => 'Hozir kim ko\'radi';
+
+  @override
+  String get trkNoNotifPermission => 'Bildirishnoma ruxsati yo\'q';
+
+  @override
+  String get trkNoNotifPermissionBody =>
+      'Kuzatuv davom etadi, lekin bildirishnoma panelida ko\'rinmaydi.';
+
+  @override
+  String get trkBatterySaver => 'Batareya tejash rejimi';
+
+  @override
+  String get trkBatterySaverBody =>
+      'Ba\'zi telefonlar fondagi ilovalarni to\'xtatadi. Muammo bo\'lsa, bsmart uchun batareya cheklovini o\'chiring.';
+
+  @override
+  String get trkAboutSharing => 'Joylashuv ulashish haqida';
+
+  @override
+  String get trkSharing => 'Joylashuv ulashilmoqda';
+
+  @override
+  String get trkConnecting => 'Ulanmoqda…';
+
+  @override
+  String get trkNoGps => 'GPS signali yo\'q';
+
+  @override
+  String get trkReconnecting => 'Qayta ulanmoqda…';
+
+  @override
+  String get trkDenied => 'Ruxsat berilmagan';
+
+  @override
+  String get trkGpsOff => 'GPS o\'chirilgan';
+
+  @override
+  String get trkJustNow => 'hozirgina';
 }

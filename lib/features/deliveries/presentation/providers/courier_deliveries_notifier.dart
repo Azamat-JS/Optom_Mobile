@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/app_l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/network/api_exception.dart';
 import 'package:bsmart/core/realtime/tracking_socket.dart';
@@ -43,8 +44,10 @@ class CourierDeliveriesNotifier extends AsyncNotifier<List<Delivery>> {
 
   void _syncTrackingContext(List<Delivery> items) {
     final active = items.where((d) => d.status.isActive).toList();
-    ref.read(trackingNotifierProvider.notifier).setActiveDelivery(
-          active.isEmpty ? null : (active.length == 1 ? active.first.label : '${active.length} ta yetkazish'),
+    ref
+        .read(trackingNotifierProvider.notifier)
+        .setActiveDelivery(
+          active.isEmpty ? null : (active.length == 1 ? active.first.label : appL10n.dlvCount(active.length)),
           // B2C buyers always can; since Phase 6 V5 so can restaurant customers whose (verified)
           // app account matches the phone staff entered — any restaurant delivery with a phone.
           customerWatches: active.any(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/realtime/tracking_socket.dart';
 
@@ -62,7 +63,7 @@ class _HandoverCodeSheetState extends ConsumerState<HandoverCodeSheet> {
 
   Future<void> _submit({required bool withCode}) async {
     if (withCode && _code.text.length != 4) {
-      setState(() => _error = 'Kod 4 ta raqamdan iborat');
+      setState(() => _error = context.l10n.dlvCodeFourDigits);
       return;
     }
     setState(() {
@@ -105,18 +106,16 @@ class _HandoverCodeSheetState extends ConsumerState<HandoverCodeSheet> {
           const SizedBox(height: 12),
           Text(
             handover.locked
-                ? 'Kod bloklandi'
-                : (waived ? "Do'kon kodsiz topshirishga ruxsat berdi" : 'Topshirish kodi'),
+                ? context.l10n.dlvCodeLocked
+                : (waived ? context.l10n.dlvWaivedTitle : context.l10n.dlvHandoverCode),
             textAlign: TextAlign.center,
             style: theme.textTheme.titleLarge,
           ),
           const SizedBox(height: 8),
           Text(
             handover.locked
-                ? "Noto'g'ri urinishlar juda ko'p. Do'konga qo'ng'iroq qiling — ular kodsiz topshirishga ruxsat beradi."
-                : (waived
-                    ? 'Buyurtmani mijozga topshirganingizni tasdiqlang.'
-                    : "Mijozdan 4 xonali kodni so'rang. Kod mijozning ilovasida va Telegramida."),
+                ? context.l10n.dlvTooManyTries
+                : (waived ? context.l10n.dlvConfirmHandedOver : context.l10n.dlvAskCodeLong),
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium,
           ),
@@ -135,31 +134,35 @@ class _HandoverCodeSheetState extends ConsumerState<HandoverCodeSheet> {
                 counterText: '',
                 hintText: '••••',
                 errorText: _error,
-                helperText: 'Urinishlar: ${handover.attemptsLeft} ta qoldi',
+                helperText: context.l10n.dlvAttemptsLeft(handover.attemptsLeft),
                 border: const OutlineInputBorder(),
               ),
               onSubmitted: (_) => _submit(withCode: true),
             ),
           ] else if (_error != null) ...[
             const SizedBox(height: 12),
-            Text(_error!, textAlign: TextAlign.center, style: TextStyle(color: theme.colorScheme.error)),
+            Text(
+              _error!,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: theme.colorScheme.error),
+            ),
           ],
           const SizedBox(height: 16),
           if (handover.locked) ...[
             FilledButton.tonalIcon(
               onPressed: _busy ? null : _recheck,
               icon: const Icon(Icons.refresh),
-              label: const Text('Qayta tekshirish'),
+              label: Text(context.l10n.dlvRecheck),
             ),
             const SizedBox(height: 8),
-            OutlinedButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Yopish')),
+            OutlinedButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonClose)),
           ] else
             FilledButton.icon(
               onPressed: _busy ? null : () => _submit(withCode: !waived),
               icon: _busy
                   ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
                   : const Icon(Icons.task_alt),
-              label: Text(waived ? 'Ha, topshirdim' : 'Tasdiqlash'),
+              label: Text(waived ? context.l10n.dlvYesHandedOver : context.l10n.commonConfirm),
             ),
         ],
       ),
@@ -193,8 +196,7 @@ class _FailDeliverySheetState extends State<FailDeliverySheet> {
     super.dispose();
   }
 
-  bool get _valid =>
-      _reason != null && (_reason != DeliveryFailReason.other || _note.text.trim().isNotEmpty);
+  bool get _valid => _reason != null && (_reason != DeliveryFailReason.other || _note.text.trim().isNotEmpty);
 
   @override
   Widget build(BuildContext context) {
@@ -205,12 +207,9 @@ class _FailDeliverySheetState extends State<FailDeliverySheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text("Nima uchun topshirib bo'lmadi?", style: theme.textTheme.titleLarge),
+          Text(context.l10n.dlvWhyFailed, style: theme.textTheme.titleLarge),
           const SizedBox(height: 4),
-          Text(
-            "Mijoz va do'kon xabardor qilinadi. Buyurtmani do'konga qaytaring.",
-            style: theme.textTheme.bodyMedium,
-          ),
+          Text(context.l10n.dlvFailNotice, style: theme.textTheme.bodyMedium),
           const SizedBox(height: 8),
           RadioGroup<DeliveryFailReason>(
             groupValue: _reason,
@@ -228,7 +227,9 @@ class _FailDeliverySheetState extends State<FailDeliverySheet> {
             maxLines: 2,
             onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
-              labelText: _reason == DeliveryFailReason.other ? 'Izoh (majburiy)' : 'Izoh (ixtiyoriy)',
+              labelText: _reason == DeliveryFailReason.other
+                  ? context.l10n.dlvNoteRequired
+                  : context.l10n.commonNoteOptional,
               border: const OutlineInputBorder(),
             ),
           ),
@@ -237,7 +238,7 @@ class _FailDeliverySheetState extends State<FailDeliverySheet> {
             style: FilledButton.styleFrom(backgroundColor: theme.colorScheme.error),
             onPressed: _valid ? () => Navigator.of(context).pop((_reason!, _note.text.trim())) : null,
             icon: const Icon(Icons.report_outlined),
-            label: const Text("Yetkazib bo'lmadi"),
+            label: Text(context.l10n.dlvFailed),
           ),
         ],
       ),

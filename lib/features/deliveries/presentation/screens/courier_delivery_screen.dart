@@ -157,7 +157,7 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
       }
     }
     if (!done || !mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Yetkazish yakunlandi')));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.dlvCompleted)));
     Navigator.of(context).pop();
   }
 
@@ -172,9 +172,7 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
       DeliveryActions.showError(context, failure.message);
       return;
     }
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Belgilandi: yetkazib bo'lmadi. Buyurtmani do'konga qaytaring.")));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.dlvFailedMarked)));
     Navigator.of(context).pop();
   }
 
@@ -186,7 +184,7 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
       _decodedFor = route.encodedPolyline;
       _routePoints = decodePolyline(route.encodedPolyline);
     }
-    final title = delivery.valueOrNull?.label ?? 'Yetkazish';
+    final title = delivery.valueOrNull?.label ?? context.l10n.dlvLabelFallback;
     final d = delivery.valueOrNull;
     if (d != null && !_fitted && _map != null) {
       _fitted = true;
@@ -214,7 +212,7 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
                   actions: [
                     MapRoundButton(
                       icon: Icons.zoom_out_map_rounded,
-                      tooltip: "Hammasini ko'rsatish",
+                      tooltip: context.l10n.mapFitAll,
                       onTap: d == null ? null : () => _fitAll(d),
                     ),
                   ],
@@ -233,7 +231,7 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
               bottom: 12 + _BottomPanel.estimatedHeight,
               child: MapRoundButton(
                 icon: Icons.my_location_rounded,
-                tooltip: 'Mening joylashuvim',
+                tooltip: context.l10n.mapMyLocation,
                 onTap: () {
                   final me = _courier.value;
                   if (me != null) _map?.animateCamera(CameraUpdate.newLatLngZoom(me.position, 16));
@@ -286,7 +284,7 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
                 position: _ll(d.pickup!),
                 icon: _shopIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
                 anchor: const Offset(0.5, 1),
-                infoWindow: InfoWindow(title: 'Olib ketish', snippet: d.storeName),
+                infoWindow: InfoWindow(title: context.l10n.dlvPickup, snippet: d.storeName),
               ),
             if (d.dropoff != null)
               Marker(
@@ -294,7 +292,7 @@ class _CourierDeliveryScreenState extends ConsumerState<CourierDeliveryScreen> w
                 position: _ll(d.dropoff!),
                 icon: _homeIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
                 anchor: const Offset(0.5, 1),
-                infoWindow: InfoWindow(title: 'Mijoz', snippet: d.dropoffAddress),
+                infoWindow: InfoWindow(title: context.l10n.salesCustomer, snippet: d.dropoffAddress),
               ),
             if (me != null && _courierIcon != null)
               Marker(
@@ -369,14 +367,17 @@ class _OfflineBanner extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Siz oflaynsiz',
+                            context.l10n.dlvYouAreOffline,
                             style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
                           ),
-                          Text("Joylashuvingiz ko'rinmayapti", style: theme.textTheme.bodySmall),
+                          Text(context.l10n.dlvLocationHidden, style: theme.textTheme.bodySmall),
                         ],
                       ),
                     ),
-                    FilledButton(onPressed: () => TrackingActions.goOnline(context, ref), child: const Text('Onlayn')),
+                    FilledButton(
+                      onPressed: () => TrackingActions.goOnline(context, ref),
+                      child: Text(context.l10n.trkOnline),
+                    ),
                   ],
                 ),
               ),
@@ -402,11 +403,11 @@ class _BottomPanel extends ConsumerWidget {
   final Future<void> Function(DeliveryAction action) onAction;
   final Future<void> Function() onFail;
 
-  static String _title(Delivery d, bool toPickup) => switch (d.status) {
-    DeliveryStatus.failed => "Yetkazib bo'lmadi",
-    DeliveryStatus.cancelled => 'Yetkazish bekor qilindi',
-    _ when d.status.isTerminal => 'Yetkazish yakunlangan',
-    _ => toPickup ? "Do'konga boring" : 'Mijozga yetkazing',
+  static String _title(AppLocalizations l10n, Delivery d, bool toPickup) => switch (d.status) {
+    DeliveryStatus.failed => l10n.dlvFailed,
+    DeliveryStatus.cancelled => l10n.dlvCancelledTitle,
+    _ when d.status.isTerminal => l10n.dlvFinishedTitle,
+    _ => toPickup ? l10n.dlvGoToStore : l10n.dlvDeliverToCustomer,
   };
 
   @override
@@ -435,7 +436,7 @@ class _BottomPanel extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      _title(d, toPickup),
+                      _title(context.l10n, d, toPickup),
                       style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800, height: 1.15),
                     ),
                   ),
@@ -461,9 +462,7 @@ class _BottomPanel extends ConsumerWidget {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          d.handover.locked
-                              ? "Kod bloklangan — do'konga qo'ng'iroq qiling"
-                              : "Topshirishda mijozdan 4 xonali kodni so'rang",
+                          d.handover.locked ? context.l10n.dlvCodeLockedHint : context.l10n.dlvAskCode,
                           style: TextStyle(color: colors.accentText, fontSize: 13, fontWeight: FontWeight.w700),
                         ),
                       ),
@@ -476,7 +475,11 @@ class _BottomPanel extends ConsumerWidget {
                 decoration: BoxDecoration(color: DashColors.inset(context), borderRadius: BorderRadius.circular(20)),
                 child: Column(
                   children: [
-                    _Stop(icon: Icons.storefront_rounded, title: d.storeName ?? "Do'kon", done: !toPickup),
+                    _Stop(
+                      icon: Icons.storefront_rounded,
+                      title: d.storeName ?? context.l10n.dlvStoreFallback,
+                      done: !toPickup,
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 17),
                       child: Align(
@@ -487,7 +490,7 @@ class _BottomPanel extends ConsumerWidget {
                     _Stop(
                       icon: Icons.near_me_rounded,
                       highlight: true,
-                      title: d.dropoffAddress ?? "Manzil ko'rsatilmagan",
+                      title: d.dropoffAddress ?? context.l10n.dlvNoAddress,
                       subtitle: d.customerName,
                       done: d.status == DeliveryStatus.delivered,
                       trailing: d.customerPhone == null
@@ -506,7 +509,7 @@ class _BottomPanel extends ConsumerWidget {
                         style: OutlinedButton.styleFrom(minimumSize: const Size(0, 56), shape: shape),
                         onPressed: () => DeliveryActions.navigate(context, next),
                         icon: const Icon(Icons.navigation_rounded),
-                        label: const Text('Navigator'),
+                        label: Text(context.l10n.dlvNavigator),
                       ),
                       const SizedBox(width: 10),
                     ],
@@ -520,13 +523,13 @@ class _BottomPanel extends ConsumerWidget {
                         style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
                         onPressed: busy ? null : onFail,
                         icon: const Icon(Icons.report_rounded, size: 18),
-                        label: const Text("Yetkazib bo'lmadi"),
+                        label: Text(context.l10n.dlvFailed),
                       ),
                       const Spacer(),
                       if (d.status == DeliveryStatus.pickedUp)
                         TextButton(
                           onPressed: busy ? null : () => onAction(DeliveryAction.complete),
-                          child: const Text('Topshirdim'),
+                          child: Text(context.l10n.dlvHandedOver),
                         ),
                     ],
                   ),
@@ -541,17 +544,17 @@ class _BottomPanel extends ConsumerWidget {
   Widget _primary(BuildContext context, WidgetRef ref) {
     final (label, icon, run) = switch (delivery.status) {
       DeliveryStatus.pending || DeliveryStatus.assigned => (
-        'Qabul qilish',
+        context.l10n.restAccept,
         Icons.check_rounded,
         () => DeliveryActions.accept(context, ref, delivery),
       ),
       DeliveryStatus.accepted => (
-        'Buyurtmani oldim',
+        context.l10n.dlvPickedUp,
         Icons.shopping_bag_outlined,
         () => onAction(DeliveryAction.pickup),
       ),
-      DeliveryStatus.pickedUp => ('Yetib keldim', Icons.flag_outlined, () => onAction(DeliveryAction.arrive)),
-      _ => ('Topshirdim', Icons.task_alt, () => onAction(DeliveryAction.complete)),
+      DeliveryStatus.pickedUp => (context.l10n.dlvArrived, Icons.flag_outlined, () => onAction(DeliveryAction.arrive)),
+      _ => (context.l10n.dlvHandedOver, Icons.task_alt, () => onAction(DeliveryAction.complete)),
     };
     return FilledButton.icon(
       style: FilledButton.styleFrom(
@@ -639,18 +642,19 @@ class _EtaRow extends StatelessWidget {
 
   final DeliveryRoute route;
 
-  static String _minutes(Duration d) => '~${(d.inSeconds / 60).ceil()} daq';
+  static String _minutes(AppLocalizations l10n, Duration d) => l10n.dlvMinutesShort('${(d.inSeconds / 60).ceil()}');
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final now = DateTime.now();
     final toStore = route.toPickup ? route.remaining(RouteStopKind.pickup, now) : null;
     final toCustomer = route.remaining(RouteStopKind.dropoff, now);
     final km = (route.stop(RouteStopKind.dropoff)?.distanceMeters ?? route.distanceMeters) / 1000;
     final parts = [
-      if (toStore != null) "Do'kongacha ${_minutes(toStore)}",
-      if (toCustomer != null) 'Mijozgacha ${_minutes(toCustomer)}',
-      '${km.toStringAsFixed(1).replaceAll('.', ',')} km',
+      if (toStore != null) l10n.dlvToStore(_minutes(l10n, toStore)),
+      if (toCustomer != null) l10n.dlvToCustomer(_minutes(l10n, toCustomer)),
+      l10n.commonKm(km.toStringAsFixed(1).replaceAll('.', ',')),
     ];
     const green = AppColors.success;
     return Padding(

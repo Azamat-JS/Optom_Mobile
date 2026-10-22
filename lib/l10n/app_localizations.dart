@@ -3933,6 +3933,894 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Bugun: {count} ta yetkazish'**
   String couriersToday(int count);
+
+  /// No description provided for @enumDeliveryStatus.
+  ///
+  /// In uz, this message translates to:
+  /// **'{status, select, pending{Kutilmoqda} assigned{Biriktirilgan} accepted{Qabul qilingan} pickedUp{Yo\'lda} arrived{Yetib keldi} delivered{Topshirildi} cancelled{Bekor qilingan} failed{Yetkazib bo\'lmadi} other{}}'**
+  String enumDeliveryStatus(String status);
+
+  /// No description provided for @enumDeliveryFailReason.
+  ///
+  /// In uz, this message translates to:
+  /// **'{reason, select, notHome{Mijoz manzilda yo\'q} refused{Mijoz qabul qilmadi} wrongAddress{Manzil noto\'g\'ri} other{Boshqa sabab}}'**
+  String enumDeliveryFailReason(String reason);
+
+  /// No description provided for @dlvHeadline.
+  ///
+  /// In uz, this message translates to:
+  /// **'{status, select, pending{Kuryer qidirilmoqda} assigned{Kuryer tayinlandi, tasdiqlashini kutmoqda} accepted{Kuryer do\'konga bormoqda} pickedUp{Kuryer yo\'lda} arrived{Kuryer yetib keldi!} delivered{Buyurtma topshirildi} cancelled{Yetkazish bekor qilindi} failed{Yetkazib bo\'lmadi} other{}}'**
+  String dlvHeadline(String status);
+
+  /// No description provided for @dlvLabelFallback.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazish'**
+  String get dlvLabelFallback;
+
+  /// No description provided for @dlvConfirmHandoverTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma topshirildimi?'**
+  String get dlvConfirmHandoverTitle;
+
+  /// No description provided for @dlvConfirmHandoverBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'{label} mijozga topshirilganini tasdiqlang.'**
+  String dlvConfirmHandoverBody(String label);
+
+  /// No description provided for @dlvYesHandedOver.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ha, topshirdim'**
+  String get dlvYesHandedOver;
+
+  /// No description provided for @dlvCallFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'ng\'iroq qilib bo\'lmadi'**
+  String get dlvCallFailed;
+
+  /// No description provided for @dlvNavigatorFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Navigatorni ochib bo\'lmadi'**
+  String get dlvNavigatorFailed;
+
+  /// No description provided for @dlvCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta yetkazish'**
+  String dlvCount(int count);
+
+  /// No description provided for @dlvNone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha yetkazish yo\'q'**
+  String get dlvNone;
+
+  /// No description provided for @dlvActiveSection.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faol yetkazishlar'**
+  String get dlvActiveSection;
+
+  /// No description provided for @dlvOffersSection.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi takliflar'**
+  String get dlvOffersSection;
+
+  /// No description provided for @dlvActiveBannerTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faol yetkazish bor'**
+  String get dlvActiveBannerTitle;
+
+  /// No description provided for @dlvActiveBannerCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijoz va biznes egangiz sizni xaritada ko\'rishi uchun onlayn bo\'ling.'**
+  String get dlvActiveBannerCustomer;
+
+  /// No description provided for @dlvActiveBannerOwner.
+  ///
+  /// In uz, this message translates to:
+  /// **'Biznes egangiz sizni xaritada ko\'rishi uchun onlayn bo\'ling.'**
+  String get dlvActiveBannerOwner;
+
+  /// No description provided for @dlvNoAddress.
+  ///
+  /// In uz, this message translates to:
+  /// **'Manzil ko\'rsatilmagan'**
+  String get dlvNoAddress;
+
+  /// No description provided for @dlvCompleted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazish yakunlandi'**
+  String get dlvCompleted;
+
+  /// No description provided for @dlvFailedMarked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Belgilandi: yetkazib bo\'lmadi. Buyurtmani do\'konga qaytaring.'**
+  String get dlvFailedMarked;
+
+  /// No description provided for @mapFitAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hammasini ko\'rsatish'**
+  String get mapFitAll;
+
+  /// No description provided for @mapMyLocation.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mening joylashuvim'**
+  String get mapMyLocation;
+
+  /// No description provided for @dlvPickup.
+  ///
+  /// In uz, this message translates to:
+  /// **'Olib ketish'**
+  String get dlvPickup;
+
+  /// No description provided for @dlvYouAreOffline.
+  ///
+  /// In uz, this message translates to:
+  /// **'Siz oflaynsiz'**
+  String get dlvYouAreOffline;
+
+  /// No description provided for @dlvLocationHidden.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joylashuvingiz ko\'rinmayapti'**
+  String get dlvLocationHidden;
+
+  /// No description provided for @dlvFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazib bo\'lmadi'**
+  String get dlvFailed;
+
+  /// No description provided for @dlvCancelledTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazish bekor qilindi'**
+  String get dlvCancelledTitle;
+
+  /// No description provided for @dlvFinishedTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazish yakunlangan'**
+  String get dlvFinishedTitle;
+
+  /// No description provided for @dlvGoToStore.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'konga boring'**
+  String get dlvGoToStore;
+
+  /// No description provided for @dlvDeliverToCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozga yetkazing'**
+  String get dlvDeliverToCustomer;
+
+  /// No description provided for @dlvCodeLockedHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kod bloklangan — do\'konga qo\'ng\'iroq qiling'**
+  String get dlvCodeLockedHint;
+
+  /// No description provided for @dlvAskCode.
+  ///
+  /// In uz, this message translates to:
+  /// **'Topshirishda mijozdan 4 xonali kodni so\'rang'**
+  String get dlvAskCode;
+
+  /// No description provided for @dlvStoreFallback.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon'**
+  String get dlvStoreFallback;
+
+  /// No description provided for @dlvNavigator.
+  ///
+  /// In uz, this message translates to:
+  /// **'Navigator'**
+  String get dlvNavigator;
+
+  /// No description provided for @dlvHandedOver.
+  ///
+  /// In uz, this message translates to:
+  /// **'Topshirdim'**
+  String get dlvHandedOver;
+
+  /// No description provided for @dlvPickedUp.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani oldim'**
+  String get dlvPickedUp;
+
+  /// No description provided for @dlvArrived.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetib keldim'**
+  String get dlvArrived;
+
+  /// No description provided for @dlvMinutesShort.
+  ///
+  /// In uz, this message translates to:
+  /// **'~{minutes} daq'**
+  String dlvMinutesShort(String minutes);
+
+  /// No description provided for @dlvToStore.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kongacha {time}'**
+  String dlvToStore(String time);
+
+  /// No description provided for @dlvToCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozgacha {time}'**
+  String dlvToCustomer(String time);
+
+  /// No description provided for @commonKm.
+  ///
+  /// In uz, this message translates to:
+  /// **'{km} km'**
+  String commonKm(String km);
+
+  /// No description provided for @commonMeters.
+  ///
+  /// In uz, this message translates to:
+  /// **'{meters} m'**
+  String commonMeters(String meters);
+
+  /// No description provided for @dlvRestaurantOrder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Restoran buyurtmasi'**
+  String get dlvRestaurantOrder;
+
+  /// No description provided for @dlvMinutesLong.
+  ///
+  /// In uz, this message translates to:
+  /// **'~{minutes} daqiqa'**
+  String dlvMinutesLong(String minutes);
+
+  /// No description provided for @dlvFailedCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'{reason}. Do\'kon siz bilan bog\'lanadi.'**
+  String dlvFailedCustomer(String reason);
+
+  /// No description provided for @dlvFailedFallback.
+  ///
+  /// In uz, this message translates to:
+  /// **'Topshirib bo\'lmadi'**
+  String get dlvFailedFallback;
+
+  /// No description provided for @dlvCourierUpdating.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer joylashuvi yangilanmoqda…'**
+  String get dlvCourierUpdating;
+
+  /// No description provided for @dlvYourCourier.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sizning kuryeringiz'**
+  String get dlvYourCourier;
+
+  /// No description provided for @commonCall.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'ng\'iroq'**
+  String get commonCall;
+
+  /// No description provided for @dlvAssignTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryerga berish'**
+  String get dlvAssignTitle;
+
+  /// No description provided for @dlvOfferAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barcha kuryerlarga taklif qilish'**
+  String get dlvOfferAll;
+
+  /// No description provided for @dlvOfferAllHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Birinchi qabul qilgan kuryer oladi'**
+  String get dlvOfferAllHint;
+
+  /// No description provided for @dlvNoActiveCouriers.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faol kuryer yo\'q'**
+  String get dlvNoActiveCouriers;
+
+  /// No description provided for @dlvActiveDeliveries.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta faol yetkazish'**
+  String dlvActiveDeliveries(int count);
+
+  /// No description provided for @dlvCodeFourDigits.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kod 4 ta raqamdan iborat'**
+  String get dlvCodeFourDigits;
+
+  /// No description provided for @dlvCodeLocked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kod bloklandi'**
+  String get dlvCodeLocked;
+
+  /// No description provided for @dlvWaivedTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon kodsiz topshirishga ruxsat berdi'**
+  String get dlvWaivedTitle;
+
+  /// No description provided for @dlvHandoverCode.
+  ///
+  /// In uz, this message translates to:
+  /// **'Topshirish kodi'**
+  String get dlvHandoverCode;
+
+  /// No description provided for @dlvTooManyTries.
+  ///
+  /// In uz, this message translates to:
+  /// **'Noto\'g\'ri urinishlar juda ko\'p. Do\'konga qo\'ng\'iroq qiling — ular kodsiz topshirishga ruxsat beradi.'**
+  String get dlvTooManyTries;
+
+  /// No description provided for @dlvConfirmHandedOver.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani mijozga topshirganingizni tasdiqlang.'**
+  String get dlvConfirmHandedOver;
+
+  /// No description provided for @dlvAskCodeLong.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozdan 4 xonali kodni so\'rang. Kod mijozning ilovasida va Telegramida.'**
+  String get dlvAskCodeLong;
+
+  /// No description provided for @dlvAttemptsLeft.
+  ///
+  /// In uz, this message translates to:
+  /// **'Urinishlar: {count} ta qoldi'**
+  String dlvAttemptsLeft(int count);
+
+  /// No description provided for @dlvRecheck.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qayta tekshirish'**
+  String get dlvRecheck;
+
+  /// No description provided for @dlvWhyFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nima uchun topshirib bo\'lmadi?'**
+  String get dlvWhyFailed;
+
+  /// No description provided for @dlvFailNotice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijoz va do\'kon xabardor qilinadi. Buyurtmani do\'konga qaytaring.'**
+  String get dlvFailNotice;
+
+  /// No description provided for @dlvNoteRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Izoh (majburiy)'**
+  String get dlvNoteRequired;
+
+  /// No description provided for @dlvWaiveTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kodsiz topshirishga ruxsat berilsinmi?'**
+  String get dlvWaiveTitle;
+
+  /// No description provided for @dlvWaiveBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer buyurtmani mijoz kodisiz topshira oladi. Faqat mijoz bilan gaplashib, buyurtmani olganiga ishonch hosil qilsangiz ruxsat bering.'**
+  String get dlvWaiveBody;
+
+  /// No description provided for @dlvWaiveConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ruxsat berish'**
+  String get dlvWaiveConfirm;
+
+  /// No description provided for @dlvWaived.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ruxsat berildi — kuryer kodsiz topshira oladi'**
+  String get dlvWaived;
+
+  /// No description provided for @dlvReasonWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab: {reason}'**
+  String dlvReasonWith(String reason);
+
+  /// No description provided for @dlvDistanceFromDropoff.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer mijoz manzilidan {distance} uzoqlikda edi'**
+  String dlvDistanceFromDropoff(String distance);
+
+  /// No description provided for @dlvCancelReasonWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilish sababi: {reason}'**
+  String dlvCancelReasonWith(String reason);
+
+  /// No description provided for @dlvCodeLockedStaff.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kod bloklandi: kuryer noto\'g\'ri kodni ko\'p kiritdi'**
+  String get dlvCodeLockedStaff;
+
+  /// No description provided for @dlvCodeWaiting.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijoz kodi kutilmoqda ({count} urinish qoldi)'**
+  String dlvCodeWaiting(int count);
+
+  /// No description provided for @dlvWaivedStaff.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kodsiz topshirishga ruxsat berilgan'**
+  String get dlvWaivedStaff;
+
+  /// No description provided for @dlvWaiveButton.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kodsiz topshirishga ruxsat'**
+  String get dlvWaiveButton;
+
+  /// No description provided for @dlvHandoverCodeHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani olganingizda kuryerga ayting. Boshqa hech kimga bermang.'**
+  String get dlvHandoverCodeHint;
+
+  /// No description provided for @dlvCodeSemantics.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kod {digits}'**
+  String dlvCodeSemantics(String digits);
+
+  /// No description provided for @dlvCourierWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer: {name}'**
+  String dlvCourierWith(String name);
+
+  /// No description provided for @dlvChangeCourier.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryerni o\'zgartirish'**
+  String get dlvChangeCourier;
+
+  /// No description provided for @dlvCancel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilish'**
+  String get dlvCancel;
+
+  /// No description provided for @dlvReassign.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qayta kuryerga berish'**
+  String get dlvReassign;
+
+  /// No description provided for @dlvTrackCourier.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryerni kuzatish'**
+  String get dlvTrackCourier;
+
+  /// No description provided for @dlvOfferedAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barcha kuryerlarga taklif qilindi'**
+  String get dlvOfferedAll;
+
+  /// No description provided for @dlvAssigned.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryerga berildi'**
+  String get dlvAssigned;
+
+  /// No description provided for @dlvCancelTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazishni bekor qilish?'**
+  String get dlvCancelTitle;
+
+  /// No description provided for @dlvCancelBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuryer bu buyurtmani endi ko\'rmaydi. Keyin qayta berishingiz mumkin.'**
+  String get dlvCancelBody;
+
+  /// No description provided for @commonRefresh.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangilash'**
+  String get commonRefresh;
+
+  /// No description provided for @fleetOnline.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} onlayn'**
+  String fleetOnline(String count);
+
+  /// No description provided for @fleetBusy.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} yetkazishda'**
+  String fleetBusy(String count);
+
+  /// No description provided for @fleetStale.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} aloqasiz'**
+  String fleetStale(String count);
+
+  /// No description provided for @fleetNoSignal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Aloqa yo\'q'**
+  String get fleetNoSignal;
+
+  /// No description provided for @fleetDelivering.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazishda'**
+  String get fleetDelivering;
+
+  /// No description provided for @fleetFree.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bo\'sh'**
+  String get fleetFree;
+
+  /// No description provided for @fleetNoneOnline.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha onlayn kuryer yo\'q'**
+  String get fleetNoneOnline;
+
+  /// No description provided for @fleetLastLocation.
+  ///
+  /// In uz, this message translates to:
+  /// **'oxirgi joylashuv {ago}'**
+  String fleetLastLocation(String ago);
+
+  /// No description provided for @fleetViewDelivery.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazishni ko\'rish'**
+  String get fleetViewDelivery;
+
+  /// No description provided for @fleetViewDeliveryN.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazishni ko\'rish ({n})'**
+  String fleetViewDeliveryN(String n);
+
+  /// No description provided for @trkOnline.
+  ///
+  /// In uz, this message translates to:
+  /// **'Onlayn'**
+  String get trkOnline;
+
+  /// No description provided for @trkOffline.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oflayn'**
+  String get trkOffline;
+
+  /// No description provided for @trkNotificationTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'bsmart joylashuvingizni ulashmoqda'**
+  String get trkNotificationTitle;
+
+  /// No description provided for @trkNotifActiveCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faol yetkazish: {label} — mijoz va biznes egangiz ko\'radi'**
+  String trkNotifActiveCustomer(String label);
+
+  /// No description provided for @trkNotifActiveOwner.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faol yetkazish: {label} — biznes egangiz ko\'radi'**
+  String trkNotifActiveOwner(String label);
+
+  /// No description provided for @trkNotifOnline.
+  ///
+  /// In uz, this message translates to:
+  /// **'Onlayn — joylashuvingiz biznes egasiga ko\'rinadi'**
+  String get trkNotifOnline;
+
+  /// No description provided for @trkShareTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joylashuvni ulashish'**
+  String get trkShareTitle;
+
+  /// No description provided for @trkWatchersNone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hech kim — joylashuv yuborilmayapti'**
+  String get trkWatchersNone;
+
+  /// No description provided for @trkWatchersWithCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Biznes egangiz, administratorlar va mijoz ({label})'**
+  String trkWatchersWithCustomer(String label);
+
+  /// No description provided for @trkWatchersOwner.
+  ///
+  /// In uz, this message translates to:
+  /// **'Biznes egangiz va administratorlar'**
+  String get trkWatchersOwner;
+
+  /// No description provided for @trkWhatTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nima ulashiladi'**
+  String get trkWhatTitle;
+
+  /// No description provided for @trkWhatBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefoningizning GPS joylashuvi: koordinatalar, tezlik va harakat yo\'nalishi.'**
+  String get trkWhatBody;
+
+  /// No description provided for @trkWhenTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qachon'**
+  String get trkWhenTitle;
+
+  /// No description provided for @trkWhenBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faqat siz «Onlayn» bo\'lganingizda yoki faol yetkazish paytida — ilova fonda yoki ekran o\'chiq bo\'lsa ham. Bu vaqtda bildirishnomalar panelida doimiy xabar turadi.'**
+  String get trkWhenBody;
+
+  /// No description provided for @trkWhoTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kim ko\'radi'**
+  String get trkWhoTitle;
+
+  /// No description provided for @trkWhoBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Biznes egangiz va uning administratorlari, hamda faol yetkazish buyurtmasining mijozi.'**
+  String get trkWhoBody;
+
+  /// No description provided for @trkStopTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qanday to\'xtatiladi'**
+  String get trkStopTitle;
+
+  /// No description provided for @trkStopBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Istalgan vaqtda «Oflayn» ga o\'ting — joylashuv yuborish darhol to\'xtaydi. Oflayn paytida joylashuvingiz yuborilmaydi.'**
+  String get trkStopBody;
+
+  /// No description provided for @trkDisclosureLead.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetkazishlarni kuzatish uchun bsmart joylashuvingizdan foydalanadi'**
+  String get trkDisclosureLead;
+
+  /// No description provided for @trkNotNow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozir emas'**
+  String get trkNotNow;
+
+  /// No description provided for @trkAgree.
+  ///
+  /// In uz, this message translates to:
+  /// **'Roziman'**
+  String get trkAgree;
+
+  /// No description provided for @trkGoOfflineTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oflayn bo\'lish'**
+  String get trkGoOfflineTitle;
+
+  /// No description provided for @trkGoOfflineBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joylashuvingizni ulashish to\'xtatiladi — biznes egangiz sizni xaritada ko\'rmaydi.'**
+  String get trkGoOfflineBody;
+
+  /// No description provided for @trkGoOfflineActiveCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sizda faol yetkazish bor ({label}). Joylashuv ulashish to\'xtatilsa, mijoz va biznes egangiz sizni xaritada ko\'rmay qoladi.'**
+  String trkGoOfflineActiveCustomer(String label);
+
+  /// No description provided for @trkGoOfflineActiveOwner.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sizda faol yetkazish bor ({label}). Joylashuv ulashish to\'xtatilsa, biznes egangiz sizni xaritada ko\'rmay qoladi.'**
+  String trkGoOfflineActiveOwner(String label);
+
+  /// No description provided for @trkStop.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'xtatish'**
+  String get trkStop;
+
+  /// No description provided for @trkNotSentYet.
+  ///
+  /// In uz, this message translates to:
+  /// **'hali yuborilmagan'**
+  String get trkNotSentYet;
+
+  /// No description provided for @trkSecondsAgo.
+  ///
+  /// In uz, this message translates to:
+  /// **'{seconds} soniya oldin'**
+  String trkSecondsAgo(String seconds);
+
+  /// No description provided for @trkMinutesAgo.
+  ///
+  /// In uz, this message translates to:
+  /// **'{minutes} daqiqa oldin'**
+  String trkMinutesAgo(String minutes);
+
+  /// No description provided for @trkWatchersWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ko\'radi: {who}'**
+  String trkWatchersWith(String who);
+
+  /// No description provided for @trkGoOnlineHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ishni boshlash uchun onlayn bo\'ling'**
+  String get trkGoOnlineHint;
+
+  /// No description provided for @trkGpsOffBanner.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefoningizda GPS (joylashuv) o\'chirilgan.'**
+  String get trkGpsOffBanner;
+
+  /// No description provided for @trkTurnOnGps.
+  ///
+  /// In uz, this message translates to:
+  /// **'GPS ni yoqish'**
+  String get trkTurnOnGps;
+
+  /// No description provided for @trkDeniedForever.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joylashuv ruxsati rad etilgan. Sozlamalardan ruxsat bering.'**
+  String get trkDeniedForever;
+
+  /// No description provided for @trkOpenSettings.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sozlamalarni ochish'**
+  String get trkOpenSettings;
+
+  /// No description provided for @trkPermissionNeeded.
+  ///
+  /// In uz, this message translates to:
+  /// **'Onlayn bo\'lish uchun joylashuv ruxsati kerak.'**
+  String get trkPermissionNeeded;
+
+  /// No description provided for @trkLastSent.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oxirgi yuborilgan joylashuv'**
+  String get trkLastSent;
+
+  /// No description provided for @trkWhoNow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozir kim ko\'radi'**
+  String get trkWhoNow;
+
+  /// No description provided for @trkNoNotifPermission.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bildirishnoma ruxsati yo\'q'**
+  String get trkNoNotifPermission;
+
+  /// No description provided for @trkNoNotifPermissionBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuzatuv davom etadi, lekin bildirishnoma panelida ko\'rinmaydi.'**
+  String get trkNoNotifPermissionBody;
+
+  /// No description provided for @trkBatterySaver.
+  ///
+  /// In uz, this message translates to:
+  /// **'Batareya tejash rejimi'**
+  String get trkBatterySaver;
+
+  /// No description provided for @trkBatterySaverBody.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ba\'zi telefonlar fondagi ilovalarni to\'xtatadi. Muammo bo\'lsa, bsmart uchun batareya cheklovini o\'chiring.'**
+  String get trkBatterySaverBody;
+
+  /// No description provided for @trkAboutSharing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joylashuv ulashish haqida'**
+  String get trkAboutSharing;
+
+  /// No description provided for @trkSharing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joylashuv ulashilmoqda'**
+  String get trkSharing;
+
+  /// No description provided for @trkConnecting.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ulanmoqda…'**
+  String get trkConnecting;
+
+  /// No description provided for @trkNoGps.
+  ///
+  /// In uz, this message translates to:
+  /// **'GPS signali yo\'q'**
+  String get trkNoGps;
+
+  /// No description provided for @trkReconnecting.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qayta ulanmoqda…'**
+  String get trkReconnecting;
+
+  /// No description provided for @trkDenied.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ruxsat berilmagan'**
+  String get trkDenied;
+
+  /// No description provided for @trkGpsOff.
+  ///
+  /// In uz, this message translates to:
+  /// **'GPS o\'chirilgan'**
+  String get trkGpsOff;
+
+  /// No description provided for @trkJustNow.
+  ///
+  /// In uz, this message translates to:
+  /// **'hozirgina'**
+  String get trkJustNow;
 }
 
 class _AppLocalizationsDelegate

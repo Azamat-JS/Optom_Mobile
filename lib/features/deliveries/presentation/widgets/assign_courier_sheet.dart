@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/features/deliveries/domain/entities/assignable_courier.dart';
@@ -43,26 +44,30 @@ class AssignCourierSheet extends ConsumerWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-              child: Text('Kuryerga berish', style: theme.textTheme.titleLarge),
+              child: Text(context.l10n.dlvAssignTitle, style: theme.textTheme.titleLarge),
             ),
             ListTile(
               leading: CircleAvatar(
                 backgroundColor: theme.colorScheme.secondaryContainer,
                 child: const Icon(Icons.campaign_outlined),
               ),
-              title: const Text('Barcha kuryerlarga taklif qilish'),
-              subtitle: const Text('Birinchi qabul qilgan kuryer oladi'),
+              title: Text(context.l10n.dlvOfferAll),
+              subtitle: Text(context.l10n.dlvOfferAllHint),
               selected: currentCourierId == null,
               onTap: () => Navigator.pop(context, (courierId: null)),
             ),
             const Divider(),
             Flexible(
               child: couriers.when(
-                loading: () => const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator())),
-                error: (e, _) => Padding(padding: const EdgeInsets.all(24), child: Text('Xatolik: $e')),
+                loading: () => const Padding(
+                  padding: EdgeInsets.all(24),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                error: (e, _) =>
+                    Padding(padding: const EdgeInsets.all(24), child: Text(context.l10n.commonErrorWith('$e'))),
                 data: (list) {
                   if (list.isEmpty) {
-                    return const Padding(padding: EdgeInsets.all(24), child: Text("Faol kuryer yo'q"));
+                    return Padding(padding: const EdgeInsets.all(24), child: Text(context.l10n.dlvNoActiveCouriers));
                   }
                   final sorted = [...list]..sort((a, b) => (b.online ? 1 : 0) - (a.online ? 1 : 0));
                   return ListView(
@@ -93,8 +98,8 @@ class AssignCourierSheet extends ConsumerWidget {
                           title: Text(c.fullName),
                           subtitle: Text(
                             [
-                              c.online ? 'Onlayn' : 'Oflayn',
-                              if (c.activeDeliveries > 0) '${c.activeDeliveries} ta faol yetkazish',
+                              c.online ? context.l10n.trkOnline : context.l10n.trkOffline,
+                              if (c.activeDeliveries > 0) context.l10n.dlvActiveDeliveries(c.activeDeliveries),
                             ].join(' · '),
                           ),
                           onTap: () => Navigator.pop(context, (courierId: c.id)),

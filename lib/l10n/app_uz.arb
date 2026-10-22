@@ -1269,5 +1269,384 @@
         "type": "int"
       }
     }
-  }
+  },
+  "enumDeliveryStatus": "{status, select, pending{Kutilmoqda} assigned{Biriktirilgan} accepted{Qabul qilingan} pickedUp{Yo'lda} arrived{Yetib keldi} delivered{Topshirildi} cancelled{Bekor qilingan} failed{Yetkazib bo'lmadi} other{}}",
+  "@enumDeliveryStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "enumDeliveryFailReason": "{reason, select, notHome{Mijoz manzilda yo'q} refused{Mijoz qabul qilmadi} wrongAddress{Manzil noto'g'ri} other{Boshqa sabab}}",
+  "@enumDeliveryFailReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvHeadline": "{status, select, pending{Kuryer qidirilmoqda} assigned{Kuryer tayinlandi, tasdiqlashini kutmoqda} accepted{Kuryer do'konga bormoqda} pickedUp{Kuryer yo'lda} arrived{Kuryer yetib keldi!} delivered{Buyurtma topshirildi} cancelled{Yetkazish bekor qilindi} failed{Yetkazib bo'lmadi} other{}}",
+  "@dlvHeadline": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvLabelFallback": "Yetkazish",
+  "dlvConfirmHandoverTitle": "Buyurtma topshirildimi?",
+  "dlvConfirmHandoverBody": "{label} mijozga topshirilganini tasdiqlang.",
+  "@dlvConfirmHandoverBody": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvYesHandedOver": "Ha, topshirdim",
+  "dlvCallFailed": "Qo'ng'iroq qilib bo'lmadi",
+  "dlvNavigatorFailed": "Navigatorni ochib bo'lmadi",
+  "dlvCount": "{count} ta yetkazish",
+  "@dlvCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dlvNone": "Hozircha yetkazish yo'q",
+  "dlvActiveSection": "Faol yetkazishlar",
+  "dlvOffersSection": "Yangi takliflar",
+  "dlvActiveBannerTitle": "Faol yetkazish bor",
+  "dlvActiveBannerCustomer": "Mijoz va biznes egangiz sizni xaritada ko'rishi uchun onlayn bo'ling.",
+  "dlvActiveBannerOwner": "Biznes egangiz sizni xaritada ko'rishi uchun onlayn bo'ling.",
+  "dlvNoAddress": "Manzil ko'rsatilmagan",
+  "dlvCompleted": "Yetkazish yakunlandi",
+  "dlvFailedMarked": "Belgilandi: yetkazib bo'lmadi. Buyurtmani do'konga qaytaring.",
+  "mapFitAll": "Hammasini ko'rsatish",
+  "mapMyLocation": "Mening joylashuvim",
+  "dlvPickup": "Olib ketish",
+  "dlvYouAreOffline": "Siz oflaynsiz",
+  "dlvLocationHidden": "Joylashuvingiz ko'rinmayapti",
+  "dlvFailed": "Yetkazib bo'lmadi",
+  "dlvCancelledTitle": "Yetkazish bekor qilindi",
+  "dlvFinishedTitle": "Yetkazish yakunlangan",
+  "dlvGoToStore": "Do'konga boring",
+  "dlvDeliverToCustomer": "Mijozga yetkazing",
+  "dlvCodeLockedHint": "Kod bloklangan — do'konga qo'ng'iroq qiling",
+  "dlvAskCode": "Topshirishda mijozdan 4 xonali kodni so'rang",
+  "dlvStoreFallback": "Do'kon",
+  "dlvNavigator": "Navigator",
+  "dlvHandedOver": "Topshirdim",
+  "dlvPickedUp": "Buyurtmani oldim",
+  "dlvArrived": "Yetib keldim",
+  "dlvMinutesShort": "~{minutes} daq",
+  "@dlvMinutesShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvToStore": "Do'kongacha {time}",
+  "@dlvToStore": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvToCustomer": "Mijozgacha {time}",
+  "@dlvToCustomer": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "commonKm": "{km} km",
+  "@commonKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "commonMeters": "{meters} m",
+  "@commonMeters": {
+    "placeholders": {
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvRestaurantOrder": "Restoran buyurtmasi",
+  "dlvMinutesLong": "~{minutes} daqiqa",
+  "@dlvMinutesLong": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvFailedCustomer": "{reason}. Do'kon siz bilan bog'lanadi.",
+  "@dlvFailedCustomer": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvFailedFallback": "Topshirib bo'lmadi",
+  "dlvCourierUpdating": "Kuryer joylashuvi yangilanmoqda…",
+  "dlvYourCourier": "Sizning kuryeringiz",
+  "commonCall": "Qo'ng'iroq",
+  "dlvAssignTitle": "Kuryerga berish",
+  "dlvOfferAll": "Barcha kuryerlarga taklif qilish",
+  "dlvOfferAllHint": "Birinchi qabul qilgan kuryer oladi",
+  "dlvNoActiveCouriers": "Faol kuryer yo'q",
+  "dlvActiveDeliveries": "{count} ta faol yetkazish",
+  "@dlvActiveDeliveries": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dlvCodeFourDigits": "Kod 4 ta raqamdan iborat",
+  "dlvCodeLocked": "Kod bloklandi",
+  "dlvWaivedTitle": "Do'kon kodsiz topshirishga ruxsat berdi",
+  "dlvHandoverCode": "Topshirish kodi",
+  "dlvTooManyTries": "Noto'g'ri urinishlar juda ko'p. Do'konga qo'ng'iroq qiling — ular kodsiz topshirishga ruxsat beradi.",
+  "dlvConfirmHandedOver": "Buyurtmani mijozga topshirganingizni tasdiqlang.",
+  "dlvAskCodeLong": "Mijozdan 4 xonali kodni so'rang. Kod mijozning ilovasida va Telegramida.",
+  "dlvAttemptsLeft": "Urinishlar: {count} ta qoldi",
+  "@dlvAttemptsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dlvRecheck": "Qayta tekshirish",
+  "dlvWhyFailed": "Nima uchun topshirib bo'lmadi?",
+  "dlvFailNotice": "Mijoz va do'kon xabardor qilinadi. Buyurtmani do'konga qaytaring.",
+  "dlvNoteRequired": "Izoh (majburiy)",
+  "dlvWaiveTitle": "Kodsiz topshirishga ruxsat berilsinmi?",
+  "dlvWaiveBody": "Kuryer buyurtmani mijoz kodisiz topshira oladi. Faqat mijoz bilan gaplashib, buyurtmani olganiga ishonch hosil qilsangiz ruxsat bering.",
+  "dlvWaiveConfirm": "Ruxsat berish",
+  "dlvWaived": "Ruxsat berildi — kuryer kodsiz topshira oladi",
+  "dlvReasonWith": "Sabab: {reason}",
+  "@dlvReasonWith": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvDistanceFromDropoff": "Kuryer mijoz manzilidan {distance} uzoqlikda edi",
+  "@dlvDistanceFromDropoff": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvCancelReasonWith": "Bekor qilish sababi: {reason}",
+  "@dlvCancelReasonWith": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvCodeLockedStaff": "Kod bloklandi: kuryer noto'g'ri kodni ko'p kiritdi",
+  "dlvCodeWaiting": "Mijoz kodi kutilmoqda ({count} urinish qoldi)",
+  "@dlvCodeWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dlvWaivedStaff": "Kodsiz topshirishga ruxsat berilgan",
+  "dlvWaiveButton": "Kodsiz topshirishga ruxsat",
+  "dlvHandoverCodeHint": "Buyurtmani olganingizda kuryerga ayting. Boshqa hech kimga bermang.",
+  "dlvCodeSemantics": "Kod {digits}",
+  "@dlvCodeSemantics": {
+    "placeholders": {
+      "digits": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvCourierWith": "Kuryer: {name}",
+  "@dlvCourierWith": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "dlvChangeCourier": "Kuryerni o'zgartirish",
+  "dlvCancel": "Bekor qilish",
+  "dlvReassign": "Qayta kuryerga berish",
+  "dlvTrackCourier": "Kuryerni kuzatish",
+  "dlvOfferedAll": "Barcha kuryerlarga taklif qilindi",
+  "dlvAssigned": "Kuryerga berildi",
+  "dlvCancelTitle": "Yetkazishni bekor qilish?",
+  "dlvCancelBody": "Kuryer bu buyurtmani endi ko'rmaydi. Keyin qayta berishingiz mumkin.",
+  "commonRefresh": "Yangilash",
+  "fleetOnline": "{count} onlayn",
+  "@fleetOnline": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "fleetBusy": "{count} yetkazishda",
+  "@fleetBusy": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "fleetStale": "{count} aloqasiz",
+  "@fleetStale": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "fleetNoSignal": "Aloqa yo'q",
+  "fleetDelivering": "Yetkazishda",
+  "fleetFree": "Bo'sh",
+  "fleetNoneOnline": "Hozircha onlayn kuryer yo'q",
+  "fleetLastLocation": "oxirgi joylashuv {ago}",
+  "@fleetLastLocation": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      }
+    }
+  },
+  "fleetViewDelivery": "Yetkazishni ko'rish",
+  "fleetViewDeliveryN": "Yetkazishni ko'rish ({n})",
+  "@fleetViewDeliveryN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "trkOnline": "Onlayn",
+  "trkOffline": "Oflayn",
+  "trkNotificationTitle": "bsmart joylashuvingizni ulashmoqda",
+  "trkNotifActiveCustomer": "Faol yetkazish: {label} — mijoz va biznes egangiz ko'radi",
+  "@trkNotifActiveCustomer": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trkNotifActiveOwner": "Faol yetkazish: {label} — biznes egangiz ko'radi",
+  "@trkNotifActiveOwner": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trkNotifOnline": "Onlayn — joylashuvingiz biznes egasiga ko'rinadi",
+  "trkShareTitle": "Joylashuvni ulashish",
+  "trkWatchersNone": "Hech kim — joylashuv yuborilmayapti",
+  "trkWatchersWithCustomer": "Biznes egangiz, administratorlar va mijoz ({label})",
+  "@trkWatchersWithCustomer": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trkWatchersOwner": "Biznes egangiz va administratorlar",
+  "trkWhatTitle": "Nima ulashiladi",
+  "trkWhatBody": "Telefoningizning GPS joylashuvi: koordinatalar, tezlik va harakat yo'nalishi.",
+  "trkWhenTitle": "Qachon",
+  "trkWhenBody": "Faqat siz «Onlayn» bo'lganingizda yoki faol yetkazish paytida — ilova fonda yoki ekran o'chiq bo'lsa ham. Bu vaqtda bildirishnomalar panelida doimiy xabar turadi.",
+  "trkWhoTitle": "Kim ko'radi",
+  "trkWhoBody": "Biznes egangiz va uning administratorlari, hamda faol yetkazish buyurtmasining mijozi.",
+  "trkStopTitle": "Qanday to'xtatiladi",
+  "trkStopBody": "Istalgan vaqtda «Oflayn» ga o'ting — joylashuv yuborish darhol to'xtaydi. Oflayn paytida joylashuvingiz yuborilmaydi.",
+  "trkDisclosureLead": "Yetkazishlarni kuzatish uchun bsmart joylashuvingizdan foydalanadi",
+  "trkNotNow": "Hozir emas",
+  "trkAgree": "Roziman",
+  "trkGoOfflineTitle": "Oflayn bo'lish",
+  "trkGoOfflineBody": "Joylashuvingizni ulashish to'xtatiladi — biznes egangiz sizni xaritada ko'rmaydi.",
+  "trkGoOfflineActiveCustomer": "Sizda faol yetkazish bor ({label}). Joylashuv ulashish to'xtatilsa, mijoz va biznes egangiz sizni xaritada ko'rmay qoladi.",
+  "@trkGoOfflineActiveCustomer": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trkGoOfflineActiveOwner": "Sizda faol yetkazish bor ({label}). Joylashuv ulashish to'xtatilsa, biznes egangiz sizni xaritada ko'rmay qoladi.",
+  "@trkGoOfflineActiveOwner": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trkStop": "To'xtatish",
+  "trkNotSentYet": "hali yuborilmagan",
+  "trkSecondsAgo": "{seconds} soniya oldin",
+  "@trkSecondsAgo": {
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "trkMinutesAgo": "{minutes} daqiqa oldin",
+  "@trkMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "trkWatchersWith": "Ko'radi: {who}",
+  "@trkWatchersWith": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "trkGoOnlineHint": "Ishni boshlash uchun onlayn bo'ling",
+  "trkGpsOffBanner": "Telefoningizda GPS (joylashuv) o'chirilgan.",
+  "trkTurnOnGps": "GPS ni yoqish",
+  "trkDeniedForever": "Joylashuv ruxsati rad etilgan. Sozlamalardan ruxsat bering.",
+  "trkOpenSettings": "Sozlamalarni ochish",
+  "trkPermissionNeeded": "Onlayn bo'lish uchun joylashuv ruxsati kerak.",
+  "trkLastSent": "Oxirgi yuborilgan joylashuv",
+  "trkWhoNow": "Hozir kim ko'radi",
+  "trkNoNotifPermission": "Bildirishnoma ruxsati yo'q",
+  "trkNoNotifPermissionBody": "Kuzatuv davom etadi, lekin bildirishnoma panelida ko'rinmaydi.",
+  "trkBatterySaver": "Batareya tejash rejimi",
+  "trkBatterySaverBody": "Ba'zi telefonlar fondagi ilovalarni to'xtatadi. Muammo bo'lsa, bsmart uchun batareya cheklovini o'chiring.",
+  "trkAboutSharing": "Joylashuv ulashish haqida",
+  "trkSharing": "Joylashuv ulashilmoqda",
+  "trkConnecting": "Ulanmoqda…",
+  "trkNoGps": "GPS signali yo'q",
+  "trkReconnecting": "Qayta ulanmoqda…",
+  "trkDenied": "Ruxsat berilmagan",
+  "trkGpsOff": "GPS o'chirilgan",
+  "trkJustNow": "hozirgina"
 }

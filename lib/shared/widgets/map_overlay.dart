@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/theme/app_colors.dart';
 
 /// Round floating map button (back, fit-to-bounds, my location …) on the
@@ -97,7 +98,7 @@ class MapCallButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     return IconButton.filled(
-      tooltip: "Qo'ng'iroq",
+      tooltip: context.l10n.commonCall,
       style: IconButton.styleFrom(
         backgroundColor: dark ? AppColors.brandYellow : AppColors.ink,
         foregroundColor: dark ? AppColors.onBrand : AppColors.brandYellow,

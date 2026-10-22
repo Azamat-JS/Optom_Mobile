@@ -161,17 +161,17 @@ class _FleetMapScreenState extends ConsumerState<FleetMapScreen> with TickerProv
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MapTopBar(
-                  title: 'Kuryerlar xaritasi',
+                  title: context.l10n.navFleetMap,
                   actions: [
                     MapRoundButton(
                       icon: Icons.refresh_rounded,
-                      tooltip: 'Yangilash',
+                      tooltip: context.l10n.commonRefresh,
                       onTap: () => ref.read(fleetProvider.notifier).refresh(),
                     ),
                     if (list.isNotEmpty)
                       MapRoundButton(
                         icon: Icons.zoom_out_map_rounded,
-                        tooltip: "Hammasini ko'rsatish",
+                        tooltip: context.l10n.mapFitAll,
                         onTap: () => _fit(list),
                       ),
                   ],
@@ -182,9 +182,10 @@ class _FleetMapScreenState extends ConsumerState<FleetMapScreen> with TickerProv
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      _Chip(color: _free, text: '$online onlayn'),
-                      _Chip(color: _busy, text: '$busy yetkazishda'),
-                      if (list.length - online > 0) _Chip(color: _stale, text: '${list.length - online} aloqasiz'),
+                      _Chip(color: _free, text: context.l10n.fleetOnline('$online')),
+                      _Chip(color: _busy, text: context.l10n.fleetBusy('$busy')),
+                      if (list.length - online > 0)
+                        _Chip(color: _stale, text: context.l10n.fleetStale('${list.length - online}')),
                     ],
                   ).animate().fadeIn(duration: AppMotion.standard),
                 ),
@@ -243,7 +244,9 @@ class _FleetMapScreenState extends ConsumerState<FleetMapScreen> with TickerProv
                                             ),
                                           ),
                                           Text(
-                                            stale ? "Aloqa yo'q" : (c.busy ? 'Yetkazishda' : "Bo'sh"),
+                                            stale
+                                                ? context.l10n.fleetNoSignal
+                                                : (c.busy ? context.l10n.fleetDelivering : context.l10n.fleetFree),
                                             style: TextStyle(
                                               color: colors.textMuted,
                                               fontSize: 12.5,
@@ -282,7 +285,7 @@ class _FleetMapScreenState extends ConsumerState<FleetMapScreen> with TickerProv
                       Icon(Icons.moped_rounded, size: 40, color: colors.textMuted),
                       const SizedBox(height: 8),
                       Text(
-                        "Hozircha onlayn kuryer yo'q",
+                        context.l10n.fleetNoneOnline,
                         style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w700),
                       ),
                     ],
@@ -324,8 +327,10 @@ class _FleetMapScreenState extends ConsumerState<FleetMapScreen> with TickerProv
                           ),
                           Text(
                             [
-                              stale ? 'Aloqa yo\'q' : (c.busy ? 'Yetkazishda' : "Bo'sh"),
-                              'oxirgi joylashuv ${trackingAgoLabel(c.lastPointAt, now)}',
+                              stale
+                                  ? context.l10n.fleetNoSignal
+                                  : (c.busy ? context.l10n.fleetDelivering : context.l10n.fleetFree),
+                              context.l10n.fleetLastLocation(trackingAgoLabel(c.lastPointAt, now)),
                             ].join(' · '),
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
@@ -353,8 +358,8 @@ class _FleetMapScreenState extends ConsumerState<FleetMapScreen> with TickerProv
                       icon: const Icon(Icons.map_rounded),
                       label: Text(
                         c.deliveryIds.length > 1
-                            ? 'Yetkazishni ko\'rish (${c.deliveryIds.indexOf(id) + 1})'
-                            : 'Yetkazishni ko\'rish',
+                            ? context.l10n.fleetViewDeliveryN('${c.deliveryIds.indexOf(id) + 1}')
+                            : context.l10n.fleetViewDelivery,
                       ),
                     ),
                   ),

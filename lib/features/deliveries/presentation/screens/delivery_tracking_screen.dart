@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/core/maps/animated_position.dart';
@@ -140,11 +141,11 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
       }
     }
 
-    final title = delivery.valueOrNull?.label ?? 'Yetkazish';
+    final title = delivery.valueOrNull?.label ?? context.l10n.dlvLabelFallback;
     return Scaffold(
       body: delivery.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Xatolik: $e')),
+        error: (e, _) => Center(child: Text(context.l10n.commonErrorWith('$e'))),
         data: (d) => Stack(
           children: [
             Positioned.fill(
@@ -173,7 +174,7 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
                         position: _ll(d.dropoff!),
                         icon: _homeIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
                         anchor: const Offset(0.5, 1),
-                        infoWindow: InfoWindow(title: d.dropoffAddress ?? 'Yetkazib berish manzili'),
+                        infoWindow: InfoWindow(title: d.dropoffAddress ?? context.l10n.commonDeliveryAddress),
                       ),
                     // The store only matters until the courier has picked the order up.
                     if (d.pickup != null && (d.status.isOffer || d.status == DeliveryStatus.accepted))
@@ -182,7 +183,7 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
                         position: _ll(d.pickup!),
                         icon: _shopIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
                         anchor: const Offset(0.5, 1),
-                        infoWindow: InfoWindow(title: d.storeName ?? "Do'kon"),
+                        infoWindow: InfoWindow(title: d.storeName ?? context.l10n.dlvStoreFallback),
                       ),
                     if (me != null && _courierIcon != null && d.status.isActive)
                       Marker(
@@ -222,7 +223,7 @@ class _DeliveryTrackingScreenState extends ConsumerState<DeliveryTrackingScreen>
               child: MapTopBar(
                 title: title,
                 actions: [
-                  MapRoundButton(icon: Icons.zoom_out_map_rounded, tooltip: "Hammasini ko'rsatish", onTap: _fit),
+                  MapRoundButton(icon: Icons.zoom_out_map_rounded, tooltip: context.l10n.mapFitAll, onTap: _fit),
                 ],
               ),
             ),
@@ -346,7 +347,7 @@ class _InfoPanel extends StatelessWidget {
               if (d.status == DeliveryStatus.failed) ...[
                 const SizedBox(height: 4),
                 Text(
-                  "${d.failReason?.label ?? "Topshirib bo'lmadi"}. Do'kon siz bilan bog'lanadi.",
+                  context.l10n.dlvFailedCustomer(d.failReason?.label ?? context.l10n.dlvFailedFallback),
                   style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error),
                 ),
               ],
@@ -358,7 +359,7 @@ class _InfoPanel extends StatelessWidget {
                   children: [
                     const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)),
                     const SizedBox(width: 8),
-                    Text('Kuryer joylashuvi yangilanmoqda…', style: theme.textTheme.bodySmall),
+                    Text(context.l10n.dlvCourierUpdating, style: theme.textTheme.bodySmall),
                   ],
                 ),
               ],
@@ -374,8 +375,11 @@ class _InfoPanel extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(d.courier?.firstName ?? 'Kuryer', style: theme.textTheme.titleMedium),
-                        Text(isCustomer ? 'Sizning kuryeringiz' : 'Kuryer', style: theme.textTheme.bodySmall),
+                        Text(d.courier?.firstName ?? UserRole.courier.label, style: theme.textTheme.titleMedium),
+                        Text(
+                          isCustomer ? context.l10n.dlvYourCourier : UserRole.courier.label,
+                          style: theme.textTheme.bodySmall,
+                        ),
                       ],
                     ),
                   ),
@@ -383,7 +387,7 @@ class _InfoPanel extends StatelessWidget {
                     FilledButton.icon(
                       onPressed: () => DeliveryActions.call(context, d.courier!.phone),
                       icon: const Icon(Icons.call_rounded),
-                      label: const Text("Qo'ng'iroq"),
+                      label: Text(context.l10n.commonCall),
                     ),
                 ],
               ),

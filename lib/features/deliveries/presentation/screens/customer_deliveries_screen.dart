@@ -25,7 +25,7 @@ class CustomerDeliveriesScreen extends ConsumerWidget {
     final notifier = ref.read(customerDeliveriesProvider.notifier);
 
     return DashPage(
-      title: 'Yetkazishlarim',
+      title: context.l10n.profileMyDeliveries,
       body: RefreshIndicator(
         color: AppColors.onBrand,
         backgroundColor: AppColors.brandYellow,
@@ -45,7 +45,7 @@ class CustomerDeliveriesScreen extends ConsumerWidget {
               error: (error, _) => [
                 Padding(
                   padding: const EdgeInsets.only(top: 96),
-                  child: Center(child: Text('Xatolik: $error', textAlign: TextAlign.center)),
+                  child: Center(child: Text(context.l10n.commonErrorWith('$error'), textAlign: TextAlign.center)),
                 ),
               ],
               data: (items) => items.isEmpty
@@ -62,7 +62,7 @@ class CustomerDeliveriesScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 14),
                             Text(
-                              'Hozircha yetkazishlar yo‘q',
+                              context.l10n.dlvNone,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: BrandColors.of(context).textSecondary,
@@ -96,9 +96,9 @@ class _DeliveryTile extends StatelessWidget {
     final eta = d.eta;
     final tint = DeliveryStatusBadge.colorOf(d.status, Theme.of(context).colorScheme);
     final subtitle = [
-      if (d.source == DeliverySource.restaurantOrder) 'Restoran buyurtmasi',
+      if (d.source == DeliverySource.restaurantOrder) context.l10n.dlvRestaurantOrder,
       d.label,
-      if (d.status.isActive && eta != null) '~${(eta.seconds / 60).ceil()} daqiqa',
+      if (d.status.isActive && eta != null) context.l10n.dlvMinutesLong('${(eta.seconds / 60).ceil()}'),
     ].join(' · ');
     return DashListCard(
       leading: Container(
@@ -107,7 +107,7 @@ class _DeliveryTile extends StatelessWidget {
         decoration: BoxDecoration(color: tint.withValues(alpha: 0.13), borderRadius: BorderRadius.circular(14)),
         child: Icon(d.status.isActive ? Icons.moped_rounded : Icons.inventory_2_rounded, color: tint),
       ),
-      title: d.storeName ?? 'Yetkazish',
+      title: d.storeName ?? context.l10n.dlvLabelFallback,
       subtitle: subtitle,
       trailing: DeliveryStatusBadge(status: d.status),
       onTap: () =>

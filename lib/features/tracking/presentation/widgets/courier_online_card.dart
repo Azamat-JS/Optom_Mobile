@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/location/location_tracker.dart';
 import 'package:bsmart/core/theme/app_motion.dart';
@@ -62,11 +63,13 @@ class CourierOnlineCard extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          tracking.isOnline ? 'Onlayn' : 'Oflayn',
+                          tracking.isOnline ? context.l10n.trkOnline : context.l10n.trkOffline,
                           style: TextStyle(color: colors.textPrimary, fontSize: 18, fontWeight: FontWeight.w800),
                         ),
                         Text(
-                          tracking.isOnline ? "Ko'radi: ${tracking.watchersLabel}" : "Ishni boshlash uchun onlayn bo'ling",
+                          tracking.isOnline
+                              ? context.l10n.trkWatchersWith(tracking.watchersLabel)
+                              : context.l10n.trkGoOnlineHint,
                           style: TextStyle(color: colors.textSecondary, fontSize: 13.5, fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -103,20 +106,16 @@ class _ProblemBanner extends ConsumerWidget {
     final theme = Theme.of(context);
     final (message, actionLabel, action) = switch (phase) {
       TrackingPhase.servicesDisabled => (
-          "Telefoningizda GPS (joylashuv) o'chirilgan.",
-          'GPS ni yoqish',
-          tracker.openLocationSettings,
-        ),
+        context.l10n.trkGpsOffBanner,
+        context.l10n.trkTurnOnGps,
+        tracker.openLocationSettings,
+      ),
       TrackingPhase.permissionDeniedForever => (
-          'Joylashuv ruxsati rad etilgan. Sozlamalardan ruxsat bering.',
-          'Sozlamalarni ochish',
-          tracker.openAppSettings,
-        ),
-      _ => (
-          'Onlayn bo\'lish uchun joylashuv ruxsati kerak.',
-          'Qayta urinish',
-          () => TrackingActions.goOnline(context, ref),
-        ),
+        context.l10n.trkDeniedForever,
+        context.l10n.trkOpenSettings,
+        tracker.openAppSettings,
+      ),
+      _ => (context.l10n.trkPermissionNeeded, context.l10n.commonRetry, () => TrackingActions.goOnline(context, ref)),
     };
     final error = theme.colorScheme.error;
     return Container(
@@ -128,7 +127,10 @@ class _ProblemBanner extends ConsumerWidget {
           Icon(Icons.warning_amber_rounded, color: error),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(message, style: TextStyle(color: error, fontWeight: FontWeight.w600)),
+            child: Text(
+              message,
+              style: TextStyle(color: error, fontWeight: FontWeight.w600),
+            ),
           ),
           TextButton(
             onPressed: action,

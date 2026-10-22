@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/features/deliveries/domain/entities/delivery.dart';
 import 'package:bsmart/features/deliveries/domain/repositories/deliveries_repository.dart';
 import 'package:bsmart/features/deliveries/presentation/providers/courier_deliveries_notifier.dart';
@@ -24,11 +25,11 @@ abstract final class DeliveryActions {
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Buyurtma topshirildimi?'),
-        content: Text('${delivery.label} mijozga topshirilganini tasdiqlang.'),
+        title: Text(context.l10n.dlvConfirmHandoverTitle),
+        content: Text(context.l10n.dlvConfirmHandoverBody(delivery.label)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Yo\'q')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Ha, topshirdim')),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.l10n.commonNo)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(context.l10n.dlvYesHandedOver)),
         ],
       ),
     );
@@ -38,7 +39,7 @@ abstract final class DeliveryActions {
   static Future<void> call(BuildContext context, String? phone) async {
     if (phone == null || phone.isEmpty) return;
     if (!await launchUrl(Uri(scheme: 'tel', path: phone)) && context.mounted) {
-      showError(context, "Qo'ng'iroq qilib bo'lmadi");
+      showError(context, context.l10n.dlvCallFailed);
     }
   }
 
@@ -50,7 +51,7 @@ abstract final class DeliveryActions {
       'travelmode': 'driving',
     });
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication) && context.mounted) {
-      showError(context, "Navigatorni ochib bo'lmadi");
+      showError(context, context.l10n.dlvNavigatorFailed);
     }
   }
 

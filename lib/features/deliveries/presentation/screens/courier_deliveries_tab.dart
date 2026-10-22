@@ -40,7 +40,7 @@ class CourierDeliveriesTab extends ConsumerWidget {
           final active = items.where((d) => d.status.isActive).toList();
           final offers = items.where((d) => d.status.isOffer).toList();
           if (items.isEmpty) {
-            return const DashEmptyState(icon: Icons.moped_rounded, text: "Hozircha yetkazish yo'q");
+            return DashEmptyState(icon: Icons.moped_rounded, text: context.l10n.dlvNone);
           }
           var i = 0;
           Widget animated(Widget child) => child
@@ -54,10 +54,10 @@ class CourierDeliveriesTab extends ConsumerWidget {
               if (!online && active.isNotEmpty)
                 animated(_GoOnlineBanner(customerWatches: active.any((d) => d.source == DeliverySource.order))),
               if (active.isNotEmpty)
-                const DashSectionTitle('Faol yetkazishlar', padding: EdgeInsets.fromLTRB(4, 14, 4, 10)),
+                DashSectionTitle(context.l10n.dlvActiveSection, padding: const EdgeInsets.fromLTRB(4, 14, 4, 10)),
               for (final d in active) animated(_DeliveryCard(delivery: d)),
               if (offers.isNotEmpty)
-                const DashSectionTitle('Yangi takliflar', padding: EdgeInsets.fromLTRB(4, 14, 4, 10)),
+                DashSectionTitle(context.l10n.dlvOffersSection, padding: const EdgeInsets.fromLTRB(4, 14, 4, 10)),
               for (final d in offers) animated(_DeliveryCard(delivery: d)),
             ],
           );
@@ -92,18 +92,18 @@ class _GoOnlineBanner extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Faol yetkazish bor',
+                  context.l10n.dlvActiveBannerTitle,
                   style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w800),
                 ),
                 Text(
-                  "${customerWatches ? 'Mijoz va biznes egangiz' : 'Biznes egangiz'} sizni xaritada ko'rishi uchun onlayn bo'ling.",
+                  customerWatches ? context.l10n.dlvActiveBannerCustomer : context.l10n.dlvActiveBannerOwner,
                   style: TextStyle(color: colors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
           ),
           const SizedBox(width: 8),
-          FilledButton(onPressed: () => TrackingActions.goOnline(context, ref), child: const Text('Onlayn')),
+          FilledButton(onPressed: () => TrackingActions.goOnline(context, ref), child: Text(context.l10n.trkOnline)),
         ],
       ),
     );
@@ -152,7 +152,7 @@ class _DeliveryCard extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             if (delivery.storeName != null) _Line(icon: Icons.storefront_rounded, text: delivery.storeName!),
-            _Line(icon: Icons.place_rounded, text: delivery.dropoffAddress ?? "Manzil ko'rsatilmagan"),
+            _Line(icon: Icons.place_rounded, text: delivery.dropoffAddress ?? context.l10n.dlvNoAddress),
             if (delivery.customerName != null) _Line(icon: Icons.person_rounded, text: delivery.customerName!),
             if (delivery.status.isOffer) ...[
               const SizedBox(height: 10),
@@ -172,7 +172,7 @@ class _DeliveryCard extends ConsumerWidget {
                     }
                   },
                   icon: const Icon(Icons.check_rounded),
-                  label: const Text('Qabul qilish'),
+                  label: Text(context.l10n.restAccept),
                 ),
               ),
             ],

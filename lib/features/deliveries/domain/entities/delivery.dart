@@ -1,20 +1,23 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
+
 /// Mirrors the backend `DeliveryStatus` enum (Optom_Savdo CLAUDE.md "Deliveries — T4").
 /// ACCEPTED = courier heading to pickup; PICKED_UP = in transit to the customer.
 enum DeliveryStatus {
-  pending('PENDING', 'Kutilmoqda'),
-  assigned('ASSIGNED', 'Biriktirilgan'),
-  accepted('ACCEPTED', 'Qabul qilingan'),
-  pickedUp('PICKED_UP', 'Yo\'lda'),
-  arrived('ARRIVED', 'Yetib keldi'),
-  delivered('DELIVERED', 'Topshirildi'),
-  cancelled('CANCELLED', 'Bekor qilingan'),
+  pending('PENDING'),
+  assigned('ASSIGNED'),
+  accepted('ACCEPTED'),
+  pickedUp('PICKED_UP'),
+  arrived('ARRIVED'),
+  delivered('DELIVERED'),
+  cancelled('CANCELLED'),
   // Phase 7 N2: the courier tried and couldn't hand it over (see [Delivery.failReason]).
-  failed('FAILED', "Yetkazib bo'lmadi");
+  failed('FAILED');
 
-  const DeliveryStatus(this.wire, this.label);
+  const DeliveryStatus(this.wire);
 
   final String wire;
-  final String label;
+
+  String get label => appL10n.enumDeliveryStatus(name);
 
   static DeliveryStatus fromWire(String value) =>
       values.firstWhere((s) => s.wire == value, orElse: () => DeliveryStatus.pending);
@@ -32,18 +35,18 @@ enum DeliveryStatus {
 
 /// Why the courier couldn't hand it over (`PATCH /deliveries/:id/fail`).
 enum DeliveryFailReason {
-  notHome('NOT_HOME', "Mijoz manzilda yo'q"),
-  refused('REFUSED', 'Mijoz qabul qilmadi'),
-  wrongAddress('WRONG_ADDRESS', "Manzil noto'g'ri"),
-  other('OTHER', 'Boshqa sabab');
+  notHome('NOT_HOME'),
+  refused('REFUSED'),
+  wrongAddress('WRONG_ADDRESS'),
+  other('OTHER');
 
-  const DeliveryFailReason(this.wire, this.label);
+  const DeliveryFailReason(this.wire);
 
   final String wire;
-  final String label;
 
-  static DeliveryFailReason? fromWire(Object? value) =>
-      values.where((r) => r.wire == value).firstOrNull;
+  String get label => appL10n.enumDeliveryFailReason(name);
+
+  static DeliveryFailReason? fromWire(Object? value) => values.where((r) => r.wire == value).firstOrNull;
 }
 
 /// The customer's 4-digit handover code (Phase 7 N2). Staff and the courier get the status only;
@@ -169,7 +172,7 @@ class Delivery {
   final DeliveryOutcomeLocation? outcomeLocation;
 
   /// Short label for notifications/sheets: "#ORD-123".
-  String get label => orderNumber != null ? '#$orderNumber' : 'Yetkazish';
+  String get label => orderNumber != null ? '#$orderNumber' : appL10n.dlvLabelFallback;
 
   /// Where the courier should drive next: the store until pickup, then the customer.
   LatLngPoint? get nextStop => status.isOffer || status == DeliveryStatus.accepted ? pickup : dropoff;

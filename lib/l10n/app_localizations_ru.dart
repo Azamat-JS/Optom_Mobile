@@ -2320,4 +2320,591 @@ class AppLocalizationsRu extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String enumDeliveryStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'pending': 'Ожидает',
+      'assigned': 'Назначена',
+      'accepted': 'Принята',
+      'pickedUp': 'В пути',
+      'arrived': 'На месте',
+      'delivered': 'Доставлена',
+      'cancelled': 'Отменена',
+      'failed': 'Не доставлена',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumDeliveryFailReason(String reason) {
+    String _temp0 = intl.Intl.selectLogic(reason, {
+      'notHome': 'Клиента нет на месте',
+      'refused': 'Клиент отказался',
+      'wrongAddress': 'Неверный адрес',
+      'other': 'Другая причина',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String dlvHeadline(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'pending': 'Ищем курьера',
+      'assigned': 'Курьер назначен, ждём подтверждения',
+      'accepted': 'Курьер едет в магазин',
+      'pickedUp': 'Курьер в пути',
+      'arrived': 'Курьер на месте!',
+      'delivered': 'Заказ передан',
+      'cancelled': 'Доставка отменена',
+      'failed': 'Не удалось доставить',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get dlvLabelFallback => 'Доставка';
+
+  @override
+  String get dlvConfirmHandoverTitle => 'Заказ передан?';
+
+  @override
+  String dlvConfirmHandoverBody(String label) {
+    return 'Подтвердите, что $label передан клиенту.';
+  }
+
+  @override
+  String get dlvYesHandedOver => 'Да, передал';
+
+  @override
+  String get dlvCallFailed => 'Не удалось позвонить';
+
+  @override
+  String get dlvNavigatorFailed => 'Не удалось открыть навигатор';
+
+  @override
+  String dlvCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count доставок',
+      few: '$count доставки',
+      one: '$count доставка',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dlvNone => 'Пока нет доставок';
+
+  @override
+  String get dlvActiveSection => 'Активные доставки';
+
+  @override
+  String get dlvOffersSection => 'Новые предложения';
+
+  @override
+  String get dlvActiveBannerTitle => 'Есть активная доставка';
+
+  @override
+  String get dlvActiveBannerCustomer =>
+      'Выйдите онлайн, чтобы клиент и владелец бизнеса видели вас на карте.';
+
+  @override
+  String get dlvActiveBannerOwner =>
+      'Выйдите онлайн, чтобы владелец бизнеса видел вас на карте.';
+
+  @override
+  String get dlvNoAddress => 'Адрес не указан';
+
+  @override
+  String get dlvCompleted => 'Доставка завершена';
+
+  @override
+  String get dlvFailedMarked =>
+      'Отмечено: не доставлено. Верните заказ в магазин.';
+
+  @override
+  String get mapFitAll => 'Показать всё';
+
+  @override
+  String get mapMyLocation => 'Моё местоположение';
+
+  @override
+  String get dlvPickup => 'Забрать';
+
+  @override
+  String get dlvYouAreOffline => 'Вы офлайн';
+
+  @override
+  String get dlvLocationHidden => 'Ваше местоположение не видно';
+
+  @override
+  String get dlvFailed => 'Не удалось доставить';
+
+  @override
+  String get dlvCancelledTitle => 'Доставка отменена';
+
+  @override
+  String get dlvFinishedTitle => 'Доставка завершена';
+
+  @override
+  String get dlvGoToStore => 'Езжайте в магазин';
+
+  @override
+  String get dlvDeliverToCustomer => 'Доставьте клиенту';
+
+  @override
+  String get dlvCodeLockedHint => 'Код заблокирован — позвоните в магазин';
+
+  @override
+  String get dlvAskCode => 'При передаче спросите у клиента 4-значный код';
+
+  @override
+  String get dlvStoreFallback => 'Магазин';
+
+  @override
+  String get dlvNavigator => 'Навигатор';
+
+  @override
+  String get dlvHandedOver => 'Передал';
+
+  @override
+  String get dlvPickedUp => 'Забрал заказ';
+
+  @override
+  String get dlvArrived => 'Я на месте';
+
+  @override
+  String dlvMinutesShort(String minutes) {
+    return '~$minutes мин';
+  }
+
+  @override
+  String dlvToStore(String time) {
+    return 'До магазина $time';
+  }
+
+  @override
+  String dlvToCustomer(String time) {
+    return 'До клиента $time';
+  }
+
+  @override
+  String commonKm(String km) {
+    return '$km км';
+  }
+
+  @override
+  String commonMeters(String meters) {
+    return '$meters м';
+  }
+
+  @override
+  String get dlvRestaurantOrder => 'Заказ из ресторана';
+
+  @override
+  String dlvMinutesLong(String minutes) {
+    return '~$minutes мин';
+  }
+
+  @override
+  String dlvFailedCustomer(String reason) {
+    return '$reason. Магазин свяжется с вами.';
+  }
+
+  @override
+  String get dlvFailedFallback => 'Не удалось передать';
+
+  @override
+  String get dlvCourierUpdating => 'Обновляем местоположение курьера…';
+
+  @override
+  String get dlvYourCourier => 'Ваш курьер';
+
+  @override
+  String get commonCall => 'Позвонить';
+
+  @override
+  String get dlvAssignTitle => 'Передать курьеру';
+
+  @override
+  String get dlvOfferAll => 'Предложить всем курьерам';
+
+  @override
+  String get dlvOfferAllHint => 'Заказ получит первый принявший курьер';
+
+  @override
+  String get dlvNoActiveCouriers => 'Нет активных курьеров';
+
+  @override
+  String dlvActiveDeliveries(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count активных доставок',
+      few: '$count активные доставки',
+      one: '$count активная доставка',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dlvCodeFourDigits => 'Код состоит из 4 цифр';
+
+  @override
+  String get dlvCodeLocked => 'Код заблокирован';
+
+  @override
+  String get dlvWaivedTitle => 'Магазин разрешил передачу без кода';
+
+  @override
+  String get dlvHandoverCode => 'Код передачи';
+
+  @override
+  String get dlvTooManyTries =>
+      'Слишком много неверных попыток. Позвоните в магазин — там могут разрешить передачу без кода.';
+
+  @override
+  String get dlvConfirmHandedOver => 'Подтвердите, что передали заказ клиенту.';
+
+  @override
+  String get dlvAskCodeLong =>
+      'Спросите у клиента 4-значный код. Он есть в приложении клиента и в его Telegram.';
+
+  @override
+  String dlvAttemptsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Осталось $count попыток',
+      few: 'Осталось $count попытки',
+      one: 'Осталась $count попытка',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dlvRecheck => 'Проверить снова';
+
+  @override
+  String get dlvWhyFailed => 'Почему не удалось передать?';
+
+  @override
+  String get dlvFailNotice =>
+      'Клиент и магазин получат уведомление. Верните заказ в магазин.';
+
+  @override
+  String get dlvNoteRequired => 'Комментарий (обязательно)';
+
+  @override
+  String get dlvWaiveTitle => 'Разрешить передачу без кода?';
+
+  @override
+  String get dlvWaiveBody =>
+      'Курьер сможет передать заказ без кода клиента. Разрешайте, только если поговорили с клиентом и уверены, что он получил заказ.';
+
+  @override
+  String get dlvWaiveConfirm => 'Разрешить';
+
+  @override
+  String get dlvWaived => 'Разрешено — курьер может передать без кода';
+
+  @override
+  String dlvReasonWith(String reason) {
+    return 'Причина: $reason';
+  }
+
+  @override
+  String dlvDistanceFromDropoff(String distance) {
+    return 'Курьер был в $distance от адреса клиента';
+  }
+
+  @override
+  String dlvCancelReasonWith(String reason) {
+    return 'Причина отмены: $reason';
+  }
+
+  @override
+  String get dlvCodeLockedStaff =>
+      'Код заблокирован: курьер много раз ввёл неверный код';
+
+  @override
+  String dlvCodeWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ждём код клиента (осталось $count попыток)',
+      few: 'Ждём код клиента (осталось $count попытки)',
+      one: 'Ждём код клиента (осталась $count попытка)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dlvWaivedStaff => 'Передача без кода разрешена';
+
+  @override
+  String get dlvWaiveButton => 'Разрешить без кода';
+
+  @override
+  String get dlvHandoverCodeHint =>
+      'Назовите его курьеру при получении заказа. Больше никому не сообщайте.';
+
+  @override
+  String dlvCodeSemantics(String digits) {
+    return 'Код $digits';
+  }
+
+  @override
+  String dlvCourierWith(String name) {
+    return 'Курьер: $name';
+  }
+
+  @override
+  String get dlvChangeCourier => 'Сменить курьера';
+
+  @override
+  String get dlvCancel => 'Отменить';
+
+  @override
+  String get dlvReassign => 'Снова передать курьеру';
+
+  @override
+  String get dlvTrackCourier => 'Отследить курьера';
+
+  @override
+  String get dlvOfferedAll => 'Предложено всем курьерам';
+
+  @override
+  String get dlvAssigned => 'Передано курьеру';
+
+  @override
+  String get dlvCancelTitle => 'Отменить доставку?';
+
+  @override
+  String get dlvCancelBody =>
+      'Курьер больше не увидит этот заказ. Позже можно передать снова.';
+
+  @override
+  String get commonRefresh => 'Обновить';
+
+  @override
+  String fleetOnline(String count) {
+    return '$count онлайн';
+  }
+
+  @override
+  String fleetBusy(String count) {
+    return '$count в доставке';
+  }
+
+  @override
+  String fleetStale(String count) {
+    return '$count без связи';
+  }
+
+  @override
+  String get fleetNoSignal => 'Нет связи';
+
+  @override
+  String get fleetDelivering => 'В доставке';
+
+  @override
+  String get fleetFree => 'Свободен';
+
+  @override
+  String get fleetNoneOnline => 'Пока нет курьеров онлайн';
+
+  @override
+  String fleetLastLocation(String ago) {
+    return 'последнее местоположение $ago';
+  }
+
+  @override
+  String get fleetViewDelivery => 'Открыть доставку';
+
+  @override
+  String fleetViewDeliveryN(String n) {
+    return 'Открыть доставку ($n)';
+  }
+
+  @override
+  String get trkOnline => 'Онлайн';
+
+  @override
+  String get trkOffline => 'Офлайн';
+
+  @override
+  String get trkNotificationTitle => 'bsmart передаёт ваше местоположение';
+
+  @override
+  String trkNotifActiveCustomer(String label) {
+    return 'Активная доставка: $label — видят клиент и владелец бизнеса';
+  }
+
+  @override
+  String trkNotifActiveOwner(String label) {
+    return 'Активная доставка: $label — видит владелец бизнеса';
+  }
+
+  @override
+  String get trkNotifOnline =>
+      'Онлайн — владелец бизнеса видит ваше местоположение';
+
+  @override
+  String get trkShareTitle => 'Передача местоположения';
+
+  @override
+  String get trkWatchersNone => 'Никто — местоположение не передаётся';
+
+  @override
+  String trkWatchersWithCustomer(String label) {
+    return 'Владелец бизнеса, администраторы и клиент ($label)';
+  }
+
+  @override
+  String get trkWatchersOwner => 'Владелец бизнеса и администраторы';
+
+  @override
+  String get trkWhatTitle => 'Что передаётся';
+
+  @override
+  String get trkWhatBody =>
+      'GPS-местоположение вашего телефона: координаты, скорость и направление движения.';
+
+  @override
+  String get trkWhenTitle => 'Когда';
+
+  @override
+  String get trkWhenBody =>
+      'Только когда вы «Онлайн» или во время активной доставки — даже если приложение в фоне или экран выключен. В это время в панели уведомлений висит постоянное уведомление.';
+
+  @override
+  String get trkWhoTitle => 'Кто видит';
+
+  @override
+  String get trkWhoBody =>
+      'Владелец бизнеса и его администраторы, а также клиент активной доставки.';
+
+  @override
+  String get trkStopTitle => 'Как остановить';
+
+  @override
+  String get trkStopBody =>
+      'В любой момент перейдите в «Офлайн» — передача сразу прекратится. В офлайне ваше местоположение не передаётся.';
+
+  @override
+  String get trkDisclosureLead =>
+      'bsmart использует ваше местоположение, чтобы отслеживать доставки';
+
+  @override
+  String get trkNotNow => 'Не сейчас';
+
+  @override
+  String get trkAgree => 'Согласен';
+
+  @override
+  String get trkGoOfflineTitle => 'Выйти в офлайн';
+
+  @override
+  String get trkGoOfflineBody =>
+      'Передача местоположения остановится — владелец бизнеса не увидит вас на карте.';
+
+  @override
+  String trkGoOfflineActiveCustomer(String label) {
+    return 'У вас активная доставка ($label). Если остановить передачу, клиент и владелец бизнеса перестанут видеть вас на карте.';
+  }
+
+  @override
+  String trkGoOfflineActiveOwner(String label) {
+    return 'У вас активная доставка ($label). Если остановить передачу, владелец бизнеса перестанет видеть вас на карте.';
+  }
+
+  @override
+  String get trkStop => 'Остановить';
+
+  @override
+  String get trkNotSentYet => 'ещё не отправлено';
+
+  @override
+  String trkSecondsAgo(String seconds) {
+    return '$seconds сек. назад';
+  }
+
+  @override
+  String trkMinutesAgo(String minutes) {
+    return '$minutes мин. назад';
+  }
+
+  @override
+  String trkWatchersWith(String who) {
+    return 'Видят: $who';
+  }
+
+  @override
+  String get trkGoOnlineHint => 'Выйдите онлайн, чтобы начать работу';
+
+  @override
+  String get trkGpsOffBanner => 'На телефоне выключен GPS (геолокация).';
+
+  @override
+  String get trkTurnOnGps => 'Включить GPS';
+
+  @override
+  String get trkDeniedForever =>
+      'Доступ к геолокации запрещён. Разрешите его в настройках.';
+
+  @override
+  String get trkOpenSettings => 'Открыть настройки';
+
+  @override
+  String get trkPermissionNeeded =>
+      'Чтобы выйти онлайн, нужен доступ к геолокации.';
+
+  @override
+  String get trkLastSent => 'Последнее отправленное местоположение';
+
+  @override
+  String get trkWhoNow => 'Кто видит сейчас';
+
+  @override
+  String get trkNoNotifPermission => 'Нет разрешения на уведомления';
+
+  @override
+  String get trkNoNotifPermissionBody =>
+      'Отслеживание продолжится, но в панели уведомлений его не будет видно.';
+
+  @override
+  String get trkBatterySaver => 'Режим энергосбережения';
+
+  @override
+  String get trkBatterySaverBody =>
+      'Некоторые телефоны останавливают фоновые приложения. Если возникнут проблемы, отключите ограничение батареи для bsmart.';
+
+  @override
+  String get trkAboutSharing => 'О передаче местоположения';
+
+  @override
+  String get trkSharing => 'Местоположение передаётся';
+
+  @override
+  String get trkConnecting => 'Подключение…';
+
+  @override
+  String get trkNoGps => 'Нет сигнала GPS';
+
+  @override
+  String get trkReconnecting => 'Переподключение…';
+
+  @override
+  String get trkDenied => 'Нет разрешения';
+
+  @override
+  String get trkGpsOff => 'GPS выключен';
+
+  @override
+  String get trkJustNow => 'только что';
 }

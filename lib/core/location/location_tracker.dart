@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart' show Permission, PermissionActions, PermissionStatusGetters;
 
+import 'package:bsmart/core/l10n/app_l10n.dart';
 import 'package:bsmart/core/location/location_fix.dart';
 
 enum LocationAccess { granted, denied, deniedForever, servicesDisabled }
@@ -128,7 +129,7 @@ class LocationTracker {
         foregroundNotificationConfig: ForegroundNotificationConfig(
           notificationTitle: notificationTitle,
           notificationText: notificationText,
-          notificationChannelName: 'Joylashuvni ulashish',
+          notificationChannelName: appL10n.trkShareTitle,
           enableWakeLock: true,
           setOngoing: true,
         ),

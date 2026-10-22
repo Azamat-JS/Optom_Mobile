@@ -1,3 +1,5 @@
+import 'package:bsmart/core/l10n/app_l10n.dart';
+
 /// What the courier's location sharing is doing right now — the single source
 /// of truth behind the status pill, details sheet, problem banner and online
 /// toggle.
@@ -44,42 +46,41 @@ class TrackingState {
   final bool customerWatches;
 
   String get watchersLabel {
-    if (!isOnline) return 'Hech kim — joylashuv yuborilmayapti';
+    if (!isOnline) return appL10n.trkWatchersNone;
     if (activeDeliveryLabel != null && customerWatches) {
-      return 'Biznes egangiz, administratorlar va mijoz ($activeDeliveryLabel)';
+      return appL10n.trkWatchersWithCustomer(activeDeliveryLabel!);
     }
-    return 'Biznes egangiz va administratorlar';
+    return appL10n.trkWatchersOwner;
   }
 
   /// The courier currently wants to be online (location may still be
   /// temporarily unavailable — see [phase]).
   bool get isOnline => const {
-        TrackingPhase.starting,
-        TrackingPhase.sharing,
-        TrackingPhase.noGpsFix,
-        TrackingPhase.reconnecting,
-      }.contains(phase);
+    TrackingPhase.starting,
+    TrackingPhase.sharing,
+    TrackingPhase.noGpsFix,
+    TrackingPhase.reconnecting,
+  }.contains(phase);
 
   bool get hasProblem => const {
-        TrackingPhase.permissionDenied,
-        TrackingPhase.permissionDeniedForever,
-        TrackingPhase.servicesDisabled,
-      }.contains(phase);
+    TrackingPhase.permissionDenied,
+    TrackingPhase.permissionDeniedForever,
+    TrackingPhase.servicesDisabled,
+  }.contains(phase);
 
-  TrackingState copyWith({TrackingPhase? phase, DateTime? lastSentAt, bool? notificationsDenied}) =>
-      TrackingState(
-        phase: phase ?? this.phase,
-        lastSentAt: lastSentAt ?? this.lastSentAt,
-        notificationsDenied: notificationsDenied ?? this.notificationsDenied,
-        activeDeliveryLabel: activeDeliveryLabel,
-        customerWatches: customerWatches,
-      );
+  TrackingState copyWith({TrackingPhase? phase, DateTime? lastSentAt, bool? notificationsDenied}) => TrackingState(
+    phase: phase ?? this.phase,
+    lastSentAt: lastSentAt ?? this.lastSentAt,
+    notificationsDenied: notificationsDenied ?? this.notificationsDenied,
+    activeDeliveryLabel: activeDeliveryLabel,
+    customerWatches: customerWatches,
+  );
 
   TrackingState withActiveDelivery(String? label, {required bool customerWatches}) => TrackingState(
-        phase: phase,
-        lastSentAt: lastSentAt,
-        notificationsDenied: notificationsDenied,
-        activeDeliveryLabel: label,
-        customerWatches: customerWatches,
-      );
+    phase: phase,
+    lastSentAt: lastSentAt,
+    notificationsDenied: notificationsDenied,
+    activeDeliveryLabel: label,
+    customerWatches: customerWatches,
+  );
 }
