@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/core/l10n/app_l10n.dart';
 import 'package:bsmart/core/network/api_exception.dart';
 import 'package:bsmart/features/auth/domain/entities/telegram_verification.dart';
 import 'package:bsmart/features/auth/domain/usecases/telegram_verification_usecases.dart';
@@ -113,16 +114,13 @@ class TelegramVerifyNotifier extends AutoDisposeNotifier<TelegramVerifyState> {
       final result = await getIt<PollTelegramVerificationUseCase>().call(verification);
       // The attempt may have been restarted or abandoned while this poll was in flight.
       if (_disposed || state.verification != verification) return;
-      result.fold(
-        (status) => _apply(status),
-        (failure) {
-          // Network blips are transient — keep polling. 404 means the request
-          // is gone server-side (purged), so it can never finish.
-          if (failure is NotFoundApiException) {
-            _finish(TelegramVerifyPhase.failed, "So'rov topilmadi. Qaytadan boshlang.");
-          }
-        },
-      );
+      result.fold((status) => _apply(status), (failure) {
+        // Network blips are transient — keep polling. 404 means the request
+        // is gone server-side (purged), so it can never finish.
+        if (failure is NotFoundApiException) {
+          _finish(TelegramVerifyPhase.failed, appL10n.tgRequestNotFound);
+        }
+      });
     } finally {
       _pollInFlight = false;
     }
@@ -139,7 +137,7 @@ class TelegramVerifyNotifier extends AutoDisposeNotifier<TelegramVerifyState> {
       case TelegramExpired():
         _finish(TelegramVerifyPhase.expired);
       case TelegramConsumed():
-        _finish(TelegramVerifyPhase.failed, "Bu so'rov allaqachon ishlatilgan. Qaytadan boshlang.");
+        _finish(TelegramVerifyPhase.failed, appL10n.tgRequestUsed);
       case TelegramVerified(:final authResult, :final isNewUser):
         _timer?.cancel();
         state = state.copyWith(phase: TelegramVerifyPhase.done, isNewUser: isNewUser);
@@ -153,5 +151,6 @@ class TelegramVerifyNotifier extends AutoDisposeNotifier<TelegramVerifyState> {
   }
 }
 
-final telegramVerifyProvider =
-    NotifierProvider.autoDispose<TelegramVerifyNotifier, TelegramVerifyState>(TelegramVerifyNotifier.new);
+final telegramVerifyProvider = NotifierProvider.autoDispose<TelegramVerifyNotifier, TelegramVerifyState>(
+  TelegramVerifyNotifier.new,
+);

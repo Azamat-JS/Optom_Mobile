@@ -4821,6 +4821,114 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'hozirgina'**
   String get trkJustNow;
+
+  /// No description provided for @tgRequestNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov topilmadi. Qaytadan boshlang.'**
+  String get tgRequestNotFound;
+
+  /// No description provided for @tgRequestUsed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu so\'rov allaqachon ishlatilgan. Qaytadan boshlang.'**
+  String get tgRequestUsed;
+
+  /// No description provided for @sfUnknownShop.
+  ///
+  /// In uz, this message translates to:
+  /// **'Noma\'lum do\'kon'**
+  String get sfUnknownShop;
+
+  /// No description provided for @favLoginPrompt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sevimlilarni ko\'rish uchun tizimga kiring'**
+  String get favLoginPrompt;
+
+  /// No description provided for @favEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sevimlilar ro\'yxati bo\'sh'**
+  String get favEmpty;
+
+  /// No description provided for @usersNotFound.
+  ///
+  /// In uz, this message translates to:
+  /// **'Foydalanuvchilar topilmadi'**
+  String get usersNotFound;
+
+  /// No description provided for @usersSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ism, familiya yoki telefon...'**
+  String get usersSearchHint;
+
+  /// No description provided for @usersDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Foydalanuvchini o\'chirish'**
+  String get usersDeleteTitle;
+
+  /// No description provided for @usersDeleteConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} butunlay o\'chirilsinmi? Bu amalni bekor qilib bo\'lmaydi.'**
+  String usersDeleteConfirm(String name);
+
+  /// No description provided for @usersEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Foydalanuvchini tahrirlash'**
+  String get usersEditTitle;
+
+  /// No description provided for @usersNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi foydalanuvchi'**
+  String get usersNewTitle;
+
+  /// No description provided for @usersRoleRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rol *'**
+  String get usersRoleRequired;
+
+  /// No description provided for @usersVerticalRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yo\'nalish *'**
+  String get usersVerticalRequired;
+
+  /// No description provided for @usersShopName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'kon nomi'**
+  String get usersShopName;
+
+  /// No description provided for @adminVerticalsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yo\'nalishlar bo\'yicha do\'konchilar'**
+  String get adminVerticalsTitle;
+
+  /// No description provided for @adminTotalRevenue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami tushum'**
+  String get adminTotalRevenue;
+
+  /// No description provided for @adminActiveUsers.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faol foydalanuvchilar'**
+  String get adminActiveUsers;
+
+  /// No description provided for @adminTotalDebt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Umumiy qarzdorlik'**
+  String get adminTotalDebt;
 }
 
 class _AppLocalizationsDelegate

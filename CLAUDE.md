@@ -1429,7 +1429,7 @@ Settings + the registration/login flow. Backend error messages and Telegram bot 
 | I7 | Mobile features batch 1: operator core (products, categories, orders, sales/POS, customers, debts, stores/admins, expenditures, reports, dashboard) | 🟢 Done 2026-10-11: the operator feature folders plus master catalog and the shared scanner/location widgets converted; core enum labels, `ApiException` fallbacks and the currency suffix are localized through `appL10n`. 395 ARB keys with uz/ru/en parity, `flutter analyze` clean, 46 tests (5 new). Verified on the Pixel_9a emulator with a temporary SELLER account (since deleted) in ru and en: home, all drawer screens, product detail/form, stock sheet, POS → checkout, orders, and the create forms (see "Phase 8 I7 notes") |
 | I8a | Mobile batch 2a: restaurant (order board, create, detail, waiter menu), tables, the owner's waiter and courier management | 🟢 Done 2026-10-22: 71 new ARB keys (639, uz/ru/en parity), `flutter analyze` clean, 76 tests. Verified on the iPhone 17 simulator in ru and en with a temporary restaurant owner + waiter (deleted): board, both order details, create + menu sheet, tables + delete dialog + form, waiters/couriers lists + forms with validation errors, waiter shell (see "Phase 8 I8 notes") |
 | I8b | Mobile batch 2b: courier home, deliveries, delivery map + sheets, tracking (online card, pill, details sheet, disclosure, notification text), fleet map, customer deliveries/tracking | 🟢 Done 2026-10-22: 148 new ARB keys (787, uz/ru/en parity), `flutter analyze` clean, 76 tests. Verified on the iPhone 17 simulator in ru and en with a temporary restaurant owner, courier and verified customer (deleted): courier home, disclosure, tracking sheet, delivery map, handover-code and fail sheets; owner fleet map + courier sheet, a failed and an offered B2C order's delivery card, the assign sheet; customer deliveries list + tracking screen with the code (see "Phase 8 I8 notes") |
-| I8c | Mobile batch 2c: super-admin (home, users, forms), storefront/favorites leftovers, core enum fallbacks; final leftover-string sweep | ⚪ |
+| I8c | Mobile batch 2c: super-admin (home, users, forms), storefront/favorites leftovers, core enum fallbacks; final leftover-string sweep | 🟢 Done 2026-10-22: 18 new ARB keys (805, uz/ru/en parity), `flutter analyze` clean, 76 tests. Verified on the iPhone 17 simulator in ru and en with a temporary SUPER_ADMIN and verified CUSTOMER (deleted): guest and logged-in Sevimlilar, Qarzlarim, super-admin home, users list, delete dialog and user form. **Phase 8 complete on mobile.** (see "Phase 8 I8 notes") |
 
 **Phase 8 I2 notes (bsmart, 2026-10-10):**
 - **Setup:**
@@ -1589,6 +1589,16 @@ Settings + the registration/login flow. Backend error messages and Telegram bot 
   courier notification title/text and the Android notification channel name all follow the app
   language. The disclosure's four items became `_items(l10n)`. Distances use `commonKm` /
   `commonMeters` but keep the comma decimal ("1,2 km") in every language.
+- **I8c:** super-admin home / users / user form, Qarzlarim, Sevimlilar and the Telegram verify
+  notifier's two error messages (via `appL10n`). Final sweep: the word-list scanner plus a
+  spelling-pattern pass (o'/g', "q" not followed by "u", Uzbek suffixes) over every literal outside
+  `lib/l10n/`. What remains is intentional: the language's own name "O'zbekcha", developer-only
+  exceptions ("Unknown X from backend: …") and log lines, the `qarzlar.xlsx` file name, and the
+  Telegram bot's own button text quoted in the verify steps. Two Russian tile labels were shortened
+  to fit one line ("Активные аккаунты", "Общий долг").
+- **Known wording overlap (not changed):** in Russian the retailer role is "Магазин" (I2) and so
+  is the "general" business type, so the super-admin user form reads "Роль: Магазин /
+  Направление: Магазин".
 - **Device check pattern:** log in with the app in Uzbek (the login finders use Uzbek text), then
   `localeProvider.notifier.setLanguage('ru'|'en')`, and switch back to `uz` at the end; the choice
   is persisted.

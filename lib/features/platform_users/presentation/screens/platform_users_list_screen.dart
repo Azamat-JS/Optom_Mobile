@@ -83,11 +83,11 @@ class _PlatformUsersListScreenState extends ConsumerState<PlatformUsersListScree
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Foydalanuvchini o'chirish"),
-        content: Text('${user.fullName} butunlay oʻchirilsinmi? Bu amalni bekor qilib boʻlmaydi.'),
+        title: Text(context.l10n.usersDeleteTitle),
+        content: Text(context.l10n.usersDeleteConfirm(user.fullName)),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Bekor qilish')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("O'chirish")),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -116,11 +116,7 @@ class _PlatformUsersListScreenState extends ConsumerState<PlatformUsersListScree
       header: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          DashSearchField(
-            controller: _searchController,
-            hint: 'Ism, familiya yoki telefon...',
-            onChanged: _onSearchChanged,
-          ),
+          DashSearchField(controller: _searchController, hint: l10n.usersSearchHint, onChanged: _onSearchChanged),
           const SizedBox(height: 10),
           DashChoiceChips<UserRole?>(
             values: const [null, ...UserRole.values],
@@ -151,7 +147,7 @@ class _PlatformUsersListScreenState extends ConsumerState<PlatformUsersListScree
           backgroundColor: AppColors.brandYellow,
           onRefresh: () => ref.read(platformUsersListProvider.notifier).refresh(),
           child: state.items.isEmpty
-              ? const DashEmptyState(icon: Icons.groups_rounded, text: 'Foydalanuvchilar topilmadi')
+              ? DashEmptyState(icon: Icons.groups_rounded, text: l10n.usersNotFound)
               : ListView.separated(
                   physics: const AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,
@@ -182,7 +178,7 @@ class _PlatformUsersListScreenState extends ConsumerState<PlatformUsersListScree
                           (
                             value: 'toggle',
                             icon: user.isActive ? Icons.block_rounded : Icons.check_circle_rounded,
-                            label: user.isActive ? 'Faolsizlantirish' : 'Faollashtirish',
+                            label: user.isActive ? l10n.commonDeactivate : l10n.commonActivate,
                             destructive: false,
                           ),
                           (

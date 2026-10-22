@@ -40,7 +40,7 @@ class FavoritesTab extends ConsumerWidget {
       body: !isLoggedIn
           ? DashEmptyState(
               icon: Icons.favorite_rounded,
-              text: 'Sevimlilarni koʻrish uchun tizimga kiring',
+              text: context.l10n.favLoginPrompt,
               action: FilledButton(
                 onPressed: () => context.push(RouteNames.login),
                 style: FilledButton.styleFrom(minimumSize: const Size(160, 48)),
@@ -55,7 +55,7 @@ class FavoritesTab extends ConsumerWidget {
     final favoritesAsync = ref.watch(favoritesListProvider);
     return favoritesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => DashEmptyState(icon: Icons.cloud_off_rounded, text: 'Xatolik: $error'),
+      error: (error, _) => DashEmptyState(icon: Icons.cloud_off_rounded, text: context.l10n.commonErrorWith('$error')),
       data: (favorites) => RefreshIndicator(
         color: AppColors.onBrand,
         backgroundColor: AppColors.brandYellow,
@@ -63,7 +63,7 @@ class FavoritesTab extends ConsumerWidget {
         child: favorites.isEmpty
             ? DashEmptyState(
                 icon: Icons.favorite_border_rounded,
-                text: "Sevimlilar ro'yxati bo'sh",
+                text: context.l10n.favEmpty,
                 action: onStartShopping == null
                     ? null
                     : FilledButton.icon(

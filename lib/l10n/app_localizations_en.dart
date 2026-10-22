@@ -2890,4 +2890,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trkJustNow => 'just now';
+
+  @override
+  String get tgRequestNotFound => 'Request not found. Start again.';
+
+  @override
+  String get tgRequestUsed =>
+      'This request has already been used. Start again.';
+
+  @override
+  String get sfUnknownShop => 'Unknown store';
+
+  @override
+  String get favLoginPrompt => 'Log in to see your favorites';
+
+  @override
+  String get favEmpty => 'Your favorites list is empty';
+
+  @override
+  String get usersNotFound => 'No users found';
+
+  @override
+  String get usersSearchHint => 'Name, surname or phone...';
+
+  @override
+  String get usersDeleteTitle => 'Delete user';
+
+  @override
+  String usersDeleteConfirm(String name) {
+    return 'Delete $name permanently? This can\'t be undone.';
+  }
+
+  @override
+  String get usersEditTitle => 'Edit user';
+
+  @override
+  String get usersNewTitle => 'New user';
+
+  @override
+  String get usersRoleRequired => 'Role *';
+
+  @override
+  String get usersVerticalRequired => 'Business type *';
+
+  @override
+  String get usersShopName => 'Store name';
+
+  @override
+  String get adminVerticalsTitle => 'Retailers by business type';
+
+  @override
+  String get adminTotalRevenue => 'Total revenue';
+
+  @override
+  String get adminActiveUsers => 'Active users';
+
+  @override
+  String get adminTotalDebt => 'Total debt';
 }

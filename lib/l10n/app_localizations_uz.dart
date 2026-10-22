@@ -2795,4 +2795,61 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get trkJustNow => 'hozirgina';
+
+  @override
+  String get tgRequestNotFound => 'So\'rov topilmadi. Qaytadan boshlang.';
+
+  @override
+  String get tgRequestUsed =>
+      'Bu so\'rov allaqachon ishlatilgan. Qaytadan boshlang.';
+
+  @override
+  String get sfUnknownShop => 'Noma\'lum do\'kon';
+
+  @override
+  String get favLoginPrompt => 'Sevimlilarni ko\'rish uchun tizimga kiring';
+
+  @override
+  String get favEmpty => 'Sevimlilar ro\'yxati bo\'sh';
+
+  @override
+  String get usersNotFound => 'Foydalanuvchilar topilmadi';
+
+  @override
+  String get usersSearchHint => 'Ism, familiya yoki telefon...';
+
+  @override
+  String get usersDeleteTitle => 'Foydalanuvchini o\'chirish';
+
+  @override
+  String usersDeleteConfirm(String name) {
+    return '$name butunlay o\'chirilsinmi? Bu amalni bekor qilib bo\'lmaydi.';
+  }
+
+  @override
+  String get usersEditTitle => 'Foydalanuvchini tahrirlash';
+
+  @override
+  String get usersNewTitle => 'Yangi foydalanuvchi';
+
+  @override
+  String get usersRoleRequired => 'Rol *';
+
+  @override
+  String get usersVerticalRequired => 'Yo\'nalish *';
+
+  @override
+  String get usersShopName => 'Do\'kon nomi';
+
+  @override
+  String get adminVerticalsTitle => 'Yo\'nalishlar bo\'yicha do\'konchilar';
+
+  @override
+  String get adminTotalRevenue => 'Jami tushum';
+
+  @override
+  String get adminActiveUsers => 'Faol foydalanuvchilar';
+
+  @override
+  String get adminTotalDebt => 'Umumiy qarzdorlik';
 }

@@ -99,7 +99,7 @@ class _PlatformUserFormScreenState extends State<PlatformUserFormScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return DashPage(
-      title: _isEditing ? 'Foydalanuvchini tahrirlash' : 'Yangi foydalanuvchi',
+      title: _isEditing ? l10n.usersEditTitle : l10n.usersNewTitle,
       bottomBar: DashBottomButton(label: l10n.commonSave, busy: _isSaving, onPressed: _submit),
       body: DashFormTheme(
         child: Form(
@@ -110,7 +110,10 @@ class _PlatformUserFormScreenState extends State<PlatformUserFormScreen> {
               if (!_isEditing) ...[
                 DropdownButtonFormField<UserRole>(
                   initialValue: _role,
-                  decoration: const InputDecoration(labelText: 'Rol *', prefixIcon: Icon(Icons.badge_rounded)),
+                  decoration: InputDecoration(
+                    labelText: l10n.usersRoleRequired,
+                    prefixIcon: const Icon(Icons.badge_rounded),
+                  ),
                   items: [for (final role in UserRole.values) DropdownMenuItem(value: role, child: Text(role.label))],
                   onChanged: (value) => setState(() => _role = value ?? _role),
                 ),
@@ -119,9 +122,9 @@ class _PlatformUserFormScreenState extends State<PlatformUserFormScreen> {
               if (_role == UserRole.retailer) ...[
                 DropdownButtonFormField<BusinessType>(
                   initialValue: _businessType ?? BusinessType.general,
-                  decoration: const InputDecoration(
-                    labelText: "Yo'nalish *",
-                    prefixIcon: Icon(Icons.storefront_rounded),
+                  decoration: InputDecoration(
+                    labelText: l10n.usersVerticalRequired,
+                    prefixIcon: const Icon(Icons.storefront_rounded),
                   ),
                   items: [
                     for (final type in BusinessType.values) DropdownMenuItem(value: type, child: Text(type.label)),
@@ -133,34 +136,34 @@ class _PlatformUserFormScreenState extends State<PlatformUserFormScreen> {
               DashSectionTitle(l10n.formBasics, padding: const EdgeInsets.fromLTRB(4, 8, 4, 10)),
               TextFormField(
                 controller: _firstNameController,
-                decoration: const InputDecoration(labelText: 'Ism *'),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Ismni kiriting' : null,
+                decoration: InputDecoration(labelText: l10n.commonFirstNameRequired),
+                validator: (v) => (v == null || v.trim().isEmpty) ? l10n.commonFirstNameMissing : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _lastNameController,
-                decoration: const InputDecoration(labelText: 'Familiya *'),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Familiyani kiriting' : null,
+                decoration: InputDecoration(labelText: l10n.commonLastNameRequired),
+                validator: (v) => (v == null || v.trim().isEmpty) ? l10n.commonLastNameMissing : null,
               ),
               if (_role == UserRole.seller || _role == UserRole.retailer) ...[
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _shopNameController,
-                  decoration: const InputDecoration(labelText: "Do'kon nomi"),
+                  decoration: InputDecoration(labelText: l10n.usersShopName),
                 ),
               ],
               const SizedBox(height: 12),
               TextFormField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: 'Telefon *',
+                decoration: InputDecoration(
+                  labelText: l10n.commonPhoneRequired,
                   hintText: '+998901234567',
-                  prefixIcon: Icon(Icons.phone_rounded),
+                  prefixIcon: const Icon(Icons.phone_rounded),
                 ),
                 validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'Telefon raqamini kiriting';
-                  if (!RegExp(r'^\+998\d{9}$').hasMatch(v.trim())) return 'Format: +998XXXXXXXXX';
+                  if (v == null || v.trim().isEmpty) return l10n.commonPhoneMissing;
+                  if (!RegExp(r'^\+998\d{9}$').hasMatch(v.trim())) return l10n.authPhoneFormat;
                   return null;
                 },
               ),
@@ -169,8 +172,11 @@ class _PlatformUserFormScreenState extends State<PlatformUserFormScreen> {
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Parol *', prefixIcon: Icon(Icons.lock_rounded)),
-                  validator: (v) => (v == null || v.length < 6) ? 'Kamida 6 ta belgi' : null,
+                  decoration: InputDecoration(
+                    labelText: l10n.commonPasswordRequired,
+                    prefixIcon: const Icon(Icons.lock_rounded),
+                  ),
+                  validator: (v) => (v == null || v.length < 6) ? l10n.loginPasswordMinLength : null,
                 ),
               ],
               if (_errorMessage != null) ...[

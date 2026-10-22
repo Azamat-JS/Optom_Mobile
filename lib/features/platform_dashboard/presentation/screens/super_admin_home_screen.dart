@@ -155,7 +155,7 @@ class _Body extends ConsumerWidget {
           if (dashboardAsync.valueOrNull case final data?) ...[
             DashSectionTitle(l10n.navUsers),
             _UsersCard(stats: data.dashboard.users),
-            const DashSectionTitle("Yo'nalishlar bo'yicha do'konchilar"),
+            DashSectionTitle(l10n.adminVerticalsTitle),
             _VerticalsCard(counts: data.dashboard.users.businessTypes),
             DashSectionTitle(l10n.homeStatistics),
             ..._charts(data, currency),
@@ -212,7 +212,7 @@ class _Hero extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Expanded(child: Text('Jami savdo', style: muted(16))),
+              Expanded(child: Text(l10n.homeTotalSales, style: muted(16))),
               PillToggle<Currency>(
                 values: const [Currency.uzs, Currency.usd],
                 selected: currency,
@@ -258,7 +258,7 @@ class _Hero extends ConsumerWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: Text('Jami tushum', style: muted(14))),
+              Expanded(child: Text(l10n.adminTotalRevenue, style: muted(14))),
               Text(
                 CurrencyFormatter.format(totalSellings, currency),
                 style: const TextStyle(
@@ -314,15 +314,20 @@ class _Tiles extends StatelessWidget {
       children: [
         StatTile(
           icon: Icons.people_alt_rounded,
-          label: 'Faol foydalanuvchilar',
+          label: context.l10n.adminActiveUsers,
           value: '${dashboard.users.active}',
           onTap: () => context.push(RouteNames.superAdminUsers),
           index: 0,
         ),
-        StatTile(icon: Icons.receipt_long_rounded, label: 'Buyurtmalar', value: '${dashboard.ordersTotal}', index: 1),
         StatTile(
           icon: Icons.receipt_long_rounded,
-          label: 'Umumiy qarzdorlik',
+          label: context.l10n.navOrders,
+          value: '${dashboard.ordersTotal}',
+          index: 1,
+        ),
+        StatTile(
+          icon: Icons.receipt_long_rounded,
+          label: context.l10n.adminTotalDebt,
           value: money(debt),
           tint: Theme.of(context).colorScheme.error,
           index: 2,

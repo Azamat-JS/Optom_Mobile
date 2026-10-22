@@ -34,14 +34,14 @@ class CustomerDebtsScreen extends ConsumerWidget {
       if (previous == false && next == true) ref.invalidate(saleDebtsListProvider);
     });
 
-    return DashPage(title: 'Qarzlarim', body: _body(context, ref, debtsAsync));
+    return DashPage(title: context.l10n.profileMyDebts, body: _body(context, ref, debtsAsync));
   }
 
   Widget _body(BuildContext context, WidgetRef ref, AsyncValue<List<SaleDebt>> debtsAsync) {
     final banner = VerifyPhoneBanner(message: context.l10n.verifyBannerDebts);
     return debtsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => DashEmptyState(icon: Icons.cloud_off_rounded, text: 'Xatolik: $error'),
+      error: (error, _) => DashEmptyState(icon: Icons.cloud_off_rounded, text: context.l10n.commonErrorWith('$error')),
       data: (debts) {
         // Never summed across currencies: one total per currency, active debts only.
         final totals = <Currency, double>{};
@@ -70,7 +70,7 @@ class CustomerDebtsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 14),
                       Text(
-                        'Qarzlar topilmadi',
+                        context.l10n.debtsNotFound,
                         style: TextStyle(
                           color: BrandColors.of(context).textSecondary,
                           fontSize: 15,
@@ -169,7 +169,7 @@ class _DebtTile extends StatelessWidget {
         ),
         child: Icon(Icons.storefront_rounded, color: open ? error : AppColors.success),
       ),
-      title: debt.owner?.fullName ?? "Noma'lum do'kon",
+      title: debt.owner?.fullName ?? context.l10n.sfUnknownShop,
       subtitle: _dateFormat.format(debt.createdAt.toLocal()),
       trailing: Column(
         crossAxisAlignment: CrossAxisAlignment.end,

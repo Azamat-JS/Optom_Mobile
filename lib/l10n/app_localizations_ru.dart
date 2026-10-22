@@ -2907,4 +2907,60 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get trkJustNow => 'только что';
+
+  @override
+  String get tgRequestNotFound => 'Запрос не найден. Начните заново.';
+
+  @override
+  String get tgRequestUsed => 'Этот запрос уже использован. Начните заново.';
+
+  @override
+  String get sfUnknownShop => 'Неизвестный магазин';
+
+  @override
+  String get favLoginPrompt => 'Войдите, чтобы увидеть избранное';
+
+  @override
+  String get favEmpty => 'Список избранного пуст';
+
+  @override
+  String get usersNotFound => 'Пользователи не найдены';
+
+  @override
+  String get usersSearchHint => 'Имя, фамилия или телефон...';
+
+  @override
+  String get usersDeleteTitle => 'Удалить пользователя';
+
+  @override
+  String usersDeleteConfirm(String name) {
+    return 'Удалить $name навсегда? Это действие нельзя отменить.';
+  }
+
+  @override
+  String get usersEditTitle => 'Редактировать пользователя';
+
+  @override
+  String get usersNewTitle => 'Новый пользователь';
+
+  @override
+  String get usersRoleRequired => 'Роль *';
+
+  @override
+  String get usersVerticalRequired => 'Направление *';
+
+  @override
+  String get usersShopName => 'Название магазина';
+
+  @override
+  String get adminVerticalsTitle => 'Розничные продавцы по направлениям';
+
+  @override
+  String get adminTotalRevenue => 'Общая выручка';
+
+  @override
+  String get adminActiveUsers => 'Активные аккаунты';
+
+  @override
+  String get adminTotalDebt => 'Общий долг';
 }

@@ -1648,5 +1648,30 @@
   "trkReconnecting": "Qayta ulanmoqda…",
   "trkDenied": "Ruxsat berilmagan",
   "trkGpsOff": "GPS o'chirilgan",
-  "trkJustNow": "hozirgina"
+  "trkJustNow": "hozirgina",
+  "tgRequestNotFound": "So'rov topilmadi. Qaytadan boshlang.",
+  "tgRequestUsed": "Bu so'rov allaqachon ishlatilgan. Qaytadan boshlang.",
+  "sfUnknownShop": "Noma'lum do'kon",
+  "favLoginPrompt": "Sevimlilarni ko'rish uchun tizimga kiring",
+  "favEmpty": "Sevimlilar ro'yxati bo'sh",
+  "usersNotFound": "Foydalanuvchilar topilmadi",
+  "usersSearchHint": "Ism, familiya yoki telefon...",
+  "usersDeleteTitle": "Foydalanuvchini o'chirish",
+  "usersDeleteConfirm": "{name} butunlay o'chirilsinmi? Bu amalni bekor qilib bo'lmaydi.",
+  "@usersDeleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "usersEditTitle": "Foydalanuvchini tahrirlash",
+  "usersNewTitle": "Yangi foydalanuvchi",
+  "usersRoleRequired": "Rol *",
+  "usersVerticalRequired": "Yo'nalish *",
+  "usersShopName": "Do'kon nomi",
+  "adminVerticalsTitle": "Yo'nalishlar bo'yicha do'konchilar",
+  "adminTotalRevenue": "Jami tushum",
+  "adminActiveUsers": "Faol foydalanuvchilar",
+  "adminTotalDebt": "Umumiy qarzdorlik"
 }
