@@ -330,9 +330,9 @@ features/
                                                   shape only this endpoint has
     presentation/
       providers/   → PlatformDashboardNotifier
-      screens/     → SuperAdminHomeScreen — deliberately the dashboard itself plus an overflow
-                     menu (Foydalanuvchilar/Kategoriyalar/Katalog nazorati), not a bottom-nav
-                     shell, mirroring `HomeScreen`'s own pattern rather than inventing a new one
+      screens/     → SuperAdminHomeScreen — the dashboard itself, not a bottom-nav shell; since
+                     Phase 9 U4c7c the drill-downs (Foydalanuvchilar/Kategoriyalar/Katalog
+                     nazorati) are a visible "Bo'limlar" grid like `HomeScreen`'s
 
 shared/widgets/
   barcode_scanner_screen.dart   → full-screen mobile_scanner camera view, reused by products now and POS later
@@ -1590,7 +1590,7 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
 | U4c6 | Customer tabs (Sevimlilar, Profil, Qarzlarim, Yetkazishlarim) | 🟢 Done 2026-10-21 |
 | U4c7a | Restaurant: order board, order create/detail, tables + form, waiter shell + menu | 🟢 Done 2026-10-21 |
 | U4c7b | Courier: home, deliveries tab, delivery screen, tracking disclosure, fleet map | 🟢 Done 2026-10-21 |
-| U4c7c | Super-admin: home, platform users + form, categories + form, master catalog + form | ⚪ |
+| U4c7c | Super-admin: home, platform users + form, categories + form, master catalog + form | 🟢 Done 2026-10-22 |
 
 **U1 notes (2026-10-18):**
 - **Scoped theme:** the brand look is applied only inside the auth flow, via
@@ -1917,7 +1917,8 @@ Optom_Savdo's `public/logo.jpg`; dark backgrounds only), shown via `shared/widge
   debts → debts, received payments, stock value + expected profit → products); a **visible
   "Bo'limlar" shortcut grid replacing the old "⋯" popup menu**, with the same role gating (Wrap,
   not a fixed-cell grid, so two-line labels never overflow); then the three charts.
-  `KpiCard` now just wraps `StatTile` (still used by `SuperAdminHomeScreen`).
+  `KpiCard` was a thin `StatTile` wrapper; deleted in U4c7c once the super-admin home stopped
+  using it.
 - **`ReportsScreen`**: round back + UZS/USD pill, large title, full-width period pill, revenue card
   with the period range and the chart inside, 4 tiles (new debts, debt payments, outstanding,
   cash), ranked top products (photo or placeholder), restyled `WorkDayCard` (status dot pill,
@@ -2214,6 +2215,38 @@ already done in U1/U3c).
 - **Not checked:** going online for real (OS location prompt), live ETA/route (no Routes key
   locally), the handover-code and fail sheets, a fleet with online/busy couriers. These screens
   still have hard-coded Uzbek (Phase 8 I8); no new strings were added.
+
+**U4c7c (super-admin), 2026-10-22, closes the U4c sweep:**
+- **Home** (`SuperAdminHomeScreen`), the operator home's layout: header (initial, "Salom, …!",
+  Super Admin, round settings + logout), dark hero (platform sales + UZS/USD `PillToggle`, sales
+  count, "Jami tushum"), 2×2 `StatTile`s (active users → users list, orders, total debt in red,
+  cash received with card as the sub-line), a "Bo'limlar" grid of the three drill-downs (a third of
+  the width each, the "⋯" menu is gone), a users card (Optomchi / Do'konchi / Mijoz via the
+  localized role labels), active retailers per vertical as rows with a yellow bar scaled to the
+  largest (`BusinessType.label`, replacing hard-coded chip labels), then the three charts.
+- **Users:** `DashSearchField` (debounced, restored from the provider like products/customers),
+  role `DashChoiceChips` and, for retailers, a vertical chip row; rows with `DashAvatar`, phone ·
+  role · vertical, `DashMenuButton`. `setRole` now keeps the search text (it used to drop it while
+  the field still showed it). **Form:** `DashFormTheme`, role/vertical dropdowns, sticky save.
+- **Categories:** one `DashCard` per root with its subcategories indented inside (`DashThumb`s,
+  inactive ones faded + "Faolsiz", ⋯ menu). **Form:** a 104 px image tile (after creating),
+  fields, active switch card, sticky "Saqlash" → "Tayyor" once created.
+- **Master catalog:** status `DashChoiceChips`, rows with `DashThumb`; pending rows get round green
+  ✓ / red ✗ review buttons, the rest a status `DashTag` + ⋯ menu. **Form:** photo strip like the
+  product detail, Asosiy / Qo'shimcha sections, units by their localized label (was the raw enum
+  name), active switch card, sticky save.
+- `KpiCard` deleted (no users left).
+- **Verified:** `flutter analyze` clean, 76 unit tests. Temporary on-device test (deleted) with a
+  throwaway SUPER_ADMIN + seeded seller, pharmacy, inactive customer and a category tree (all
+  deleted): home at three scroll positions; users search "Temp", Do'konchi → Dorixona filter,
+  back to Barchasi; create a retailer through the form → listed → delete; create a subcategory
+  under a seeded root (image tile appears, "Tayyor") → nested in the root's card → delete; dark:
+  home, users, user edit form, categories, catalog.
+- **Catalog screens checked with sample data only:** the local DB still lacks
+  `master_products.unit` (see "Product / Catalog model"), so the test fed the list a fake notifier
+  through a `ProviderScope` override and opened the form with a sample entry. Approve/reject/save
+  against the API, and image upload, were not exercised. Also not checked: Russian/English lengths.
+  These screens still carry hard-coded Uzbek (Phase 8 I8); no new strings were added.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

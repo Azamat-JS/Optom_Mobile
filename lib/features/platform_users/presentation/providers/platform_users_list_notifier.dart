@@ -59,9 +59,12 @@ class PlatformUsersListNotifier extends AsyncNotifier<PlatformUsersListState> {
     state = await AsyncValue.guard(() => _fetch(current.copyWith(page: 1)));
   }
 
+  /// Changing the role drops the vertical filter (only retailers have one)
+  /// but keeps the search text the screen is still showing.
   Future<void> setRole(UserRole? role) async {
+    final search = state.valueOrNull?.query.search;
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => _fetch(PlatformUserQuery(role: role, page: 1)));
+    state = await AsyncValue.guard(() => _fetch(PlatformUserQuery(role: role, search: search, page: 1)));
   }
 
   Future<void> setBusinessType(BusinessType? businessType) async {

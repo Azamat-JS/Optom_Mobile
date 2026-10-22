@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/business_type.dart';
 import 'package:bsmart/core/enums/user_role.dart';
+import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/features/platform_users/domain/entities/platform_user.dart';
 import 'package:bsmart/features/platform_users/domain/entities/platform_user_write_params.dart';
 import 'package:bsmart/features/platform_users/domain/usecases/create_platform_user_usecase.dart';
 import 'package:bsmart/features/platform_users/domain/usecases/update_platform_user_usecase.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// Create/edit any platform user, of any role — the SUPER_ADMIN-only
 /// provisioning path for SELLER/RETAILER accounts (which, unlike CUSTOMER,
@@ -94,89 +97,88 @@ class _PlatformUserFormScreenState extends State<PlatformUserFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? 'Foydalanuvchini tahrirlash' : 'Yangi foydalanuvchi')),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            if (!_isEditing) ...[
-              DropdownButtonFormField<UserRole>(
-                initialValue: _role,
-                decoration: const InputDecoration(labelText: 'Rol *', border: OutlineInputBorder()),
-                items: [
-                  for (final role in UserRole.values) DropdownMenuItem(value: role, child: Text(role.label)),
-                ],
-                onChanged: (value) => setState(() => _role = value ?? _role),
+    final l10n = context.l10n;
+    return DashPage(
+      title: _isEditing ? 'Foydalanuvchini tahrirlash' : 'Yangi foydalanuvchi',
+      bottomBar: DashBottomButton(label: l10n.commonSave, busy: _isSaving, onPressed: _submit),
+      body: DashFormTheme(
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+            children: [
+              if (!_isEditing) ...[
+                DropdownButtonFormField<UserRole>(
+                  initialValue: _role,
+                  decoration: const InputDecoration(labelText: 'Rol *', prefixIcon: Icon(Icons.badge_rounded)),
+                  items: [for (final role in UserRole.values) DropdownMenuItem(value: role, child: Text(role.label))],
+                  onChanged: (value) => setState(() => _role = value ?? _role),
+                ),
+                const SizedBox(height: 12),
+              ],
+              if (_role == UserRole.retailer) ...[
+                DropdownButtonFormField<BusinessType>(
+                  initialValue: _businessType ?? BusinessType.general,
+                  decoration: const InputDecoration(
+                    labelText: "Yo'nalish *",
+                    prefixIcon: Icon(Icons.storefront_rounded),
+                  ),
+                  items: [
+                    for (final type in BusinessType.values) DropdownMenuItem(value: type, child: Text(type.label)),
+                  ],
+                  onChanged: (value) => setState(() => _businessType = value),
+                ),
+                const SizedBox(height: 12),
+              ],
+              DashSectionTitle(l10n.formBasics, padding: const EdgeInsets.fromLTRB(4, 8, 4, 10)),
+              TextFormField(
+                controller: _firstNameController,
+                decoration: const InputDecoration(labelText: 'Ism *'),
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Ismni kiriting' : null,
               ),
-              const SizedBox(height: 12),
-            ],
-            if (_role == UserRole.retailer) ...[
-              DropdownButtonFormField<BusinessType>(
-                initialValue: _businessType ?? BusinessType.general,
-                decoration: const InputDecoration(labelText: "Yo'nalish *", border: OutlineInputBorder()),
-                items: [
-                  for (final type in BusinessType.values) DropdownMenuItem(value: type, child: Text(type.label)),
-                ],
-                onChanged: (value) => setState(() => _businessType = value),
-              ),
-              const SizedBox(height: 12),
-            ],
-            TextFormField(
-              controller: _firstNameController,
-              decoration: const InputDecoration(labelText: 'Ism *', border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Ismni kiriting' : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _lastNameController,
-              decoration: const InputDecoration(labelText: 'Familiya *', border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Familiyani kiriting' : null,
-            ),
-            if (_role == UserRole.seller || _role == UserRole.retailer) ...[
               const SizedBox(height: 12),
               TextFormField(
-                controller: _shopNameController,
-                decoration: const InputDecoration(labelText: "Do'kon nomi", border: OutlineInputBorder()),
+                controller: _lastNameController,
+                decoration: const InputDecoration(labelText: 'Familiya *'),
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Familiyani kiriting' : null,
               ),
-            ],
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                labelText: 'Telefon *',
-                hintText: '+998901234567',
-                border: OutlineInputBorder(),
-              ),
-              validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Telefon raqamini kiriting';
-                if (!RegExp(r'^\+998\d{9}$').hasMatch(v.trim())) return 'Format: +998XXXXXXXXX';
-                return null;
-              },
-            ),
-            if (!_isEditing) ...[
+              if (_role == UserRole.seller || _role == UserRole.retailer) ...[
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _shopNameController,
+                  decoration: const InputDecoration(labelText: "Do'kon nomi"),
+                ),
+              ],
               const SizedBox(height: 12),
               TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(labelText: 'Parol *', border: OutlineInputBorder()),
-                validator: (v) => (v == null || v.length < 6) ? 'Kamida 6 ta belgi' : null,
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  labelText: 'Telefon *',
+                  hintText: '+998901234567',
+                  prefixIcon: Icon(Icons.phone_rounded),
+                ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return 'Telefon raqamini kiriting';
+                  if (!RegExp(r'^\+998\d{9}$').hasMatch(v.trim())) return 'Format: +998XXXXXXXXX';
+                  return null;
+                },
               ),
+              if (!_isEditing) ...[
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Parol *', prefixIcon: Icon(Icons.lock_rounded)),
+                  validator: (v) => (v == null || v.length < 6) ? 'Kamida 6 ta belgi' : null,
+                ),
+              ],
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              ],
             ],
-            if (_errorMessage != null) ...[
-              const SizedBox(height: 12),
-              Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-            ],
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: _isSaving ? null : _submit,
-              child: _isSaving
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Saqlash'),
-            ),
-          ],
+          ),
         ),
       ),
     );

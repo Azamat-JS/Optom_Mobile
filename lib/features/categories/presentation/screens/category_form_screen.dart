@@ -5,12 +5,15 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/categories/domain/entities/category.dart';
 import 'package:bsmart/features/categories/domain/entities/category_write_params.dart';
 import 'package:bsmart/features/categories/domain/usecases/create_category_usecase.dart';
 import 'package:bsmart/features/categories/domain/usecases/update_category_usecase.dart';
 import 'package:bsmart/features/categories/domain/usecases/upload_category_image_usecase.dart';
 import 'package:bsmart/features/categories/presentation/providers/categories_provider.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// Create/edit a category — SUPER_ADMIN only. The parent picker only offers
 /// root categories (a subcategory can't itself have children, matching the
@@ -30,9 +33,7 @@ class CategoryFormScreen extends ConsumerStatefulWidget {
 class _CategoryFormScreenState extends ConsumerState<CategoryFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late final _nameController = TextEditingController(text: widget.editingCategory?.name);
-  late final _sortOrderController = TextEditingController(
-    text: (widget.editingCategory?.sortOrder ?? 0).toString(),
-  );
+  late final _sortOrderController = TextEditingController(text: (widget.editingCategory?.sortOrder ?? 0).toString());
   String? _parentId;
   bool _isActive = true;
   bool _isSaving = false;
@@ -125,75 +126,85 @@ class _CategoryFormScreenState extends ConsumerState<CategoryFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
     final rootCategories = (ref.watch(categoriesProvider).valueOrNull ?? const [])
         .where((c) => c.isRoot && c.id != widget.editingCategory?.id)
         .toList();
     final canPickImage = _isEditing || _createdId != null;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? context.l10n.categoriesEditTitle : context.l10n.categoriesNewTitle)),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            if (canPickImage) ...[
-              Center(
-                child: GestureDetector(
-                  onTap: _isUploadingImage ? null : _pickImage,
-                  child: CircleAvatar(
-                    radius: 40,
-                    backgroundImage: _imageUrl != null ? CachedNetworkImageProvider(_imageUrl!) : null,
-                    child: _isUploadingImage
-                        ? const CircularProgressIndicator()
-                        : (_imageUrl == null ? const Icon(Icons.add_a_photo_outlined) : null),
+    return DashPage(
+      title: _isEditing ? l10n.categoriesEditTitle : l10n.categoriesNewTitle,
+      // After creating, the form stays open for the image; the button then just closes it.
+      bottomBar: DashBottomButton(
+        label: _createdId != null ? l10n.commonDone : l10n.commonSave,
+        busy: _isSaving,
+        onPressed: _createdId != null ? () => Navigator.of(context).pop(true) : _submit,
+      ),
+      body: DashFormTheme(
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+            children: [
+              if (canPickImage) ...[
+                Center(
+                  child: Material(
+                    color: DashColors.card(context),
+                    borderRadius: BorderRadius.circular(28),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: _isUploadingImage ? null : _pickImage,
+                      child: SizedBox(
+                        width: 104,
+                        height: 104,
+                        child: _isUploadingImage
+                            ? const Center(child: CircularProgressIndicator())
+                            : _imageUrl != null
+                            ? CachedNetworkImage(imageUrl: _imageUrl!, fit: BoxFit.cover)
+                            : Icon(Icons.add_a_photo_rounded, color: colors.textSecondary, size: 30),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-            ],
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: context.l10n.commonNameRequired, border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonNameMissing : null,
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String?>(
-              initialValue: _parentId,
-              decoration: InputDecoration(labelText: context.l10n.categoriesParent, border: OutlineInputBorder()),
-              items: [
-                DropdownMenuItem(value: null, child: Text(context.l10n.categoriesNoParent)),
-                for (final c in rootCategories) DropdownMenuItem(value: c.id, child: Text(c.name)),
+                const SizedBox(height: 16),
               ],
-              onChanged: (value) => setState(() => _parentId = value),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _sortOrderController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: context.l10n.categoriesSortOrder, border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 8),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(context.l10n.commonActive),
-              value: _isActive,
-              onChanged: (value) => setState(() => _isActive = value),
-            ),
-            if (_errorMessage != null) ...[
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(labelText: l10n.commonNameRequired),
+                validator: (v) => (v == null || v.trim().isEmpty) ? l10n.commonNameMissing : null,
+              ),
               const SizedBox(height: 12),
-              Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              DropdownButtonFormField<String?>(
+                initialValue: _parentId,
+                decoration: InputDecoration(labelText: l10n.categoriesParent),
+                items: [
+                  DropdownMenuItem(value: null, child: Text(l10n.categoriesNoParent)),
+                  for (final c in rootCategories) DropdownMenuItem(value: c.id, child: Text(c.name)),
+                ],
+                onChanged: (value) => setState(() => _parentId = value),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _sortOrderController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: l10n.categoriesSortOrder),
+              ),
+              const SizedBox(height: 12),
+              DashCard(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                child: SwitchListTile(
+                  title: Text(l10n.commonActive),
+                  value: _isActive,
+                  onChanged: (value) => setState(() => _isActive = value),
+                ),
+              ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              ],
             ],
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: _isSaving
-                  ? null
-                  : (_createdId != null ? () => Navigator.of(context).pop(true) : _submit),
-              child: _isSaving
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text(_createdId != null ? context.l10n.commonDone : context.l10n.commonSave),
-            ),
-          ],
+          ),
         ),
       ),
     );

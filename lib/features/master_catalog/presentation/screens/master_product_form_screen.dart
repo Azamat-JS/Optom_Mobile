@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -6,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/enums/product_unit.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/categories/presentation/providers/categories_provider.dart';
 import 'package:bsmart/features/master_catalog/domain/entities/master_product.dart';
 import 'package:bsmart/features/master_catalog/domain/entities/master_product_write_params.dart';
@@ -14,6 +14,8 @@ import 'package:bsmart/features/master_catalog/domain/usecases/get_master_produc
 import 'package:bsmart/features/master_catalog/domain/usecases/remove_master_product_image_usecase.dart';
 import 'package:bsmart/features/master_catalog/domain/usecases/update_master_product_usecase.dart';
 import 'package:bsmart/features/master_catalog/domain/usecases/upload_master_product_image_usecase.dart';
+import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// Create/edit a shared catalog entry — SUPER_ADMIN only. Image
 /// upload/delete only becomes available once the entry exists (create
@@ -164,136 +166,147 @@ class _MasterProductFormScreenState extends ConsumerState<MasterProductFormScree
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final categories = (ref.watch(categoriesProvider).valueOrNull ?? const [])
         .expand((c) => [c, ...c.children])
         .toList();
     final createdButNotEditing = !_isEditing && _current != null;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? context.l10n.masterEditTitle : context.l10n.masterNewTitle)),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            if (_current != null) ...[
-              SizedBox(
-                height: 90,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    for (final image in _current!.images)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: CachedNetworkImage(
-                                imageUrl: image.url,
-                                width: 90,
-                                height: 90,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Positioned(
-                              top: 2,
-                              right: 2,
-                              child: GestureDetector(
-                                onTap: _isUploadingImage ? null : () => _deleteImage(image.id),
-                                child: const CircleAvatar(
-                                  radius: 12,
-                                  backgroundColor: Colors.black54,
-                                  child: Icon(Icons.close, size: 14, color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    GestureDetector(
-                      onTap: _isUploadingImage ? null : _pickImage,
-                      child: Container(
-                        width: 90,
-                        height: 90,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Theme.of(context).colorScheme.outline),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: _isUploadingImage
-                            ? const Center(child: CircularProgressIndicator())
-                            : const Icon(Icons.add_a_photo_outlined),
-                      ),
-                    ),
-                  ],
+    return DashPage(
+      title: _isEditing ? l10n.masterEditTitle : l10n.masterNewTitle,
+      // After creating, the form stays open for the photos; the button then just closes it.
+      bottomBar: DashBottomButton(
+        label: createdButNotEditing ? l10n.commonDone : l10n.commonSave,
+        busy: _isSaving,
+        onPressed: createdButNotEditing ? () => Navigator.of(context).pop(true) : _submit,
+      ),
+      body: DashFormTheme(
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+            children: [
+              if (_current != null) ...[_buildImageStrip(_current!), const SizedBox(height: 4)],
+              DashSectionTitle(l10n.formBasics, padding: const EdgeInsets.fromLTRB(4, 8, 4, 10)),
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(labelText: l10n.commonNameRequired),
+                validator: (v) => (v == null || v.trim().isEmpty) ? l10n.commonNameMissing : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _brandController,
+                decoration: InputDecoration(labelText: l10n.commonBrand),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _descriptionController,
+                decoration: InputDecoration(labelText: l10n.commonDescription),
+                maxLines: 3,
+              ),
+              DashSectionTitle(l10n.formExtra),
+              TextFormField(
+                controller: _barcodeController,
+                decoration: InputDecoration(
+                  labelText: l10n.commonBarcode,
+                  prefixIcon: const Icon(Icons.qr_code_rounded),
                 ),
               ),
-              const SizedBox(height: 16),
-            ],
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: context.l10n.commonNameRequired, border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonNameMissing : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _brandController,
-              decoration: InputDecoration(labelText: context.l10n.commonBrand, border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: context.l10n.commonDescription, border: OutlineInputBorder()),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _barcodeController,
-              decoration: InputDecoration(labelText: context.l10n.commonBarcode, border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String?>(
-              initialValue: _categoryId,
-              isExpanded: true,
-              decoration: InputDecoration(labelText: context.l10n.commonCategory, border: OutlineInputBorder()),
-              items: [
-                DropdownMenuItem(value: null, child: Text(context.l10n.commonNotSelectedDash)),
-                for (final c in categories) DropdownMenuItem(value: c.id, child: Text(c.name)),
-              ],
-              onChanged: (value) => setState(() => _categoryId = value),
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<ProductUnit?>(
-              initialValue: _unit,
-              decoration: InputDecoration(labelText: context.l10n.commonUnit, border: OutlineInputBorder()),
-              items: [
-                DropdownMenuItem(value: null, child: Text(context.l10n.commonNotSelectedDash)),
-                for (final u in ProductUnit.values) DropdownMenuItem(value: u, child: Text(u.name)),
-              ],
-              onChanged: (value) => setState(() => _unit = value),
-            ),
-            const SizedBox(height: 8),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(context.l10n.masterActiveVisible),
-              value: _isActive,
-              onChanged: (value) => setState(() => _isActive = value),
-            ),
-            if (_errorMessage != null) ...[
               const SizedBox(height: 12),
-              Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              DropdownButtonFormField<String?>(
+                initialValue: _categoryId,
+                isExpanded: true,
+                decoration: InputDecoration(labelText: l10n.commonCategory),
+                items: [
+                  DropdownMenuItem(value: null, child: Text(l10n.commonNotSelectedDash)),
+                  for (final c in categories) DropdownMenuItem(value: c.id, child: Text(c.name)),
+                ],
+                onChanged: (value) => setState(() => _categoryId = value),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<ProductUnit?>(
+                initialValue: _unit,
+                decoration: InputDecoration(labelText: l10n.commonUnit),
+                items: [
+                  DropdownMenuItem(value: null, child: Text(l10n.commonNotSelectedDash)),
+                  for (final u in ProductUnit.values) DropdownMenuItem(value: u, child: Text(u.label)),
+                ],
+                onChanged: (value) => setState(() => _unit = value),
+              ),
+              const SizedBox(height: 12),
+              DashCard(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                child: SwitchListTile(
+                  title: Text(l10n.masterActiveVisible),
+                  value: _isActive,
+                  onChanged: (value) => setState(() => _isActive = value),
+                ),
+              ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              ],
             ],
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: _isSaving
-                  ? null
-                  : (createdButNotEditing ? () => Navigator.of(context).pop(true) : _submit),
-              child: _isSaving
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text(createdButNotEditing ? context.l10n.commonDone : context.l10n.commonSave),
-            ),
-          ],
+          ),
         ),
+      ),
+    );
+  }
+
+  /// Photos with a remove badge each, plus an add tile (same strip as the
+  /// product detail screen).
+  Widget _buildImageStrip(MasterProduct product) {
+    final colors = BrandColors.of(context);
+    return SizedBox(
+      height: 104,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          for (final image in product.images)
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Stack(
+                children: [
+                  DashThumb(url: image.url, size: 104),
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Material(
+                      color: Colors.black54,
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: _isUploadingImage ? null : () => _deleteImage(image.id),
+                        child: Tooltip(
+                          message: context.l10n.commonDelete,
+                          child: const SizedBox(
+                            width: 28,
+                            height: 28,
+                            child: Icon(Icons.close_rounded, size: 16, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          Material(
+            color: DashColors.card(context),
+            borderRadius: BorderRadius.circular(28),
+            child: InkWell(
+              onTap: _isUploadingImage ? null : _pickImage,
+              borderRadius: BorderRadius.circular(28),
+              child: SizedBox(
+                width: 104,
+                height: 104,
+                child: _isUploadingImage
+                    ? const Center(child: CircularProgressIndicator())
+                    : Icon(Icons.add_a_photo_rounded, color: colors.textSecondary, size: 30),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
