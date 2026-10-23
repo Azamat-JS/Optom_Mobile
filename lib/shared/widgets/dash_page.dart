@@ -348,7 +348,9 @@ class DashFormTheme extends StatelessWidget {
 
   final Widget child;
 
-  /// Inside a bottom sheet (white in light mode): use the recessed fill.
+  /// Inside a bottom sheet or dialog: use the field fill (grey on the white
+  /// sheet in light mode, raised grey on the dark sheet; the recessed
+  /// [DashColors.inset] would equal the dark sheet and hide the fields).
   final bool onSheet;
 
   @override
@@ -366,7 +368,7 @@ class DashFormTheme extends StatelessWidget {
       data: theme.copyWith(
         inputDecorationTheme: theme.inputDecorationTheme.copyWith(
           filled: true,
-          fillColor: onSheet ? DashColors.inset(context) : DashColors.card(context),
+          fillColor: onSheet ? colors.field : DashColors.card(context),
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           border: border(),
           enabledBorder: border(),

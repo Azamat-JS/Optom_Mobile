@@ -46,7 +46,7 @@ class PaymentMethodTiles extends StatelessWidget {
                     color: m == selected
                         ? AppColors.brandYellow
                         : onSheet
-                        ? DashColors.inset(context)
+                        ? BrandColors.of(context).field
                         : DashColors.card(context),
                     borderRadius: BorderRadius.circular(16),
                     child: InkWell(

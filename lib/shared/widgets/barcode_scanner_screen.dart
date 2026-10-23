@@ -88,39 +88,44 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
                 ),
               ),
             ),
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: Row(
-                  children: [
-                    _GlassButton(
-                      icon: Icons.arrow_back_rounded,
-                      tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                      onTap: () => Navigator.of(context).maybePop(),
-                    ),
-                    Expanded(
-                      child: Text(
-                        widget.title ?? l10n.scannerTitle,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: Row(
+                    children: [
+                      _GlassButton(
+                        icon: Icons.arrow_back_rounded,
+                        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                        onTap: () => Navigator.of(context).maybePop(),
                       ),
-                    ),
-                    ValueListenableBuilder(
-                      valueListenable: _controller,
-                      builder: (context, state, _) {
-                        if (state.torchState == TorchState.unavailable) return const SizedBox(width: 48);
-                        final on = state.torchState == TorchState.on;
-                        return _GlassButton(
-                          icon: on ? Icons.flash_on_rounded : Icons.flash_off_rounded,
-                          tooltip: l10n.scannerTorch,
-                          highlight: on,
-                          onTap: () => _controller.toggleTorch(),
-                        );
-                      },
-                    ),
-                  ],
+                      Expanded(
+                        child: Text(
+                          widget.title ?? l10n.scannerTitle,
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),
+                        ),
+                      ),
+                      ValueListenableBuilder(
+                        valueListenable: _controller,
+                        builder: (context, state, _) {
+                          if (state.torchState == TorchState.unavailable) return const SizedBox(width: 48);
+                          final on = state.torchState == TorchState.on;
+                          return _GlassButton(
+                            icon: on ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+                            tooltip: l10n.scannerTorch,
+                            highlight: on,
+                            onTap: () => _controller.toggleTorch(),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -258,7 +263,7 @@ class _CameraError extends StatelessWidget {
       color: AppColors.ink,
       child: Center(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(40, 0, 40, _BarcodeScannerScreenState._windowSize.height + 120),
+          padding: EdgeInsets.fromLTRB(40, 0, 40, _BarcodeScannerScreenState._windowSize.height + 160),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
