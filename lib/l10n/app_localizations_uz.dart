@@ -2852,4 +2852,20 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get adminTotalDebt => 'Umumiy qarzdorlik';
+
+  @override
+  String get scannerHint => 'Shtrix-kodni ramka ichiga joylang';
+
+  @override
+  String get scannerTorch => 'Chiroq';
+
+  @override
+  String get locationDragHint => 'Xaritani suring — pin markazda qoladi';
+
+  @override
+  String get categoriesPickerTitle => 'Kategoriyani tanlang';
+
+  @override
+  String get scannerCameraError =>
+      'Kamerani ochib bo\'lmadi. Kameraga ruxsat berilganini tekshiring.';
 }

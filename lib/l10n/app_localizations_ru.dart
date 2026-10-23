@@ -2963,4 +2963,20 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get adminTotalDebt => 'Общий долг';
+
+  @override
+  String get scannerHint => 'Поместите штрихкод в рамку';
+
+  @override
+  String get scannerTorch => 'Фонарик';
+
+  @override
+  String get locationDragHint => 'Двигайте карту — метка остаётся в центре';
+
+  @override
+  String get categoriesPickerTitle => 'Выберите категорию';
+
+  @override
+  String get scannerCameraError =>
+      'Не удалось открыть камеру. Проверьте доступ к камере.';
 }

@@ -11,6 +11,7 @@ import 'package:bsmart/features/customers/domain/entities/customer_query.dart';
 import 'package:bsmart/features/customers/domain/entities/customer_write_params.dart';
 import 'package:bsmart/features/customers/domain/usecases/create_customer_usecase.dart';
 import 'package:bsmart/features/customers/domain/usecases/list_customers_usecase.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// A bottom sheet used by POS checkout to pick (or quick-create) a
 /// `Customer` — every `Sale` requires one, so this is the one place a
@@ -231,45 +232,61 @@ class _QuickCreateCustomerDialogState extends State<_QuickCreateCustomerDialog> 
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(context.l10n.customersNewTitle),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _firstNameController,
-              decoration: InputDecoration(labelText: context.l10n.commonFirstNameRequired),
-              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonFirstNameMissing : null,
-            ),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(labelText: context.l10n.commonPhoneRequired, hintText: '+998901234567'),
-              validator: (v) {
-                if (v == null || v.trim().isEmpty) return context.l10n.commonPhoneMissing;
-                if (!RegExp(r'^\+?[0-9]{9,15}$').hasMatch(v.trim())) return context.l10n.commonInvalidFormat;
-                return null;
-              },
-            ),
-            if (_errorMessage != null) ...[
-              const SizedBox(height: 8),
-              Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+    final error = Theme.of(context).colorScheme.error;
+    return DashFormTheme(
+      onSheet: true,
+      child: AlertDialog(
+        scrollable: true,
+        title: Text(context.l10n.customersNewTitle),
+        content: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _firstNameController,
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  labelText: context.l10n.commonFirstNameRequired,
+                  prefixIcon: const Icon(Icons.person_rounded),
+                ),
+                validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.commonFirstNameMissing : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  labelText: context.l10n.commonPhoneRequired,
+                  hintText: '+998901234567',
+                  prefixIcon: const Icon(Icons.phone_rounded),
+                ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return context.l10n.commonPhoneMissing;
+                  if (!RegExp(r'^\+?[0-9]{9,15}$').hasMatch(v.trim())) return context.l10n.commonInvalidFormat;
+                  return null;
+                },
+              ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(color: error, fontWeight: FontWeight.w700),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(context.l10n.commonCancel)),
+          FilledButton(
+            onPressed: _isSaving ? null : _submit,
+            child: _isSaving
+                ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                : Text(context.l10n.commonSave),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(context.l10n.commonCancel)),
-        FilledButton(
-          onPressed: _isSaving ? null : _submit,
-          child: _isSaving
-              ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2))
-              : Text(context.l10n.commonSave),
-        ),
-      ],
     );
   }
 }

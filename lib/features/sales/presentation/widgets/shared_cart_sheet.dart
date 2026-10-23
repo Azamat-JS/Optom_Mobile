@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/core/theme/app_colors.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/sales/domain/entities/shared_cart.dart';
 import 'package:bsmart/features/sales/domain/entities/shared_cart_write_params.dart';
@@ -137,7 +139,7 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
         content: Text(context.l10n.cartsDeleteConfirm),
         actions: [
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.commonCancel)),
-          TextButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -155,6 +157,8 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
     final cart = ref.watch(posCartProvider);
     final sharedCartsAsync = ref.watch(sharedCartsProvider);
 
@@ -171,79 +175,71 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Text(context.l10n.posSavedCarts, style: Theme.of(context).textTheme.titleMedium),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: cart.isEmpty || _isParking ? null : _parkCurrentCart,
-                      icon: _isParking
-                          ? const SizedBox(
-                              height: 16,
-                              width: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.save_outlined),
-                      label: Text(
-                        cart.isEmpty ? context.l10n.cartsCurrentEmpty : context.l10n.cartsSaveCurrent(cart.itemCount),
-                      ),
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 14),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      l10n.posSavedCarts,
+                      style: TextStyle(color: colors.textPrimary, fontSize: 20, fontWeight: FontWeight.w800),
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Divider(height: 1),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: FilledButton.icon(
+                    onPressed: cart.isEmpty || _isParking ? null : _parkCurrentCart,
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size.fromHeight(56),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                    ),
+                    icon: _isParking
+                        ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Icon(Icons.bookmark_add_rounded),
+                    label: Text(cart.isEmpty ? l10n.cartsCurrentEmpty : l10n.cartsSaveCurrent(cart.itemCount)),
+                  ),
+                ),
+                const SizedBox(height: 12),
                 Expanded(
                   child: sharedCartsAsync.when(
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (error, _) => Center(child: Text(context.l10n.commonErrorWith('$error'))),
+                    error: (error, _) => Center(child: Text(l10n.commonErrorWith('$error'))),
                     data: (carts) {
                       if (carts.isEmpty) {
-                        return Center(child: Text(context.l10n.cartsNone));
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 64,
+                                height: 64,
+                                decoration: BoxDecoration(color: colors.field, shape: BoxShape.circle),
+                                child: Icon(Icons.shopping_basket_rounded, size: 30, color: colors.textMuted),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                l10n.cartsNone,
+                                style: TextStyle(
+                                  color: colors.textSecondary,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
                       }
                       return ListView.separated(
                         controller: scrollController,
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                         itemCount: carts.length,
-                        separatorBuilder: (_, _) => const Divider(height: 1),
-                        itemBuilder: (context, index) {
-                          final sharedCart = carts[index];
-                          final names = sharedCart.items.take(3).map((i) => i.productName).join(', ');
-                          final extra = sharedCart.items.length > 3 ? ' ${context.l10n.cartsMore(sharedCart.items.length - 3)}' : '';
-                          return ListTile(
-                            title: Text(CurrencyFormatter.format(sharedCart.total, sharedCart.currency)),
-                            subtitle: Text(
-                              '${_timeFormat.format(sharedCart.createdAt.toLocal())} · $names$extra',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _restoringId == sharedCart.id
-                                    ? const Padding(
-                                        padding: EdgeInsets.all(12),
-                                        child: SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(strokeWidth: 2),
-                                        ),
-                                      )
-                                    : IconButton(
-                                        icon: const Icon(Icons.restore),
-                                        tooltip: context.l10n.cartsRestore,
-                                        onPressed: () => _restore(sharedCart),
-                                      ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete_outline),
-                                  tooltip: context.l10n.commonDelete,
-                                  onPressed: () => _delete(sharedCart),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+                        separatorBuilder: (_, _) => const SizedBox(height: 10),
+                        itemBuilder: (context, index) => _SharedCartRow(
+                          sharedCart: carts[index],
+                          time: _timeFormat.format(carts[index].createdAt.toLocal()),
+                          restoring: _restoringId == carts[index].id,
+                          onRestore: () => _restore(carts[index]),
+                          onDelete: () => _delete(carts[index]),
+                        ),
                       );
                     },
                   ),
@@ -253,6 +249,87 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
           ),
         );
       },
+    );
+  }
+}
+
+/// One parked cart: total, time + first product names, restore / delete.
+class _SharedCartRow extends StatelessWidget {
+  const _SharedCartRow({
+    required this.sharedCart,
+    required this.time,
+    required this.restoring,
+    required this.onRestore,
+    required this.onDelete,
+  });
+
+  final SharedCart sharedCart;
+  final String time;
+  final bool restoring;
+  final VoidCallback onRestore;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    final names = sharedCart.items.take(3).map((i) => i.productName).join(', ');
+    final extra = sharedCart.items.length > 3 ? ' ${l10n.cartsMore(sharedCart.items.length - 3)}' : '';
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 12, 6, 12),
+      decoration: BoxDecoration(color: colors.field, borderRadius: BorderRadius.circular(18)),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.brandYellow.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(Icons.shopping_basket_rounded, color: colors.accentText),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  CurrencyFormatter.format(sharedCart.total, sharedCart.currency),
+                  style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '$time · $names$extra',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 6),
+          restoring
+              ? const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                )
+              : IconButton.filled(
+                  tooltip: l10n.cartsRestore,
+                  style: IconButton.styleFrom(
+                    backgroundColor: AppColors.brandYellow,
+                    foregroundColor: AppColors.onBrand,
+                  ),
+                  icon: const Icon(Icons.restore_rounded),
+                  onPressed: onRestore,
+                ),
+          IconButton(
+            tooltip: l10n.commonDelete,
+            icon: Icon(Icons.delete_outline_rounded, color: Theme.of(context).colorScheme.error),
+            onPressed: onDelete,
+          ),
+        ],
+      ),
     );
   }
 }

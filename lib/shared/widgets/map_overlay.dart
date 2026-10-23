@@ -7,11 +7,14 @@ import 'package:bsmart/core/theme/app_colors.dart';
 /// Round floating map button (back, fit-to-bounds, my location …) on the
 /// full-screen maps (Phase 9: delivery tracking, courier delivery, fleet).
 class MapRoundButton extends StatelessWidget {
-  const MapRoundButton({required this.icon, required this.tooltip, required this.onTap, super.key});
+  const MapRoundButton({required this.icon, required this.tooltip, required this.onTap, this.busy = false, super.key});
 
   final IconData icon;
   final String tooltip;
   final VoidCallback? onTap;
+
+  /// Shows a small spinner instead of the icon (and ignores taps).
+  final bool busy;
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +26,16 @@ class MapRoundButton extends StatelessWidget {
       shadowColor: Colors.black26,
       child: InkWell(
         customBorder: const CircleBorder(),
-        onTap: onTap,
+        onTap: busy ? null : onTap,
         child: Tooltip(
           message: tooltip,
-          child: SizedBox(width: 48, height: 48, child: Icon(icon, color: scheme.onSurface)),
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: busy
+                ? const Padding(padding: EdgeInsets.all(15), child: CircularProgressIndicator(strokeWidth: 2))
+                : Icon(icon, color: scheme.onSurface),
+          ),
         ),
       ),
     );

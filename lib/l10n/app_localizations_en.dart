@@ -2947,4 +2947,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminTotalDebt => 'Total debt';
+
+  @override
+  String get scannerHint => 'Fit the barcode inside the frame';
+
+  @override
+  String get scannerTorch => 'Flashlight';
+
+  @override
+  String get locationDragHint => 'Move the map — the pin stays in the centre';
+
+  @override
+  String get categoriesPickerTitle => 'Choose a category';
+
+  @override
+  String get scannerCameraError =>
+      'Couldn\'t open the camera. Check that camera access is allowed.';
 }

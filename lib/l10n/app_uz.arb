@@ -1673,5 +1673,10 @@
   "adminVerticalsTitle": "Yo'nalishlar bo'yicha do'konchilar",
   "adminTotalRevenue": "Jami tushum",
   "adminActiveUsers": "Faol foydalanuvchilar",
-  "adminTotalDebt": "Umumiy qarzdorlik"
+  "adminTotalDebt": "Umumiy qarzdorlik",
+  "scannerHint": "Shtrix-kodni ramka ichiga joylang",
+  "scannerTorch": "Chiroq",
+  "locationDragHint": "Xaritani suring — pin markazda qoladi",
+  "categoriesPickerTitle": "Kategoriyani tanlang",
+  "scannerCameraError": "Kamerani ochib bo'lmadi. Kameraga ruxsat berilganini tekshiring."
 }

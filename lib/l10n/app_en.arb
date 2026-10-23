@@ -812,5 +812,10 @@
   "adminVerticalsTitle": "Retailers by business type",
   "adminTotalRevenue": "Total revenue",
   "adminActiveUsers": "Active users",
-  "adminTotalDebt": "Total debt"
+  "adminTotalDebt": "Total debt",
+  "scannerHint": "Fit the barcode inside the frame",
+  "scannerTorch": "Flashlight",
+  "locationDragHint": "Move the map — the pin stays in the centre",
+  "categoriesPickerTitle": "Choose a category",
+  "scannerCameraError": "Couldn't open the camera. Check that camera access is allowed."
 }

@@ -812,5 +812,10 @@
   "adminVerticalsTitle": "Розничные продавцы по направлениям",
   "adminTotalRevenue": "Общая выручка",
   "adminActiveUsers": "Активные аккаунты",
-  "adminTotalDebt": "Общий долг"
+  "adminTotalDebt": "Общий долг",
+  "scannerHint": "Поместите штрихкод в рамку",
+  "scannerTorch": "Фонарик",
+  "locationDragHint": "Двигайте карту — метка остаётся в центре",
+  "categoriesPickerTitle": "Выберите категорию",
+  "scannerCameraError": "Не удалось открыть камеру. Проверьте доступ к камере."
 }

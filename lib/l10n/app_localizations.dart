@@ -4929,6 +4929,36 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Umumiy qarzdorlik'**
   String get adminTotalDebt;
+
+  /// No description provided for @scannerHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shtrix-kodni ramka ichiga joylang'**
+  String get scannerHint;
+
+  /// No description provided for @scannerTorch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chiroq'**
+  String get scannerTorch;
+
+  /// No description provided for @locationDragHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xaritani suring — pin markazda qoladi'**
+  String get locationDragHint;
+
+  /// No description provided for @categoriesPickerTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kategoriyani tanlang'**
+  String get categoriesPickerTitle;
+
+  /// No description provided for @scannerCameraError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kamerani ochib bo\'lmadi. Kameraga ruxsat berilganini tekshiring.'**
+  String get scannerCameraError;
 }
 
 class _AppLocalizationsDelegate
