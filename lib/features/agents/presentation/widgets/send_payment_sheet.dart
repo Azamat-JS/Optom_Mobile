@@ -21,10 +21,10 @@ class SendPaymentSheet extends StatefulWidget {
   final LeadAgentAccount account;
 
   static Future<bool?> show(BuildContext context, LeadAgentAccount account) => showModalBottomSheet<bool>(
-        context: context,
-        isScrollControlled: true,
-        builder: (_) => SendPaymentSheet(account: account),
-      );
+    context: context,
+    isScrollControlled: true,
+    builder: (_) => SendPaymentSheet(account: account),
+  );
 
   @override
   State<SendPaymentSheet> createState() => _SendPaymentSheetState();

@@ -49,12 +49,12 @@ class CreateAgentAccountParams {
   final String? storeId;
 
   Map<String, dynamic> toRequestBody() => {
-        'firstName': firstName,
-        'lastName': lastName,
-        'phone': phone,
-        'password': password,
-        if (storeId != null) 'storeId': storeId,
-      };
+    'firstName': firstName,
+    'lastName': lastName,
+    'phone': phone,
+    'password': password,
+    if (storeId != null) 'storeId': storeId,
+  };
 }
 
 /// Mirrors `UpdateAgentAccountDto` / `UpdateLeadAgentDto`.
@@ -67,9 +67,9 @@ class UpdateAgentAccountParams {
   final String? storeId;
 
   Map<String, dynamic> toRequestBody() => {
-        if (firstName != null) 'firstName': firstName,
-        if (lastName != null) 'lastName': lastName,
-        if (phone != null) 'phone': phone,
-        if (storeId != null) 'storeId': storeId,
-      };
+    if (firstName != null) 'firstName': firstName,
+    if (lastName != null) 'lastName': lastName,
+    if (phone != null) 'phone': phone,
+    if (storeId != null) 'storeId': storeId,
+  };
 }

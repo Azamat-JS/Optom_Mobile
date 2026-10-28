@@ -7,5 +7,6 @@ class UpdateAgentStaffUseCase {
 
   final LeadAgentRepository _repository;
 
-  Future<Result<AgentAccountUser>> call(String id, UpdateAgentAccountParams params) => _repository.updateStaff(id, params);
+  Future<Result<AgentAccountUser>> call(String id, UpdateAgentAccountParams params) =>
+      _repository.updateStaff(id, params);
 }

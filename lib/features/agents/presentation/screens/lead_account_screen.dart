@@ -5,16 +5,14 @@ import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/theme/app_colors.dart';
 import 'package:bsmart/core/theme/brand_theme.dart';
-import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/agents/domain/entities/agent_requests.dart';
 import 'package:bsmart/features/agents/domain/usecases/cancel_payment_request_usecase.dart';
 import 'package:bsmart/features/agents/presentation/providers/lead_agent_providers.dart';
 import 'package:bsmart/features/agents/presentation/screens/agent_return_detail_screen.dart';
 import 'package:bsmart/features/agents/presentation/screens/return_goods_screen.dart';
-import 'package:bsmart/features/agents/presentation/widgets/agent_format.dart';
 import 'package:bsmart/features/agents/presentation/widgets/agent_money.dart';
 import 'package:bsmart/features/agents/presentation/widgets/agent_request_actions.dart';
-import 'package:bsmart/features/agents/presentation/widgets/agent_request_status_tag.dart';
+import 'package:bsmart/features/agents/presentation/widgets/agent_request_cards.dart';
 import 'package:bsmart/features/agents/presentation/widgets/send_payment_sheet.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
@@ -59,13 +57,10 @@ class _LeadAccountScreenState extends ConsumerState<LeadAccountScreen> {
     if (!await confirmAgentRequestCancel(context)) return;
     final result = await getIt<CancelPaymentRequestUseCase>().call(request.id);
     if (!mounted) return;
-    result.fold(
-      (_) {
-        refreshAfterAgentRequest(ref);
-        _snack(context.l10n.agentRequestCancelled);
-      },
-      (failure) => _snack(failure.message),
-    );
+    result.fold((_) {
+      refreshAfterAgentRequest(ref);
+      _snack(context.l10n.agentRequestCancelled);
+    }, (failure) => _snack(failure.message));
   }
 
   Future<void> _openReturn(AgentReturn ret) async {
@@ -171,7 +166,10 @@ class _AccountCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.agentMyDebt, style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w700)),
+          Text(
+            l10n.agentMyDebt,
+            style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 4),
           Text(
             owes ? agentMoneyBoth(account.debt) : l10n.agentNothingOwed,
@@ -206,7 +204,6 @@ class _PaymentsList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final colors = BrandColors.of(context);
     return ref
         .watch(leadPaymentRequestsProvider)
         .when(
@@ -221,41 +218,12 @@ class _PaymentsList extends ConsumerWidget {
                   children: [
                     for (final (i, p) in items.indexed) ...[
                       if (i > 0) const SizedBox(height: 10),
-                      DashCard(
-                        padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    CurrencyFormatter.format(p.amount, p.currency),
-                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    [agentDateFormat.format(p.createdAt.toLocal()), ?p.notes].join(' · '),
-                                    style: TextStyle(fontSize: 12, color: colors.textSecondary),
-                                  ),
-                                  if (p.rejectReason != null && p.rejectReason!.isNotEmpty)
-                                    Text(
-                                      l10n.agentRejectReason(p.rejectReason!),
-                                      style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.error),
-                                    ),
-                                ],
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                AgentRequestStatusTag(status: p.status),
-                                if (p.status == AgentRequestStatus.pending)
-                                  TextButton(onPressed: () => onCancel(p), child: Text(l10n.agentCancelRequest)),
-                              ],
-                            ),
-                          ],
-                        ),
+                      AgentPaymentRequestCard(
+                        request: p,
+                        actions: [
+                          if (p.status == AgentRequestStatus.pending)
+                            TextButton(onPressed: () => onCancel(p), child: Text(l10n.agentCancelRequest)),
+                        ],
                       ),
                     ],
                   ],
@@ -272,7 +240,6 @@ class _ReturnsList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final colors = BrandColors.of(context);
     return ref
         .watch(leadReturnsProvider)
         .when(
@@ -287,46 +254,7 @@ class _ReturnsList extends ConsumerWidget {
                   children: [
                     for (final (i, r) in items.indexed) ...[
                       if (i > 0) const SizedBox(height: 10),
-                      DashCard(
-                        onTap: () => onOpen(r),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(r.returnNumber, style: const TextStyle(fontWeight: FontWeight.w800)),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    [
-                                      agentDateFormat.format(r.createdAt.toLocal()),
-                                      l10n.agentCartCount(r.itemCount),
-                                    ].join(' · '),
-                                    style: TextStyle(fontSize: 12, color: colors.textSecondary),
-                                  ),
-                                  if (r.refundAmount > 0)
-                                    Text(
-                                      '${l10n.agentRefund}: ${CurrencyFormatter.format(r.refundAmount, r.currency)}',
-                                      style: TextStyle(fontSize: 12, color: colors.success, fontWeight: FontWeight.w700),
-                                    ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  CurrencyFormatter.format(r.value, r.currency),
-                                  style: const TextStyle(fontWeight: FontWeight.w800),
-                                ),
-                                const SizedBox(height: 4),
-                                AgentRequestStatusTag(status: r.status),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      AgentReturnCard(ret: r, onTap: () => onOpen(r)),
                     ],
                   ],
                 ),

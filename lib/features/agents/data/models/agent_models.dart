@@ -24,29 +24,29 @@ ProductUnit? agentUnitFromWire(dynamic value) {
 AgentPerson? _personOrNull(dynamic json) => json is Map<String, dynamic> ? agentPersonFromJson(json) : null;
 
 AgentPerson agentPersonFromJson(Map<String, dynamic> json) => AgentPerson(
-      id: json['id'] as String,
-      firstName: json['firstName'] as String? ?? '',
-      lastName: json['lastName'] as String? ?? '',
-      phone: json['phone'] as String?,
-    );
+  id: json['id'] as String,
+  firstName: json['firstName'] as String? ?? '',
+  lastName: json['lastName'] as String? ?? '',
+  phone: json['phone'] as String?,
+);
 
-AgentStockItem agentStockItemFromJson(Map<String, dynamic> json) {
-  final product = json['product'] as Map<String, dynamic>;
-  return AgentStockItem(
-    id: json['id'] as String,
-    currency: Currency.fromWire(json['currency'] as String),
-    stock: parseDecimal(json['stock']),
-    minPrice: parseDecimal(json['minPrice']),
-    maxPrice: parseDecimal(json['maxPrice']),
-    product: AgentProductRef(
-      id: product['id'] as String,
-      name: product['name'] as String? ?? '',
-      unit: agentUnitFromWire(product['unit']),
-      barcode: product['barcode'] as String?,
-      imageUrl: product['imageUrl'] as String?,
-    ),
-  );
-}
+/// The server's `productSummary` shape (name/image already resolved from the catalog entry).
+AgentProductRef agentProductRefFromJson(Map<String, dynamic> json) => AgentProductRef(
+  id: json['id'] as String,
+  name: json['name'] as String? ?? '',
+  unit: agentUnitFromWire(json['unit']),
+  barcode: json['barcode'] as String?,
+  imageUrl: json['imageUrl'] as String?,
+);
+
+AgentStockItem agentStockItemFromJson(Map<String, dynamic> json) => AgentStockItem(
+  id: json['id'] as String,
+  currency: Currency.fromWire(json['currency'] as String),
+  stock: parseDecimal(json['stock']),
+  minPrice: parseDecimal(json['minPrice']),
+  maxPrice: parseDecimal(json['maxPrice']),
+  product: agentProductRefFromJson(json['product'] as Map<String, dynamic>),
+);
 
 AgentSale agentSaleFromJson(Map<String, dynamic> json) {
   final debt = json['debt'] as Map<String, dynamic>?;
@@ -90,34 +90,34 @@ AgentSaleDetail agentSaleDetailFromJson(Map<String, dynamic> json) {
 }
 
 AgentDebt agentDebtFromJson(Map<String, dynamic> json) => AgentDebt(
-      id: json['id'] as String,
-      originalAmount: parseDecimal(json['originalAmount']),
-      paidAmount: parseDecimal(json['paidAmount']),
-      balance: parseDecimal(json['balance']),
-      currency: Currency.fromWire(json['currency'] as String),
-      status: DebtStatus.fromWire(json['status'] as String),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      customer: agentPersonFromJson(json['customer'] as Map<String, dynamic>),
-      seller: _personOrNull(json['createdBy']),
-      saleNumber: (json['sale'] as Map<String, dynamic>?)?['saleNumber'] as String? ?? '',
-    );
+  id: json['id'] as String,
+  originalAmount: parseDecimal(json['originalAmount']),
+  paidAmount: parseDecimal(json['paidAmount']),
+  balance: parseDecimal(json['balance']),
+  currency: Currency.fromWire(json['currency'] as String),
+  status: DebtStatus.fromWire(json['status'] as String),
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  customer: agentPersonFromJson(json['customer'] as Map<String, dynamic>),
+  seller: _personOrNull(json['createdBy']),
+  saleNumber: (json['sale'] as Map<String, dynamic>?)?['saleNumber'] as String? ?? '',
+);
 
 AgentDebtDetail agentDebtDetailFromJson(Map<String, dynamic> json) => AgentDebtDetail(
-      debt: agentDebtFromJson(json),
-      payments: [
-        for (final raw in (json['payments'] as List? ?? []))
-          () {
-            final p = raw as Map<String, dynamic>;
-            return AgentDebtPayment(
-              id: p['id'] as String,
-              amount: parseDecimal(p['amount']),
-              paidAt: DateTime.parse(p['paidAt'] as String),
-              notes: p['notes'] as String?,
-              by: _personOrNull(p['createdBy']),
-            );
-          }(),
-      ],
-    );
+  debt: agentDebtFromJson(json),
+  payments: [
+    for (final raw in (json['payments'] as List? ?? []))
+      () {
+        final p = raw as Map<String, dynamic>;
+        return AgentDebtPayment(
+          id: p['id'] as String,
+          amount: parseDecimal(p['amount']),
+          paidAt: DateTime.parse(p['paidAt'] as String),
+          notes: p['notes'] as String?,
+          by: _personOrNull(p['createdBy']),
+        );
+      }(),
+  ],
+);
 
 MoneyByCurrency _money(dynamic json) => json is Map<String, dynamic>
     ? MoneyByCurrency(uzs: parseDecimal(json['uzs'] ?? 0), usd: parseDecimal(json['usd'] ?? 0))
@@ -139,13 +139,13 @@ AgentSummary agentSummaryFromJson(Map<String, dynamic> json) {
 }
 
 AgentProfitStats _profitStats(Map<String, dynamic> json) => AgentProfitStats(
-      salesCount: (json['salesCount'] as num?)?.toInt() ?? 0,
-      revenue: parseDecimal(json['revenue'] ?? 0),
-      cost: parseDecimal(json['cost'] ?? 0),
-      netProfit: parseDecimal(json['netProfit'] ?? 0),
-      pendingProfit: parseDecimal(json['pendingProfit'] ?? 0),
-      ownDebts: parseDecimal(json['ownDebts'] ?? 0),
-    );
+  salesCount: (json['salesCount'] as num?)?.toInt() ?? 0,
+  revenue: parseDecimal(json['revenue'] ?? 0),
+  cost: parseDecimal(json['cost'] ?? 0),
+  netProfit: parseDecimal(json['netProfit'] ?? 0),
+  pendingProfit: parseDecimal(json['pendingProfit'] ?? 0),
+  ownDebts: parseDecimal(json['ownDebts'] ?? 0),
+);
 
 AgentProfit agentProfitFromJson(Map<String, dynamic> json) {
   final summary = json['summary'] as Map<String, dynamic>;

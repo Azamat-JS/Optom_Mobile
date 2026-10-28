@@ -2314,7 +2314,7 @@ on **`/agent`** (`AgentHomeScreen`).
 |---|---|---|
 | A7a | Roles + routing; agent shell: home dashboard (summary, lead agent's net profit), Sell (shared stock, min–max range, cart, checkout cash/debt), Sales + detail, Debtors + detail + customer payments | 🟢 Done 2026-10-28 |
 | A7b | Lead agent's management: account with the owner (send payment, return goods, their status), received transfers, staff agents CRUD | 🟢 Done 2026-10-28 |
-| A7c | Owner side: lead agents list/CRUD, give products (transfer), stock + range edit, confirm/reject payments and returns, read-only team sales/debts | ⏳ |
+| A7c | Owner side: lead agents list/CRUD, give products (transfer), stock + range edit, confirm/reject payments and returns, read-only team sales/debts | 🟢 Done 2026-10-28 |
 
 **A7a notes (2026-10-28):**
 - **Roles:** `UserRole.leadAgent`/`.agent` (`LEAD_AGENT`/`AGENT`) + `isAgent`; `roleLabel` select
@@ -2417,6 +2417,69 @@ on **`/agent`** (`AgentHomeScreen`).
   - **Test tip:** a bottom sheet or dialog leaves the page's own button with the same label in
     the tree, so tap `.last`; settle about a second after a route push/pop before tapping.
   - **Not checked:** dark mode, USD-owing accounts on a device, more than 20 transfers.
+
+**A7c notes (2026-10-28):**
+- **Entry point:** a "Dillerlar" `ShortcutTile` on the owner's home (`isOwner` only, every business
+  type), route `RouteNames.leadAgents`. The server refuses the owner's admins anyway (exact-role
+  check).
+- **Data layer:** `OwnerAgentRepository` (+ remote data source, 22 use cases,
+  `owner_agent_models.dart`) over `/lead-agents/*` and `/agent-transfers` / `/agent-payments` /
+  `/agent-returns` filtered by `leadAgentId`. `agentProductRefFromJson` is shared with the stock
+  parser. Providers in `owner_agent_providers.dart`: the roster (one page of 100) plus per-id
+  families for the summary and the team summary.
+- **`LeadAgentsListScreen` + `LeadAgentFormScreen`:** the courier pattern plus a required store
+  ("the goods come from this store"). A row shows store, staff count and a "N ta so'rov" tag. No
+  phone: next to the tag it pushed the store name off the line. Deleting surfaces the server's 409
+  reason (stock, debt, staff or pending requests).
+- **`LeadAgentDetailScreen`** is one scrolling page:
+  - A summary card: owes me, products held, staff.
+  - "Mahsulot berish", disabled while the lead agent is deactivated.
+  - A team card: today / 30 days / customer debts, each per currency via `agentMoneyBoth`.
+  - Six `DashChoiceChips` tabs, with pending counts on Payments and Returns:
+    - Products: range edit dialog.
+    - Transfers: opens `AgentTransferDetailScreen`, which shows the owner's cost.
+    - Payments: confirm / reject with an optional reason.
+    - Returns: opens `AgentReturnDetailScreen(ownerDebt:)`.
+    - Sales and Customer debts: read-only (open / all).
+  - Tabs render through `AgentPagedColumn` (a non-scrolling column with "Yana ko'rsatish"), reset
+    by a new key after any change.
+- **Reused A7a/A7b screens in owner mode:**
+  - `AgentSaleCard` / `AgentDebtCard` (made public) and their detail screens take `leadAgentId`,
+    which switches them to the `/lead-agents/:id/...` endpoints. The debt detail then hides the
+    payment form.
+  - `AgentReturnDetailScreen(ownerDebt:)` swaps "withdraw" for `OwnerDecisionBar`
+    (reject / confirm). It previews "Qarzdan ayriladi / Naqd qaytarasiz" from the lead agent's
+    open debt in that currency, the split the server makes.
+  - Payment / return / transfer rows are shared widgets (`agent_request_cards.dart`).
+- **`AgentTransferFormScreen`:**
+  - Search the lead agent's store (debounced); tap to pick. Other currencies dim once one is
+    picked.
+  - Per line: quantity, and min / max prefilled with the lead agent's current range, else the
+    stock price. A hint shows when min is below the owed price.
+  - Total, "paid now", the resulting debt, and a note.
+  - Refused before sending: empty, over stock, min > max, paid > total.
+- **New ARB keys:** `navLeadAgents`, the `owner*` set (web wording), `commonLoadMore`.
+- **Verified:**
+  - `flutter analyze` is clean, and **96 unit tests** pass (3 new in
+    `owner_agent_models_test.dart`: summary parsing, transferable products with and without a
+    held range, and the transfer request body).
+  - A temporary integration test (deleted) on the iPhone 17 simulator against the local backend.
+    The A7b seed was extended with a staff cash sale (2 tea) and a lead debt sale (1 sugar); all
+    test rows were deleted afterwards.
+  - Uzbek, full flow:
+    - Roster with "2 ta so'rov".
+    - Detail: owes 320 000; holds 315 000 (6 tea + 7 sugar + 6 oil); team 41 000 from 2 sales;
+      customers owe 17 000.
+    - Range edit: min > max refused, then 11 500–14 500 saved.
+    - 40 000 payment confirmed → owes 280 000.
+    - The 2-tea return's preview "Qarzdan ayriladi: 20 000"; confirmed → 260 000.
+    - Gave 2 oil with 10 000 paid ("Qarzga yoziladi: 40 000") → owes 300 000, holds 365 000.
+    - Team sale detail without cost; team debt without a payment form.
+    - New lead agent created through the form.
+  - Russian and English: roster and detail fit.
+  - Fixed from screenshots: the truncated roster subtitle; the transfer form's fields (white on
+    white cards → grey fill); a stale error in the range dialog.
+  - **Not checked:** USD transfers on a device, dark mode, more than 20 rows per tab.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

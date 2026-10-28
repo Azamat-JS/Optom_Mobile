@@ -30,48 +30,48 @@ LeadAgentAccount leadAgentAccountFromJson(Map<String, dynamic> json) {
 }
 
 AgentPaymentRequest agentPaymentRequestFromJson(Map<String, dynamic> json) => AgentPaymentRequest(
-      id: json['id'] as String,
-      status: AgentRequestStatus.fromWire(json['status'] as String),
-      amount: parseDecimal(json['amount']),
-      currency: Currency.fromWire(json['currency'] as String),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      leadAgent: agentPersonFromJson(json['leadAgent'] as Map<String, dynamic>),
-      notes: json['notes'] as String?,
-      rejectReason: json['rejectReason'] as String?,
-      decidedAt: _date(json['decidedAt']),
-    );
+  id: json['id'] as String,
+  status: AgentRequestStatus.fromWire(json['status'] as String),
+  amount: parseDecimal(json['amount']),
+  currency: Currency.fromWire(json['currency'] as String),
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  leadAgent: agentPersonFromJson(json['leadAgent'] as Map<String, dynamic>),
+  notes: json['notes'] as String?,
+  rejectReason: json['rejectReason'] as String?,
+  decidedAt: _date(json['decidedAt']),
+);
 
 AgentReturn agentReturnFromJson(Map<String, dynamic> json) => AgentReturn(
-      id: json['id'] as String,
-      returnNumber: json['returnNumber'] as String,
-      status: AgentRequestStatus.fromWire(json['status'] as String),
-      currency: Currency.fromWire(json['currency'] as String),
-      value: parseDecimal(json['value']),
-      refundAmount: parseDecimal(json['refundAmount'] ?? 0),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      leadAgent: agentPersonFromJson(json['leadAgent'] as Map<String, dynamic>),
-      itemCount: (json['itemCount'] as num?)?.toInt() ?? (json['items'] as List?)?.length ?? 0,
-      notes: json['notes'] as String?,
-      rejectReason: json['rejectReason'] as String?,
-    );
+  id: json['id'] as String,
+  returnNumber: json['returnNumber'] as String,
+  status: AgentRequestStatus.fromWire(json['status'] as String),
+  currency: Currency.fromWire(json['currency'] as String),
+  value: parseDecimal(json['value']),
+  refundAmount: parseDecimal(json['refundAmount'] ?? 0),
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  leadAgent: agentPersonFromJson(json['leadAgent'] as Map<String, dynamic>),
+  itemCount: (json['itemCount'] as num?)?.toInt() ?? (json['items'] as List?)?.length ?? 0,
+  notes: json['notes'] as String?,
+  rejectReason: json['rejectReason'] as String?,
+);
 
 AgentReturnDetail agentReturnDetailFromJson(Map<String, dynamic> json) => AgentReturnDetail(
-      ret: agentReturnFromJson(json),
-      lines: [
-        for (final raw in (json['items'] as List? ?? []))
-          () {
-            final line = raw as Map<String, dynamic>;
-            return AgentReturnLine(
-              id: line['id'] as String,
-              productName: line['productName'] as String,
-              unit: agentUnitFromWire(line['productUnit']),
-              quantity: parseDecimal(line['quantity']),
-              unitPrice: parseDecimal(line['unitPrice']),
-              transferNumber: line['transferNumber'] as String? ?? '',
-            );
-          }(),
-      ],
-    );
+  ret: agentReturnFromJson(json),
+  lines: [
+    for (final raw in (json['items'] as List? ?? []))
+      () {
+        final line = raw as Map<String, dynamic>;
+        return AgentReturnLine(
+          id: line['id'] as String,
+          productName: line['productName'] as String,
+          unit: agentUnitFromWire(line['productUnit']),
+          quantity: parseDecimal(line['quantity']),
+          unitPrice: parseDecimal(line['unitPrice']),
+          transferNumber: line['transferNumber'] as String? ?? '',
+        );
+      }(),
+  ],
+);
 
 AgentTransfer agentTransferFromJson(Map<String, dynamic> json) {
   final debt = json['debt'] as Map<String, dynamic>?;

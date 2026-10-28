@@ -121,6 +121,31 @@ import 'package:bsmart/features/agents/domain/usecases/create_agent_staff_usecas
 import 'package:bsmart/features/agents/domain/usecases/update_agent_staff_usecase.dart';
 import 'package:bsmart/features/agents/domain/usecases/set_agent_staff_active_usecase.dart';
 import 'package:bsmart/features/agents/domain/usecases/delete_agent_staff_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/confirm_agent_payment_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/confirm_agent_return_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/create_agent_transfer_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/create_lead_agent_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/delete_lead_agent_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_lead_agent_summary_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_lead_team_summary_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_team_debt_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_team_sale_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_lead_agents_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_lead_payments_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_lead_returns_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_lead_stock_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_lead_transfers_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_team_debts_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_team_sales_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_transferable_products_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/reject_agent_payment_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/reject_agent_return_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/set_lead_agent_active_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/update_agent_price_range_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/update_lead_agent_usecase.dart';
+import 'package:bsmart/features/agents/data/datasources/owner_agent_remote_data_source.dart';
+import 'package:bsmart/features/agents/data/repositories/owner_agent_repository_impl.dart';
+import 'package:bsmart/features/agents/domain/repositories/owner_agent_repository.dart';
 import 'package:bsmart/features/agents/domain/usecases/list_agent_stock_usecase.dart';
 import 'package:bsmart/features/agents/domain/usecases/create_agent_sale_usecase.dart';
 import 'package:bsmart/features/agents/domain/usecases/list_agent_sales_usecase.dart';
@@ -419,6 +444,32 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => UpdateAgentStaffUseCase(getIt()));
   getIt.registerFactory(() => SetAgentStaffActiveUseCase(getIt()));
   getIt.registerFactory(() => DeleteAgentStaffUseCase(getIt()));
+
+  // Agents — the business owner's side (Phase 10 A7c).
+  getIt.registerLazySingleton(() => OwnerAgentRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<OwnerAgentRepository>(() => OwnerAgentRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ConfirmAgentPaymentUseCase(getIt()));
+  getIt.registerFactory(() => ConfirmAgentReturnUseCase(getIt()));
+  getIt.registerFactory(() => CreateAgentTransferUseCase(getIt()));
+  getIt.registerFactory(() => CreateLeadAgentUseCase(getIt()));
+  getIt.registerFactory(() => DeleteLeadAgentUseCase(getIt()));
+  getIt.registerFactory(() => GetLeadAgentSummaryUseCase(getIt()));
+  getIt.registerFactory(() => GetLeadTeamSummaryUseCase(getIt()));
+  getIt.registerFactory(() => GetTeamDebtUseCase(getIt()));
+  getIt.registerFactory(() => GetTeamSaleUseCase(getIt()));
+  getIt.registerFactory(() => ListLeadAgentsUseCase(getIt()));
+  getIt.registerFactory(() => ListLeadPaymentsUseCase(getIt()));
+  getIt.registerFactory(() => ListLeadReturnsUseCase(getIt()));
+  getIt.registerFactory(() => ListLeadStockUseCase(getIt()));
+  getIt.registerFactory(() => ListLeadTransfersUseCase(getIt()));
+  getIt.registerFactory(() => ListTeamDebtsUseCase(getIt()));
+  getIt.registerFactory(() => ListTeamSalesUseCase(getIt()));
+  getIt.registerFactory(() => ListTransferableProductsUseCase(getIt()));
+  getIt.registerFactory(() => RejectAgentPaymentUseCase(getIt()));
+  getIt.registerFactory(() => RejectAgentReturnUseCase(getIt()));
+  getIt.registerFactory(() => SetLeadAgentActiveUseCase(getIt()));
+  getIt.registerFactory(() => UpdateAgentPriceRangeUseCase(getIt()));
+  getIt.registerFactory(() => UpdateLeadAgentUseCase(getIt()));
 
   // --- features/courier (Phase 4, Courier accounts) ---
   getIt.registerLazySingleton(() => CourierRemoteDataSource(mainDio));

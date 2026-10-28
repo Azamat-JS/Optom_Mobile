@@ -74,9 +74,7 @@ class AgentDebtsListNotifier extends AsyncNotifier<AgentDebtsListState> {
 
   Future<void> refresh() async {
     final current = state.valueOrNull;
-    state = await AsyncValue.guard(
-      () => _fetch(openOnly: current?.openOnly ?? true, search: current?.search ?? ''),
-    );
+    state = await AsyncValue.guard(() => _fetch(openOnly: current?.openOnly ?? true, search: current?.search ?? ''));
   }
 
   Future<void> loadMore() async {
@@ -102,5 +100,6 @@ class AgentDebtsListNotifier extends AsyncNotifier<AgentDebtsListState> {
   }
 }
 
-final agentDebtsListProvider =
-    AsyncNotifierProvider<AgentDebtsListNotifier, AgentDebtsListState>(AgentDebtsListNotifier.new);
+final agentDebtsListProvider = AsyncNotifierProvider<AgentDebtsListNotifier, AgentDebtsListState>(
+  AgentDebtsListNotifier.new,
+);

@@ -99,10 +99,13 @@ class _AgentDebtsTabState extends ConsumerState<AgentDebtsTab> {
                     ),
                   for (final debt in state.items) ...[
                     const SizedBox(height: 10),
-                    _DebtCard(debt: debt, showSeller: isLead),
+                    AgentDebtCard(debt: debt, showSeller: isLead),
                   ],
                   if (state.isLoadingMore)
-                    const Padding(padding: EdgeInsets.all(12), child: Center(child: CircularProgressIndicator())),
+                    const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
                 ],
               ),
             ),
@@ -131,7 +134,10 @@ class _TotalCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(context.l10n.agentDebtsTotal, style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w600)),
+          Text(
+            context.l10n.agentDebtsTotal,
+            style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 6),
           Text(
             parts.join(' · '),
@@ -143,11 +149,13 @@ class _TotalCard extends StatelessWidget {
   }
 }
 
-class _DebtCard extends ConsumerWidget {
-  const _DebtCard({required this.debt, required this.showSeller});
+/// One customer-debt row. [leadAgentId] set = the owner's read-only view of that lead agent's team.
+class AgentDebtCard extends ConsumerWidget {
+  const AgentDebtCard({required this.debt, required this.showSeller, this.leadAgentId, super.key});
 
   final AgentDebt debt;
   final bool showSeller;
+  final String? leadAgentId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -158,7 +166,9 @@ class _DebtCard extends ConsumerWidget {
       padding: const EdgeInsets.all(14),
       onTap: () async {
         await Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => AgentDebtDetailScreen(debtId: debt.id)),
+          MaterialPageRoute<void>(
+            builder: (_) => AgentDebtDetailScreen(debtId: debt.id, leadAgentId: leadAgentId),
+          ),
         );
       },
       child: Row(

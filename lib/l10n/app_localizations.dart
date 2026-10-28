@@ -5643,6 +5643,294 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Yuborish mumkin: {amount}'**
   String agentAvailableToSend(String amount);
+
+  /// No description provided for @navLeadAgents.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dillerlar'**
+  String get navLeadAgents;
+
+  /// No description provided for @ownerLeadNew.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi diller'**
+  String get ownerLeadNew;
+
+  /// No description provided for @ownerLeadEdit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dillerni tahrirlash'**
+  String get ownerLeadEdit;
+
+  /// No description provided for @ownerLeadDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dillerni o\'chirish'**
+  String get ownerLeadDeleteTitle;
+
+  /// No description provided for @ownerLeadsEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali diller yo\'q'**
+  String get ownerLeadsEmpty;
+
+  /// No description provided for @ownerLeadStoreHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Diller shu do\'kon mahsulotlarini oladi'**
+  String get ownerLeadStoreHint;
+
+  /// No description provided for @ownerLeadStaffCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta agent'**
+  String ownerLeadStaffCount(int count);
+
+  /// No description provided for @ownerLeadPendingCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta so\'rov'**
+  String ownerLeadPendingCount(int count);
+
+  /// No description provided for @ownerLeadOwes.
+  ///
+  /// In uz, this message translates to:
+  /// **'Menga qarzi'**
+  String get ownerLeadOwes;
+
+  /// No description provided for @ownerLeadStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'lidagi mahsulotlar'**
+  String get ownerLeadStock;
+
+  /// No description provided for @ownerLeadStaff.
+  ///
+  /// In uz, this message translates to:
+  /// **'Agentlari'**
+  String get ownerLeadStaff;
+
+  /// No description provided for @ownerTeamTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jamoa savdosi'**
+  String get ownerTeamTitle;
+
+  /// No description provided for @ownerGiveProducts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulot berish'**
+  String get ownerGiveProducts;
+
+  /// No description provided for @ownerTabStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlari'**
+  String get ownerTabStock;
+
+  /// No description provided for @ownerTabTransfers.
+  ///
+  /// In uz, this message translates to:
+  /// **'Berilganlar'**
+  String get ownerTabTransfers;
+
+  /// No description provided for @ownerTabCustomerDebts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijoz qarzlari'**
+  String get ownerTabCustomerDebts;
+
+  /// No description provided for @ownerStockEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dillerda mahsulot yo\'q'**
+  String get ownerStockEmpty;
+
+  /// No description provided for @ownerMinPrice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eng kam narx'**
+  String get ownerMinPrice;
+
+  /// No description provided for @ownerMaxPrice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eng yuqori narx'**
+  String get ownerMaxPrice;
+
+  /// No description provided for @ownerEditRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx oralig\'ini o\'zgartirish'**
+  String get ownerEditRange;
+
+  /// No description provided for @ownerRangeUpdated.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx oralig\'i yangilandi'**
+  String get ownerRangeUpdated;
+
+  /// No description provided for @ownerRangeInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'«{name}»: eng kam narx eng yuqori narxdan katta bo\'lmasin'**
+  String ownerRangeInvalid(String name);
+
+  /// No description provided for @ownerPriceInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'«{name}»: narxni kiriting'**
+  String ownerPriceInvalid(String name);
+
+  /// No description provided for @ownerMinBelowPrice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eng kam narx diller to\'laydigan narxdan past'**
+  String get ownerMinBelowPrice;
+
+  /// No description provided for @ownerConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlash'**
+  String get ownerConfirm;
+
+  /// No description provided for @ownerReject.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etish'**
+  String get ownerReject;
+
+  /// No description provided for @ownerConfirmed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlandi'**
+  String get ownerConfirmed;
+
+  /// No description provided for @ownerRejected.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etildi'**
+  String get ownerRejected;
+
+  /// No description provided for @ownerRejectTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rovni rad etish'**
+  String get ownerRejectTitle;
+
+  /// No description provided for @ownerRejectReason.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab (ixtiyoriy)'**
+  String get ownerRejectReason;
+
+  /// No description provided for @ownerConfirmPaymentTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lovni tasdiqlash'**
+  String get ownerConfirmPaymentTitle;
+
+  /// No description provided for @ownerConfirmPaymentText.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} {amount} to\'laganini tasdiqlaysizmi? Summa eng eski qarzlaridan boshlab yopiladi.'**
+  String ownerConfirmPaymentText(String name, String amount);
+
+  /// No description provided for @ownerConfirmReturnTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytarishni tasdiqlash'**
+  String get ownerConfirmReturnTitle;
+
+  /// No description provided for @ownerConfirmReturnText.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlar omboringizga qaytadi va dillerning qarzi kamayadi.'**
+  String get ownerConfirmReturnText;
+
+  /// No description provided for @ownerDebtReduceLine.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzdan ayriladi: {amount}'**
+  String ownerDebtReduceLine(String amount);
+
+  /// No description provided for @ownerRefundLine.
+  ///
+  /// In uz, this message translates to:
+  /// **'Naqd qaytarasiz: {amount}'**
+  String ownerRefundLine(String amount);
+
+  /// No description provided for @ownerTransferEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu do\'konda berish uchun mahsulot yo\'q'**
+  String get ownerTransferEmpty;
+
+  /// No description provided for @ownerTransferInStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Omborda: {qty}'**
+  String ownerTransferInStock(String qty);
+
+  /// No description provided for @ownerTransferHeld.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dillerda: {qty}'**
+  String ownerTransferHeld(String qty);
+
+  /// No description provided for @ownerTransferOneCurrency.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bitta berishda bitta valyuta bo\'ladi'**
+  String get ownerTransferOneCurrency;
+
+  /// No description provided for @ownerTransferPicked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tanlanganlar'**
+  String get ownerTransferPicked;
+
+  /// No description provided for @ownerTransferPaid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozir to\'langan summa'**
+  String get ownerTransferPaid;
+
+  /// No description provided for @ownerTransferPaidTooMuch.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'langan summa umumiy summadan oshmasin'**
+  String get ownerTransferPaidTooMuch;
+
+  /// No description provided for @ownerTransferDebtLine.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzga yoziladi: {amount}'**
+  String ownerTransferDebtLine(String amount);
+
+  /// No description provided for @ownerTransferSubmit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Berish ({count})'**
+  String ownerTransferSubmit(int count);
+
+  /// No description provided for @ownerTransferDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlar berildi'**
+  String get ownerTransferDone;
+
+  /// No description provided for @ownerTransferPickOne.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kamida bitta mahsulot tanlang'**
+  String get ownerTransferPickOne;
+
+  /// No description provided for @commonLoadMore.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yana ko\'rsatish'**
+  String get commonLoadMore;
 }
 
 class _AppLocalizationsDelegate

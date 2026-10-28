@@ -53,7 +53,11 @@ class _AgentHomeScreenState extends ConsumerState<AgentHomeScreen> {
         items: [
           StorefrontNavItem(icon: Icons.home_outlined, selectedIcon: Icons.home_rounded, label: titles[0]),
           StorefrontNavItem(icon: Icons.storefront_outlined, selectedIcon: Icons.storefront_rounded, label: titles[1]),
-          StorefrontNavItem(icon: Icons.receipt_long_outlined, selectedIcon: Icons.receipt_long_rounded, label: titles[2]),
+          StorefrontNavItem(
+            icon: Icons.receipt_long_outlined,
+            selectedIcon: Icons.receipt_long_rounded,
+            label: titles[2],
+          ),
           StorefrontNavItem(
             icon: Icons.account_balance_wallet_outlined,
             selectedIcon: Icons.account_balance_wallet_rounded,

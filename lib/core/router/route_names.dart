@@ -92,4 +92,7 @@ abstract final class RouteNames {
   static const waiters = '/waiters';
   static const couriers = '/couriers';
   static const fleetMap = '/fleet-map';
+
+  // --- Phase 10: agents, the business owner's side ---
+  static const leadAgents = '/lead-agents';
 }

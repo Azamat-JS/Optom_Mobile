@@ -32,11 +32,13 @@ class AgentCartNotifier extends Notifier<List<AgentCartLine>> {
     return true;
   }
 
-  void remove(String itemId) => state = [for (final l in state) if (l.item.id != itemId) l];
+  void remove(String itemId) => state = [
+    for (final l in state)
+      if (l.item.id != itemId) l,
+  ];
 
-  void update(String itemId, {double? quantity, double? unitPrice}) => state = [
-        for (final l in state) l.item.id == itemId ? l.copyWith(quantity: quantity, unitPrice: unitPrice) : l,
-      ];
+  void update(String itemId, {double? quantity, double? unitPrice}) =>
+      state = [for (final l in state) l.item.id == itemId ? l.copyWith(quantity: quantity, unitPrice: unitPrice) : l];
 
   void clear() => state = const [];
 }

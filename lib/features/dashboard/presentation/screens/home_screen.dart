@@ -425,6 +425,8 @@ class _Shortcuts extends ConsumerWidget {
           ShortcutTile(icon: Icons.room_service_rounded, label: l10n.navWaiters, onTap: () => go(RouteNames.waiters)),
         if (courierFeatureEnabled)
           ShortcutTile(icon: Icons.moped_rounded, label: l10n.navCouriers, onTap: () => go(RouteNames.couriers)),
+        // Lead agents (dillers): owner-only, every business type (Phase 10).
+        ShortcutTile(icon: Icons.handshake_rounded, label: l10n.navLeadAgents, onTap: () => go(RouteNames.leadAgents)),
         ShortcutTile(
           icon: Icons.account_balance_wallet_rounded,
           label: l10n.navExpenditures,

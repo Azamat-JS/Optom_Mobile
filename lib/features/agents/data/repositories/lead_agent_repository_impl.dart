@@ -31,8 +31,11 @@ class LeadAgentRepositoryImpl implements LeadAgentRepository {
       _guard(() => _remote.paymentRequests(page: page));
 
   @override
-  Future<Result<AgentPaymentRequest>> sendPayment({required double amount, required Currency currency, String? notes}) =>
-      _guard(() => _remote.sendPayment(amount: amount, currency: currency, notes: notes));
+  Future<Result<AgentPaymentRequest>> sendPayment({
+    required double amount,
+    required Currency currency,
+    String? notes,
+  }) => _guard(() => _remote.sendPayment(amount: amount, currency: currency, notes: notes));
 
   @override
   Future<Result<void>> cancelPayment(String id) => _guard(() => _remote.cancelPayment(id));
@@ -51,16 +54,19 @@ class LeadAgentRepositoryImpl implements LeadAgentRepository {
   Future<Result<void>> cancelReturn(String id) => _guard(() => _remote.cancelReturn(id));
 
   @override
-  Future<Result<PaginatedResult<AgentTransfer>>> transfers({int page = 1}) => _guard(() => _remote.transfers(page: page));
+  Future<Result<PaginatedResult<AgentTransfer>>> transfers({int page = 1}) =>
+      _guard(() => _remote.transfers(page: page));
 
   @override
   Future<Result<AgentTransferDetail>> transfer(String id) => _guard(() => _remote.transfer(id));
 
   @override
-  Future<Result<PaginatedResult<AgentAccountUser>>> staff({String? search}) => _guard(() => _remote.staff(search: search));
+  Future<Result<PaginatedResult<AgentAccountUser>>> staff({String? search}) =>
+      _guard(() => _remote.staff(search: search));
 
   @override
-  Future<Result<AgentAccountUser>> createStaff(CreateAgentAccountParams params) => _guard(() => _remote.createStaff(params));
+  Future<Result<AgentAccountUser>> createStaff(CreateAgentAccountParams params) =>
+      _guard(() => _remote.createStaff(params));
 
   @override
   Future<Result<AgentAccountUser>> updateStaff(String id, UpdateAgentAccountParams params) =>

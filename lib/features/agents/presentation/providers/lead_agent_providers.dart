@@ -46,8 +46,9 @@ class LeadPaymentRequestsNotifier extends AsyncNotifier<List<AgentPaymentRequest
   Future<void> refresh() async => state = await AsyncValue.guard(_fetch);
 }
 
-final leadPaymentRequestsProvider =
-    AsyncNotifierProvider<LeadPaymentRequestsNotifier, List<AgentPaymentRequest>>(LeadPaymentRequestsNotifier.new);
+final leadPaymentRequestsProvider = AsyncNotifierProvider<LeadPaymentRequestsNotifier, List<AgentPaymentRequest>>(
+  LeadPaymentRequestsNotifier.new,
+);
 
 class LeadReturnsNotifier extends AsyncNotifier<List<AgentReturn>> {
   @override
@@ -67,7 +68,12 @@ class LeadReturnsNotifier extends AsyncNotifier<List<AgentReturn>> {
 final leadReturnsProvider = AsyncNotifierProvider<LeadReturnsNotifier, List<AgentReturn>>(LeadReturnsNotifier.new);
 
 class ReceivedTransfersState {
-  const ReceivedTransfersState({required this.items, required this.page, this.hasNext = false, this.isLoadingMore = false});
+  const ReceivedTransfersState({
+    required this.items,
+    required this.page,
+    this.hasNext = false,
+    this.isLoadingMore = false,
+  });
 
   final List<AgentTransfer> items;
   final int page;
@@ -119,8 +125,9 @@ class ReceivedTransfersNotifier extends AsyncNotifier<ReceivedTransfersState> {
   }
 }
 
-final receivedTransfersProvider =
-    AsyncNotifierProvider<ReceivedTransfersNotifier, ReceivedTransfersState>(ReceivedTransfersNotifier.new);
+final receivedTransfersProvider = AsyncNotifierProvider<ReceivedTransfersNotifier, ReceivedTransfersState>(
+  ReceivedTransfersNotifier.new,
+);
 
 class AgentStaffListNotifier extends AsyncNotifier<List<AgentAccountUser>> {
   @override
@@ -137,5 +144,6 @@ class AgentStaffListNotifier extends AsyncNotifier<List<AgentAccountUser>> {
   Future<void> refresh() async => state = await AsyncValue.guard(_fetch);
 }
 
-final agentStaffListProvider =
-    AsyncNotifierProvider<AgentStaffListNotifier, List<AgentAccountUser>>(AgentStaffListNotifier.new);
+final agentStaffListProvider = AsyncNotifierProvider<AgentStaffListNotifier, List<AgentAccountUser>>(
+  AgentStaffListNotifier.new,
+);

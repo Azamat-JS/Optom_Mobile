@@ -24,10 +24,10 @@ class AgentSaleCustomerParams {
   final String phone;
 
   Map<String, dynamic> toJson() => {
-        'firstName': firstName,
-        if (lastName != null && lastName!.isNotEmpty) 'lastName': lastName,
-        'phone': phone,
-      };
+    'firstName': firstName,
+    if (lastName != null && lastName!.isNotEmpty) 'lastName': lastName,
+    'phone': phone,
+  };
 }
 
 class CreateAgentSaleParams {
@@ -41,9 +41,9 @@ class CreateAgentSaleParams {
   final String? notes;
 
   Map<String, dynamic> toRequestBody() => {
-        'items': [for (final l in lines) l.toJson()],
-        'paymentType': paymentType.toWire(),
-        if (customer != null) 'customer': customer!.toJson(),
-        if (notes != null && notes!.isNotEmpty) 'notes': notes,
-      };
+    'items': [for (final l in lines) l.toJson()],
+    'paymentType': paymentType.toWire(),
+    if (customer != null) 'customer': customer!.toJson(),
+    if (notes != null && notes!.isNotEmpty) 'notes': notes,
+  };
 }

@@ -11,12 +11,12 @@ enum AgentRequestStatus {
   cancelled;
 
   static AgentRequestStatus fromWire(String value) => switch (value) {
-        'PENDING' => AgentRequestStatus.pending,
-        'CONFIRMED' => AgentRequestStatus.confirmed,
-        'REJECTED' => AgentRequestStatus.rejected,
-        'CANCELLED' => AgentRequestStatus.cancelled,
-        _ => throw ArgumentError('Unknown AgentRequestStatus from backend: $value'),
-      };
+    'PENDING' => AgentRequestStatus.pending,
+    'CONFIRMED' => AgentRequestStatus.confirmed,
+    'REJECTED' => AgentRequestStatus.rejected,
+    'CANCELLED' => AgentRequestStatus.cancelled,
+    _ => throw ArgumentError('Unknown AgentRequestStatus from backend: $value'),
+  };
 }
 
 /// Money the lead agent says it paid the owner — nothing moves until the owner confirms; then it
@@ -118,9 +118,9 @@ class LeadAgentAccount {
 
   /// What a new payment request may still claim, per currency (open debt − pending requests).
   MoneyByCurrency get available => MoneyByCurrency(
-        uzs: (debt.uzs - pendingPayments.uzs).clamp(0, double.infinity).toDouble(),
-        usd: (debt.usd - pendingPayments.usd).clamp(0, double.infinity).toDouble(),
-      );
+    uzs: (debt.uzs - pendingPayments.uzs).clamp(0, double.infinity).toDouble(),
+    usd: (debt.usd - pendingPayments.usd).clamp(0, double.infinity).toDouble(),
+  );
 }
 
 class AgentReturnLineParams {

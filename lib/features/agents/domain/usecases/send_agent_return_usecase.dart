@@ -7,5 +7,6 @@ class SendAgentReturnUseCase {
 
   final LeadAgentRepository _repository;
 
-  Future<Result<AgentReturnDetail>> call(List<AgentReturnLineParams> lines, {String? notes}) => _repository.sendReturn(lines, notes: notes);
+  Future<Result<AgentReturnDetail>> call(List<AgentReturnLineParams> lines, {String? notes}) =>
+      _repository.sendReturn(lines, notes: notes);
 }

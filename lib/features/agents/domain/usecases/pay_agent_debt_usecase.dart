@@ -7,5 +7,6 @@ class PayAgentDebtUseCase {
 
   final AgentsRepository _repository;
 
-  Future<Result<AgentDebtDetail>> call(String id, {required double amount, String? notes}) => _repository.payDebt(id, amount: amount, notes: notes);
+  Future<Result<AgentDebtDetail>> call(String id, {required double amount, String? notes}) =>
+      _repository.payDebt(id, amount: amount, notes: notes);
 }

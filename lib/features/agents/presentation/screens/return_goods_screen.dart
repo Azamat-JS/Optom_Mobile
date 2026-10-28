@@ -59,18 +59,18 @@ class _ReturnGoodsScreenState extends State<ReturnGoodsScreen> {
   }
 
   TextEditingController _controllerFor(String id) => _qty.putIfAbsent(id, () {
-        final c = TextEditingController();
-        // Re-count the button label; an earlier error no longer applies once a quantity changes.
-        c.addListener(() => setState(() => _error = null));
-        return c;
-      });
+    final c = TextEditingController();
+    // Re-count the button label; an earlier error no longer applies once a quantity changes.
+    c.addListener(() => setState(() => _error = null));
+    return c;
+  });
 
   double? _parse(String id) => double.tryParse((_qty[id]?.text ?? '').trim().replaceAll(',', '.'));
 
   List<AgentStockItem> get _shown => [
-        for (final item in _items ?? const <AgentStockItem>[])
-          if (item.currency == _currency) item,
-      ];
+    for (final item in _items ?? const <AgentStockItem>[])
+      if (item.currency == _currency) item,
+  ];
 
   int get _pickedCount => _shown.where((i) => (_parse(i.id) ?? 0) > 0).length;
 
@@ -84,7 +84,9 @@ class _ReturnGoodsScreenState extends State<ReturnGoodsScreen> {
       if (qty == null || qty < 0) return setState(() => _error = l10n.agentQtyInvalid(item.product.name));
       if (qty == 0) continue;
       if (qty > item.stock + 0.0005) {
-        return setState(() => _error = l10n.agentQtyTooMuch(item.product.name, agentQty(item.stock, item.product.unit)));
+        return setState(
+          () => _error = l10n.agentQtyTooMuch(item.product.name, agentQty(item.stock, item.product.unit)),
+        );
       }
       lines.add(AgentReturnLineParams(agentProductId: item.id, quantity: qty));
     }

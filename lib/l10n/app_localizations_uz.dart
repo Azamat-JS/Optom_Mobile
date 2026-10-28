@@ -3270,4 +3270,174 @@ class AppLocalizationsUz extends AppLocalizations {
   String agentAvailableToSend(String amount) {
     return 'Yuborish mumkin: $amount';
   }
+
+  @override
+  String get navLeadAgents => 'Dillerlar';
+
+  @override
+  String get ownerLeadNew => 'Yangi diller';
+
+  @override
+  String get ownerLeadEdit => 'Dillerni tahrirlash';
+
+  @override
+  String get ownerLeadDeleteTitle => 'Dillerni o\'chirish';
+
+  @override
+  String get ownerLeadsEmpty => 'Hali diller yo\'q';
+
+  @override
+  String get ownerLeadStoreHint => 'Diller shu do\'kon mahsulotlarini oladi';
+
+  @override
+  String ownerLeadStaffCount(int count) {
+    return '$count ta agent';
+  }
+
+  @override
+  String ownerLeadPendingCount(int count) {
+    return '$count ta so\'rov';
+  }
+
+  @override
+  String get ownerLeadOwes => 'Menga qarzi';
+
+  @override
+  String get ownerLeadStock => 'Qo\'lidagi mahsulotlar';
+
+  @override
+  String get ownerLeadStaff => 'Agentlari';
+
+  @override
+  String get ownerTeamTitle => 'Jamoa savdosi';
+
+  @override
+  String get ownerGiveProducts => 'Mahsulot berish';
+
+  @override
+  String get ownerTabStock => 'Mahsulotlari';
+
+  @override
+  String get ownerTabTransfers => 'Berilganlar';
+
+  @override
+  String get ownerTabCustomerDebts => 'Mijoz qarzlari';
+
+  @override
+  String get ownerStockEmpty => 'Dillerda mahsulot yo\'q';
+
+  @override
+  String get ownerMinPrice => 'Eng kam narx';
+
+  @override
+  String get ownerMaxPrice => 'Eng yuqori narx';
+
+  @override
+  String get ownerEditRange => 'Narx oralig\'ini o\'zgartirish';
+
+  @override
+  String get ownerRangeUpdated => 'Narx oralig\'i yangilandi';
+
+  @override
+  String ownerRangeInvalid(String name) {
+    return '«$name»: eng kam narx eng yuqori narxdan katta bo\'lmasin';
+  }
+
+  @override
+  String ownerPriceInvalid(String name) {
+    return '«$name»: narxni kiriting';
+  }
+
+  @override
+  String get ownerMinBelowPrice =>
+      'Eng kam narx diller to\'laydigan narxdan past';
+
+  @override
+  String get ownerConfirm => 'Tasdiqlash';
+
+  @override
+  String get ownerReject => 'Rad etish';
+
+  @override
+  String get ownerConfirmed => 'Tasdiqlandi';
+
+  @override
+  String get ownerRejected => 'Rad etildi';
+
+  @override
+  String get ownerRejectTitle => 'So\'rovni rad etish';
+
+  @override
+  String get ownerRejectReason => 'Sabab (ixtiyoriy)';
+
+  @override
+  String get ownerConfirmPaymentTitle => 'To\'lovni tasdiqlash';
+
+  @override
+  String ownerConfirmPaymentText(String name, String amount) {
+    return '$name $amount to\'laganini tasdiqlaysizmi? Summa eng eski qarzlaridan boshlab yopiladi.';
+  }
+
+  @override
+  String get ownerConfirmReturnTitle => 'Qaytarishni tasdiqlash';
+
+  @override
+  String get ownerConfirmReturnText =>
+      'Mahsulotlar omboringizga qaytadi va dillerning qarzi kamayadi.';
+
+  @override
+  String ownerDebtReduceLine(String amount) {
+    return 'Qarzdan ayriladi: $amount';
+  }
+
+  @override
+  String ownerRefundLine(String amount) {
+    return 'Naqd qaytarasiz: $amount';
+  }
+
+  @override
+  String get ownerTransferEmpty => 'Bu do\'konda berish uchun mahsulot yo\'q';
+
+  @override
+  String ownerTransferInStock(String qty) {
+    return 'Omborda: $qty';
+  }
+
+  @override
+  String ownerTransferHeld(String qty) {
+    return 'Dillerda: $qty';
+  }
+
+  @override
+  String get ownerTransferOneCurrency =>
+      'Bitta berishda bitta valyuta bo\'ladi';
+
+  @override
+  String get ownerTransferPicked => 'Tanlanganlar';
+
+  @override
+  String get ownerTransferPaid => 'Hozir to\'langan summa';
+
+  @override
+  String get ownerTransferPaidTooMuch =>
+      'To\'langan summa umumiy summadan oshmasin';
+
+  @override
+  String ownerTransferDebtLine(String amount) {
+    return 'Qarzga yoziladi: $amount';
+  }
+
+  @override
+  String ownerTransferSubmit(int count) {
+    return 'Berish ($count)';
+  }
+
+  @override
+  String get ownerTransferDone => 'Mahsulotlar berildi';
+
+  @override
+  String get ownerTransferPickOne => 'Kamida bitta mahsulot tanlang';
+
+  @override
+  String get commonLoadMore => 'Yana ko\'rsatish';
 }

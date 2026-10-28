@@ -87,20 +87,17 @@ class _AgentCheckoutScreenState extends ConsumerState<AgentCheckoutScreen> {
     );
     if (!mounted) return;
     setState(() => _busy = false);
-    result.fold(
-      (_) {
-        HapticFeedback.mediumImpact();
-        ref.read(agentCartProvider.notifier).clear();
-        ref.read(agentStockProvider.notifier).refresh();
-        ref.read(agentSalesListProvider.notifier).refresh();
-        ref.read(agentDebtsListProvider.notifier).refresh();
-        ref.read(agentSummaryProvider.notifier).refresh();
-        ref.invalidate(agentProfitProvider);
-        _snack(l10n.agentSold);
-        Navigator.of(context).pop();
-      },
-      (failure) => _snack(failure.message),
-    );
+    result.fold((_) {
+      HapticFeedback.mediumImpact();
+      ref.read(agentCartProvider.notifier).clear();
+      ref.read(agentStockProvider.notifier).refresh();
+      ref.read(agentSalesListProvider.notifier).refresh();
+      ref.read(agentDebtsListProvider.notifier).refresh();
+      ref.read(agentSummaryProvider.notifier).refresh();
+      ref.invalidate(agentProfitProvider);
+      _snack(l10n.agentSold);
+      Navigator.of(context).pop();
+    }, (failure) => _snack(failure.message));
   }
 
   @override
@@ -243,7 +240,9 @@ class _AgentCheckoutScreenState extends ConsumerState<AgentCheckoutScreen> {
               decoration: InputDecoration(labelText: l10n.commonNote),
             ),
             const SizedBox(height: 16),
-            DashCard(child: BillRow(label: l10n.commonTotal, value: money(total), strong: true)),
+            DashCard(
+              child: BillRow(label: l10n.commonTotal, value: money(total), strong: true),
+            ),
           ],
         ),
       ),

@@ -82,7 +82,8 @@ class _LeadShortcuts extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final pending = ref.watch(leadAccountProvider).valueOrNull;
-    final waiting = pending != null &&
+    final waiting =
+        pending != null &&
         (pending.pendingReturns > 0 || pending.pendingPayments.uzs > 0 || pending.pendingPayments.usd > 0);
     void open(Widget screen) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
 
@@ -131,8 +132,8 @@ class _ProfileCard extends ConsumerWidget {
     final worksFor = user.role == UserRole.leadAgent && owner != null
         ? l10n.agentLeadOf(owner.shopName?.isNotEmpty == true ? owner.shopName! : owner.fullName)
         : user.role == UserRole.agent && user.owner != null
-            ? l10n.agentStaffOf(user.owner!.fullName)
-            : null;
+        ? l10n.agentStaffOf(user.owner!.fullName)
+        : null;
 
     return DashCard(
       child: Row(
@@ -291,7 +292,8 @@ class _ProfitCardState extends ConsumerState<_ProfitCard> {
                   BillRow(label: l10n.agentProfitCost, value: money(stats.cost), muted: true),
                   if (stats.pendingProfit > 0)
                     BillRow(label: l10n.agentProfitPending, value: money(stats.pendingProfit), muted: true),
-                  if (stats.ownDebts > 0) BillRow(label: l10n.agentOwedToOwner, value: money(stats.ownDebts), muted: true),
+                  if (stats.ownDebts > 0)
+                    BillRow(label: l10n.agentOwedToOwner, value: money(stats.ownDebts), muted: true),
                   const SizedBox(height: 8),
                   Text(l10n.agentProfitHint, style: TextStyle(fontSize: 12, color: colors.textMuted)),
                 ],

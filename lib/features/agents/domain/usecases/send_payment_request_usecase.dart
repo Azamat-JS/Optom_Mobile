@@ -8,5 +8,6 @@ class SendPaymentRequestUseCase {
 
   final LeadAgentRepository _repository;
 
-  Future<Result<AgentPaymentRequest>> call({required double amount, required Currency currency, String? notes}) => _repository.sendPayment(amount: amount, currency: currency, notes: notes);
+  Future<Result<AgentPaymentRequest>> call({required double amount, required Currency currency, String? notes}) =>
+      _repository.sendPayment(amount: amount, currency: currency, notes: notes);
 }

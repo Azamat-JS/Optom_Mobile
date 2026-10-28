@@ -8,5 +8,6 @@ class ListAgentSalesUseCase {
 
   final AgentsRepository _repository;
 
-  Future<Result<PaginatedResult<AgentSale>>> call({String? search, int page = 1}) => _repository.sales(search: search, page: page);
+  Future<Result<PaginatedResult<AgentSale>>> call({String? search, int page = 1}) =>
+      _repository.sales(search: search, page: page);
 }

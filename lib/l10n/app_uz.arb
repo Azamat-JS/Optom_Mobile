@@ -1989,5 +1989,133 @@
         "type": "String"
       }
     }
-  }
+  },
+  "navLeadAgents": "Dillerlar",
+  "ownerLeadNew": "Yangi diller",
+  "ownerLeadEdit": "Dillerni tahrirlash",
+  "ownerLeadDeleteTitle": "Dillerni o'chirish",
+  "ownerLeadsEmpty": "Hali diller yo'q",
+  "ownerLeadStoreHint": "Diller shu do'kon mahsulotlarini oladi",
+  "ownerLeadStaffCount": "{count} ta agent",
+  "@ownerLeadStaffCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ownerLeadPendingCount": "{count} ta so'rov",
+  "@ownerLeadPendingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ownerLeadOwes": "Menga qarzi",
+  "ownerLeadStock": "Qo'lidagi mahsulotlar",
+  "ownerLeadStaff": "Agentlari",
+  "ownerTeamTitle": "Jamoa savdosi",
+  "ownerGiveProducts": "Mahsulot berish",
+  "ownerTabStock": "Mahsulotlari",
+  "ownerTabTransfers": "Berilganlar",
+  "ownerTabCustomerDebts": "Mijoz qarzlari",
+  "ownerStockEmpty": "Dillerda mahsulot yo'q",
+  "ownerMinPrice": "Eng kam narx",
+  "ownerMaxPrice": "Eng yuqori narx",
+  "ownerEditRange": "Narx oralig'ini o'zgartirish",
+  "ownerRangeUpdated": "Narx oralig'i yangilandi",
+  "ownerRangeInvalid": "«{name}»: eng kam narx eng yuqori narxdan katta bo'lmasin",
+  "@ownerRangeInvalid": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ownerPriceInvalid": "«{name}»: narxni kiriting",
+  "@ownerPriceInvalid": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ownerMinBelowPrice": "Eng kam narx diller to'laydigan narxdan past",
+  "ownerConfirm": "Tasdiqlash",
+  "ownerReject": "Rad etish",
+  "ownerConfirmed": "Tasdiqlandi",
+  "ownerRejected": "Rad etildi",
+  "ownerRejectTitle": "So'rovni rad etish",
+  "ownerRejectReason": "Sabab (ixtiyoriy)",
+  "ownerConfirmPaymentTitle": "To'lovni tasdiqlash",
+  "ownerConfirmPaymentText": "{name} {amount} to'laganini tasdiqlaysizmi? Summa eng eski qarzlaridan boshlab yopiladi.",
+  "@ownerConfirmPaymentText": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ownerConfirmReturnTitle": "Qaytarishni tasdiqlash",
+  "ownerConfirmReturnText": "Mahsulotlar omboringizga qaytadi va dillerning qarzi kamayadi.",
+  "ownerDebtReduceLine": "Qarzdan ayriladi: {amount}",
+  "@ownerDebtReduceLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ownerRefundLine": "Naqd qaytarasiz: {amount}",
+  "@ownerRefundLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ownerTransferEmpty": "Bu do'konda berish uchun mahsulot yo'q",
+  "ownerTransferInStock": "Omborda: {qty}",
+  "@ownerTransferInStock": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "ownerTransferHeld": "Dillerda: {qty}",
+  "@ownerTransferHeld": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "ownerTransferOneCurrency": "Bitta berishda bitta valyuta bo'ladi",
+  "ownerTransferPicked": "Tanlanganlar",
+  "ownerTransferPaid": "Hozir to'langan summa",
+  "ownerTransferPaidTooMuch": "To'langan summa umumiy summadan oshmasin",
+  "ownerTransferDebtLine": "Qarzga yoziladi: {amount}",
+  "@ownerTransferDebtLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ownerTransferSubmit": "Berish ({count})",
+  "@ownerTransferSubmit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ownerTransferDone": "Mahsulotlar berildi",
+  "ownerTransferPickOne": "Kamida bitta mahsulot tanlang",
+  "commonLoadMore": "Yana ko'rsatish"
 }

@@ -80,7 +80,10 @@ class AgentsRemoteDataSource {
   }
 
   Future<AgentProfit> profit(AgentProfitPeriod period) async {
-    final response = await _dio.get<Map<String, dynamic>>('/agent/profit', queryParameters: {'period': period.toWire()});
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/agent/profit',
+      queryParameters: {'period': period.toWire()},
+    );
     return agentProfitFromJson(response.data!);
   }
 }

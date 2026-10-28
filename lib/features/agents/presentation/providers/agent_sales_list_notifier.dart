@@ -73,5 +73,6 @@ class AgentSalesListNotifier extends AsyncNotifier<AgentSalesListState> {
   }
 }
 
-final agentSalesListProvider =
-    AsyncNotifierProvider<AgentSalesListNotifier, AgentSalesListState>(AgentSalesListNotifier.new);
+final agentSalesListProvider = AsyncNotifierProvider<AgentSalesListNotifier, AgentSalesListState>(
+  AgentSalesListNotifier.new,
+);

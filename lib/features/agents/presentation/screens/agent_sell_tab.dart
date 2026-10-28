@@ -80,7 +80,10 @@ class _AgentSellTabState extends ConsumerState<AgentSellTab> {
               backgroundColor: AppColors.brandYellow,
               onRefresh: () => ref.read(agentStockProvider.notifier).refresh(),
               child: state.items.isEmpty
-                  ? DashEmptyState(icon: Icons.inventory_2_outlined, text: '${l10n.agentNoStock}\n${l10n.agentNoStockHint}')
+                  ? DashEmptyState(
+                      icon: Icons.inventory_2_outlined,
+                      text: '${l10n.agentNoStock}\n${l10n.agentNoStockHint}',
+                    )
                   : ListView.separated(
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),

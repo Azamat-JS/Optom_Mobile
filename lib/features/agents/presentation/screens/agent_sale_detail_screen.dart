@@ -7,28 +7,36 @@ import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/agents/domain/entities/agent_sale.dart';
 import 'package:bsmart/features/agents/domain/usecases/get_agent_sale_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_team_sale_usecase.dart';
 import 'package:bsmart/features/agents/presentation/widgets/agent_format.dart';
 import 'package:bsmart/features/sales/presentation/widgets/sale_status_badge.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
 
-final _agentSaleProvider = FutureProvider.autoDispose.family<AgentSaleDetail, String>((ref, id) async {
-  final result = await getIt<GetAgentSaleUseCase>().call(id);
+/// Keyed by (sale id, lead agent id): the owner reads a team sale through `/lead-agents/:id/sales`.
+final _agentSaleProvider = FutureProvider.autoDispose.family<AgentSaleDetail, (String, String?)>((ref, key) async {
+  final (id, leadAgentId) = key;
+  final result = leadAgentId == null
+      ? await getIt<GetAgentSaleUseCase>().call(id)
+      : await getIt<GetTeamSaleUseCase>().call(leadAgentId, id);
   return result.fold((sale) => sale, (failure) => throw failure);
 });
 
 /// One agent sale: lines (the lead agent also sees its cost per line), the total and, on debt,
 /// what is still owed.
 class AgentSaleDetailScreen extends ConsumerWidget {
-  const AgentSaleDetailScreen({required this.saleId, super.key});
+  const AgentSaleDetailScreen({required this.saleId, this.leadAgentId, super.key});
 
   final String saleId;
+
+  /// Set when the business owner opens one of this lead agent's team sales (no cost shown).
+  final String? leadAgentId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final colors = BrandColors.of(context);
-    final saleAsync = ref.watch(_agentSaleProvider(saleId));
+    final saleAsync = ref.watch(_agentSaleProvider((saleId, leadAgentId)));
 
     return DashPage(
       title: saleAsync.valueOrNull?.sale.saleNumber ?? l10n.agentCheckoutTitle,
@@ -61,7 +69,8 @@ class AgentSaleDetailScreen extends ConsumerWidget {
                     Text(
                       [
                         sale.customer.fullName,
-                        if (sale.customer.phone != null && sale.customer.phone != agentWalkInPhone) sale.customer.phone!,
+                        if (sale.customer.phone != null && sale.customer.phone != agentWalkInPhone)
+                          sale.customer.phone!,
                       ].join(' · '),
                       style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600),
                     ),

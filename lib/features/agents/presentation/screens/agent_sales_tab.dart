@@ -88,7 +88,7 @@ class _AgentSalesTabState extends ConsumerState<AgentSalesTab> {
                             child: Center(child: CircularProgressIndicator()),
                           );
                         }
-                        return _SaleCard(sale: state.items[i], showSeller: isLead);
+                        return AgentSaleCard(sale: state.items[i], showSeller: isLead);
                       },
                     ),
             ),
@@ -99,11 +99,13 @@ class _AgentSalesTabState extends ConsumerState<AgentSalesTab> {
   }
 }
 
-class _SaleCard extends StatelessWidget {
-  const _SaleCard({required this.sale, required this.showSeller});
+/// One sale row. [leadAgentId] set = the owner's read-only view of that lead agent's team.
+class AgentSaleCard extends StatelessWidget {
+  const AgentSaleCard({required this.sale, required this.showSeller, this.leadAgentId, super.key});
 
   final AgentSale sale;
   final bool showSeller;
+  final String? leadAgentId;
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +115,9 @@ class _SaleCard extends StatelessWidget {
     return DashCard(
       padding: const EdgeInsets.all(14),
       onTap: () => Navigator.of(context).push(
-        MaterialPageRoute<void>(builder: (_) => AgentSaleDetailScreen(saleId: sale.id)),
+        MaterialPageRoute<void>(
+          builder: (_) => AgentSaleDetailScreen(saleId: sale.id, leadAgentId: leadAgentId),
+        ),
       ),
       child: Row(
         children: [

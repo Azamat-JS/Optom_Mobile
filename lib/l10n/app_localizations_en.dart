@@ -3382,4 +3382,186 @@ class AppLocalizationsEn extends AppLocalizations {
   String agentAvailableToSend(String amount) {
     return 'You can send up to $amount';
   }
+
+  @override
+  String get navLeadAgents => 'Lead agents';
+
+  @override
+  String get ownerLeadNew => 'New lead agent';
+
+  @override
+  String get ownerLeadEdit => 'Edit lead agent';
+
+  @override
+  String get ownerLeadDeleteTitle => 'Delete lead agent';
+
+  @override
+  String get ownerLeadsEmpty => 'No lead agents yet';
+
+  @override
+  String get ownerLeadStoreHint =>
+      'The lead agent gets products from this store';
+
+  @override
+  String ownerLeadStaffCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count agents',
+      one: '1 agent',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ownerLeadPendingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count requests',
+      one: '1 request',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ownerLeadOwes => 'Owes me';
+
+  @override
+  String get ownerLeadStock => 'Products held';
+
+  @override
+  String get ownerLeadStaff => 'Staff agents';
+
+  @override
+  String get ownerTeamTitle => 'Team sales';
+
+  @override
+  String get ownerGiveProducts => 'Give products';
+
+  @override
+  String get ownerTabStock => 'Products';
+
+  @override
+  String get ownerTabTransfers => 'Transfers';
+
+  @override
+  String get ownerTabCustomerDebts => 'Customer debts';
+
+  @override
+  String get ownerStockEmpty => 'The lead agent holds no products';
+
+  @override
+  String get ownerMinPrice => 'Min price';
+
+  @override
+  String get ownerMaxPrice => 'Max price';
+
+  @override
+  String get ownerEditRange => 'Change price range';
+
+  @override
+  String get ownerRangeUpdated => 'Price range updated';
+
+  @override
+  String ownerRangeInvalid(String name) {
+    return '“$name”: min price must not exceed max price';
+  }
+
+  @override
+  String ownerPriceInvalid(String name) {
+    return '“$name”: enter a price';
+  }
+
+  @override
+  String get ownerMinBelowPrice =>
+      'Min price is below what the lead agent owes';
+
+  @override
+  String get ownerConfirm => 'Confirm';
+
+  @override
+  String get ownerReject => 'Reject';
+
+  @override
+  String get ownerConfirmed => 'Confirmed';
+
+  @override
+  String get ownerRejected => 'Rejected';
+
+  @override
+  String get ownerRejectTitle => 'Reject request';
+
+  @override
+  String get ownerRejectReason => 'Reason (optional)';
+
+  @override
+  String get ownerConfirmPaymentTitle => 'Confirm payment';
+
+  @override
+  String ownerConfirmPaymentText(String name, String amount) {
+    return 'Confirm that $name paid $amount? It pays off the oldest debts first.';
+  }
+
+  @override
+  String get ownerConfirmReturnTitle => 'Confirm return';
+
+  @override
+  String get ownerConfirmReturnText =>
+      'The products go back into your stock and the lead agent\'s debt goes down.';
+
+  @override
+  String ownerDebtReduceLine(String amount) {
+    return 'Taken off the debt: $amount';
+  }
+
+  @override
+  String ownerRefundLine(String amount) {
+    return 'You refund in cash: $amount';
+  }
+
+  @override
+  String get ownerTransferEmpty => 'No products in this store to give';
+
+  @override
+  String ownerTransferInStock(String qty) {
+    return 'In stock: $qty';
+  }
+
+  @override
+  String ownerTransferHeld(String qty) {
+    return 'Lead agent has: $qty';
+  }
+
+  @override
+  String get ownerTransferOneCurrency => 'One transfer, one currency';
+
+  @override
+  String get ownerTransferPicked => 'Selected';
+
+  @override
+  String get ownerTransferPaid => 'Paid now';
+
+  @override
+  String get ownerTransferPaidTooMuch =>
+      'Paid amount must not exceed the total';
+
+  @override
+  String ownerTransferDebtLine(String amount) {
+    return 'Goes on the debt: $amount';
+  }
+
+  @override
+  String ownerTransferSubmit(int count) {
+    return 'Give ($count)';
+  }
+
+  @override
+  String get ownerTransferDone => 'Products given';
+
+  @override
+  String get ownerTransferPickOne => 'Pick at least one product';
+
+  @override
+  String get commonLoadMore => 'Show more';
 }

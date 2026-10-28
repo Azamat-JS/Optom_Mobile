@@ -20,7 +20,10 @@ class LeadAgentRemoteDataSource {
   }
 
   Future<PaginatedResult<AgentPaymentRequest>> paymentRequests({int page = 1}) async {
-    final response = await _dio.get<Map<String, dynamic>>('/agent-payments', queryParameters: {'page': page, 'limit': 50});
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/agent-payments',
+      queryParameters: {'page': page, 'limit': 50},
+    );
     return PaginatedResult.fromJson(response.data!, agentPaymentRequestFromJson);
   }
 
@@ -35,7 +38,10 @@ class LeadAgentRemoteDataSource {
   Future<void> cancelPayment(String id) => _dio.patch<void>('/agent-payments/$id/cancel');
 
   Future<PaginatedResult<AgentReturn>> returns({int page = 1}) async {
-    final response = await _dio.get<Map<String, dynamic>>('/agent-returns', queryParameters: {'page': page, 'limit': 50});
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/agent-returns',
+      queryParameters: {'page': page, 'limit': 50},
+    );
     return PaginatedResult.fromJson(response.data!, agentReturnFromJson);
   }
 
@@ -58,7 +64,10 @@ class LeadAgentRemoteDataSource {
   Future<void> cancelReturn(String id) => _dio.patch<void>('/agent-returns/$id/cancel');
 
   Future<PaginatedResult<AgentTransfer>> transfers({int page = 1}) async {
-    final response = await _dio.get<Map<String, dynamic>>('/agent-transfers', queryParameters: {'page': page, 'limit': 20});
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/agent-transfers',
+      queryParameters: {'page': page, 'limit': 20},
+    );
     return PaginatedResult.fromJson(response.data!, agentTransferFromJson);
   }
 

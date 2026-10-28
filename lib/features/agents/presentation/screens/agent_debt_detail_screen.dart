@@ -8,6 +8,7 @@ import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/agents/domain/entities/agent_debt.dart';
 import 'package:bsmart/features/agents/domain/usecases/get_agent_debt_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_team_debt_usecase.dart';
 import 'package:bsmart/features/agents/domain/usecases/pay_agent_debt_usecase.dart';
 import 'package:bsmart/features/agents/presentation/providers/agent_dashboard_providers.dart';
 import 'package:bsmart/features/agents/presentation/providers/agent_debts_list_notifier.dart';
@@ -20,9 +21,12 @@ import 'package:bsmart/shared/widgets/dash_page.dart';
 /// One customer debt: amounts, receiving a payment (full or part, never more than what's left —
 /// the server re-checks it atomically), and the payment history.
 class AgentDebtDetailScreen extends ConsumerStatefulWidget {
-  const AgentDebtDetailScreen({required this.debtId, super.key});
+  const AgentDebtDetailScreen({required this.debtId, this.leadAgentId, super.key});
 
   final String debtId;
+
+  /// Set when the business owner opens one of this lead agent's team debts: read-only.
+  final String? leadAgentId;
 
   @override
   ConsumerState<AgentDebtDetailScreen> createState() => _AgentDebtDetailScreenState();
@@ -49,7 +53,10 @@ class _AgentDebtDetailScreenState extends ConsumerState<AgentDebtDetailScreen> {
   }
 
   Future<void> _load() async {
-    final result = await getIt<GetAgentDebtUseCase>().call(widget.debtId);
+    final leadAgentId = widget.leadAgentId;
+    final result = leadAgentId == null
+        ? await getIt<GetAgentDebtUseCase>().call(widget.debtId)
+        : await getIt<GetTeamDebtUseCase>().call(leadAgentId, widget.debtId);
     if (!mounted) return;
     setState(() => result.fold((d) => _detail = d, (failure) => _error = failure));
   }
@@ -66,20 +73,17 @@ class _AgentDebtDetailScreenState extends ConsumerState<AgentDebtDetailScreen> {
     final result = await getIt<PayAgentDebtUseCase>().call(debt.id, amount: amount, notes: _notes.text.trim());
     if (!mounted) return;
     setState(() => _busy = false);
-    result.fold(
-      (detail) {
-        HapticFeedback.mediumImpact();
-        setState(() => _detail = detail);
-        _amount.clear();
-        _notes.clear();
-        ref.read(agentDebtsListProvider.notifier).refresh();
-        ref.read(agentSalesListProvider.notifier).refresh();
-        ref.read(agentSummaryProvider.notifier).refresh();
-        ref.invalidate(agentProfitProvider);
-        _snack(l10n.agentPaid);
-      },
-      (failure) => _snack(failure.message),
-    );
+    result.fold((detail) {
+      HapticFeedback.mediumImpact();
+      setState(() => _detail = detail);
+      _amount.clear();
+      _notes.clear();
+      ref.read(agentDebtsListProvider.notifier).refresh();
+      ref.read(agentSalesListProvider.notifier).refresh();
+      ref.read(agentSummaryProvider.notifier).refresh();
+      ref.invalidate(agentProfitProvider);
+      _snack(l10n.agentPaid);
+    }, (failure) => _snack(failure.message));
   }
 
   @override
@@ -143,7 +147,7 @@ class _AgentDebtDetailScreenState extends ConsumerState<AgentDebtDetailScreen> {
                         ],
                       ),
                     ),
-                    if (d.isOpen) ...[
+                    if (d.isOpen && widget.leadAgentId == null) ...[
                       DashSectionTitle(l10n.agentPayTitle),
                       Row(
                         children: [
@@ -163,7 +167,10 @@ class _AgentDebtDetailScreenState extends ConsumerState<AgentDebtDetailScreen> {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      TextField(controller: _notes, decoration: InputDecoration(labelText: l10n.commonNote)),
+                      TextField(
+                        controller: _notes,
+                        decoration: InputDecoration(labelText: l10n.commonNote),
+                      ),
                       const SizedBox(height: 12),
                       FilledButton(
                         style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
@@ -172,7 +179,7 @@ class _AgentDebtDetailScreenState extends ConsumerState<AgentDebtDetailScreen> {
                             ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2.5))
                             : Text(l10n.agentPaySubmit),
                       ),
-                    ] else ...[
+                    ] else if (!d.isOpen) ...[
                       const SizedBox(height: 12),
                       DashCard(child: Center(child: Text(l10n.agentDebtClosed))),
                     ],

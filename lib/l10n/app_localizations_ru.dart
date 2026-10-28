@@ -3380,4 +3380,172 @@ class AppLocalizationsRu extends AppLocalizations {
   String agentAvailableToSend(String amount) {
     return 'Можно отправить: $amount';
   }
+
+  @override
+  String get navLeadAgents => 'Дилеры';
+
+  @override
+  String get ownerLeadNew => 'Новый дилер';
+
+  @override
+  String get ownerLeadEdit => 'Изменить дилера';
+
+  @override
+  String get ownerLeadDeleteTitle => 'Удалить дилера';
+
+  @override
+  String get ownerLeadsEmpty => 'Дилеров пока нет';
+
+  @override
+  String get ownerLeadStoreHint => 'Дилер получает товары этого магазина';
+
+  @override
+  String ownerLeadStaffCount(int count) {
+    return 'Агентов: $count';
+  }
+
+  @override
+  String ownerLeadPendingCount(int count) {
+    return 'Запросов: $count';
+  }
+
+  @override
+  String get ownerLeadOwes => 'Должен мне';
+
+  @override
+  String get ownerLeadStock => 'Товары на руках';
+
+  @override
+  String get ownerLeadStaff => 'Агенты';
+
+  @override
+  String get ownerTeamTitle => 'Продажи команды';
+
+  @override
+  String get ownerGiveProducts => 'Передать товары';
+
+  @override
+  String get ownerTabStock => 'Товары';
+
+  @override
+  String get ownerTabTransfers => 'Передачи';
+
+  @override
+  String get ownerTabCustomerDebts => 'Долги покупателей';
+
+  @override
+  String get ownerStockEmpty => 'У дилера нет товаров';
+
+  @override
+  String get ownerMinPrice => 'Мин. цена';
+
+  @override
+  String get ownerMaxPrice => 'Макс. цена';
+
+  @override
+  String get ownerEditRange => 'Изменить диапазон цен';
+
+  @override
+  String get ownerRangeUpdated => 'Диапазон цен обновлён';
+
+  @override
+  String ownerRangeInvalid(String name) {
+    return '«$name»: мин. цена не должна быть больше макс.';
+  }
+
+  @override
+  String ownerPriceInvalid(String name) {
+    return '«$name»: введите цену';
+  }
+
+  @override
+  String get ownerMinBelowPrice => 'Мин. цена ниже цены, которую должен дилер';
+
+  @override
+  String get ownerConfirm => 'Подтвердить';
+
+  @override
+  String get ownerReject => 'Отклонить';
+
+  @override
+  String get ownerConfirmed => 'Подтверждено';
+
+  @override
+  String get ownerRejected => 'Отклонено';
+
+  @override
+  String get ownerRejectTitle => 'Отклонить запрос';
+
+  @override
+  String get ownerRejectReason => 'Причина (необязательно)';
+
+  @override
+  String get ownerConfirmPaymentTitle => 'Подтвердить оплату';
+
+  @override
+  String ownerConfirmPaymentText(String name, String amount) {
+    return 'Подтверждаете, что $name оплатил $amount? Сумма закроет самые старые долги.';
+  }
+
+  @override
+  String get ownerConfirmReturnTitle => 'Подтвердить возврат';
+
+  @override
+  String get ownerConfirmReturnText =>
+      'Товары вернутся на ваш склад, а долг дилера уменьшится.';
+
+  @override
+  String ownerDebtReduceLine(String amount) {
+    return 'Спишется с долга: $amount';
+  }
+
+  @override
+  String ownerRefundLine(String amount) {
+    return 'Вы вернёте наличными: $amount';
+  }
+
+  @override
+  String get ownerTransferEmpty => 'В этом магазине нет товаров для передачи';
+
+  @override
+  String ownerTransferInStock(String qty) {
+    return 'На складе: $qty';
+  }
+
+  @override
+  String ownerTransferHeld(String qty) {
+    return 'У дилера: $qty';
+  }
+
+  @override
+  String get ownerTransferOneCurrency => 'В одной передаче одна валюта';
+
+  @override
+  String get ownerTransferPicked => 'Выбрано';
+
+  @override
+  String get ownerTransferPaid => 'Оплачено сейчас';
+
+  @override
+  String get ownerTransferPaidTooMuch =>
+      'Оплата не может превышать общую сумму';
+
+  @override
+  String ownerTransferDebtLine(String amount) {
+    return 'Запишется в долг: $amount';
+  }
+
+  @override
+  String ownerTransferSubmit(int count) {
+    return 'Передать ($count)';
+  }
+
+  @override
+  String get ownerTransferDone => 'Товары переданы';
+
+  @override
+  String get ownerTransferPickOne => 'Выберите хотя бы один товар';
+
+  @override
+  String get commonLoadMore => 'Показать ещё';
 }

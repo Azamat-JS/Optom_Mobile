@@ -38,6 +38,7 @@ import 'package:bsmart/features/master_catalog/presentation/screens/master_catal
 import 'package:bsmart/features/platform_dashboard/presentation/screens/super_admin_home_screen.dart';
 import 'package:bsmart/features/platform_users/presentation/screens/platform_users_list_screen.dart';
 import 'package:bsmart/features/courier/presentation/screens/couriers_list_screen.dart';
+import 'package:bsmart/features/agents/presentation/screens/lead_agents_list_screen.dart';
 import 'package:bsmart/features/fleet/presentation/screens/fleet_map_screen.dart';
 import 'package:bsmart/features/restaurant_orders/presentation/screens/courier_home_screen.dart';
 import 'package:bsmart/features/restaurant_orders/presentation/screens/restaurant_orders_board_screen.dart';
@@ -301,6 +302,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.couriers,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const CouriersListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.leadAgents,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const LeadAgentsListScreen()),
       ),
       GoRoute(
         path: RouteNames.fleetMap,

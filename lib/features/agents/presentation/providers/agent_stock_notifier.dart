@@ -23,10 +23,7 @@ class AgentStockNotifier extends AsyncNotifier<AgentStockState> {
 
   Future<AgentStockState> _fetch(String search) async {
     final result = await getIt<ListAgentStockUseCase>().call(search: search);
-    return result.fold(
-      (page) => AgentStockState(items: page.data, search: search),
-      (failure) => throw failure,
-    );
+    return result.fold((page) => AgentStockState(items: page.data, search: search), (failure) => throw failure);
   }
 
   Future<void> search(String text) async {

@@ -93,7 +93,12 @@ class AgentStaffListScreen extends ConsumerWidget {
                         label: agent.isActive ? l10n.commonDeactivate : l10n.commonActivate,
                         destructive: false,
                       ),
-                      (value: 'delete', icon: Icons.delete_outline_rounded, label: l10n.commonDelete, destructive: true),
+                      (
+                        value: 'delete',
+                        icon: Icons.delete_outline_rounded,
+                        label: l10n.commonDelete,
+                        destructive: true,
+                      ),
                     ],
                     onSelected: (action) {
                       switch (action) {
