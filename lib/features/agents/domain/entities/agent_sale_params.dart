@@ -31,19 +31,29 @@ class AgentSaleCustomerParams {
 }
 
 class CreateAgentSaleParams {
-  const CreateAgentSaleParams({required this.lines, required this.paymentType, this.customer, this.notes});
+  const CreateAgentSaleParams({
+    required this.lines,
+    required this.paymentType,
+    this.customer,
+    this.paidAmount,
+    this.notes,
+  });
 
   final List<AgentSaleLineParams> lines;
   final AgentPaymentType paymentType;
 
   /// Required on debt; optional for cash (otherwise the lead agent's walk-in buyer).
   final AgentSaleCustomerParams? customer;
+
+  /// Debt only: cash the buyer pays now; only the rest is owed (same as the owner's POS).
+  final double? paidAmount;
   final String? notes;
 
   Map<String, dynamic> toRequestBody() => {
     'items': [for (final l in lines) l.toJson()],
     'paymentType': paymentType.toWire(),
     if (customer != null) 'customer': customer!.toJson(),
+    if (paymentType == AgentPaymentType.debt && (paidAmount ?? 0) > 0) 'paidAmount': paidAmount,
     if (notes != null && notes!.isNotEmpty) 'notes': notes,
   };
 }

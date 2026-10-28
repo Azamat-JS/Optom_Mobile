@@ -2481,6 +2481,14 @@ on **`/agent`** (`AgentHomeScreen`).
     white cards → grey fill); a stale error in the range dialog.
   - **Not checked:** USD transfers on a device, dark mode, more than 20 rows per tab.
 
+**Agent checkout: partly paid debt (2026-10-28):** with Qarzga, `AgentCheckoutScreen` shows
+"Oldindan to'lov (ixtiyoriy)" plus To'langan / Qarzga qoladi rows (the owner checkout's strings).
+`CreateAgentSaleParams.paidAmount` is sent only for a debt above 0; the server makes it a cash
+payment on the debt (see Optom_Savdo "Agents (Dillers)" → Web "Sotish" page redesign). More than
+the total is refused before sending.
+- Verified: 2 unit tests (98 total), plus a simulator run: staff sale of 12 000 with 5 000 paid,
+  20 000 refused, and the server's debt PARTIAL with 7 000 left and the 5 000 payment.
+
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
 priority) a real-time layer — all as **new NestJS + PostgreSQL infrastructure**, never a

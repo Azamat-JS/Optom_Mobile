@@ -19,7 +19,8 @@ import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// Checkout for an agent sale: quantity and price per line (price within the owner's range,
 /// re-checked by the server), cash or debt, and the buyer — required on debt, where a phone
-/// already on file reuses that customer.
+/// already on file reuses that customer. A debt can be partly paid up front (cash), like the
+/// owner's POS; only the rest is owed.
 class AgentCheckoutScreen extends ConsumerStatefulWidget {
   const AgentCheckoutScreen({super.key});
 
@@ -34,12 +35,13 @@ class _AgentCheckoutScreenState extends ConsumerState<AgentCheckoutScreen> {
   final _lastName = TextEditingController();
   final _phone = TextEditingController(text: '+998');
   final _notes = TextEditingController();
+  final _paid = TextEditingController();
   AgentPaymentType _type = AgentPaymentType.cash;
   bool _busy = false;
 
   @override
   void dispose() {
-    for (final c in [..._qty.values, ..._price.values, _firstName, _lastName, _phone, _notes]) {
+    for (final c in [..._qty.values, ..._price.values, _firstName, _lastName, _phone, _notes, _paid]) {
       c.dispose();
     }
     super.dispose();
@@ -70,6 +72,11 @@ class _AgentCheckoutScreenState extends ConsumerState<AgentCheckoutScreen> {
     final typedCustomer = hasName || phone.replaceAll(RegExp(r'\D'), '').length > 3;
     if (_type == AgentPaymentType.debt && !(hasName && phoneOk)) return _snack(l10n.agentDebtNeedsCustomer);
     if (typedCustomer && !(hasName && phoneOk)) return _snack(l10n.agentPhoneInvalid);
+    final isDebt = _type == AgentPaymentType.debt;
+    final total = lines.fold<double>(0, (s, l) => s + l.total);
+    final paid = _paid.text.trim().isEmpty ? 0.0 : _num(_paid);
+    if (isDebt && (paid == null || paid < 0)) return _snack(l10n.agentPayInvalid);
+    if (isDebt && paid! > total + 0.0005) return _snack(l10n.ownerTransferPaidTooMuch);
 
     setState(() => _busy = true);
     final result = await getIt<CreateAgentSaleUseCase>().call(
@@ -82,6 +89,7 @@ class _AgentCheckoutScreenState extends ConsumerState<AgentCheckoutScreen> {
         customer: hasName && phoneOk
             ? AgentSaleCustomerParams(firstName: _firstName.text.trim(), lastName: _lastName.text.trim(), phone: phone)
             : null,
+        paidAmount: isDebt ? paid : null,
         notes: _notes.text.trim(),
       ),
     );
@@ -116,6 +124,8 @@ class _AgentCheckoutScreenState extends ConsumerState<AgentCheckoutScreen> {
     final currency = lines.first.item.currency;
     final total = lines.fold<double>(0, (s, l) => s + l.total);
     String money(double v) => CurrencyFormatter.format(v, currency);
+    final isDebt = _type == AgentPaymentType.debt;
+    final paidNow = isDebt ? (_num(_paid) ?? 0).clamp(0, total).toDouble() : 0.0;
 
     return DashPage(
       title: l10n.agentCheckoutTitle,
@@ -210,6 +220,18 @@ class _AgentCheckoutScreenState extends ConsumerState<AgentCheckoutScreen> {
               label: (t) => t == AgentPaymentType.cash ? l10n.agentCash : l10n.agentDebt,
               onChanged: (t) => setState(() => _type = t),
             ),
+            if (isDebt) ...[
+              const SizedBox(height: 12),
+              TextField(
+                controller: _paid,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                  labelText: l10n.salesDownPaymentOptional,
+                  prefixIcon: const Icon(Icons.savings_rounded),
+                ),
+                onChanged: (_) => setState(() {}),
+              ),
+            ],
             DashSectionTitle(l10n.agentCustomer),
             Text(
               _type == AgentPaymentType.debt ? l10n.agentReturningDebtorHint : l10n.agentCustomerOptional,
@@ -241,7 +263,19 @@ class _AgentCheckoutScreenState extends ConsumerState<AgentCheckoutScreen> {
             ),
             const SizedBox(height: 16),
             DashCard(
-              child: BillRow(label: l10n.commonTotal, value: money(total), strong: true),
+              child: Column(
+                children: [
+                  if (isDebt) ...[
+                    BillRow(label: l10n.commonPaid, value: money(paidNow), muted: true),
+                    const SizedBox(height: 8),
+                    BillRow(label: l10n.salesDebtLeft, value: money(total - paidNow), muted: true),
+                    const SizedBox(height: 12),
+                    DashedDivider(color: colors.outline),
+                    const SizedBox(height: 12),
+                  ],
+                  BillRow(label: l10n.commonTotal, value: money(total), strong: true),
+                ],
+              ),
             ),
           ],
         ),
