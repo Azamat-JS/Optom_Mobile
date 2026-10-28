@@ -40,6 +40,8 @@ class AppLocalizationsUz extends AppLocalizations {
       'customer': 'Mijoz',
       'waiter': 'Ofitsiant',
       'courier': 'Kuryer',
+      'leadAgent': 'Diller',
+      'agent': 'Agent',
       'other': '',
     });
     return '$_temp0';
@@ -2868,4 +2870,404 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get scannerCameraError =>
       'Kamerani ochib bo\'lmadi. Kameraga ruxsat berilganini tekshiring.';
+
+  @override
+  String get agentTabHome => 'Bosh sahifa';
+
+  @override
+  String get agentTabSell => 'Sotish';
+
+  @override
+  String get agentTabSales => 'Sotuvlar';
+
+  @override
+  String get agentTabDebts => 'Qarzdorlar';
+
+  @override
+  String agentHello(String name) {
+    return 'Salom, $name!';
+  }
+
+  @override
+  String agentLeadOf(String business) {
+    return '$business dilleri';
+  }
+
+  @override
+  String agentStaffOf(String lead) {
+    return '$lead dillerining agenti';
+  }
+
+  @override
+  String get agentTodaySales => 'Bugungi savdo';
+
+  @override
+  String get agentMonthSales => '30 kunlik savdo';
+
+  @override
+  String get agentMyTodaySales => 'Bugungi savdom';
+
+  @override
+  String get agentMyMonthSales => '30 kunlik savdom';
+
+  @override
+  String agentSalesCount(int count) {
+    return '$count ta sotuv';
+  }
+
+  @override
+  String get agentCustomersOwe => 'Mijozlar qarzi';
+
+  @override
+  String get agentMyDebtsGiven => 'Men bergan qarzlar';
+
+  @override
+  String agentOpenDebts(int count) {
+    return '$count ta ochiq qarz';
+  }
+
+  @override
+  String get agentOwedToOwner => 'Biznes egasiga qarzim';
+
+  @override
+  String get agentStockValue => 'Qo\'limdagi tovar';
+
+  @override
+  String get agentProfitTitle => 'Sof foyda';
+
+  @override
+  String get agentProfitToday => 'Bugun';
+
+  @override
+  String get agentProfit7 => '7 kun';
+
+  @override
+  String get agentProfit30 => '30 kun';
+
+  @override
+  String get agentProfitRevenue => 'Sotuv summasi';
+
+  @override
+  String get agentProfitCost => 'Egaga to\'lanadigan narx';
+
+  @override
+  String get agentProfitPending => 'Mijozlar qarzidagi foyda';
+
+  @override
+  String get agentProfitHint =>
+      'Qarzga sotuvlar foydasi mijoz to\'lagach qo\'shiladi';
+
+  @override
+  String get agentShortcutProducts => 'Mahsulotlarim';
+
+  @override
+  String get agentNoStock => 'Hozircha mahsulot yo\'q';
+
+  @override
+  String get agentNoStockHint =>
+      'Biznes egasi mahsulot berganda shu yerda paydo bo\'ladi.';
+
+  @override
+  String agentStockLeft(String qty) {
+    return 'Qoldi: $qty';
+  }
+
+  @override
+  String agentPriceRange(String min, String max) {
+    return '$min – $max';
+  }
+
+  @override
+  String get agentOtherCurrency => 'Bitta sotuvda bitta valyuta bo\'ladi';
+
+  @override
+  String agentCartCount(int count) {
+    return '$count ta mahsulot';
+  }
+
+  @override
+  String get agentCheckout => 'Rasmiylashtirish';
+
+  @override
+  String get agentCheckoutTitle => 'Sotuv';
+
+  @override
+  String get agentQuantity => 'Miqdori';
+
+  @override
+  String get agentPrice => 'Narx';
+
+  @override
+  String agentPriceOutOfRange(String name, String min, String max) {
+    return '«$name»: narx $min – $max oralig\'ida bo\'lsin';
+  }
+
+  @override
+  String agentQtyInvalid(String name) {
+    return '«$name»: miqdorni kiriting';
+  }
+
+  @override
+  String agentQtyTooMuch(String name, String qty) {
+    return '«$name»: faqat $qty bor';
+  }
+
+  @override
+  String get agentCash => 'Naqd';
+
+  @override
+  String get agentDebt => 'Qarzga';
+
+  @override
+  String get agentCustomer => 'Xaridor';
+
+  @override
+  String get agentCustomerName => 'Ismi';
+
+  @override
+  String get agentCustomerLastName => 'Familiyasi (ixtiyoriy)';
+
+  @override
+  String get agentCustomerPhone => 'Telefon raqami';
+
+  @override
+  String get agentCustomerOptional => 'Xaridor ma\'lumotlari ixtiyoriy';
+
+  @override
+  String get agentReturningDebtorHint =>
+      'Raqam avval yozilgan bo\'lsa, qarz o\'sha xaridorga qo\'shiladi';
+
+  @override
+  String get agentDebtNeedsCustomer =>
+      'Qarzga sotish uchun ism va telefon kerak';
+
+  @override
+  String get agentPhoneInvalid => 'Telefon raqami noto\'g\'ri';
+
+  @override
+  String agentSellNow(String total) {
+    return 'Sotish · $total';
+  }
+
+  @override
+  String get agentSold => 'Sotuv saqlandi';
+
+  @override
+  String get agentSalesEmpty => 'Hali sotuv yo\'q';
+
+  @override
+  String agentSaleSeller(String name) {
+    return 'Sotuvchi: $name';
+  }
+
+  @override
+  String agentLineCost(String amount) {
+    return 'Tannarx: $amount';
+  }
+
+  @override
+  String get agentDebtsOpen => 'Ochiq';
+
+  @override
+  String get agentDebtsAll => 'Hammasi';
+
+  @override
+  String get agentDebtsEmpty => 'Qarz yo\'q';
+
+  @override
+  String get agentDebtsTotal => 'Jami qarz';
+
+  @override
+  String get agentDebtOriginal => 'Qarz summasi';
+
+  @override
+  String get agentDebtPaid => 'To\'langan';
+
+  @override
+  String get agentDebtBalance => 'Qoldiq';
+
+  @override
+  String get agentPayTitle => 'To\'lov qabul qilish';
+
+  @override
+  String get agentPayFull => 'To\'liq';
+
+  @override
+  String get agentPaySubmit => 'Qabul qilish';
+
+  @override
+  String get agentPaid => 'To\'lov qabul qilindi';
+
+  @override
+  String get agentPayInvalid => 'Summani kiriting';
+
+  @override
+  String get agentPayTooMuch => 'Summa qarz qoldig\'idan oshmasin';
+
+  @override
+  String get agentPaymentsHistory => 'To\'lovlar tarixi';
+
+  @override
+  String get agentNoPayments => 'Hali to\'lov yo\'q';
+
+  @override
+  String get agentDebtClosed => 'Qarz yopilgan';
+
+  @override
+  String get agentAccountTitle => 'Hisob-kitob';
+
+  @override
+  String agentAccountWith(String owner) {
+    return '$owner bilan hisob';
+  }
+
+  @override
+  String get agentMyDebt => 'Qarzim';
+
+  @override
+  String get agentNothingOwed => 'Qarzingiz yo\'q';
+
+  @override
+  String get agentPendingPayments => 'Kutilayotgan to\'lovlar';
+
+  @override
+  String get agentPendingReturns => 'Kutilayotgan qaytarishlar';
+
+  @override
+  String get agentSendPayment => 'To\'lov yuborish';
+
+  @override
+  String get agentSendPaymentHint =>
+      'Biznes egasiga bergan pulingizni yozing. U tasdiqlagach qarzingiz kamayadi.';
+
+  @override
+  String get agentPaymentSent => 'To\'lov so\'rovi yuborildi';
+
+  @override
+  String get agentReturnGoods => 'Mahsulot qaytarish';
+
+  @override
+  String get agentReturnHint =>
+      'Qaytariladigan miqdorni kiriting. Mahsulotlar darhol zaxirangizdan ayriladi; biznes egasi tasdiqlagach qarzingiz kamayadi, rad etsa qaytib keladi.';
+
+  @override
+  String agentReturnSend(int count) {
+    return 'Qaytarish ($count)';
+  }
+
+  @override
+  String get agentReturnSent => 'Qaytarish so\'rovi yuborildi';
+
+  @override
+  String get agentReturnPickOne => 'Kamida bitta mahsulot miqdorini kiriting';
+
+  @override
+  String get agentTabPayments => 'To\'lovlar';
+
+  @override
+  String get agentTabReturns => 'Qaytarishlar';
+
+  @override
+  String get agentStatusPending => 'Kutilmoqda';
+
+  @override
+  String get agentStatusConfirmed => 'Tasdiqlangan';
+
+  @override
+  String get agentStatusRejected => 'Rad etilgan';
+
+  @override
+  String get agentStatusCancelled => 'Bekor qilingan';
+
+  @override
+  String get agentCancelRequest => 'Bekor qilish';
+
+  @override
+  String get agentCancelRequestConfirm => 'So\'rov bekor qilinsinmi?';
+
+  @override
+  String get agentRequestCancelled => 'So\'rov bekor qilindi';
+
+  @override
+  String get agentPaymentsEmpty => 'Hali to\'lov so\'rovi yo\'q';
+
+  @override
+  String get agentReturnsEmpty => 'Hali qaytarish yo\'q';
+
+  @override
+  String get agentReturnValue => 'Qiymati';
+
+  @override
+  String get agentRefund => 'Naqd qaytarildi';
+
+  @override
+  String agentReturnFromTransfer(String number) {
+    return 'O\'tkazma $number';
+  }
+
+  @override
+  String get agentTransfersTitle => 'Kirimlar';
+
+  @override
+  String get agentTransfersEmpty => 'Hali kirim yo\'q';
+
+  @override
+  String agentTransferPaid(String amount) {
+    return 'To\'langan: $amount';
+  }
+
+  @override
+  String agentTransferDebt(String amount) {
+    return 'Qarz: $amount';
+  }
+
+  @override
+  String agentTransferLineQty(String given, String left) {
+    return 'Berildi $given · qoldi $left';
+  }
+
+  @override
+  String agentTransferReturned(String qty) {
+    return 'Qaytarildi $qty';
+  }
+
+  @override
+  String agentTransferOwed(String price) {
+    return 'Narxi $price';
+  }
+
+  @override
+  String agentTransferRange(String range) {
+    return 'Sotish: $range';
+  }
+
+  @override
+  String agentTransferGivenBy(String name) {
+    return 'Bergan: $name';
+  }
+
+  @override
+  String get agentStaffTitle => 'Agentlar';
+
+  @override
+  String get agentStaffEmpty => 'Hali agent yo\'q';
+
+  @override
+  String get agentStaffNew => 'Yangi agent';
+
+  @override
+  String get agentStaffEdit => 'Agentni tahrirlash';
+
+  @override
+  String get agentStaffDeleteTitle => 'Agentni o\'chirish';
+
+  @override
+  String agentRejectReason(String reason) {
+    return 'Sabab: $reason';
+  }
+
+  @override
+  String agentAvailableToSend(String amount) {
+    return 'Yuborish mumkin: $amount';
+  }
 }

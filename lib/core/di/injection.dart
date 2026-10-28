@@ -100,6 +100,36 @@ import 'package:bsmart/features/restaurant_staff/domain/usecases/delete_waiter_u
 import 'package:bsmart/features/restaurant_staff/domain/usecases/list_waiters_usecase.dart';
 import 'package:bsmart/features/restaurant_staff/domain/usecases/set_waiter_active_usecase.dart';
 import 'package:bsmart/features/restaurant_staff/domain/usecases/update_waiter_usecase.dart';
+import 'package:bsmart/features/agents/data/datasources/agents_remote_data_source.dart';
+import 'package:bsmart/features/agents/data/repositories/agents_repository_impl.dart';
+import 'package:bsmart/features/agents/domain/repositories/agents_repository.dart';
+import 'package:bsmart/features/agents/data/datasources/lead_agent_remote_data_source.dart';
+import 'package:bsmart/features/agents/data/repositories/lead_agent_repository_impl.dart';
+import 'package:bsmart/features/agents/domain/repositories/lead_agent_repository.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_lead_account_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_payment_requests_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/send_payment_request_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/cancel_payment_request_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_agent_returns_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_agent_return_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/send_agent_return_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/cancel_agent_return_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_received_transfers_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_received_transfer_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_agent_staff_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/create_agent_staff_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/update_agent_staff_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/set_agent_staff_active_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/delete_agent_staff_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_agent_stock_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/create_agent_sale_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_agent_sales_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_agent_sale_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/list_agent_debts_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_agent_debt_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/pay_agent_debt_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_agent_summary_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/get_agent_profit_usecase.dart';
 import 'package:bsmart/features/courier/data/datasources/courier_remote_data_source.dart';
 import 'package:bsmart/features/courier/data/repositories/courier_repository_impl.dart';
 import 'package:bsmart/features/courier/domain/repositories/courier_repository.dart';
@@ -358,6 +388,37 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => UpdateWaiterUseCase(getIt()));
   getIt.registerFactory(() => SetWaiterActiveUseCase(getIt()));
   getIt.registerFactory(() => DeleteWaiterUseCase(getIt()));
+
+  // --- features/agents (lead and staff agents' own screens — Optom_Savdo "Agents (Dillers)") ---
+  getIt.registerLazySingleton(() => AgentsRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<AgentsRepository>(() => AgentsRepositoryImpl(getIt()));
+  getIt.registerFactory(() => ListAgentStockUseCase(getIt()));
+  getIt.registerFactory(() => CreateAgentSaleUseCase(getIt()));
+  getIt.registerFactory(() => ListAgentSalesUseCase(getIt()));
+  getIt.registerFactory(() => GetAgentSaleUseCase(getIt()));
+  getIt.registerFactory(() => ListAgentDebtsUseCase(getIt()));
+  getIt.registerFactory(() => GetAgentDebtUseCase(getIt()));
+  getIt.registerFactory(() => PayAgentDebtUseCase(getIt()));
+  getIt.registerFactory(() => GetAgentSummaryUseCase(getIt()));
+  getIt.registerFactory(() => GetAgentProfitUseCase(getIt()));
+  // Lead agent's management screens (A7b): account with the owner, transfers, staff agents.
+  getIt.registerLazySingleton(() => LeadAgentRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<LeadAgentRepository>(() => LeadAgentRepositoryImpl(getIt()));
+  getIt.registerFactory(() => GetLeadAccountUseCase(getIt()));
+  getIt.registerFactory(() => ListPaymentRequestsUseCase(getIt()));
+  getIt.registerFactory(() => SendPaymentRequestUseCase(getIt()));
+  getIt.registerFactory(() => CancelPaymentRequestUseCase(getIt()));
+  getIt.registerFactory(() => ListAgentReturnsUseCase(getIt()));
+  getIt.registerFactory(() => GetAgentReturnUseCase(getIt()));
+  getIt.registerFactory(() => SendAgentReturnUseCase(getIt()));
+  getIt.registerFactory(() => CancelAgentReturnUseCase(getIt()));
+  getIt.registerFactory(() => ListReceivedTransfersUseCase(getIt()));
+  getIt.registerFactory(() => GetReceivedTransferUseCase(getIt()));
+  getIt.registerFactory(() => ListAgentStaffUseCase(getIt()));
+  getIt.registerFactory(() => CreateAgentStaffUseCase(getIt()));
+  getIt.registerFactory(() => UpdateAgentStaffUseCase(getIt()));
+  getIt.registerFactory(() => SetAgentStaffActiveUseCase(getIt()));
+  getIt.registerFactory(() => DeleteAgentStaffUseCase(getIt()));
 
   // --- features/courier (Phase 4, Courier accounts) ---
   getIt.registerLazySingleton(() => CourierRemoteDataSource(mainDio));

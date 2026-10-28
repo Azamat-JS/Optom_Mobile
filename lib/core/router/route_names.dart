@@ -14,6 +14,9 @@ abstract final class RouteNames {
       Uri(path: telegramVerify, queryParameters: {'phone': phone}).toString();
   static const home = '/home';
 
+  /// Lead and staff agents' shell (home, sell, sales, debtors) — see "Agents" in CLAUDE.md.
+  static const agentHome = '/agent';
+
   /// App settings (language, logout) — guest-eligible.
   static const settings = '/settings';
 

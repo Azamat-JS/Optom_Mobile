@@ -13,7 +13,13 @@ enum UserRole {
   retailerAdmin,
   customer,
   waiter,
-  courier;
+  courier,
+
+  /// Agents (Optom_Savdo CLAUDE.md "Agents (Dillers)"): a lead agent (diller) is created by a
+  /// SELLER/RETAILER owner and runs its own ledger; a staff agent is created by a lead agent and
+  /// sells from the lead agent's stock. Both land on `/agent`.
+  leadAgent,
+  agent;
 
   static UserRole fromWire(String value) => switch (value) {
         'SUPER_ADMIN' => UserRole.superAdmin,
@@ -24,6 +30,8 @@ enum UserRole {
         'CUSTOMER' => UserRole.customer,
         'WAITER' => UserRole.waiter,
         'COURIER' => UserRole.courier,
+        'LEAD_AGENT' => UserRole.leadAgent,
+        'AGENT' => UserRole.agent,
         _ => throw ArgumentError('Unknown UserRole from backend: $value'),
       };
 
@@ -36,11 +44,14 @@ enum UserRole {
         UserRole.customer => 'CUSTOMER',
         UserRole.waiter => 'WAITER',
         UserRole.courier => 'COURIER',
+        UserRole.leadAgent => 'LEAD_AGENT',
+        UserRole.agent => 'AGENT',
       };
 
   bool get isSellerFamily => this == UserRole.seller || this == UserRole.sellerAdmin;
   bool get isRetailerFamily => this == UserRole.retailer || this == UserRole.retailerAdmin;
   bool get isStaff => this == UserRole.sellerAdmin || this == UserRole.retailerAdmin;
+  bool get isAgent => this == UserRole.leadAgent || this == UserRole.agent;
 
   /// Display label in the active UI language — used by the SUPER_ADMIN user-management screens
   /// (Phase 3), which are the first place this app shows a raw role list to

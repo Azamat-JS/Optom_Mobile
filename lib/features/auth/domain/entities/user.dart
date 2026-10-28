@@ -4,11 +4,14 @@ import 'package:bsmart/core/enums/user_role.dart';
 /// A lightweight reference to an owner, as returned nested on a staff
 /// account's profile (`managedUser` in the backend's `getMe()`/login response).
 class OwnerRef {
-  const OwnerRef({required this.id, required this.firstName, required this.lastName});
+  const OwnerRef({required this.id, required this.firstName, required this.lastName, this.shopName});
 
   final String id;
   final String firstName;
   final String lastName;
+
+  /// Only on [User.agentOwner] — the business name a lead agent works for.
+  final String? shopName;
 
   String get fullName => '$firstName $lastName';
 }
@@ -35,6 +38,7 @@ class User {
     this.managedUserId,
     this.isActive,
     this.owner,
+    this.agentOwner,
     this.phoneVerified = false,
   });
 
@@ -60,8 +64,12 @@ class User {
   final String? managedUserId;
   final bool? isActive;
 
-  /// Non-null for `_ADMIN`/`WAITER`/`COURIER` — their owner's basic info.
+  /// Non-null for `_ADMIN`/`WAITER`/`COURIER` — their owner's basic info. For a staff agent it's
+  /// its lead agent.
   final OwnerRef? owner;
+
+  /// Lead agent only (`GET /auth/me`): the business owner it works for.
+  final OwnerRef? agentOwner;
 
   /// Phase 6: the phone was proven via Telegram. Phone-matched features
   /// (restaurant deliveries staff entered for this number, debts) only work

@@ -145,7 +145,7 @@ abstract class AppLocalizations {
   /// Display name of a user role (UserRole enum name).
   ///
   /// In uz, this message translates to:
-  /// **'{role, select, superAdmin{Super Admin} seller{Optomchi} sellerAdmin{Optomchi xodimi} retailer{Do\'konchi} retailerAdmin{Do\'konchi xodimi} customer{Mijoz} waiter{Ofitsiant} courier{Kuryer} other{}}'**
+  /// **'{role, select, superAdmin{Super Admin} seller{Optomchi} sellerAdmin{Optomchi xodimi} retailer{Do\'konchi} retailerAdmin{Do\'konchi xodimi} customer{Mijoz} waiter{Ofitsiant} courier{Kuryer} leadAgent{Diller} agent{Agent} other{}}'**
   String roleLabel(String role);
 
   /// No description provided for @languageTitle.
@@ -4959,6 +4959,690 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Kamerani ochib bo\'lmadi. Kameraga ruxsat berilganini tekshiring.'**
   String get scannerCameraError;
+
+  /// No description provided for @agentTabHome.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bosh sahifa'**
+  String get agentTabHome;
+
+  /// No description provided for @agentTabSell.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotish'**
+  String get agentTabSell;
+
+  /// No description provided for @agentTabSales.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotuvlar'**
+  String get agentTabSales;
+
+  /// No description provided for @agentTabDebts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzdorlar'**
+  String get agentTabDebts;
+
+  /// No description provided for @agentHello.
+  ///
+  /// In uz, this message translates to:
+  /// **'Salom, {name}!'**
+  String agentHello(String name);
+
+  /// No description provided for @agentLeadOf.
+  ///
+  /// In uz, this message translates to:
+  /// **'{business} dilleri'**
+  String agentLeadOf(String business);
+
+  /// No description provided for @agentStaffOf.
+  ///
+  /// In uz, this message translates to:
+  /// **'{lead} dillerining agenti'**
+  String agentStaffOf(String lead);
+
+  /// No description provided for @agentTodaySales.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bugungi savdo'**
+  String get agentTodaySales;
+
+  /// No description provided for @agentMonthSales.
+  ///
+  /// In uz, this message translates to:
+  /// **'30 kunlik savdo'**
+  String get agentMonthSales;
+
+  /// No description provided for @agentMyTodaySales.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bugungi savdom'**
+  String get agentMyTodaySales;
+
+  /// No description provided for @agentMyMonthSales.
+  ///
+  /// In uz, this message translates to:
+  /// **'30 kunlik savdom'**
+  String get agentMyMonthSales;
+
+  /// No description provided for @agentSalesCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta sotuv'**
+  String agentSalesCount(int count);
+
+  /// No description provided for @agentCustomersOwe.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozlar qarzi'**
+  String get agentCustomersOwe;
+
+  /// No description provided for @agentMyDebtsGiven.
+  ///
+  /// In uz, this message translates to:
+  /// **'Men bergan qarzlar'**
+  String get agentMyDebtsGiven;
+
+  /// No description provided for @agentOpenDebts.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta ochiq qarz'**
+  String agentOpenDebts(int count);
+
+  /// No description provided for @agentOwedToOwner.
+  ///
+  /// In uz, this message translates to:
+  /// **'Biznes egasiga qarzim'**
+  String get agentOwedToOwner;
+
+  /// No description provided for @agentStockValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'limdagi tovar'**
+  String get agentStockValue;
+
+  /// No description provided for @agentProfitTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sof foyda'**
+  String get agentProfitTitle;
+
+  /// No description provided for @agentProfitToday.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bugun'**
+  String get agentProfitToday;
+
+  /// No description provided for @agentProfit7.
+  ///
+  /// In uz, this message translates to:
+  /// **'7 kun'**
+  String get agentProfit7;
+
+  /// No description provided for @agentProfit30.
+  ///
+  /// In uz, this message translates to:
+  /// **'30 kun'**
+  String get agentProfit30;
+
+  /// No description provided for @agentProfitRevenue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotuv summasi'**
+  String get agentProfitRevenue;
+
+  /// No description provided for @agentProfitCost.
+  ///
+  /// In uz, this message translates to:
+  /// **'Egaga to\'lanadigan narx'**
+  String get agentProfitCost;
+
+  /// No description provided for @agentProfitPending.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozlar qarzidagi foyda'**
+  String get agentProfitPending;
+
+  /// No description provided for @agentProfitHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzga sotuvlar foydasi mijoz to\'lagach qo\'shiladi'**
+  String get agentProfitHint;
+
+  /// No description provided for @agentShortcutProducts.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlarim'**
+  String get agentShortcutProducts;
+
+  /// No description provided for @agentNoStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha mahsulot yo\'q'**
+  String get agentNoStock;
+
+  /// No description provided for @agentNoStockHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Biznes egasi mahsulot berganda shu yerda paydo bo\'ladi.'**
+  String get agentNoStockHint;
+
+  /// No description provided for @agentStockLeft.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldi: {qty}'**
+  String agentStockLeft(String qty);
+
+  /// No description provided for @agentPriceRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'{min} – {max}'**
+  String agentPriceRange(String min, String max);
+
+  /// No description provided for @agentOtherCurrency.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bitta sotuvda bitta valyuta bo\'ladi'**
+  String get agentOtherCurrency;
+
+  /// No description provided for @agentCartCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta mahsulot'**
+  String agentCartCount(int count);
+
+  /// No description provided for @agentCheckout.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rasmiylashtirish'**
+  String get agentCheckout;
+
+  /// No description provided for @agentCheckoutTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotuv'**
+  String get agentCheckoutTitle;
+
+  /// No description provided for @agentQuantity.
+  ///
+  /// In uz, this message translates to:
+  /// **'Miqdori'**
+  String get agentQuantity;
+
+  /// No description provided for @agentPrice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx'**
+  String get agentPrice;
+
+  /// No description provided for @agentPriceOutOfRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'«{name}»: narx {min} – {max} oralig\'ida bo\'lsin'**
+  String agentPriceOutOfRange(String name, String min, String max);
+
+  /// No description provided for @agentQtyInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'«{name}»: miqdorni kiriting'**
+  String agentQtyInvalid(String name);
+
+  /// No description provided for @agentQtyTooMuch.
+  ///
+  /// In uz, this message translates to:
+  /// **'«{name}»: faqat {qty} bor'**
+  String agentQtyTooMuch(String name, String qty);
+
+  /// No description provided for @agentCash.
+  ///
+  /// In uz, this message translates to:
+  /// **'Naqd'**
+  String get agentCash;
+
+  /// No description provided for @agentDebt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzga'**
+  String get agentDebt;
+
+  /// No description provided for @agentCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xaridor'**
+  String get agentCustomer;
+
+  /// No description provided for @agentCustomerName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ismi'**
+  String get agentCustomerName;
+
+  /// No description provided for @agentCustomerLastName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Familiyasi (ixtiyoriy)'**
+  String get agentCustomerLastName;
+
+  /// No description provided for @agentCustomerPhone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon raqami'**
+  String get agentCustomerPhone;
+
+  /// No description provided for @agentCustomerOptional.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xaridor ma\'lumotlari ixtiyoriy'**
+  String get agentCustomerOptional;
+
+  /// No description provided for @agentReturningDebtorHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Raqam avval yozilgan bo\'lsa, qarz o\'sha xaridorga qo\'shiladi'**
+  String get agentReturningDebtorHint;
+
+  /// No description provided for @agentDebtNeedsCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzga sotish uchun ism va telefon kerak'**
+  String get agentDebtNeedsCustomer;
+
+  /// No description provided for @agentPhoneInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon raqami noto\'g\'ri'**
+  String get agentPhoneInvalid;
+
+  /// No description provided for @agentSellNow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotish · {total}'**
+  String agentSellNow(String total);
+
+  /// No description provided for @agentSold.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotuv saqlandi'**
+  String get agentSold;
+
+  /// No description provided for @agentSalesEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali sotuv yo\'q'**
+  String get agentSalesEmpty;
+
+  /// No description provided for @agentSaleSeller.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotuvchi: {name}'**
+  String agentSaleSeller(String name);
+
+  /// No description provided for @agentLineCost.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tannarx: {amount}'**
+  String agentLineCost(String amount);
+
+  /// No description provided for @agentDebtsOpen.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ochiq'**
+  String get agentDebtsOpen;
+
+  /// No description provided for @agentDebtsAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hammasi'**
+  String get agentDebtsAll;
+
+  /// No description provided for @agentDebtsEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarz yo\'q'**
+  String get agentDebtsEmpty;
+
+  /// No description provided for @agentDebtsTotal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami qarz'**
+  String get agentDebtsTotal;
+
+  /// No description provided for @agentDebtOriginal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarz summasi'**
+  String get agentDebtOriginal;
+
+  /// No description provided for @agentDebtPaid.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'langan'**
+  String get agentDebtPaid;
+
+  /// No description provided for @agentDebtBalance.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldiq'**
+  String get agentDebtBalance;
+
+  /// No description provided for @agentPayTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov qabul qilish'**
+  String get agentPayTitle;
+
+  /// No description provided for @agentPayFull.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'liq'**
+  String get agentPayFull;
+
+  /// No description provided for @agentPaySubmit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qabul qilish'**
+  String get agentPaySubmit;
+
+  /// No description provided for @agentPaid.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov qabul qilindi'**
+  String get agentPaid;
+
+  /// No description provided for @agentPayInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summani kiriting'**
+  String get agentPayInvalid;
+
+  /// No description provided for @agentPayTooMuch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summa qarz qoldig\'idan oshmasin'**
+  String get agentPayTooMuch;
+
+  /// No description provided for @agentPaymentsHistory.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lovlar tarixi'**
+  String get agentPaymentsHistory;
+
+  /// No description provided for @agentNoPayments.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali to\'lov yo\'q'**
+  String get agentNoPayments;
+
+  /// No description provided for @agentDebtClosed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarz yopilgan'**
+  String get agentDebtClosed;
+
+  /// No description provided for @agentAccountTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisob-kitob'**
+  String get agentAccountTitle;
+
+  /// No description provided for @agentAccountWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'{owner} bilan hisob'**
+  String agentAccountWith(String owner);
+
+  /// No description provided for @agentMyDebt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzim'**
+  String get agentMyDebt;
+
+  /// No description provided for @agentNothingOwed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzingiz yo\'q'**
+  String get agentNothingOwed;
+
+  /// No description provided for @agentPendingPayments.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kutilayotgan to\'lovlar'**
+  String get agentPendingPayments;
+
+  /// No description provided for @agentPendingReturns.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kutilayotgan qaytarishlar'**
+  String get agentPendingReturns;
+
+  /// No description provided for @agentSendPayment.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov yuborish'**
+  String get agentSendPayment;
+
+  /// No description provided for @agentSendPaymentHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Biznes egasiga bergan pulingizni yozing. U tasdiqlagach qarzingiz kamayadi.'**
+  String get agentSendPaymentHint;
+
+  /// No description provided for @agentPaymentSent.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov so\'rovi yuborildi'**
+  String get agentPaymentSent;
+
+  /// No description provided for @agentReturnGoods.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulot qaytarish'**
+  String get agentReturnGoods;
+
+  /// No description provided for @agentReturnHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytariladigan miqdorni kiriting. Mahsulotlar darhol zaxirangizdan ayriladi; biznes egasi tasdiqlagach qarzingiz kamayadi, rad etsa qaytib keladi.'**
+  String get agentReturnHint;
+
+  /// No description provided for @agentReturnSend.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytarish ({count})'**
+  String agentReturnSend(int count);
+
+  /// No description provided for @agentReturnSent.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytarish so\'rovi yuborildi'**
+  String get agentReturnSent;
+
+  /// No description provided for @agentReturnPickOne.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kamida bitta mahsulot miqdorini kiriting'**
+  String get agentReturnPickOne;
+
+  /// No description provided for @agentTabPayments.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lovlar'**
+  String get agentTabPayments;
+
+  /// No description provided for @agentTabReturns.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytarishlar'**
+  String get agentTabReturns;
+
+  /// No description provided for @agentStatusPending.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kutilmoqda'**
+  String get agentStatusPending;
+
+  /// No description provided for @agentStatusConfirmed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlangan'**
+  String get agentStatusConfirmed;
+
+  /// No description provided for @agentStatusRejected.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etilgan'**
+  String get agentStatusRejected;
+
+  /// No description provided for @agentStatusCancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilingan'**
+  String get agentStatusCancelled;
+
+  /// No description provided for @agentCancelRequest.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilish'**
+  String get agentCancelRequest;
+
+  /// No description provided for @agentCancelRequestConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov bekor qilinsinmi?'**
+  String get agentCancelRequestConfirm;
+
+  /// No description provided for @agentRequestCancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov bekor qilindi'**
+  String get agentRequestCancelled;
+
+  /// No description provided for @agentPaymentsEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali to\'lov so\'rovi yo\'q'**
+  String get agentPaymentsEmpty;
+
+  /// No description provided for @agentReturnsEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali qaytarish yo\'q'**
+  String get agentReturnsEmpty;
+
+  /// No description provided for @agentReturnValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qiymati'**
+  String get agentReturnValue;
+
+  /// No description provided for @agentRefund.
+  ///
+  /// In uz, this message translates to:
+  /// **'Naqd qaytarildi'**
+  String get agentRefund;
+
+  /// No description provided for @agentReturnFromTransfer.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'tkazma {number}'**
+  String agentReturnFromTransfer(String number);
+
+  /// No description provided for @agentTransfersTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kirimlar'**
+  String get agentTransfersTitle;
+
+  /// No description provided for @agentTransfersEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali kirim yo\'q'**
+  String get agentTransfersEmpty;
+
+  /// No description provided for @agentTransferPaid.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'langan: {amount}'**
+  String agentTransferPaid(String amount);
+
+  /// No description provided for @agentTransferDebt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarz: {amount}'**
+  String agentTransferDebt(String amount);
+
+  /// No description provided for @agentTransferLineQty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Berildi {given} · qoldi {left}'**
+  String agentTransferLineQty(String given, String left);
+
+  /// No description provided for @agentTransferReturned.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytarildi {qty}'**
+  String agentTransferReturned(String qty);
+
+  /// No description provided for @agentTransferOwed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narxi {price}'**
+  String agentTransferOwed(String price);
+
+  /// No description provided for @agentTransferRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotish: {range}'**
+  String agentTransferRange(String range);
+
+  /// No description provided for @agentTransferGivenBy.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bergan: {name}'**
+  String agentTransferGivenBy(String name);
+
+  /// No description provided for @agentStaffTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Agentlar'**
+  String get agentStaffTitle;
+
+  /// No description provided for @agentStaffEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali agent yo\'q'**
+  String get agentStaffEmpty;
+
+  /// No description provided for @agentStaffNew.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi agent'**
+  String get agentStaffNew;
+
+  /// No description provided for @agentStaffEdit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Agentni tahrirlash'**
+  String get agentStaffEdit;
+
+  /// No description provided for @agentStaffDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Agentni o\'chirish'**
+  String get agentStaffDeleteTitle;
+
+  /// No description provided for @agentRejectReason.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab: {reason}'**
+  String agentRejectReason(String reason);
+
+  /// No description provided for @agentAvailableToSend.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yuborish mumkin: {amount}'**
+  String agentAvailableToSend(String amount);
 }
 
 class _AppLocalizationsDelegate

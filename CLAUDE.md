@@ -334,6 +334,17 @@ features/
                      Phase 9 U4c7c the drill-downs (Foydalanuvchilar/Kategoriyalar/Katalog
                      nazorati) are a visible "Bo'limlar" grid like `HomeScreen`'s
 
+  agents/              → Phase 10: lead/staff agents (dillers) — see "Phase 10" below
+    data/{datasources,models,repositories}/   → one AgentsRepository over /agent/* (A7a)
+    domain/{entities,repositories,usecases}/  → AgentStockItem, AgentSale(+Detail), AgentDebt(+Detail),
+                                                 AgentSummary/AgentProfit, CreateAgentSaleParams
+    presentation/
+      providers/   → agentSummary/agentProfile/agentProfit providers, AgentStockNotifier,
+                     AgentCartNotifier (one currency per sale), AgentSalesList/AgentDebtsList
+                     notifiers (paginated)
+      screens/     → AgentHomeScreen (tab shell: home, sell, sales, debtors), the four tabs,
+                     AgentCheckoutScreen, AgentSaleDetailScreen, AgentDebtDetailScreen
+
 shared/widgets/
   barcode_scanner_screen.dart   → full-screen mobile_scanner camera view, reused by products now and POS later
 ```
@@ -2291,6 +2302,121 @@ already done in U1/U3c).
   through a `ProviderScope` override and opened the form with a sample entry. Approve/reject/save
   against the API, and image upload, were not exercised. Also not checked: Russian/English lengths.
   These screens still carry hard-coded Uzbek (Phase 8 I8); no new strings were added.
+
+### Phase 10 — Agents / dillers (mobile; backend + web done in Optom_Savdo A1–A6)
+Optom_Savdo CLAUDE.md "Agents (Dillers)" is the authoritative design (roles, ledger, transfers,
+min–max prices, returns, payment requests, reports). Two new roles: `LEAD_AGENT` (created by a
+SELLER/RETAILER owner, its own ledger — `tenantId` = its own id, linked to the owner by
+`agentOwnerId`) and `AGENT` (created by a lead agent, `managedUserId` = the lead agent). Both land
+on **`/agent`** (`AgentHomeScreen`).
+
+| # | Scope | Status |
+|---|---|---|
+| A7a | Roles + routing; agent shell: home dashboard (summary, lead agent's net profit), Sell (shared stock, min–max range, cart, checkout cash/debt), Sales + detail, Debtors + detail + customer payments | 🟢 Done 2026-10-28 |
+| A7b | Lead agent's management: account with the owner (send payment, return goods, their status), received transfers, staff agents CRUD | 🟢 Done 2026-10-28 |
+| A7c | Owner side: lead agents list/CRUD, give products (transfer), stock + range edit, confirm/reject payments and returns, read-only team sales/debts | ⏳ |
+
+**A7a notes (2026-10-28):**
+- **Roles:** `UserRole.leadAgent`/`.agent` (`LEAD_AGENT`/`AGENT`) + `isAgent`; `roleLabel` select
+  gained `leadAgent`/`agent`. Before this, `UserRole.fromWire` threw on these roles, so an agent
+  couldn't log in at all. (`KITCHEN` is still missing on mobile and still throws — out of scope.)
+  `_homeFor` sends both agent roles to `RouteNames.agentHome` (`/agent`).
+- **`User.agentOwner`** (`OwnerRef` gained an optional `shopName`): the lead agent's business,
+  from `/auth/me` only (the login response doesn't carry it) — so `agentProfileProvider` fetches
+  `/auth/me` itself instead of relying on the session's user.
+- **Shell:** `DashPage` + `StorefrontBottomNav` like `WaiterHomeScreen` (Bosh sahifa / Sotish /
+  Sotuvlar / Qarzdorlar), settings + logout round buttons.
+  - **Home:** profile card ("Diller · Baraka Savdo dilleri" / "Agent · X dillerining agenti"),
+    the shared `CurrencyToggle`, `StatTile`s (today / 30 days / customers owe; lead also owes the
+    owner and stock value). Lead agents also get a profit card (`/agent/profit`, today / 7 / 30
+    days): net profit, sales, cost (= what it owes the owner for those units), pending profit in
+    customer debts, own debt to the owner (shown, not subtracted). Staff agents get 403 there and
+    never ask.
+  - **Sell:** `/agent/stock` (in stock only, one page of 60 with debounced search) as cards with
+    stock and the range; tap toggles the cart (one currency per sale, `AgentCartNotifier`), dark
+    `DashCartBar` → `AgentCheckoutScreen`: quantity + price per line (starts at the top of the
+    range; out-of-range price turns the range line red and is refused before sending), cash/debt
+    `PillToggle`, buyer name/last name/phone (required on debt; optional on cash, else the lead
+    agent's walk-in buyer), note, sticky "Sotish · total". On success every agent provider
+    refreshes (stock, sales, debts, summary, profit).
+  - **Sales / Debtors:** paginated lists (`loadMore` on scroll), search; a lead agent sees
+    "Sotuvchi: …" on each row. Sale detail shows the lead agent's cost per line (the API strips it
+    for staff). Debt detail: balance card, payment with a "To'liq" fill button (guarded
+    server-side), payment history.
+- New ARB keys `agent*` (70+, uz/ru/en); English counts use ICU plurals (int placeholders).
+- **Verified:** `flutter analyze` clean, **87 unit tests** (11 new: agent model parsing with the
+  backend's decimal strings, the cart's currency guard and line updates, `agentQty`, the agent
+  roles). A temporary on-device integration test (deleted) on the iPhone 17 simulator against the
+  local backend with a host seed script (owner + 2 products, lead + staff agent, a transfer on
+  debt, a staff cash sale and a staff debt sale — all deleted afterwards), logging in by saving
+  API tokens before `bootstrap()`:
+  - Lead agent (uz): home figures exactly as seeded (today 5 100 from 2 sales, customers owe
+    2 500, owes the owner 20 000, holds 16 000, net profit 600 with 500 pending), the "dilleri"
+    line from `/auth/me`; Sell → out-of-range price refused → debt sale to a new buyer saved,
+    stock 8 → 7; Sales shows the staff agent's sales with the seller, the detail shows the cost;
+    Debtors → part payment 400 (1 400 → 1 000) with its history.
+  - Staff agent (ru and en): own figures only, no profit card or owner-debt tile; sales and
+    debtors list only its own (the lead agent's sale/debtor absent); sale detail without cost.
+  - Fixed during the runs: the price range under the half-width price field was cut off (moved to
+    its own full-width line), the "Qo'limdagi mahsulotlar" and Russian "Мои продажи за 30 дней"
+    tile labels were truncated (shortened), the "To'liq" button was shorter than the field next to
+    it, English "1 sales"/"1 open debts" (plurals).
+  - **Not checked:** dark mode, a USD-only cart, staff agents' "load more" with >20 rows.
+
+**A7b notes (2026-10-28):**
+- **Entry point:** a lead-only "Bo'limlar" row of `ShortcutTile`s on the agent home (Hisob-kitob,
+  Kirimlar, Agentlar). The Hisob-kitob tile turns yellow while a payment or return is waiting for
+  the owner. Staff agents don't get the row, and the server 403s them on all of these endpoints.
+- **Data layer:** `LeadAgentRepository` (+ remote data source, 15 use cases,
+  `lead_agent_models.dart`) over `/agent/account`, `/agent-payments`, `/agent-returns`,
+  `/agent-transfers`, `/agent-staff`. Providers in `lead_agent_providers.dart`; requests and staff
+  are one page each, received transfers page in 20s.
+- **Hisob-kitob (`LeadAccountScreen`):**
+  - Card: what it owes (per currency, never summed — `agentMoneyBoth`), pending payments and
+    pending returns.
+  - Two full-width stacked buttons. Side by side, "Mahsulot qaytarish" was cut off on a phone.
+  - Payments / Returns `PillToggle` lists with status tags (`AgentRequestStatusTag`) and the
+    owner's reject reason. A pending payment has "Bekor qilish" on its card. A return opens
+    `AgentReturnDetailScreen` (lines with the transfer they came from, value, cash refund), whose
+    bottom button withdraws it while pending.
+  - **`SendPaymentSheet`:** capped at debt − pending requests per currency
+    (`LeadAgentAccount.available`; the server re-checks). "To'liq" fills that amount. A currency
+    toggle appears only when both currencies are still owed. If nothing is owed, it shows
+    "Qarzingiz yo'q" instead of opening.
+- **`ReturnGoodsScreen`:** its own fetch of `/agent/stock` (limit 200), not the Sell tab's
+  provider, which may be narrowed by a search. A quantity field per product; a currency toggle
+  when the stock holds both, so one return is always one currency. Over-stock and empty returns
+  are refused before sending. Sending or withdrawing a return also refreshes the Sell tab's stock
+  and the dashboard (`refreshAfterAgentRequest(stockChanged: true)`), since the units are reserved
+  at once.
+- **Kirimlar:** `ReceivedTransfersScreen` (paid / still-owed lines, debt status badge, load more
+  on scroll) → `AgentTransferDetailScreen` (per line: given / left / returned, owed price, selling
+  range). The owner's cost appears only when the API sends it, so the detail screen can be reused
+  for the owner in A7c.
+- **Agentlar:** `AgentStaffListScreen` + `AgentStaffFormScreen` (no store field; password on
+  create only), the same pattern as the courier screens: edit, (de)activate, delete.
+- New ARB keys: the A7b `agent*` set plus `agentRejectReason` and `agentAvailableToSend`.
+- **Verified:**
+  - `flutter analyze` is clean, and **93 unit tests** pass (6 new in `lead_agent_models_test.dart`:
+    account `available` clamping, request/return/transfer parsing including the owner-only cost,
+    and money text).
+  - A temporary integration test (deleted) on the iPhone 17 simulator against the local backend.
+    The seed script (owner, 3 products, lead + staff agent, two transfers, a rejected and a
+    pending payment, a pending return) was deleted afterwards.
+  - Uzbek, full flow:
+    - Debt 320 000, 40 000 pending, 1 return.
+    - "To'liq" = 280 000; 300 000 refused; 100 000 sent (pending → 140 000), then withdrawn.
+    - The seeded return withdrawn; a 99-unit return refused; 1 sugar returned (stock value
+      370 000 → 355 000).
+    - Transfers list/detail figures, with no cost shown.
+    - Staff agent added and deactivated.
+  - Russian and English: dashboard and account screens fit.
+  - Fixed from screenshots: the side-by-side buttons; the return quantity field ("Miqd…" label
+    cut off, white on white → grey fill, no label); the return line's amount in ListTile's small
+    grey trailing style; a stale over-stock error after correcting the quantity.
+  - **Test tip:** a bottom sheet or dialog leaves the page's own button with the same label in
+    the tree, so tap `.last`; settle about a second after a route push/pop before tapping.
+  - **Not checked:** dark mode, USD-owing accounts on a device, more than 20 transfers.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

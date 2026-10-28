@@ -7,7 +7,7 @@
   "commonRegister": "Ro'yxatdan o'tish",
   "commonSettings": "Sozlamalar",
   "commonUnknownError": "Noma'lum xatolik yuz berdi.",
-  "roleLabel": "{role, select, superAdmin{Super Admin} seller{Optomchi} sellerAdmin{Optomchi xodimi} retailer{Do'konchi} retailerAdmin{Do'konchi xodimi} customer{Mijoz} waiter{Ofitsiant} courier{Kuryer} other{}}",
+  "roleLabel": "{role, select, superAdmin{Super Admin} seller{Optomchi} sellerAdmin{Optomchi xodimi} retailer{Do'konchi} retailerAdmin{Do'konchi xodimi} customer{Mijoz} waiter{Ofitsiant} courier{Kuryer} leadAgent{Diller} agent{Agent} other{}}",
   "@roleLabel": {
     "description": "Display name of a user role (UserRole enum name).",
     "placeholders": {
@@ -1678,5 +1678,316 @@
   "scannerTorch": "Chiroq",
   "locationDragHint": "Xaritani suring — pin markazda qoladi",
   "categoriesPickerTitle": "Kategoriyani tanlang",
-  "scannerCameraError": "Kamerani ochib bo'lmadi. Kameraga ruxsat berilganini tekshiring."
+  "scannerCameraError": "Kamerani ochib bo'lmadi. Kameraga ruxsat berilganini tekshiring.",
+  "agentTabHome": "Bosh sahifa",
+  "agentTabSell": "Sotish",
+  "agentTabSales": "Sotuvlar",
+  "agentTabDebts": "Qarzdorlar",
+  "agentHello": "Salom, {name}!",
+  "@agentHello": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "agentLeadOf": "{business} dilleri",
+  "@agentLeadOf": {
+    "placeholders": {
+      "business": {
+        "type": "String"
+      }
+    }
+  },
+  "agentStaffOf": "{lead} dillerining agenti",
+  "@agentStaffOf": {
+    "placeholders": {
+      "lead": {
+        "type": "String"
+      }
+    }
+  },
+  "agentTodaySales": "Bugungi savdo",
+  "agentMonthSales": "30 kunlik savdo",
+  "agentMyTodaySales": "Bugungi savdom",
+  "agentMyMonthSales": "30 kunlik savdom",
+  "agentSalesCount": "{count} ta sotuv",
+  "@agentSalesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agentCustomersOwe": "Mijozlar qarzi",
+  "agentMyDebtsGiven": "Men bergan qarzlar",
+  "agentOpenDebts": "{count} ta ochiq qarz",
+  "@agentOpenDebts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agentOwedToOwner": "Biznes egasiga qarzim",
+  "agentStockValue": "Qo'limdagi tovar",
+  "agentProfitTitle": "Sof foyda",
+  "agentProfitToday": "Bugun",
+  "agentProfit7": "7 kun",
+  "agentProfit30": "30 kun",
+  "agentProfitRevenue": "Sotuv summasi",
+  "agentProfitCost": "Egaga to'lanadigan narx",
+  "agentProfitPending": "Mijozlar qarzidagi foyda",
+  "agentProfitHint": "Qarzga sotuvlar foydasi mijoz to'lagach qo'shiladi",
+  "agentShortcutProducts": "Mahsulotlarim",
+  "agentNoStock": "Hozircha mahsulot yo'q",
+  "agentNoStockHint": "Biznes egasi mahsulot berganda shu yerda paydo bo'ladi.",
+  "agentStockLeft": "Qoldi: {qty}",
+  "@agentStockLeft": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "agentPriceRange": "{min} – {max}",
+  "@agentPriceRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "agentOtherCurrency": "Bitta sotuvda bitta valyuta bo'ladi",
+  "agentCartCount": "{count} ta mahsulot",
+  "@agentCartCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agentCheckout": "Rasmiylashtirish",
+  "agentCheckoutTitle": "Sotuv",
+  "agentQuantity": "Miqdori",
+  "agentPrice": "Narx",
+  "agentPriceOutOfRange": "«{name}»: narx {min} – {max} oralig'ida bo'lsin",
+  "@agentPriceOutOfRange": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "agentQtyInvalid": "«{name}»: miqdorni kiriting",
+  "@agentQtyInvalid": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "agentQtyTooMuch": "«{name}»: faqat {qty} bor",
+  "@agentQtyTooMuch": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "agentCash": "Naqd",
+  "agentDebt": "Qarzga",
+  "agentCustomer": "Xaridor",
+  "agentCustomerName": "Ismi",
+  "agentCustomerLastName": "Familiyasi (ixtiyoriy)",
+  "agentCustomerPhone": "Telefon raqami",
+  "agentCustomerOptional": "Xaridor ma'lumotlari ixtiyoriy",
+  "agentReturningDebtorHint": "Raqam avval yozilgan bo'lsa, qarz o'sha xaridorga qo'shiladi",
+  "agentDebtNeedsCustomer": "Qarzga sotish uchun ism va telefon kerak",
+  "agentPhoneInvalid": "Telefon raqami noto'g'ri",
+  "agentSellNow": "Sotish · {total}",
+  "@agentSellNow": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "agentSold": "Sotuv saqlandi",
+  "agentSalesEmpty": "Hali sotuv yo'q",
+  "agentSaleSeller": "Sotuvchi: {name}",
+  "@agentSaleSeller": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "agentLineCost": "Tannarx: {amount}",
+  "@agentLineCost": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "agentDebtsOpen": "Ochiq",
+  "agentDebtsAll": "Hammasi",
+  "agentDebtsEmpty": "Qarz yo'q",
+  "agentDebtsTotal": "Jami qarz",
+  "agentDebtOriginal": "Qarz summasi",
+  "agentDebtPaid": "To'langan",
+  "agentDebtBalance": "Qoldiq",
+  "agentPayTitle": "To'lov qabul qilish",
+  "agentPayFull": "To'liq",
+  "agentPaySubmit": "Qabul qilish",
+  "agentPaid": "To'lov qabul qilindi",
+  "agentPayInvalid": "Summani kiriting",
+  "agentPayTooMuch": "Summa qarz qoldig'idan oshmasin",
+  "agentPaymentsHistory": "To'lovlar tarixi",
+  "agentNoPayments": "Hali to'lov yo'q",
+  "agentDebtClosed": "Qarz yopilgan",
+  "agentAccountTitle": "Hisob-kitob",
+  "agentAccountWith": "{owner} bilan hisob",
+  "@agentAccountWith": {
+    "placeholders": {
+      "owner": {
+        "type": "String"
+      }
+    }
+  },
+  "agentMyDebt": "Qarzim",
+  "agentNothingOwed": "Qarzingiz yo'q",
+  "agentPendingPayments": "Kutilayotgan to'lovlar",
+  "agentPendingReturns": "Kutilayotgan qaytarishlar",
+  "agentSendPayment": "To'lov yuborish",
+  "agentSendPaymentHint": "Biznes egasiga bergan pulingizni yozing. U tasdiqlagach qarzingiz kamayadi.",
+  "agentPaymentSent": "To'lov so'rovi yuborildi",
+  "agentReturnGoods": "Mahsulot qaytarish",
+  "agentReturnHint": "Qaytariladigan miqdorni kiriting. Mahsulotlar darhol zaxirangizdan ayriladi; biznes egasi tasdiqlagach qarzingiz kamayadi, rad etsa qaytib keladi.",
+  "agentReturnSend": "Qaytarish ({count})",
+  "@agentReturnSend": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agentReturnSent": "Qaytarish so'rovi yuborildi",
+  "agentReturnPickOne": "Kamida bitta mahsulot miqdorini kiriting",
+  "agentTabPayments": "To'lovlar",
+  "agentTabReturns": "Qaytarishlar",
+  "agentStatusPending": "Kutilmoqda",
+  "agentStatusConfirmed": "Tasdiqlangan",
+  "agentStatusRejected": "Rad etilgan",
+  "agentStatusCancelled": "Bekor qilingan",
+  "agentCancelRequest": "Bekor qilish",
+  "agentCancelRequestConfirm": "So'rov bekor qilinsinmi?",
+  "agentRequestCancelled": "So'rov bekor qilindi",
+  "agentPaymentsEmpty": "Hali to'lov so'rovi yo'q",
+  "agentReturnsEmpty": "Hali qaytarish yo'q",
+  "agentReturnValue": "Qiymati",
+  "agentRefund": "Naqd qaytarildi",
+  "agentReturnFromTransfer": "O'tkazma {number}",
+  "@agentReturnFromTransfer": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "agentTransfersTitle": "Kirimlar",
+  "agentTransfersEmpty": "Hali kirim yo'q",
+  "agentTransferPaid": "To'langan: {amount}",
+  "@agentTransferPaid": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "agentTransferDebt": "Qarz: {amount}",
+  "@agentTransferDebt": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "agentTransferLineQty": "Berildi {given} · qoldi {left}",
+  "@agentTransferLineQty": {
+    "placeholders": {
+      "given": {
+        "type": "String"
+      },
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "agentTransferReturned": "Qaytarildi {qty}",
+  "@agentTransferReturned": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "agentTransferOwed": "Narxi {price}",
+  "@agentTransferOwed": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "agentTransferRange": "Sotish: {range}",
+  "@agentTransferRange": {
+    "placeholders": {
+      "range": {
+        "type": "String"
+      }
+    }
+  },
+  "agentTransferGivenBy": "Bergan: {name}",
+  "@agentTransferGivenBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "agentStaffTitle": "Agentlar",
+  "agentStaffEmpty": "Hali agent yo'q",
+  "agentStaffNew": "Yangi agent",
+  "agentStaffEdit": "Agentni tahrirlash",
+  "agentStaffDeleteTitle": "Agentni o'chirish",
+  "agentRejectReason": "Sabab: {reason}",
+  "@agentRejectReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "agentAvailableToSend": "Yuborish mumkin: {amount}",
+  "@agentAvailableToSend": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  }
 }

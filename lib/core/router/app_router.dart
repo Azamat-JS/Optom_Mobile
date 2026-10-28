@@ -9,6 +9,7 @@ import 'package:bsmart/features/auth/presentation/providers/session_notifier.dar
 import 'package:bsmart/features/auth/presentation/screens/login_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/register_screen.dart';
 import 'package:bsmart/features/auth/presentation/screens/splash_screen.dart';
+import 'package:bsmart/features/agents/presentation/screens/agent_home_screen.dart';
 import 'package:bsmart/features/storefront/presentation/screens/customer_order_screen.dart';
 import 'package:bsmart/features/storefront/presentation/screens/order_placed_screen.dart';
 import 'package:bsmart/features/storefront/presentation/screens/storefront_search_screen.dart';
@@ -274,6 +275,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const MasterCatalogAdminListScreen()),
       ),
       GoRoute(
+        path: RouteNames.agentHome,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const AgentHomeScreen()),
+      ),
+      GoRoute(
         path: RouteNames.waiterHome,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const WaiterHomeScreen()),
       ),
@@ -397,5 +402,6 @@ String _homeFor(UserRole? role) {
   if (role == UserRole.superAdmin) return RouteNames.superAdminHome;
   if (role == UserRole.waiter) return RouteNames.waiterHome;
   if (role == UserRole.courier) return RouteNames.courierHome;
+  if (role != null && role.isAgent) return RouteNames.agentHome;
   return role == UserRole.customer ? RouteNames.customerHome : RouteNames.home;
 }

@@ -7,6 +7,7 @@ import 'package:bsmart/features/auth/domain/entities/user.dart';
 /// to share one parser; fields present in only one are nullable here.
 User userFromJson(Map<String, dynamic> json) {
   final managedUser = json['managedUser'] as Map<String, dynamic>?;
+  final agentOwner = json['agentOwner'] as Map<String, dynamic>?;
   return User(
     id: json['id'] as String,
     phone: json['phone'] as String,
@@ -32,6 +33,14 @@ User userFromJson(Map<String, dynamic> json) {
             id: managedUser['id'] as String,
             firstName: managedUser['firstName'] as String,
             lastName: managedUser['lastName'] as String,
+          ),
+    agentOwner: agentOwner == null
+        ? null
+        : OwnerRef(
+            id: agentOwner['id'] as String,
+            firstName: agentOwner['firstName'] as String,
+            lastName: agentOwner['lastName'] as String,
+            shopName: agentOwner['shopName'] as String?,
           ),
   );
 }

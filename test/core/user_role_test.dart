@@ -15,4 +15,14 @@ void main() {
     expect(UserRole.courier.isStaff, isFalse);
     expect(UserRole.sellerAdmin.isStaff, isTrue);
   });
+
+  test('agents are their own family: not staff, not an owner family', () {
+    expect(UserRole.fromWire('LEAD_AGENT'), UserRole.leadAgent);
+    expect(UserRole.fromWire('AGENT'), UserRole.agent);
+    for (final role in [UserRole.leadAgent, UserRole.agent]) {
+      expect(role.isAgent, isTrue);
+      expect(role.isStaff || role.isSellerFamily || role.isRetailerFamily, isFalse);
+    }
+    expect(UserRole.courier.isAgent, isFalse);
+  });
 }

@@ -40,6 +40,8 @@ class AppLocalizationsRu extends AppLocalizations {
       'customer': 'Клиент',
       'waiter': 'Официант',
       'courier': 'Курьер',
+      'leadAgent': 'Дилер',
+      'agent': 'Агент',
       'other': '',
     });
     return '$_temp0';
@@ -2979,4 +2981,403 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get scannerCameraError =>
       'Не удалось открыть камеру. Проверьте доступ к камере.';
+
+  @override
+  String get agentTabHome => 'Главная';
+
+  @override
+  String get agentTabSell => 'Продажа';
+
+  @override
+  String get agentTabSales => 'Продажи';
+
+  @override
+  String get agentTabDebts => 'Должники';
+
+  @override
+  String agentHello(String name) {
+    return 'Здравствуйте, $name!';
+  }
+
+  @override
+  String agentLeadOf(String business) {
+    return 'Дилер $business';
+  }
+
+  @override
+  String agentStaffOf(String lead) {
+    return 'Агент дилера $lead';
+  }
+
+  @override
+  String get agentTodaySales => 'Продажи сегодня';
+
+  @override
+  String get agentMonthSales => 'Продажи за 30 дней';
+
+  @override
+  String get agentMyTodaySales => 'Мои продажи сегодня';
+
+  @override
+  String get agentMyMonthSales => 'Мои за 30 дней';
+
+  @override
+  String agentSalesCount(int count) {
+    return 'Продаж: $count';
+  }
+
+  @override
+  String get agentCustomersOwe => 'Долги покупателей';
+
+  @override
+  String get agentMyDebtsGiven => 'Мои продажи в долг';
+
+  @override
+  String agentOpenDebts(int count) {
+    return 'Открытых долгов: $count';
+  }
+
+  @override
+  String get agentOwedToOwner => 'Мой долг владельцу';
+
+  @override
+  String get agentStockValue => 'Товар на руках';
+
+  @override
+  String get agentProfitTitle => 'Чистая прибыль';
+
+  @override
+  String get agentProfitToday => 'Сегодня';
+
+  @override
+  String get agentProfit7 => '7 дней';
+
+  @override
+  String get agentProfit30 => '30 дней';
+
+  @override
+  String get agentProfitRevenue => 'Сумма продаж';
+
+  @override
+  String get agentProfitCost => 'Цена для владельца';
+
+  @override
+  String get agentProfitPending => 'Прибыль в долгах покупателей';
+
+  @override
+  String get agentProfitHint =>
+      'Прибыль с продаж в долг добавляется после оплаты';
+
+  @override
+  String get agentShortcutProducts => 'Мои товары';
+
+  @override
+  String get agentNoStock => 'Товаров пока нет';
+
+  @override
+  String get agentNoStockHint =>
+      'Они появятся здесь, когда владелец передаст товары.';
+
+  @override
+  String agentStockLeft(String qty) {
+    return 'Осталось: $qty';
+  }
+
+  @override
+  String agentPriceRange(String min, String max) {
+    return '$min – $max';
+  }
+
+  @override
+  String get agentOtherCurrency => 'В одной продаже — одна валюта';
+
+  @override
+  String agentCartCount(int count) {
+    return 'Товаров: $count';
+  }
+
+  @override
+  String get agentCheckout => 'Оформить';
+
+  @override
+  String get agentCheckoutTitle => 'Продажа';
+
+  @override
+  String get agentQuantity => 'Количество';
+
+  @override
+  String get agentPrice => 'Цена';
+
+  @override
+  String agentPriceOutOfRange(String name, String min, String max) {
+    return '«$name»: цена должна быть в пределах $min – $max';
+  }
+
+  @override
+  String agentQtyInvalid(String name) {
+    return '«$name»: укажите количество';
+  }
+
+  @override
+  String agentQtyTooMuch(String name, String qty) {
+    return '«$name»: есть только $qty';
+  }
+
+  @override
+  String get agentCash => 'Наличные';
+
+  @override
+  String get agentDebt => 'В долг';
+
+  @override
+  String get agentCustomer => 'Покупатель';
+
+  @override
+  String get agentCustomerName => 'Имя';
+
+  @override
+  String get agentCustomerLastName => 'Фамилия (необязательно)';
+
+  @override
+  String get agentCustomerPhone => 'Телефон';
+
+  @override
+  String get agentCustomerOptional => 'Данные покупателя необязательны';
+
+  @override
+  String get agentReturningDebtorHint =>
+      'Если номер уже записан, долг добавится этому покупателю';
+
+  @override
+  String get agentDebtNeedsCustomer => 'Для продажи в долг нужны имя и телефон';
+
+  @override
+  String get agentPhoneInvalid => 'Неверный номер телефона';
+
+  @override
+  String agentSellNow(String total) {
+    return 'Продать · $total';
+  }
+
+  @override
+  String get agentSold => 'Продажа сохранена';
+
+  @override
+  String get agentSalesEmpty => 'Продаж пока нет';
+
+  @override
+  String agentSaleSeller(String name) {
+    return 'Продавец: $name';
+  }
+
+  @override
+  String agentLineCost(String amount) {
+    return 'Себестоимость: $amount';
+  }
+
+  @override
+  String get agentDebtsOpen => 'Открытые';
+
+  @override
+  String get agentDebtsAll => 'Все';
+
+  @override
+  String get agentDebtsEmpty => 'Долгов нет';
+
+  @override
+  String get agentDebtsTotal => 'Всего долг';
+
+  @override
+  String get agentDebtOriginal => 'Сумма долга';
+
+  @override
+  String get agentDebtPaid => 'Оплачено';
+
+  @override
+  String get agentDebtBalance => 'Остаток';
+
+  @override
+  String get agentPayTitle => 'Принять оплату';
+
+  @override
+  String get agentPayFull => 'Полностью';
+
+  @override
+  String get agentPaySubmit => 'Принять';
+
+  @override
+  String get agentPaid => 'Оплата принята';
+
+  @override
+  String get agentPayInvalid => 'Введите сумму';
+
+  @override
+  String get agentPayTooMuch => 'Сумма не должна превышать остаток';
+
+  @override
+  String get agentPaymentsHistory => 'История оплат';
+
+  @override
+  String get agentNoPayments => 'Оплат пока нет';
+
+  @override
+  String get agentDebtClosed => 'Долг закрыт';
+
+  @override
+  String get agentAccountTitle => 'Расчёты';
+
+  @override
+  String agentAccountWith(String owner) {
+    return 'Расчёты с $owner';
+  }
+
+  @override
+  String get agentMyDebt => 'Мой долг';
+
+  @override
+  String get agentNothingOwed => 'У вас нет долга';
+
+  @override
+  String get agentPendingPayments => 'Ожидающие оплаты';
+
+  @override
+  String get agentPendingReturns => 'Ожидающие возвраты';
+
+  @override
+  String get agentSendPayment => 'Отправить оплату';
+
+  @override
+  String get agentSendPaymentHint =>
+      'Укажите сумму, переданную владельцу. После подтверждения долг уменьшится.';
+
+  @override
+  String get agentPaymentSent => 'Запрос на оплату отправлен';
+
+  @override
+  String get agentReturnGoods => 'Вернуть товары';
+
+  @override
+  String get agentReturnHint =>
+      'Укажите количество. Товары сразу списываются с остатка; после подтверждения долг уменьшится, при отказе товары вернутся.';
+
+  @override
+  String agentReturnSend(int count) {
+    return 'Вернуть ($count)';
+  }
+
+  @override
+  String get agentReturnSent => 'Запрос на возврат отправлен';
+
+  @override
+  String get agentReturnPickOne => 'Укажите количество хотя бы одного товара';
+
+  @override
+  String get agentTabPayments => 'Оплаты';
+
+  @override
+  String get agentTabReturns => 'Возвраты';
+
+  @override
+  String get agentStatusPending => 'Ожидает';
+
+  @override
+  String get agentStatusConfirmed => 'Подтверждено';
+
+  @override
+  String get agentStatusRejected => 'Отклонено';
+
+  @override
+  String get agentStatusCancelled => 'Отменено';
+
+  @override
+  String get agentCancelRequest => 'Отменить';
+
+  @override
+  String get agentCancelRequestConfirm => 'Отменить запрос?';
+
+  @override
+  String get agentRequestCancelled => 'Запрос отменён';
+
+  @override
+  String get agentPaymentsEmpty => 'Запросов на оплату пока нет';
+
+  @override
+  String get agentReturnsEmpty => 'Возвратов пока нет';
+
+  @override
+  String get agentReturnValue => 'Стоимость';
+
+  @override
+  String get agentRefund => 'Возвращено наличными';
+
+  @override
+  String agentReturnFromTransfer(String number) {
+    return 'Передача $number';
+  }
+
+  @override
+  String get agentTransfersTitle => 'Поступления';
+
+  @override
+  String get agentTransfersEmpty => 'Поступлений пока нет';
+
+  @override
+  String agentTransferPaid(String amount) {
+    return 'Оплачено: $amount';
+  }
+
+  @override
+  String agentTransferDebt(String amount) {
+    return 'Долг: $amount';
+  }
+
+  @override
+  String agentTransferLineQty(String given, String left) {
+    return 'Передано $given · осталось $left';
+  }
+
+  @override
+  String agentTransferReturned(String qty) {
+    return 'Возвращено $qty';
+  }
+
+  @override
+  String agentTransferOwed(String price) {
+    return 'Цена $price';
+  }
+
+  @override
+  String agentTransferRange(String range) {
+    return 'Продажа: $range';
+  }
+
+  @override
+  String agentTransferGivenBy(String name) {
+    return 'Передал: $name';
+  }
+
+  @override
+  String get agentStaffTitle => 'Агенты';
+
+  @override
+  String get agentStaffEmpty => 'Агентов пока нет';
+
+  @override
+  String get agentStaffNew => 'Новый агент';
+
+  @override
+  String get agentStaffEdit => 'Редактировать агента';
+
+  @override
+  String get agentStaffDeleteTitle => 'Удалить агента';
+
+  @override
+  String agentRejectReason(String reason) {
+    return 'Причина: $reason';
+  }
+
+  @override
+  String agentAvailableToSend(String amount) {
+    return 'Можно отправить: $amount';
+  }
 }

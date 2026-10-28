@@ -40,6 +40,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'customer': 'Customer',
       'waiter': 'Waiter',
       'courier': 'Courier',
+      'leadAgent': 'Lead agent',
+      'agent': 'Agent',
       'other': '',
     });
     return '$_temp0';
@@ -2963,4 +2965,421 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get scannerCameraError =>
       'Couldn\'t open the camera. Check that camera access is allowed.';
+
+  @override
+  String get agentTabHome => 'Home';
+
+  @override
+  String get agentTabSell => 'Sell';
+
+  @override
+  String get agentTabSales => 'Sales';
+
+  @override
+  String get agentTabDebts => 'Debtors';
+
+  @override
+  String agentHello(String name) {
+    return 'Hi, $name!';
+  }
+
+  @override
+  String agentLeadOf(String business) {
+    return 'Lead agent of $business';
+  }
+
+  @override
+  String agentStaffOf(String lead) {
+    return 'Agent of $lead';
+  }
+
+  @override
+  String get agentTodaySales => 'Sales today';
+
+  @override
+  String get agentMonthSales => 'Sales, 30 days';
+
+  @override
+  String get agentMyTodaySales => 'My sales today';
+
+  @override
+  String get agentMyMonthSales => 'My sales, 30 days';
+
+  @override
+  String agentSalesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sales',
+      one: '1 sale',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get agentCustomersOwe => 'Customers owe';
+
+  @override
+  String get agentMyDebtsGiven => 'Debts I gave';
+
+  @override
+  String agentOpenDebts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count open debts',
+      one: '1 open debt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get agentOwedToOwner => 'I owe the owner';
+
+  @override
+  String get agentStockValue => 'Stock held';
+
+  @override
+  String get agentProfitTitle => 'Net profit';
+
+  @override
+  String get agentProfitToday => 'Today';
+
+  @override
+  String get agentProfit7 => '7 days';
+
+  @override
+  String get agentProfit30 => '30 days';
+
+  @override
+  String get agentProfitRevenue => 'Sales';
+
+  @override
+  String get agentProfitCost => 'Owed to the owner';
+
+  @override
+  String get agentProfitPending => 'Profit in customer debts';
+
+  @override
+  String get agentProfitHint =>
+      'Profit from sales on debt counts once customers pay';
+
+  @override
+  String get agentShortcutProducts => 'My products';
+
+  @override
+  String get agentNoStock => 'No products yet';
+
+  @override
+  String get agentNoStockHint =>
+      'They appear here when the business owner gives you products.';
+
+  @override
+  String agentStockLeft(String qty) {
+    return 'Left: $qty';
+  }
+
+  @override
+  String agentPriceRange(String min, String max) {
+    return '$min – $max';
+  }
+
+  @override
+  String get agentOtherCurrency => 'One sale, one currency';
+
+  @override
+  String agentCartCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count products',
+      one: '1 product',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get agentCheckout => 'Check out';
+
+  @override
+  String get agentCheckoutTitle => 'Sale';
+
+  @override
+  String get agentQuantity => 'Quantity';
+
+  @override
+  String get agentPrice => 'Price';
+
+  @override
+  String agentPriceOutOfRange(String name, String min, String max) {
+    return '“$name”: price must be within $min – $max';
+  }
+
+  @override
+  String agentQtyInvalid(String name) {
+    return '“$name”: enter a quantity';
+  }
+
+  @override
+  String agentQtyTooMuch(String name, String qty) {
+    return '“$name”: only $qty left';
+  }
+
+  @override
+  String get agentCash => 'Cash';
+
+  @override
+  String get agentDebt => 'On debt';
+
+  @override
+  String get agentCustomer => 'Customer';
+
+  @override
+  String get agentCustomerName => 'Name';
+
+  @override
+  String get agentCustomerLastName => 'Last name (optional)';
+
+  @override
+  String get agentCustomerPhone => 'Phone';
+
+  @override
+  String get agentCustomerOptional => 'Customer details are optional';
+
+  @override
+  String get agentReturningDebtorHint =>
+      'If the phone is on file, the debt goes to that customer';
+
+  @override
+  String get agentDebtNeedsCustomer => 'Selling on debt needs a name and phone';
+
+  @override
+  String get agentPhoneInvalid => 'Invalid phone number';
+
+  @override
+  String agentSellNow(String total) {
+    return 'Sell · $total';
+  }
+
+  @override
+  String get agentSold => 'Sale saved';
+
+  @override
+  String get agentSalesEmpty => 'No sales yet';
+
+  @override
+  String agentSaleSeller(String name) {
+    return 'Seller: $name';
+  }
+
+  @override
+  String agentLineCost(String amount) {
+    return 'Cost: $amount';
+  }
+
+  @override
+  String get agentDebtsOpen => 'Open';
+
+  @override
+  String get agentDebtsAll => 'All';
+
+  @override
+  String get agentDebtsEmpty => 'No debts';
+
+  @override
+  String get agentDebtsTotal => 'Total owed';
+
+  @override
+  String get agentDebtOriginal => 'Debt amount';
+
+  @override
+  String get agentDebtPaid => 'Paid';
+
+  @override
+  String get agentDebtBalance => 'Balance';
+
+  @override
+  String get agentPayTitle => 'Receive payment';
+
+  @override
+  String get agentPayFull => 'Full';
+
+  @override
+  String get agentPaySubmit => 'Receive';
+
+  @override
+  String get agentPaid => 'Payment received';
+
+  @override
+  String get agentPayInvalid => 'Enter an amount';
+
+  @override
+  String get agentPayTooMuch => 'Amount must not exceed the balance';
+
+  @override
+  String get agentPaymentsHistory => 'Payments';
+
+  @override
+  String get agentNoPayments => 'No payments yet';
+
+  @override
+  String get agentDebtClosed => 'Debt closed';
+
+  @override
+  String get agentAccountTitle => 'Account';
+
+  @override
+  String agentAccountWith(String owner) {
+    return 'Account with $owner';
+  }
+
+  @override
+  String get agentMyDebt => 'I owe';
+
+  @override
+  String get agentNothingOwed => 'You owe nothing';
+
+  @override
+  String get agentPendingPayments => 'Pending payments';
+
+  @override
+  String get agentPendingReturns => 'Pending returns';
+
+  @override
+  String get agentSendPayment => 'Send payment';
+
+  @override
+  String get agentSendPaymentHint =>
+      'Enter the money you handed to the owner. Your debt goes down once they confirm.';
+
+  @override
+  String get agentPaymentSent => 'Payment request sent';
+
+  @override
+  String get agentReturnGoods => 'Return products';
+
+  @override
+  String get agentReturnHint =>
+      'Enter quantities. They leave your stock right away; once the owner confirms your debt goes down, and if they reject, they come back.';
+
+  @override
+  String agentReturnSend(int count) {
+    return 'Return ($count)';
+  }
+
+  @override
+  String get agentReturnSent => 'Return request sent';
+
+  @override
+  String get agentReturnPickOne => 'Enter a quantity for at least one product';
+
+  @override
+  String get agentTabPayments => 'Payments';
+
+  @override
+  String get agentTabReturns => 'Returns';
+
+  @override
+  String get agentStatusPending => 'Pending';
+
+  @override
+  String get agentStatusConfirmed => 'Confirmed';
+
+  @override
+  String get agentStatusRejected => 'Rejected';
+
+  @override
+  String get agentStatusCancelled => 'Cancelled';
+
+  @override
+  String get agentCancelRequest => 'Cancel';
+
+  @override
+  String get agentCancelRequestConfirm => 'Cancel this request?';
+
+  @override
+  String get agentRequestCancelled => 'Request cancelled';
+
+  @override
+  String get agentPaymentsEmpty => 'No payment requests yet';
+
+  @override
+  String get agentReturnsEmpty => 'No returns yet';
+
+  @override
+  String get agentReturnValue => 'Value';
+
+  @override
+  String get agentRefund => 'Refunded in cash';
+
+  @override
+  String agentReturnFromTransfer(String number) {
+    return 'Transfer $number';
+  }
+
+  @override
+  String get agentTransfersTitle => 'Received';
+
+  @override
+  String get agentTransfersEmpty => 'Nothing received yet';
+
+  @override
+  String agentTransferPaid(String amount) {
+    return 'Paid: $amount';
+  }
+
+  @override
+  String agentTransferDebt(String amount) {
+    return 'Debt: $amount';
+  }
+
+  @override
+  String agentTransferLineQty(String given, String left) {
+    return 'Given $given · left $left';
+  }
+
+  @override
+  String agentTransferReturned(String qty) {
+    return 'Returned $qty';
+  }
+
+  @override
+  String agentTransferOwed(String price) {
+    return 'Price $price';
+  }
+
+  @override
+  String agentTransferRange(String range) {
+    return 'Sell at: $range';
+  }
+
+  @override
+  String agentTransferGivenBy(String name) {
+    return 'Given by: $name';
+  }
+
+  @override
+  String get agentStaffTitle => 'Agents';
+
+  @override
+  String get agentStaffEmpty => 'No agents yet';
+
+  @override
+  String get agentStaffNew => 'New agent';
+
+  @override
+  String get agentStaffEdit => 'Edit agent';
+
+  @override
+  String get agentStaffDeleteTitle => 'Delete agent';
+
+  @override
+  String agentRejectReason(String reason) {
+    return 'Reason: $reason';
+  }
+
+  @override
+  String agentAvailableToSend(String amount) {
+    return 'You can send up to $amount';
+  }
 }
