@@ -3548,4 +3548,404 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get commonLoadMore => 'Показать ещё';
+
+  @override
+  String get navCrmDrivers => 'Водители';
+
+  @override
+  String get navCrmReminders => 'Напоминания';
+
+  @override
+  String get crmDriversSearchHint => 'Имя, телефон или госномер';
+
+  @override
+  String get crmDriversEmpty => 'Водителей пока нет';
+
+  @override
+  String get crmNotEnabled => 'CRM для этого бизнеса не включён';
+
+  @override
+  String get crmAddDriver => 'Добавить водителя';
+
+  @override
+  String get crmNewDriver => 'Новый водитель';
+
+  @override
+  String get crmEditDriver => 'Редактировать водителя';
+
+  @override
+  String get crmLastName => 'Фамилия';
+
+  @override
+  String get crmPhoneHint =>
+      'По этому номеру водитель добавится и в клиенты магазина';
+
+  @override
+  String get crmFirstCar => 'Машина (необязательно)';
+
+  @override
+  String get crmPlate => 'Госномер';
+
+  @override
+  String get crmPlateMissing => 'Введите госномер';
+
+  @override
+  String get crmPlateInvalid => 'Неверный госномер';
+
+  @override
+  String get crmModel => 'Модель';
+
+  @override
+  String get crmModelMissing => 'Введите модель машины';
+
+  @override
+  String get crmDailyKm => 'Пробег в день (км)';
+
+  @override
+  String get crmDailyKmHint =>
+      'Примерно. По нему рассчитывается срок обслуживания';
+
+  @override
+  String get crmDailyKmInvalid => 'Введите целое число от 1 до 3000';
+
+  @override
+  String get crmActiveHint =>
+      'Неактивному водителю напоминания не отправляются';
+
+  @override
+  String get crmVehicles => 'Машины';
+
+  @override
+  String get crmAddVehicle => 'Добавить машину';
+
+  @override
+  String get crmEditVehicle => 'Редактировать машину';
+
+  @override
+  String get crmNoVehicles => 'Машин нет';
+
+  @override
+  String crmDailyKmValue(String km) {
+    return '~$km км в день';
+  }
+
+  @override
+  String get crmDailyKmMissing => 'Пробег в день не указан';
+
+  @override
+  String crmNextDue(String name) {
+    return 'Следующее: $name';
+  }
+
+  @override
+  String get crmRecordService => 'Записать обслуживание';
+
+  @override
+  String get crmHistory => 'История обслуживания';
+
+  @override
+  String get crmNoVisits => 'Обслуживаний пока нет';
+
+  @override
+  String crmLinkedCustomer(String name) {
+    return 'В клиентах: $name';
+  }
+
+  @override
+  String get crmInactiveNoService =>
+      'Водитель неактивен: чтобы записать обслуживание, сначала активируйте его';
+
+  @override
+  String get crmDeleteDriverTitle => 'Удалить водителя';
+
+  @override
+  String crmDeleteDriverConfirm(String name) {
+    return '$name и его машины будут удалены. Запись в клиентах и продажи сохранятся.';
+  }
+
+  @override
+  String get crmDeleteVehicleTitle => 'Удалить машину';
+
+  @override
+  String crmDeleteVehicleConfirm(String plate) {
+    return 'Машина $plate будет удалена.';
+  }
+
+  @override
+  String get crmPhotoAdd => 'Добавить фото';
+
+  @override
+  String get crmPhotoChange => 'Заменить фото';
+
+  @override
+  String get crmPhotoRemove => 'Удалить фото';
+
+  @override
+  String get crmDueToday => 'сегодня';
+
+  @override
+  String crmDueIn(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'осталось $count дня',
+      many: 'осталось $count дней',
+      few: 'осталось $count дня',
+      one: 'остался $count день',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String crmOverdueBy(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'просрочено на $count дня',
+      many: 'просрочено на $count дней',
+      few: 'просрочено на $count дня',
+      one: 'просрочено на $count день',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get crmItemReplaced => 'Заменено при следующем обслуживании';
+
+  @override
+  String get crmItemDone => 'Выполнено';
+
+  @override
+  String get crmItemCancelled => 'Отменено';
+
+  @override
+  String get crmNoReminder => 'Без напоминания';
+
+  @override
+  String get crmNoSale => 'Без продажи';
+
+  @override
+  String crmSaleDebtLeft(String amount) {
+    return 'Долг: $amount';
+  }
+
+  @override
+  String get crmSaleDebtSettled => 'Долг погашен';
+
+  @override
+  String crmKmValue(String km) {
+    return '$km км';
+  }
+
+  @override
+  String crmEveryKm(String km) {
+    return 'каждые $km км';
+  }
+
+  @override
+  String crmAtKm(String km) {
+    return 'на $km км';
+  }
+
+  @override
+  String get crmTgLinked => 'Telegram: напоминания приходят';
+
+  @override
+  String get crmTgNotLinked => 'Telegram не подключён';
+
+  @override
+  String get crmTgBlocked => 'Водитель заблокировал бота';
+
+  @override
+  String get crmTgNoBot =>
+      'К магазину не подключён Telegram-бот, водителю напоминания в Telegram не приходят';
+
+  @override
+  String get crmTgHowTo =>
+      'Водитель должен открыть бота магазина и отправить свой номер';
+
+  @override
+  String get crmTgShareLink => 'Отправить ссылку на бота';
+
+  @override
+  String get crmVisitTitle => 'Запись обслуживания';
+
+  @override
+  String get crmServiceDate => 'Дата обслуживания';
+
+  @override
+  String get crmOdometer => 'Пробег по одометру (км)';
+
+  @override
+  String get crmParts => 'Установленные запчасти';
+
+  @override
+  String get crmAddPart => 'Добавить товар';
+
+  @override
+  String get crmAddManual => 'Вручную';
+
+  @override
+  String get crmPartSearch => 'Поиск запчасти или масла';
+
+  @override
+  String get crmPartsEmpty => 'Добавьте товар или строку вручную';
+
+  @override
+  String get crmManualName => 'Название (например: Работа)';
+
+  @override
+  String get crmQuantity => 'Количество';
+
+  @override
+  String get crmIntervalKm => 'До следующего ТО, км';
+
+  @override
+  String get crmNextDate => 'Следующая дата';
+
+  @override
+  String crmDueAuto(String date) {
+    return 'Вернётся примерно $date';
+  }
+
+  @override
+  String get crmDueManual => 'Дата указана вручную';
+
+  @override
+  String get crmDueNeedsDate => 'Нет пробега в день — укажите дату';
+
+  @override
+  String get crmRecordSale => 'Записать как продажу';
+
+  @override
+  String get crmRecordSaleOn =>
+      'Товар списывается со склада, записывается оплата или долг';
+
+  @override
+  String get crmRecordSaleOff =>
+      'Только для напоминания: склад и деньги не меняются';
+
+  @override
+  String get crmPaidNow => 'Оплачено сейчас (необязательно)';
+
+  @override
+  String crmDebtLeft(String amount) {
+    return 'Долг: $amount';
+  }
+
+  @override
+  String get crmSaveVisit => 'Сохранить обслуживание';
+
+  @override
+  String get crmVisitSaved => 'Обслуживание записано';
+
+  @override
+  String crmInStock(String qty) {
+    return 'В наличии: $qty';
+  }
+
+  @override
+  String get crmPickVehicle => 'Выберите машину';
+
+  @override
+  String get crmAddPartFirst => 'Добавьте хотя бы одну строку';
+
+  @override
+  String get crmManualNameMissing => 'Введите название строки';
+
+  @override
+  String crmPriceMissing(String name) {
+    return 'Укажите цену для «$name»';
+  }
+
+  @override
+  String crmNotEnoughStock(String name) {
+    return '«$name» недостаточно на складе';
+  }
+
+  @override
+  String crmDueAfterService(String name) {
+    return 'Следующая дата для «$name» должна быть позже даты обслуживания';
+  }
+
+  @override
+  String crmDueNeeded(String name) {
+    return 'Пробег в день не указан: выберите дату для «$name»';
+  }
+
+  @override
+  String get crmPaidTooMuch => 'Оплата не может превышать итог';
+
+  @override
+  String get crmMixedCurrency =>
+      'В одном обслуживании — товары только в одной валюте';
+
+  @override
+  String get crmRemindersAll => 'Все';
+
+  @override
+  String get crmRemindersOverdue => 'Просрочено';
+
+  @override
+  String get crmRemindersSoon => '7 дней';
+
+  @override
+  String get crmRemindersEmpty => 'Напоминаний нет';
+
+  @override
+  String get crmMarkDone => 'Выполнено';
+
+  @override
+  String get crmMoveDate => 'Изменить дату';
+
+  @override
+  String get crmCancelReminder => 'Отменить напоминание';
+
+  @override
+  String get crmReminderDone => 'Отмечено как выполненное';
+
+  @override
+  String get crmReminderCancelled => 'Напоминание отменено';
+
+  @override
+  String get crmDateMoved => 'Дата изменена';
+
+  @override
+  String get crmDueManualShort => 'Дата указана вручную';
+
+  @override
+  String get crmDriverSaved => 'Водитель сохранён';
+
+  @override
+  String get crmVehicleSaved => 'Машина сохранена';
+
+  @override
+  String get notifTitle => 'Уведомления';
+
+  @override
+  String get notifEmpty => 'Уведомлений пока нет';
+
+  @override
+  String get notifReadAll => 'Прочитать все';
+
+  @override
+  String notifServiceDueStaff(String plate, String driver) {
+    return '$plate — пора на обслуживание ($driver)';
+  }
+
+  @override
+  String get notifDriverNotified => 'Водителю напомнили в Telegram';
+
+  @override
+  String notifCallDriver(String phone) {
+    return 'Водитель не подключён к боту — позвоните: $phone';
+  }
+
+  @override
+  String notifServiceDueDriver(String store) {
+    return '$store: скоро обслуживание';
+  }
+
+  @override
+  String get notifUnknown => 'Новое уведомление';
 }

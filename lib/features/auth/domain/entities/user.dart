@@ -32,6 +32,7 @@ class User {
     this.storeId,
     required this.canAccessPos,
     this.courierFeatureEnabled = false,
+    this.crmEnabled = false,
     this.courierLimit = 0,
     this.waiterLimit = 0,
     this.ownerRole,
@@ -53,6 +54,10 @@ class User {
   final String? storeId;
   final bool canAccessPos;
   final bool courierFeatureEnabled;
+
+  /// SUPER_ADMIN-gated CRM add-on (Optom_Savdo "CRM"); a `RETAILER_ADMIN` inherits its owner's.
+  /// Only auto-parts businesses can have it on.
+  final bool crmEnabled;
   final int courierLimit;
 
   /// SUPER_ADMIN-editable cap on active WAITER accounts — only meaningful

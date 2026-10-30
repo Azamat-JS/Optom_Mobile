@@ -21,6 +21,7 @@ import 'package:bsmart/features/dashboard/presentation/widgets/sales_trend_chart
 import 'package:bsmart/features/platform_dashboard/domain/entities/platform_dashboard.dart';
 import 'package:bsmart/features/platform_dashboard/presentation/providers/platform_dashboard_notifier.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/features/notifications/presentation/widgets/notification_bell_button.dart';
 
 /// Not fetched from the backend — pure UI state for the UZS/USD toggle,
 /// deliberately a separate provider from the operator dashboard's
@@ -115,6 +116,8 @@ class _Body extends ConsumerWidget {
                   ],
                 ),
               ),
+              const NotificationBellButton(),
+              const SizedBox(width: 8),
               DashRoundButton(
                 icon: Icons.settings_outlined,
                 tooltip: l10n.commonSettings,

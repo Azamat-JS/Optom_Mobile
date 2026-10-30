@@ -21,6 +21,7 @@ import 'package:bsmart/features/dashboard/presentation/widgets/payment_breakdown
 import 'package:bsmart/features/dashboard/presentation/widgets/sales_trend_chart.dart';
 import 'package:bsmart/features/stores/presentation/widgets/store_switcher.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/features/notifications/presentation/widgets/notification_bell_button.dart';
 
 /// The role-aware operator home (SELLER/RETAILER + their `_ADMIN` staff).
 ///
@@ -136,6 +137,8 @@ class _Body extends ConsumerWidget {
                 ),
               ),
               if (isOwner) const StoreSwitcher(),
+              const SizedBox(width: 6),
+              const NotificationBellButton(),
               const SizedBox(width: 6),
               DashRoundButton(
                 icon: Icons.settings_outlined,
@@ -386,6 +389,11 @@ class _Shortcuts extends ConsumerWidget {
     // matching `assertIsRestaurantOwner`/`assertCanManageCouriers`.
     final isRestaurant = user?.businessType == BusinessType.restaurant;
     final courierFeatureEnabled = user?.courierFeatureEnabled ?? false;
+    // CRM (SUPER_ADMIN add-on): auto-parts businesses only; a store admin inherits its owner's
+    // flag and businessType. The server re-checks every call.
+    final crm = (user?.crmEnabled ?? false) &&
+        user?.businessType == BusinessType.autoParts &&
+        (user?.role == UserRole.retailer || user?.role == UserRole.retailerAdmin);
     void go(String route) => context.push(route);
 
     final items = <ShortcutTile>[
@@ -406,6 +414,14 @@ class _Shortcuts extends ConsumerWidget {
       // Live courier map: owners once SUPER_ADMIN enabled couriers; store admins always.
       if (!isOwner || courierFeatureEnabled)
         ShortcutTile(icon: Icons.map_rounded, label: l10n.navFleetMap, onTap: () => go(RouteNames.fleetMap)),
+      if (crm) ...[
+        ShortcutTile(icon: Icons.directions_car_rounded, label: l10n.navCrmDrivers, onTap: () => go(RouteNames.crmDrivers)),
+        ShortcutTile(
+          icon: Icons.notifications_active_rounded,
+          label: l10n.navCrmReminders,
+          onTap: () => go(RouteNames.crmReminders),
+        ),
+      ],
       if (isRestaurant) ...[
         ShortcutTile(
           icon: Icons.dining_rounded,

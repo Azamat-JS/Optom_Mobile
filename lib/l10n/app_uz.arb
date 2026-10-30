@@ -2117,5 +2117,266 @@
   },
   "ownerTransferDone": "Mahsulotlar berildi",
   "ownerTransferPickOne": "Kamida bitta mahsulot tanlang",
-  "commonLoadMore": "Yana ko'rsatish"
+  "commonLoadMore": "Yana ko'rsatish",
+  "navCrmDrivers": "Haydovchilar",
+  "navCrmReminders": "Eslatmalar",
+  "crmDriversSearchHint": "Ism, telefon yoki davlat raqami",
+  "crmDriversEmpty": "Hali haydovchilar yo'q",
+  "crmNotEnabled": "CRM bu biznes uchun yoqilmagan",
+  "crmAddDriver": "Haydovchi qo'shish",
+  "crmNewDriver": "Yangi haydovchi",
+  "crmEditDriver": "Haydovchini tahrirlash",
+  "crmLastName": "Familiya",
+  "crmPhoneHint": "Shu raqam bilan do'kon mijozlari ro'yxatiga ham qo'shiladi",
+  "crmFirstCar": "Mashina (ixtiyoriy)",
+  "crmPlate": "Davlat raqami",
+  "crmPlateMissing": "Davlat raqamini kiriting",
+  "crmPlateInvalid": "Davlat raqami noto'g'ri",
+  "crmModel": "Model",
+  "crmModelMissing": "Mashina modelini kiriting",
+  "crmDailyKm": "Kuniga yuradigan masofa (km)",
+  "crmDailyKmHint": "Taxminan. Xizmat muddati shu asosida hisoblanadi",
+  "crmDailyKmInvalid": "1 dan 3000 gacha butun son kiriting",
+  "crmActiveHint": "Nofaol haydovchiga eslatmalar yuborilmaydi",
+  "crmVehicles": "Mashinalar",
+  "crmAddVehicle": "Mashina qo'shish",
+  "crmEditVehicle": "Mashinani tahrirlash",
+  "crmNoVehicles": "Mashina qo'shilmagan",
+  "crmDailyKmValue": "Kuniga ~{km} km",
+  "@crmDailyKmValue": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "crmDailyKmMissing": "Kunlik masofa kiritilmagan",
+  "crmNextDue": "Keyingi: {name}",
+  "@crmNextDue": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "crmRecordService": "Xizmat yozish",
+  "crmHistory": "Xizmatlar tarixi",
+  "crmNoVisits": "Hali xizmat yozilmagan",
+  "crmLinkedCustomer": "Mijozlar ro'yxatida: {name}",
+  "@crmLinkedCustomer": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "crmInactiveNoService": "Haydovchi nofaol: xizmat yozish uchun avval uni faollashtiring",
+  "crmDeleteDriverTitle": "Haydovchini o'chirish",
+  "crmDeleteDriverConfirm": "{name} va uning mashinalari o'chiriladi. Mijozlar ro'yxatidagi yozuvi va savdolari saqlanib qoladi.",
+  "@crmDeleteDriverConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "crmDeleteVehicleTitle": "Mashinani o'chirish",
+  "crmDeleteVehicleConfirm": "{plate} mashinasi o'chiriladi.",
+  "@crmDeleteVehicleConfirm": {
+    "placeholders": {
+      "plate": {
+        "type": "String"
+      }
+    }
+  },
+  "crmPhotoAdd": "Rasm qo'shish",
+  "crmPhotoChange": "Rasmni almashtirish",
+  "crmPhotoRemove": "Rasmni o'chirish",
+  "crmDueToday": "bugun",
+  "crmDueIn": "{count} kun qoldi",
+  "@crmDueIn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "crmOverdueBy": "{count} kun o'tdi",
+  "@crmOverdueBy": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "crmItemReplaced": "Keyingi xizmatda almashtirildi",
+  "crmItemDone": "Bajarildi",
+  "crmItemCancelled": "Bekor qilingan",
+  "crmNoReminder": "Eslatmasiz",
+  "crmNoSale": "Sotuvsiz",
+  "crmSaleDebtLeft": "Qarz: {amount}",
+  "@crmSaleDebtLeft": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "crmSaleDebtSettled": "Qarz to'langan",
+  "crmKmValue": "{km} km",
+  "@crmKmValue": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "crmEveryKm": "har {km} km",
+  "@crmEveryKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "crmAtKm": "{km} km da",
+  "@crmAtKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "crmTgLinked": "Telegram: eslatmalar boradi",
+  "crmTgNotLinked": "Telegram ulanmagan",
+  "crmTgBlocked": "Haydovchi botni bloklagan",
+  "crmTgNoBot": "Do'konga Telegram bot ulanmagan, eslatmalar haydovchiga Telegram orqali bormaydi",
+  "crmTgHowTo": "Haydovchi do'kon botini ochib, telefon raqamini yuborishi kerak",
+  "crmTgShareLink": "Bot havolasini yuborish",
+  "crmVisitTitle": "Xizmat yozish",
+  "crmServiceDate": "Xizmat sanasi",
+  "crmOdometer": "Spidometr (km)",
+  "crmParts": "O'rnatilgan qismlar",
+  "crmAddPart": "Mahsulot qo'shish",
+  "crmAddManual": "Qo'lda",
+  "crmPartSearch": "Ehtiyot qism yoki moy qidirish",
+  "crmPartsEmpty": "Mahsulot yoki qo'lda qator qo'shing",
+  "crmManualName": "Nomi (masalan: Ish haqi)",
+  "crmQuantity": "Miqdor",
+  "crmIntervalKm": "Keyingi xizmatgacha, km",
+  "crmNextDate": "Keyingi sana",
+  "crmDueAuto": "Taxminan {date} da qaytib keladi",
+  "@crmDueAuto": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "crmDueManual": "Sana qo'lda kiritildi",
+  "crmDueNeedsDate": "Kunlik masofa yo'q — sanani kiriting",
+  "crmRecordSale": "Sotuv sifatida yozish",
+  "crmRecordSaleOn": "Mahsulot ombordan chiqadi, to'lov yoki qarz yoziladi",
+  "crmRecordSaleOff": "Faqat eslatma uchun: ombor va pul o'zgarmaydi",
+  "crmPaidNow": "Hozir to'langan summa (ixtiyoriy)",
+  "crmDebtLeft": "Qarz: {amount}",
+  "@crmDebtLeft": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "crmSaveVisit": "Xizmatni saqlash",
+  "crmVisitSaved": "Xizmat yozildi",
+  "crmInStock": "Omborda: {qty}",
+  "@crmInStock": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "crmPickVehicle": "Mashinani tanlang",
+  "crmAddPartFirst": "Kamida bitta qator qo'shing",
+  "crmManualNameMissing": "Qo'lda qo'shilgan qator nomini kiriting",
+  "crmPriceMissing": "\"{name}\" uchun narxni kiriting",
+  "@crmPriceMissing": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "crmNotEnoughStock": "\"{name}\" omborda yetarli emas",
+  "@crmNotEnoughStock": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "crmDueAfterService": "\"{name}\" uchun keyingi sana xizmat sanasidan keyin bo'lishi kerak",
+  "@crmDueAfterService": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "crmDueNeeded": "Kunlik masofa kiritilmagan: \"{name}\" uchun keyingi sanani tanlang",
+  "@crmDueNeeded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "crmPaidTooMuch": "To'langan summa jami summadan oshmasligi kerak",
+  "crmMixedCurrency": "Bitta xizmatda faqat bitta valyutadagi mahsulotlar bo'lishi mumkin",
+  "crmRemindersAll": "Barchasi",
+  "crmRemindersOverdue": "Muddati o'tgan",
+  "crmRemindersSoon": "7 kun ichida",
+  "crmRemindersEmpty": "Eslatmalar yo'q",
+  "crmMarkDone": "Bajarildi",
+  "crmMoveDate": "Sanani o'zgartirish",
+  "crmCancelReminder": "Eslatmani bekor qilish",
+  "crmReminderDone": "Bajarildi deb belgilandi",
+  "crmReminderCancelled": "Eslatma bekor qilindi",
+  "crmDateMoved": "Sana o'zgartirildi",
+  "crmDueManualShort": "Sana qo'lda kiritilgan",
+  "crmDriverSaved": "Haydovchi saqlandi",
+  "crmVehicleSaved": "Mashina saqlandi",
+  "notifTitle": "Bildirishnomalar",
+  "notifEmpty": "Hozircha bildirishnoma yo'q",
+  "notifReadAll": "Hammasini o'qilgan qilish",
+  "notifServiceDueStaff": "{plate} — xizmat vaqti ({driver})",
+  "@notifServiceDueStaff": {
+    "placeholders": {
+      "plate": {
+        "type": "String"
+      },
+      "driver": {
+        "type": "String"
+      }
+    }
+  },
+  "notifDriverNotified": "Haydovchiga Telegram orqali eslatildi",
+  "notifCallDriver": "Haydovchi botga ulanmagan — qo'ng'iroq qiling: {phone}",
+  "@notifCallDriver": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "notifServiceDueDriver": "{store}: xizmat vaqti yaqinlashdi",
+  "@notifServiceDueDriver": {
+    "placeholders": {
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "notifUnknown": "Yangi bildirishnoma"
 }

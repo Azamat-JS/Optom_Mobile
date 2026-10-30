@@ -266,6 +266,31 @@ import 'package:bsmart/features/deliveries/domain/usecases/list_deliveries_useca
 import 'package:bsmart/features/deliveries/domain/usecases/manage_delivery_usecases.dart';
 import 'package:bsmart/features/fleet/data/fleet_repository_impl.dart';
 import 'package:bsmart/features/fleet/domain/fleet_repository.dart';
+import 'package:bsmart/features/crm/data/datasources/crm_remote_data_source.dart';
+import 'package:bsmart/features/crm/data/repositories/crm_repository_impl.dart';
+import 'package:bsmart/features/crm/domain/repositories/crm_repository.dart';
+import 'package:bsmart/features/crm/domain/usecases/add_crm_vehicle_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/create_crm_driver_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/create_crm_visit_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/delete_crm_driver_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/delete_crm_vehicle_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/get_crm_driver_telegram_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/get_crm_driver_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/list_crm_drivers_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/list_crm_reminders_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/list_crm_visits_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/remove_crm_driver_photo_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/update_crm_driver_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/update_crm_reminder_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/update_crm_vehicle_usecase.dart';
+import 'package:bsmart/features/crm/domain/usecases/upload_crm_driver_photo_usecase.dart';
+import 'package:bsmart/features/notifications/data/datasources/notifications_remote_data_source.dart';
+import 'package:bsmart/features/notifications/data/repositories/notifications_repository_impl.dart';
+import 'package:bsmart/features/notifications/domain/repositories/notifications_repository.dart';
+import 'package:bsmart/features/notifications/domain/usecases/get_unread_notification_count_usecase.dart';
+import 'package:bsmart/features/notifications/domain/usecases/list_notifications_usecase.dart';
+import 'package:bsmart/features/notifications/domain/usecases/mark_all_notifications_read_usecase.dart';
+import 'package:bsmart/features/notifications/domain/usecases/mark_notification_read_usecase.dart';
 
 const _bareDioInstance = 'bareDio';
 const _mainDioInstance = 'mainDio';
@@ -468,6 +493,33 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => RejectAgentPaymentUseCase(getIt()));
   getIt.registerFactory(() => RejectAgentReturnUseCase(getIt()));
   getIt.registerFactory(() => SetLeadAgentActiveUseCase(getIt()));
+
+  // --- features/crm (auto-parts CRM: drivers, cars, services, reminders — Optom_Savdo "CRM") ---
+  getIt.registerLazySingleton(() => CrmRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<CrmRepository>(() => CrmRepositoryImpl(getIt()));
+  getIt.registerFactory(() => AddCrmVehicleUseCase(getIt()));
+  getIt.registerFactory(() => CreateCrmDriverUseCase(getIt()));
+  getIt.registerFactory(() => CreateCrmVisitUseCase(getIt()));
+  getIt.registerFactory(() => DeleteCrmDriverUseCase(getIt()));
+  getIt.registerFactory(() => DeleteCrmVehicleUseCase(getIt()));
+  getIt.registerFactory(() => GetCrmDriverTelegramUseCase(getIt()));
+  getIt.registerFactory(() => GetCrmDriverUseCase(getIt()));
+  getIt.registerFactory(() => ListCrmDriversUseCase(getIt()));
+  getIt.registerFactory(() => ListCrmRemindersUseCase(getIt()));
+  getIt.registerFactory(() => ListCrmVisitsUseCase(getIt()));
+  getIt.registerFactory(() => RemoveCrmDriverPhotoUseCase(getIt()));
+  getIt.registerFactory(() => UpdateCrmDriverUseCase(getIt()));
+  getIt.registerFactory(() => UpdateCrmReminderUseCase(getIt()));
+  getIt.registerFactory(() => UpdateCrmVehicleUseCase(getIt()));
+  getIt.registerFactory(() => UploadCrmDriverPhotoUseCase(getIt()));
+
+  // --- features/notifications (in-app inbox, every role) ---
+  getIt.registerLazySingleton(() => NotificationsRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<NotificationsRepository>(() => NotificationsRepositoryImpl(getIt()));
+  getIt.registerFactory(() => GetUnreadNotificationCountUseCase(getIt()));
+  getIt.registerFactory(() => ListNotificationsUseCase(getIt()));
+  getIt.registerFactory(() => MarkAllNotificationsReadUseCase(getIt()));
+  getIt.registerFactory(() => MarkNotificationReadUseCase(getIt()));
   getIt.registerFactory(() => UpdateAgentPriceRangeUseCase(getIt()));
   getIt.registerFactory(() => UpdateLeadAgentUseCase(getIt()));
 

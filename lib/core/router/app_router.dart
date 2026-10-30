@@ -52,6 +52,10 @@ import 'package:bsmart/features/products/presentation/screens/products_list_scre
 import 'package:bsmart/features/sales/presentation/screens/pos_screen.dart';
 import 'package:bsmart/features/sales/presentation/screens/sales_list_screen.dart';
 import 'package:bsmart/features/settings/presentation/screens/settings_screen.dart';
+import 'package:bsmart/features/crm/presentation/screens/crm_driver_detail_screen.dart';
+import 'package:bsmart/features/crm/presentation/screens/crm_drivers_list_screen.dart';
+import 'package:bsmart/features/crm/presentation/screens/crm_reminders_screen.dart';
+import 'package:bsmart/features/notifications/presentation/screens/notifications_screen.dart';
 
 /// Notifies [GoRouter] to re-run its `redirect` whenever auth state changes,
 /// so e.g. a forced logout (refresh-token failure) immediately routes back
@@ -310,6 +314,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.fleetMap,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const FleetMapScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.crmDrivers,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const CrmDriversListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.crmReminders,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const CrmRemindersScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.crmDriverDetailPattern,
+        pageBuilder: (context, state) =>
+            fadeThroughPage(state: state, child: CrmDriverDetailScreen(driverId: state.pathParameters['id']!)),
+      ),
+      GoRoute(
+        path: RouteNames.notifications,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const NotificationsScreen()),
       ),
     ],
   );

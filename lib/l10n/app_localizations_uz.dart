@@ -3440,4 +3440,389 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get commonLoadMore => 'Yana ko\'rsatish';
+
+  @override
+  String get navCrmDrivers => 'Haydovchilar';
+
+  @override
+  String get navCrmReminders => 'Eslatmalar';
+
+  @override
+  String get crmDriversSearchHint => 'Ism, telefon yoki davlat raqami';
+
+  @override
+  String get crmDriversEmpty => 'Hali haydovchilar yo\'q';
+
+  @override
+  String get crmNotEnabled => 'CRM bu biznes uchun yoqilmagan';
+
+  @override
+  String get crmAddDriver => 'Haydovchi qo\'shish';
+
+  @override
+  String get crmNewDriver => 'Yangi haydovchi';
+
+  @override
+  String get crmEditDriver => 'Haydovchini tahrirlash';
+
+  @override
+  String get crmLastName => 'Familiya';
+
+  @override
+  String get crmPhoneHint =>
+      'Shu raqam bilan do\'kon mijozlari ro\'yxatiga ham qo\'shiladi';
+
+  @override
+  String get crmFirstCar => 'Mashina (ixtiyoriy)';
+
+  @override
+  String get crmPlate => 'Davlat raqami';
+
+  @override
+  String get crmPlateMissing => 'Davlat raqamini kiriting';
+
+  @override
+  String get crmPlateInvalid => 'Davlat raqami noto\'g\'ri';
+
+  @override
+  String get crmModel => 'Model';
+
+  @override
+  String get crmModelMissing => 'Mashina modelini kiriting';
+
+  @override
+  String get crmDailyKm => 'Kuniga yuradigan masofa (km)';
+
+  @override
+  String get crmDailyKmHint =>
+      'Taxminan. Xizmat muddati shu asosida hisoblanadi';
+
+  @override
+  String get crmDailyKmInvalid => '1 dan 3000 gacha butun son kiriting';
+
+  @override
+  String get crmActiveHint => 'Nofaol haydovchiga eslatmalar yuborilmaydi';
+
+  @override
+  String get crmVehicles => 'Mashinalar';
+
+  @override
+  String get crmAddVehicle => 'Mashina qo\'shish';
+
+  @override
+  String get crmEditVehicle => 'Mashinani tahrirlash';
+
+  @override
+  String get crmNoVehicles => 'Mashina qo\'shilmagan';
+
+  @override
+  String crmDailyKmValue(String km) {
+    return 'Kuniga ~$km km';
+  }
+
+  @override
+  String get crmDailyKmMissing => 'Kunlik masofa kiritilmagan';
+
+  @override
+  String crmNextDue(String name) {
+    return 'Keyingi: $name';
+  }
+
+  @override
+  String get crmRecordService => 'Xizmat yozish';
+
+  @override
+  String get crmHistory => 'Xizmatlar tarixi';
+
+  @override
+  String get crmNoVisits => 'Hali xizmat yozilmagan';
+
+  @override
+  String crmLinkedCustomer(String name) {
+    return 'Mijozlar ro\'yxatida: $name';
+  }
+
+  @override
+  String get crmInactiveNoService =>
+      'Haydovchi nofaol: xizmat yozish uchun avval uni faollashtiring';
+
+  @override
+  String get crmDeleteDriverTitle => 'Haydovchini o\'chirish';
+
+  @override
+  String crmDeleteDriverConfirm(String name) {
+    return '$name va uning mashinalari o\'chiriladi. Mijozlar ro\'yxatidagi yozuvi va savdolari saqlanib qoladi.';
+  }
+
+  @override
+  String get crmDeleteVehicleTitle => 'Mashinani o\'chirish';
+
+  @override
+  String crmDeleteVehicleConfirm(String plate) {
+    return '$plate mashinasi o\'chiriladi.';
+  }
+
+  @override
+  String get crmPhotoAdd => 'Rasm qo\'shish';
+
+  @override
+  String get crmPhotoChange => 'Rasmni almashtirish';
+
+  @override
+  String get crmPhotoRemove => 'Rasmni o\'chirish';
+
+  @override
+  String get crmDueToday => 'bugun';
+
+  @override
+  String crmDueIn(int count) {
+    return '$count kun qoldi';
+  }
+
+  @override
+  String crmOverdueBy(int count) {
+    return '$count kun o\'tdi';
+  }
+
+  @override
+  String get crmItemReplaced => 'Keyingi xizmatda almashtirildi';
+
+  @override
+  String get crmItemDone => 'Bajarildi';
+
+  @override
+  String get crmItemCancelled => 'Bekor qilingan';
+
+  @override
+  String get crmNoReminder => 'Eslatmasiz';
+
+  @override
+  String get crmNoSale => 'Sotuvsiz';
+
+  @override
+  String crmSaleDebtLeft(String amount) {
+    return 'Qarz: $amount';
+  }
+
+  @override
+  String get crmSaleDebtSettled => 'Qarz to\'langan';
+
+  @override
+  String crmKmValue(String km) {
+    return '$km km';
+  }
+
+  @override
+  String crmEveryKm(String km) {
+    return 'har $km km';
+  }
+
+  @override
+  String crmAtKm(String km) {
+    return '$km km da';
+  }
+
+  @override
+  String get crmTgLinked => 'Telegram: eslatmalar boradi';
+
+  @override
+  String get crmTgNotLinked => 'Telegram ulanmagan';
+
+  @override
+  String get crmTgBlocked => 'Haydovchi botni bloklagan';
+
+  @override
+  String get crmTgNoBot =>
+      'Do\'konga Telegram bot ulanmagan, eslatmalar haydovchiga Telegram orqali bormaydi';
+
+  @override
+  String get crmTgHowTo =>
+      'Haydovchi do\'kon botini ochib, telefon raqamini yuborishi kerak';
+
+  @override
+  String get crmTgShareLink => 'Bot havolasini yuborish';
+
+  @override
+  String get crmVisitTitle => 'Xizmat yozish';
+
+  @override
+  String get crmServiceDate => 'Xizmat sanasi';
+
+  @override
+  String get crmOdometer => 'Spidometr (km)';
+
+  @override
+  String get crmParts => 'O\'rnatilgan qismlar';
+
+  @override
+  String get crmAddPart => 'Mahsulot qo\'shish';
+
+  @override
+  String get crmAddManual => 'Qo\'lda';
+
+  @override
+  String get crmPartSearch => 'Ehtiyot qism yoki moy qidirish';
+
+  @override
+  String get crmPartsEmpty => 'Mahsulot yoki qo\'lda qator qo\'shing';
+
+  @override
+  String get crmManualName => 'Nomi (masalan: Ish haqi)';
+
+  @override
+  String get crmQuantity => 'Miqdor';
+
+  @override
+  String get crmIntervalKm => 'Keyingi xizmatgacha, km';
+
+  @override
+  String get crmNextDate => 'Keyingi sana';
+
+  @override
+  String crmDueAuto(String date) {
+    return 'Taxminan $date da qaytib keladi';
+  }
+
+  @override
+  String get crmDueManual => 'Sana qo\'lda kiritildi';
+
+  @override
+  String get crmDueNeedsDate => 'Kunlik masofa yo\'q — sanani kiriting';
+
+  @override
+  String get crmRecordSale => 'Sotuv sifatida yozish';
+
+  @override
+  String get crmRecordSaleOn =>
+      'Mahsulot ombordan chiqadi, to\'lov yoki qarz yoziladi';
+
+  @override
+  String get crmRecordSaleOff =>
+      'Faqat eslatma uchun: ombor va pul o\'zgarmaydi';
+
+  @override
+  String get crmPaidNow => 'Hozir to\'langan summa (ixtiyoriy)';
+
+  @override
+  String crmDebtLeft(String amount) {
+    return 'Qarz: $amount';
+  }
+
+  @override
+  String get crmSaveVisit => 'Xizmatni saqlash';
+
+  @override
+  String get crmVisitSaved => 'Xizmat yozildi';
+
+  @override
+  String crmInStock(String qty) {
+    return 'Omborda: $qty';
+  }
+
+  @override
+  String get crmPickVehicle => 'Mashinani tanlang';
+
+  @override
+  String get crmAddPartFirst => 'Kamida bitta qator qo\'shing';
+
+  @override
+  String get crmManualNameMissing =>
+      'Qo\'lda qo\'shilgan qator nomini kiriting';
+
+  @override
+  String crmPriceMissing(String name) {
+    return '\"$name\" uchun narxni kiriting';
+  }
+
+  @override
+  String crmNotEnoughStock(String name) {
+    return '\"$name\" omborda yetarli emas';
+  }
+
+  @override
+  String crmDueAfterService(String name) {
+    return '\"$name\" uchun keyingi sana xizmat sanasidan keyin bo\'lishi kerak';
+  }
+
+  @override
+  String crmDueNeeded(String name) {
+    return 'Kunlik masofa kiritilmagan: \"$name\" uchun keyingi sanani tanlang';
+  }
+
+  @override
+  String get crmPaidTooMuch =>
+      'To\'langan summa jami summadan oshmasligi kerak';
+
+  @override
+  String get crmMixedCurrency =>
+      'Bitta xizmatda faqat bitta valyutadagi mahsulotlar bo\'lishi mumkin';
+
+  @override
+  String get crmRemindersAll => 'Barchasi';
+
+  @override
+  String get crmRemindersOverdue => 'Muddati o\'tgan';
+
+  @override
+  String get crmRemindersSoon => '7 kun ichida';
+
+  @override
+  String get crmRemindersEmpty => 'Eslatmalar yo\'q';
+
+  @override
+  String get crmMarkDone => 'Bajarildi';
+
+  @override
+  String get crmMoveDate => 'Sanani o\'zgartirish';
+
+  @override
+  String get crmCancelReminder => 'Eslatmani bekor qilish';
+
+  @override
+  String get crmReminderDone => 'Bajarildi deb belgilandi';
+
+  @override
+  String get crmReminderCancelled => 'Eslatma bekor qilindi';
+
+  @override
+  String get crmDateMoved => 'Sana o\'zgartirildi';
+
+  @override
+  String get crmDueManualShort => 'Sana qo\'lda kiritilgan';
+
+  @override
+  String get crmDriverSaved => 'Haydovchi saqlandi';
+
+  @override
+  String get crmVehicleSaved => 'Mashina saqlandi';
+
+  @override
+  String get notifTitle => 'Bildirishnomalar';
+
+  @override
+  String get notifEmpty => 'Hozircha bildirishnoma yo\'q';
+
+  @override
+  String get notifReadAll => 'Hammasini o\'qilgan qilish';
+
+  @override
+  String notifServiceDueStaff(String plate, String driver) {
+    return '$plate — xizmat vaqti ($driver)';
+  }
+
+  @override
+  String get notifDriverNotified => 'Haydovchiga Telegram orqali eslatildi';
+
+  @override
+  String notifCallDriver(String phone) {
+    return 'Haydovchi botga ulanmagan — qo\'ng\'iroq qiling: $phone';
+  }
+
+  @override
+  String notifServiceDueDriver(String store) {
+    return '$store: xizmat vaqti yaqinlashdi';
+  }
+
+  @override
+  String get notifUnknown => 'Yangi bildirishnoma';
 }

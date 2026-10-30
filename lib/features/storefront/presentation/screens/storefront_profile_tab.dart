@@ -11,6 +11,7 @@ import 'package:bsmart/features/auth/presentation/widgets/telegram_notifications
 import 'package:bsmart/features/auth/presentation/widgets/verify_phone_banner.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
+import 'package:bsmart/features/notifications/presentation/widgets/notification_bell_button.dart';
 
 /// The "Profil" tab — a guest sees login/register entry points; a logged-in
 /// `CUSTOMER` sees their own orders/debts (both reused as-is from their
@@ -88,6 +89,7 @@ class StorefrontProfileTab extends ConsumerWidget {
     return DashPage(
       title: l10n.navProfile,
       showBack: false,
+      actions: const [NotificationBellButton()],
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
         children: [

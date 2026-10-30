@@ -3564,4 +3564,398 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonLoadMore => 'Show more';
+
+  @override
+  String get navCrmDrivers => 'Drivers';
+
+  @override
+  String get navCrmReminders => 'Reminders';
+
+  @override
+  String get crmDriversSearchHint => 'Name, phone or plate';
+
+  @override
+  String get crmDriversEmpty => 'No drivers yet';
+
+  @override
+  String get crmNotEnabled => 'CRM isn\'t enabled for this business';
+
+  @override
+  String get crmAddDriver => 'Add driver';
+
+  @override
+  String get crmNewDriver => 'New driver';
+
+  @override
+  String get crmEditDriver => 'Edit driver';
+
+  @override
+  String get crmLastName => 'Last name';
+
+  @override
+  String get crmPhoneHint =>
+      'The driver is also added to the store\'s customers with this number';
+
+  @override
+  String get crmFirstCar => 'Car (optional)';
+
+  @override
+  String get crmPlate => 'Plate number';
+
+  @override
+  String get crmPlateMissing => 'Enter the plate number';
+
+  @override
+  String get crmPlateInvalid => 'Invalid plate number';
+
+  @override
+  String get crmModel => 'Model';
+
+  @override
+  String get crmModelMissing => 'Enter the car model';
+
+  @override
+  String get crmDailyKm => 'Distance per day (km)';
+
+  @override
+  String get crmDailyKmHint =>
+      'Approximate. Service due dates are counted from it';
+
+  @override
+  String get crmDailyKmInvalid => 'Enter a whole number from 1 to 3000';
+
+  @override
+  String get crmActiveHint => 'Inactive drivers get no reminders';
+
+  @override
+  String get crmVehicles => 'Cars';
+
+  @override
+  String get crmAddVehicle => 'Add car';
+
+  @override
+  String get crmEditVehicle => 'Edit car';
+
+  @override
+  String get crmNoVehicles => 'No cars added';
+
+  @override
+  String crmDailyKmValue(String km) {
+    return '~$km km per day';
+  }
+
+  @override
+  String get crmDailyKmMissing => 'Daily distance not set';
+
+  @override
+  String crmNextDue(String name) {
+    return 'Next: $name';
+  }
+
+  @override
+  String get crmRecordService => 'Record service';
+
+  @override
+  String get crmHistory => 'Service history';
+
+  @override
+  String get crmNoVisits => 'No services yet';
+
+  @override
+  String crmLinkedCustomer(String name) {
+    return 'In customers: $name';
+  }
+
+  @override
+  String get crmInactiveNoService =>
+      'The driver is inactive: activate them to record a service';
+
+  @override
+  String get crmDeleteDriverTitle => 'Delete driver';
+
+  @override
+  String crmDeleteDriverConfirm(String name) {
+    return '$name and their cars will be deleted. Their customer record and sales are kept.';
+  }
+
+  @override
+  String get crmDeleteVehicleTitle => 'Delete car';
+
+  @override
+  String crmDeleteVehicleConfirm(String plate) {
+    return 'Car $plate will be deleted.';
+  }
+
+  @override
+  String get crmPhotoAdd => 'Add photo';
+
+  @override
+  String get crmPhotoChange => 'Change photo';
+
+  @override
+  String get crmPhotoRemove => 'Remove photo';
+
+  @override
+  String get crmDueToday => 'today';
+
+  @override
+  String crmDueIn(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String crmOverdueBy(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days overdue',
+      one: '1 day overdue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get crmItemReplaced => 'Replaced at a later service';
+
+  @override
+  String get crmItemDone => 'Done';
+
+  @override
+  String get crmItemCancelled => 'Cancelled';
+
+  @override
+  String get crmNoReminder => 'No reminder';
+
+  @override
+  String get crmNoSale => 'No sale';
+
+  @override
+  String crmSaleDebtLeft(String amount) {
+    return 'Owes $amount';
+  }
+
+  @override
+  String get crmSaleDebtSettled => 'Debt paid off';
+
+  @override
+  String crmKmValue(String km) {
+    return '$km km';
+  }
+
+  @override
+  String crmEveryKm(String km) {
+    return 'every $km km';
+  }
+
+  @override
+  String crmAtKm(String km) {
+    return 'at $km km';
+  }
+
+  @override
+  String get crmTgLinked => 'Telegram: reminders go through';
+
+  @override
+  String get crmTgNotLinked => 'Telegram not connected';
+
+  @override
+  String get crmTgBlocked => 'The driver blocked the bot';
+
+  @override
+  String get crmTgNoBot =>
+      'No Telegram bot is connected to the store, so reminders don\'t reach the driver on Telegram';
+
+  @override
+  String get crmTgHowTo =>
+      'The driver needs to open the store\'s bot and share their phone number';
+
+  @override
+  String get crmTgShareLink => 'Send the bot link';
+
+  @override
+  String get crmVisitTitle => 'Record a service';
+
+  @override
+  String get crmServiceDate => 'Service date';
+
+  @override
+  String get crmOdometer => 'Odometer (km)';
+
+  @override
+  String get crmParts => 'Installed parts';
+
+  @override
+  String get crmAddPart => 'Add product';
+
+  @override
+  String get crmAddManual => 'Manual';
+
+  @override
+  String get crmPartSearch => 'Search for a part or oil';
+
+  @override
+  String get crmPartsEmpty => 'Add a product or a manual line';
+
+  @override
+  String get crmManualName => 'Name (e.g. Labour)';
+
+  @override
+  String get crmQuantity => 'Quantity';
+
+  @override
+  String get crmIntervalKm => 'Until next service, km';
+
+  @override
+  String get crmNextDate => 'Next date';
+
+  @override
+  String crmDueAuto(String date) {
+    return 'Due back around $date';
+  }
+
+  @override
+  String get crmDueManual => 'Date set by hand';
+
+  @override
+  String get crmDueNeedsDate => 'No daily distance — pick a date';
+
+  @override
+  String get crmRecordSale => 'Record as a sale';
+
+  @override
+  String get crmRecordSaleOn =>
+      'Stock is taken and a payment or debt is recorded';
+
+  @override
+  String get crmRecordSaleOff => 'Reminder only: stock and money don\'t change';
+
+  @override
+  String get crmPaidNow => 'Paid now (optional)';
+
+  @override
+  String crmDebtLeft(String amount) {
+    return 'Debt: $amount';
+  }
+
+  @override
+  String get crmSaveVisit => 'Save service';
+
+  @override
+  String get crmVisitSaved => 'Service recorded';
+
+  @override
+  String crmInStock(String qty) {
+    return 'In stock: $qty';
+  }
+
+  @override
+  String get crmPickVehicle => 'Choose a car';
+
+  @override
+  String get crmAddPartFirst => 'Add at least one line';
+
+  @override
+  String get crmManualNameMissing => 'Enter a name for the manual line';
+
+  @override
+  String crmPriceMissing(String name) {
+    return 'Enter a price for \"$name\"';
+  }
+
+  @override
+  String crmNotEnoughStock(String name) {
+    return 'Not enough \"$name\" in stock';
+  }
+
+  @override
+  String crmDueAfterService(String name) {
+    return 'The next date for \"$name\" must be after the service date';
+  }
+
+  @override
+  String crmDueNeeded(String name) {
+    return 'No daily distance: pick the next date for \"$name\"';
+  }
+
+  @override
+  String get crmPaidTooMuch => 'The amount paid can\'t exceed the total';
+
+  @override
+  String get crmMixedCurrency =>
+      'One service can only have products in one currency';
+
+  @override
+  String get crmRemindersAll => 'All';
+
+  @override
+  String get crmRemindersOverdue => 'Overdue';
+
+  @override
+  String get crmRemindersSoon => 'Within 7 days';
+
+  @override
+  String get crmRemindersEmpty => 'No reminders';
+
+  @override
+  String get crmMarkDone => 'Done';
+
+  @override
+  String get crmMoveDate => 'Change date';
+
+  @override
+  String get crmCancelReminder => 'Cancel reminder';
+
+  @override
+  String get crmReminderDone => 'Marked as done';
+
+  @override
+  String get crmReminderCancelled => 'Reminder cancelled';
+
+  @override
+  String get crmDateMoved => 'Date changed';
+
+  @override
+  String get crmDueManualShort => 'Date set by hand';
+
+  @override
+  String get crmDriverSaved => 'Driver saved';
+
+  @override
+  String get crmVehicleSaved => 'Car saved';
+
+  @override
+  String get notifTitle => 'Notifications';
+
+  @override
+  String get notifEmpty => 'No notifications yet';
+
+  @override
+  String get notifReadAll => 'Mark all as read';
+
+  @override
+  String notifServiceDueStaff(String plate, String driver) {
+    return '$plate — service due ($driver)';
+  }
+
+  @override
+  String get notifDriverNotified => 'The driver was reminded on Telegram';
+
+  @override
+  String notifCallDriver(String phone) {
+    return 'The driver isn\'t on the bot — call them: $phone';
+  }
+
+  @override
+  String notifServiceDueDriver(String store) {
+    return '$store: service coming up';
+  }
+
+  @override
+  String get notifUnknown => 'New notification';
 }

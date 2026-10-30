@@ -5931,6 +5931,672 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Yana ko\'rsatish'**
   String get commonLoadMore;
+
+  /// No description provided for @navCrmDrivers.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haydovchilar'**
+  String get navCrmDrivers;
+
+  /// No description provided for @navCrmReminders.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eslatmalar'**
+  String get navCrmReminders;
+
+  /// No description provided for @crmDriversSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ism, telefon yoki davlat raqami'**
+  String get crmDriversSearchHint;
+
+  /// No description provided for @crmDriversEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali haydovchilar yo\'q'**
+  String get crmDriversEmpty;
+
+  /// No description provided for @crmNotEnabled.
+  ///
+  /// In uz, this message translates to:
+  /// **'CRM bu biznes uchun yoqilmagan'**
+  String get crmNotEnabled;
+
+  /// No description provided for @crmAddDriver.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haydovchi qo\'shish'**
+  String get crmAddDriver;
+
+  /// No description provided for @crmNewDriver.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi haydovchi'**
+  String get crmNewDriver;
+
+  /// No description provided for @crmEditDriver.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haydovchini tahrirlash'**
+  String get crmEditDriver;
+
+  /// No description provided for @crmLastName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Familiya'**
+  String get crmLastName;
+
+  /// No description provided for @crmPhoneHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shu raqam bilan do\'kon mijozlari ro\'yxatiga ham qo\'shiladi'**
+  String get crmPhoneHint;
+
+  /// No description provided for @crmFirstCar.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mashina (ixtiyoriy)'**
+  String get crmFirstCar;
+
+  /// No description provided for @crmPlate.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davlat raqami'**
+  String get crmPlate;
+
+  /// No description provided for @crmPlateMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davlat raqamini kiriting'**
+  String get crmPlateMissing;
+
+  /// No description provided for @crmPlateInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davlat raqami noto\'g\'ri'**
+  String get crmPlateInvalid;
+
+  /// No description provided for @crmModel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Model'**
+  String get crmModel;
+
+  /// No description provided for @crmModelMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mashina modelini kiriting'**
+  String get crmModelMissing;
+
+  /// No description provided for @crmDailyKm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuniga yuradigan masofa (km)'**
+  String get crmDailyKm;
+
+  /// No description provided for @crmDailyKmHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Taxminan. Xizmat muddati shu asosida hisoblanadi'**
+  String get crmDailyKmHint;
+
+  /// No description provided for @crmDailyKmInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'1 dan 3000 gacha butun son kiriting'**
+  String get crmDailyKmInvalid;
+
+  /// No description provided for @crmActiveHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nofaol haydovchiga eslatmalar yuborilmaydi'**
+  String get crmActiveHint;
+
+  /// No description provided for @crmVehicles.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mashinalar'**
+  String get crmVehicles;
+
+  /// No description provided for @crmAddVehicle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mashina qo\'shish'**
+  String get crmAddVehicle;
+
+  /// No description provided for @crmEditVehicle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mashinani tahrirlash'**
+  String get crmEditVehicle;
+
+  /// No description provided for @crmNoVehicles.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mashina qo\'shilmagan'**
+  String get crmNoVehicles;
+
+  /// No description provided for @crmDailyKmValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kuniga ~{km} km'**
+  String crmDailyKmValue(String km);
+
+  /// No description provided for @crmDailyKmMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kunlik masofa kiritilmagan'**
+  String get crmDailyKmMissing;
+
+  /// No description provided for @crmNextDue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Keyingi: {name}'**
+  String crmNextDue(String name);
+
+  /// No description provided for @crmRecordService.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xizmat yozish'**
+  String get crmRecordService;
+
+  /// No description provided for @crmHistory.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xizmatlar tarixi'**
+  String get crmHistory;
+
+  /// No description provided for @crmNoVisits.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali xizmat yozilmagan'**
+  String get crmNoVisits;
+
+  /// No description provided for @crmLinkedCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozlar ro\'yxatida: {name}'**
+  String crmLinkedCustomer(String name);
+
+  /// No description provided for @crmInactiveNoService.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haydovchi nofaol: xizmat yozish uchun avval uni faollashtiring'**
+  String get crmInactiveNoService;
+
+  /// No description provided for @crmDeleteDriverTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haydovchini o\'chirish'**
+  String get crmDeleteDriverTitle;
+
+  /// No description provided for @crmDeleteDriverConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} va uning mashinalari o\'chiriladi. Mijozlar ro\'yxatidagi yozuvi va savdolari saqlanib qoladi.'**
+  String crmDeleteDriverConfirm(String name);
+
+  /// No description provided for @crmDeleteVehicleTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mashinani o\'chirish'**
+  String get crmDeleteVehicleTitle;
+
+  /// No description provided for @crmDeleteVehicleConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'{plate} mashinasi o\'chiriladi.'**
+  String crmDeleteVehicleConfirm(String plate);
+
+  /// No description provided for @crmPhotoAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rasm qo\'shish'**
+  String get crmPhotoAdd;
+
+  /// No description provided for @crmPhotoChange.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rasmni almashtirish'**
+  String get crmPhotoChange;
+
+  /// No description provided for @crmPhotoRemove.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rasmni o\'chirish'**
+  String get crmPhotoRemove;
+
+  /// No description provided for @crmDueToday.
+  ///
+  /// In uz, this message translates to:
+  /// **'bugun'**
+  String get crmDueToday;
+
+  /// No description provided for @crmDueIn.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} kun qoldi'**
+  String crmDueIn(int count);
+
+  /// No description provided for @crmOverdueBy.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} kun o\'tdi'**
+  String crmOverdueBy(int count);
+
+  /// No description provided for @crmItemReplaced.
+  ///
+  /// In uz, this message translates to:
+  /// **'Keyingi xizmatda almashtirildi'**
+  String get crmItemReplaced;
+
+  /// No description provided for @crmItemDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bajarildi'**
+  String get crmItemDone;
+
+  /// No description provided for @crmItemCancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilingan'**
+  String get crmItemCancelled;
+
+  /// No description provided for @crmNoReminder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eslatmasiz'**
+  String get crmNoReminder;
+
+  /// No description provided for @crmNoSale.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotuvsiz'**
+  String get crmNoSale;
+
+  /// No description provided for @crmSaleDebtLeft.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarz: {amount}'**
+  String crmSaleDebtLeft(String amount);
+
+  /// No description provided for @crmSaleDebtSettled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarz to\'langan'**
+  String get crmSaleDebtSettled;
+
+  /// No description provided for @crmKmValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'{km} km'**
+  String crmKmValue(String km);
+
+  /// No description provided for @crmEveryKm.
+  ///
+  /// In uz, this message translates to:
+  /// **'har {km} km'**
+  String crmEveryKm(String km);
+
+  /// No description provided for @crmAtKm.
+  ///
+  /// In uz, this message translates to:
+  /// **'{km} km da'**
+  String crmAtKm(String km);
+
+  /// No description provided for @crmTgLinked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telegram: eslatmalar boradi'**
+  String get crmTgLinked;
+
+  /// No description provided for @crmTgNotLinked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telegram ulanmagan'**
+  String get crmTgNotLinked;
+
+  /// No description provided for @crmTgBlocked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haydovchi botni bloklagan'**
+  String get crmTgBlocked;
+
+  /// No description provided for @crmTgNoBot.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'konga Telegram bot ulanmagan, eslatmalar haydovchiga Telegram orqali bormaydi'**
+  String get crmTgNoBot;
+
+  /// No description provided for @crmTgHowTo.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haydovchi do\'kon botini ochib, telefon raqamini yuborishi kerak'**
+  String get crmTgHowTo;
+
+  /// No description provided for @crmTgShareLink.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bot havolasini yuborish'**
+  String get crmTgShareLink;
+
+  /// No description provided for @crmVisitTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xizmat yozish'**
+  String get crmVisitTitle;
+
+  /// No description provided for @crmServiceDate.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xizmat sanasi'**
+  String get crmServiceDate;
+
+  /// No description provided for @crmOdometer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Spidometr (km)'**
+  String get crmOdometer;
+
+  /// No description provided for @crmParts.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'rnatilgan qismlar'**
+  String get crmParts;
+
+  /// No description provided for @crmAddPart.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulot qo\'shish'**
+  String get crmAddPart;
+
+  /// No description provided for @crmAddManual.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'lda'**
+  String get crmAddManual;
+
+  /// No description provided for @crmPartSearch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ehtiyot qism yoki moy qidirish'**
+  String get crmPartSearch;
+
+  /// No description provided for @crmPartsEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulot yoki qo\'lda qator qo\'shing'**
+  String get crmPartsEmpty;
+
+  /// No description provided for @crmManualName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomi (masalan: Ish haqi)'**
+  String get crmManualName;
+
+  /// No description provided for @crmQuantity.
+  ///
+  /// In uz, this message translates to:
+  /// **'Miqdor'**
+  String get crmQuantity;
+
+  /// No description provided for @crmIntervalKm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Keyingi xizmatgacha, km'**
+  String get crmIntervalKm;
+
+  /// No description provided for @crmNextDate.
+  ///
+  /// In uz, this message translates to:
+  /// **'Keyingi sana'**
+  String get crmNextDate;
+
+  /// No description provided for @crmDueAuto.
+  ///
+  /// In uz, this message translates to:
+  /// **'Taxminan {date} da qaytib keladi'**
+  String crmDueAuto(String date);
+
+  /// No description provided for @crmDueManual.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sana qo\'lda kiritildi'**
+  String get crmDueManual;
+
+  /// No description provided for @crmDueNeedsDate.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kunlik masofa yo\'q — sanani kiriting'**
+  String get crmDueNeedsDate;
+
+  /// No description provided for @crmRecordSale.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotuv sifatida yozish'**
+  String get crmRecordSale;
+
+  /// No description provided for @crmRecordSaleOn.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulot ombordan chiqadi, to\'lov yoki qarz yoziladi'**
+  String get crmRecordSaleOn;
+
+  /// No description provided for @crmRecordSaleOff.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faqat eslatma uchun: ombor va pul o\'zgarmaydi'**
+  String get crmRecordSaleOff;
+
+  /// No description provided for @crmPaidNow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozir to\'langan summa (ixtiyoriy)'**
+  String get crmPaidNow;
+
+  /// No description provided for @crmDebtLeft.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarz: {amount}'**
+  String crmDebtLeft(String amount);
+
+  /// No description provided for @crmSaveVisit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xizmatni saqlash'**
+  String get crmSaveVisit;
+
+  /// No description provided for @crmVisitSaved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xizmat yozildi'**
+  String get crmVisitSaved;
+
+  /// No description provided for @crmInStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Omborda: {qty}'**
+  String crmInStock(String qty);
+
+  /// No description provided for @crmPickVehicle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mashinani tanlang'**
+  String get crmPickVehicle;
+
+  /// No description provided for @crmAddPartFirst.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kamida bitta qator qo\'shing'**
+  String get crmAddPartFirst;
+
+  /// No description provided for @crmManualNameMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'lda qo\'shilgan qator nomini kiriting'**
+  String get crmManualNameMissing;
+
+  /// No description provided for @crmPriceMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'\"{name}\" uchun narxni kiriting'**
+  String crmPriceMissing(String name);
+
+  /// No description provided for @crmNotEnoughStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'\"{name}\" omborda yetarli emas'**
+  String crmNotEnoughStock(String name);
+
+  /// No description provided for @crmDueAfterService.
+  ///
+  /// In uz, this message translates to:
+  /// **'\"{name}\" uchun keyingi sana xizmat sanasidan keyin bo\'lishi kerak'**
+  String crmDueAfterService(String name);
+
+  /// No description provided for @crmDueNeeded.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kunlik masofa kiritilmagan: \"{name}\" uchun keyingi sanani tanlang'**
+  String crmDueNeeded(String name);
+
+  /// No description provided for @crmPaidTooMuch.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'langan summa jami summadan oshmasligi kerak'**
+  String get crmPaidTooMuch;
+
+  /// No description provided for @crmMixedCurrency.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bitta xizmatda faqat bitta valyutadagi mahsulotlar bo\'lishi mumkin'**
+  String get crmMixedCurrency;
+
+  /// No description provided for @crmRemindersAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barchasi'**
+  String get crmRemindersAll;
+
+  /// No description provided for @crmRemindersOverdue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddati o\'tgan'**
+  String get crmRemindersOverdue;
+
+  /// No description provided for @crmRemindersSoon.
+  ///
+  /// In uz, this message translates to:
+  /// **'7 kun ichida'**
+  String get crmRemindersSoon;
+
+  /// No description provided for @crmRemindersEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eslatmalar yo\'q'**
+  String get crmRemindersEmpty;
+
+  /// No description provided for @crmMarkDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bajarildi'**
+  String get crmMarkDone;
+
+  /// No description provided for @crmMoveDate.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sanani o\'zgartirish'**
+  String get crmMoveDate;
+
+  /// No description provided for @crmCancelReminder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eslatmani bekor qilish'**
+  String get crmCancelReminder;
+
+  /// No description provided for @crmReminderDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bajarildi deb belgilandi'**
+  String get crmReminderDone;
+
+  /// No description provided for @crmReminderCancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eslatma bekor qilindi'**
+  String get crmReminderCancelled;
+
+  /// No description provided for @crmDateMoved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sana o\'zgartirildi'**
+  String get crmDateMoved;
+
+  /// No description provided for @crmDueManualShort.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sana qo\'lda kiritilgan'**
+  String get crmDueManualShort;
+
+  /// No description provided for @crmDriverSaved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haydovchi saqlandi'**
+  String get crmDriverSaved;
+
+  /// No description provided for @crmVehicleSaved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mashina saqlandi'**
+  String get crmVehicleSaved;
+
+  /// No description provided for @notifTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bildirishnomalar'**
+  String get notifTitle;
+
+  /// No description provided for @notifEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha bildirishnoma yo\'q'**
+  String get notifEmpty;
+
+  /// No description provided for @notifReadAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hammasini o\'qilgan qilish'**
+  String get notifReadAll;
+
+  /// No description provided for @notifServiceDueStaff.
+  ///
+  /// In uz, this message translates to:
+  /// **'{plate} — xizmat vaqti ({driver})'**
+  String notifServiceDueStaff(String plate, String driver);
+
+  /// No description provided for @notifDriverNotified.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haydovchiga Telegram orqali eslatildi'**
+  String get notifDriverNotified;
+
+  /// No description provided for @notifCallDriver.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haydovchi botga ulanmagan — qo\'ng\'iroq qiling: {phone}'**
+  String notifCallDriver(String phone);
+
+  /// No description provided for @notifServiceDueDriver.
+  ///
+  /// In uz, this message translates to:
+  /// **'{store}: xizmat vaqti yaqinlashdi'**
+  String notifServiceDueDriver(String store);
+
+  /// No description provided for @notifUnknown.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi bildirishnoma'**
+  String get notifUnknown;
 }
 
 class _AppLocalizationsDelegate

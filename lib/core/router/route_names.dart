@@ -95,4 +95,11 @@ abstract final class RouteNames {
 
   // --- Phase 10: agents, the business owner's side ---
   static const leadAgents = '/lead-agents';
+
+  // --- CRM (auto-parts businesses with CRM switched on) + the in-app inbox ---
+  static const crmDrivers = '/crm/drivers';
+  static const crmDriverDetailPattern = '/crm/drivers/:id';
+  static String crmDriverDetail(String id) => '/crm/drivers/$id';
+  static const crmReminders = '/crm/reminders';
+  static const notifications = '/notifications';
 }

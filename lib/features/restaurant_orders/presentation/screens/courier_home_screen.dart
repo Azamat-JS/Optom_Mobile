@@ -14,6 +14,7 @@ import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
+import 'package:bsmart/features/notifications/presentation/widgets/notification_bell_button.dart';
 
 /// A courier's own home. For a RESTAURANT-vertical owner's courier, this is
 /// the real, working delivery-claiming flow — the same order board every
@@ -68,6 +69,7 @@ class _CourierHomeScreenState extends ConsumerState<CourierHomeScreen> {
       showBack: false,
       actions: [
         const CourierAlertsButton(),
+        const NotificationBellButton(),
         DashRoundButton(
           icon: Icons.settings_outlined,
           tooltip: l10n.commonSettings,

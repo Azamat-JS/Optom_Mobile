@@ -10,6 +10,7 @@ import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/features/storefront/presentation/widgets/storefront_bottom_nav.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
+import 'package:bsmart/features/notifications/presentation/widgets/notification_bell_button.dart';
 
 /// The narrow `WAITER` shell — order-taking (order board) + a read-only
 /// Menu, exactly the plan's "2-3 tabs" scope. Phase 9: a `DashPage` header
@@ -36,6 +37,7 @@ class _WaiterHomeScreenState extends ConsumerState<WaiterHomeScreen> {
       title: titles[_index],
       showBack: false,
       actions: [
+        const NotificationBellButton(),
         DashRoundButton(
           icon: Icons.settings_outlined,
           tooltip: l10n.commonSettings,
