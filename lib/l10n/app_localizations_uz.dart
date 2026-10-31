@@ -3507,6 +3507,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get crmVehicles => 'Mashinalar';
 
   @override
+  String get crmVehicle => 'Mashina';
+
+  @override
   String get crmAddVehicle => 'Mashina qo\'shish';
 
   @override
@@ -3825,4 +3828,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get notifUnknown => 'Yangi bildirishnoma';
+
+  @override
+  String get notifOpen => 'Ochish';
 }

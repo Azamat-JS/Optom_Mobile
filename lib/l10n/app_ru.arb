@@ -1001,6 +1001,7 @@
   "crmDailyKmInvalid": "Введите целое число от 1 до 3000",
   "crmActiveHint": "Неактивному водителю напоминания не отправляются",
   "crmVehicles": "Машины",
+  "crmVehicle": "Машина",
   "crmAddVehicle": "Добавить машину",
   "crmEditVehicle": "Редактировать машину",
   "crmNoVehicles": "Машин нет",
@@ -1090,5 +1091,6 @@
   "notifDriverNotified": "Водителю напомнили в Telegram",
   "notifCallDriver": "Водитель не подключён к боту — позвоните: {phone}",
   "notifServiceDueDriver": "{store}: скоро обслуживание",
-  "notifUnknown": "Новое уведомление"
+  "notifUnknown": "Новое уведомление",
+  "notifOpen": "Открыть"
 }

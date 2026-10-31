@@ -6058,6 +6058,12 @@ abstract class AppLocalizations {
   /// **'Mashinalar'**
   String get crmVehicles;
 
+  /// No description provided for @crmVehicle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mashina'**
+  String get crmVehicle;
+
   /// No description provided for @crmAddVehicle.
   ///
   /// In uz, this message translates to:
@@ -6597,6 +6603,12 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Yangi bildirishnoma'**
   String get notifUnknown;
+
+  /// No description provided for @notifOpen.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ochish'**
+  String get notifOpen;
 }
 
 class _AppLocalizationsDelegate

@@ -3616,6 +3616,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get crmVehicles => 'Машины';
 
   @override
+  String get crmVehicle => 'Машина';
+
+  @override
   String get crmAddVehicle => 'Добавить машину';
 
   @override
@@ -3948,4 +3951,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get notifUnknown => 'Новое уведомление';
+
+  @override
+  String get notifOpen => 'Открыть';
 }

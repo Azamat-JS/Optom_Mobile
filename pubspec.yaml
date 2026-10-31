@@ -68,6 +68,10 @@ dependencies:
   url_launcher: ^6.3.2
   # Reverse geocoding for the checkout address pin (native geocoder, no API key)
   geocoding: ^4.0.0
+  # Push notifications (Firebase Cloud Messaging only as the transport; Android for now, see
+  # CLAUDE.md "Phase 11" → C7). Pinned: the 5.x / 17.x majors were only two weeks old.
+  firebase_core: 4.15.0
+  firebase_messaging: 16.7.0
 
 dev_dependencies:
   flutter_test:

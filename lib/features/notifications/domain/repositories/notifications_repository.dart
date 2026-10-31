@@ -10,4 +10,8 @@ abstract class NotificationsRepository {
   Future<Result<void>> markRead(String id);
 
   Future<Result<void>> markAllRead();
+
+  Future<Result<void>> registerPushDevice({required String token, required String platform, required String locale});
+
+  Future<Result<void>> removePushDevice(String token);
 }

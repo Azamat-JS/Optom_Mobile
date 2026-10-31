@@ -10,6 +10,7 @@ import 'package:bsmart/features/auth/domain/repositories/auth_repository.dart';
 import 'package:bsmart/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/login_usecase.dart';
 import 'package:bsmart/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:bsmart/features/notifications/presentation/push/push_controller.dart';
 
 /// The authenticated app's whole auth state: `null`/`null` means logged out.
 class AuthState {
@@ -66,6 +67,8 @@ class SessionNotifier extends AsyncNotifier<AuthState> {
   }
 
   Future<void> logout() async {
+    // While the session is still valid: stop pushes to this phone for this account.
+    await unregisterPushDevice();
     await getIt<LogoutUseCase>().call();
     _clearState();
   }

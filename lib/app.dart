@@ -5,6 +5,7 @@ import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/l10n/locale_provider.dart';
 import 'package:bsmart/core/router/app_router.dart';
 import 'package:bsmart/core/theme/app_theme.dart';
+import 'package:bsmart/features/notifications/presentation/push/push_controller.dart';
 
 class BsmartApp extends ConsumerWidget {
   const BsmartApp({super.key});
@@ -13,6 +14,8 @@ class BsmartApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
     final locale = ref.watch(localeProvider);
+    // Push notifications follow the session for the app's whole life (Android only for now).
+    ref.watch(pushControllerProvider);
 
     return MaterialApp.router(
       title: 'bsmart',
@@ -20,6 +23,7 @@ class BsmartApp extends ConsumerWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       routerConfig: router,
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       // uz/ru/en (Phase 8) — strings from lib/l10n/*.arb via gen-l10n; the
       // delegates also localize Material widgets (date pickers, tooltips…).
       locale: locale,

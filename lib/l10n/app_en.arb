@@ -1001,6 +1001,7 @@
   "crmDailyKmInvalid": "Enter a whole number from 1 to 3000",
   "crmActiveHint": "Inactive drivers get no reminders",
   "crmVehicles": "Cars",
+  "crmVehicle": "Car",
   "crmAddVehicle": "Add car",
   "crmEditVehicle": "Edit car",
   "crmNoVehicles": "No cars added",
@@ -1090,5 +1091,6 @@
   "notifDriverNotified": "The driver was reminded on Telegram",
   "notifCallDriver": "The driver isn't on the bot — call them: {phone}",
   "notifServiceDueDriver": "{store}: service coming up",
-  "notifUnknown": "New notification"
+  "notifUnknown": "New notification",
+  "notifOpen": "Open"
 }

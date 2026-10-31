@@ -2489,6 +2489,144 @@ the total is refused before sending.
 - Verified: 2 unit tests (98 total), plus a simulator run: staff sale of 12 000 with 5 000 paid,
   20 000 refused, and the server's debt PARTIAL with 7 000 left and the 5 000 payment.
 
+### Phase 11 — CRM (auto parts) + in-app inbox (mobile; backend + web done in Optom_Savdo C1–C5)
+Optom_Savdo CLAUDE.md "CRM" is the authoritative design (flag, profiles, drivers/cars, visits as
+real sales, due dates, alert job, `Notification` inbox). This phase covers its milestones **C6**
+(screens + inbox) and **C7** (phone push, Android only for now).
+
+| # | Scope | Status |
+|---|---|---|
+| C6 | CRM screens (drivers, cars, visits, reminders) + inbox for every role | 🟢 Done 2026-10-31 |
+| C7 | Push notifications (Firebase Cloud Messaging) | 🟢 Android done 2026-10-31; iPhone waits for an Apple Developer account |
+
+**C6 notes (2026-10-31):**
+- **Gate:** `User.crmEnabled` (parsed from `/auth/me` and login). The CRM tiles ("Haydovchilar",
+  "Eslatmalar") show on `HomeScreen` only for `RETAILER`/`RETAILER_ADMIN` with `crmEnabled` and
+  `businessType == autoParts`. As on the web, the saved user is used until the next login. A 403
+  from any CRM call renders "CRM yoqilmagan" (`crmErrorText`).
+- **`features/crm/`** (Clean Architecture, 15 use cases, one `CrmRepository`):
+  - `domain/crm_due.dart`: calendar days. `crmToday()` is today in Tashkent (UTC+5, no DST) as a
+    UTC-midnight `DateTime`; `dayWire` sends `yyyy-MM-dd`; `dueFromKm(serviceDate, intervalKm,
+    dailyKm)` is the server rule (ceil, at least 1 day); `dueStage` (overdue / ≤ 3 days / later);
+    `isValidPlate` + `formatPlate` ("01 A 123 BC", "01 123 ABC") mirror the server/web.
+  - `CrmVehicleParams` always sends `dailyKm` (null clears it; the server then keeps the dates).
+  - Providers (`crm_providers.dart`, hand-written Notifiers): `crmDriversListProvider` (search,
+    active filter, paging; rebuilt on user or active-store change), `crmDriverProvider` /
+    `crmDriverTelegramProvider` (autoDispose families), `crmVisitsProvider` (10 per page),
+    `crmRemindersProvider` (`setWhen`, `search`, `loadMore`, `changeReminder(id, {status,
+    dueDate})` — not `update`, which clashes with Riverpod's own).
+  - Screens:
+    - `CrmDriversListScreen`: search by name/phone/plate, all/active/inactive, FAB → form.
+    - `CrmDriverFormScreen` (create with an optional first car; edit with the active switch) and
+      `CrmVehicleFormScreen`.
+    - `CrmDriverDetailScreen`: photo sheet (camera/gallery/remove), linked customer, a Telegram
+      status card (share the bot link, or "store has no bot"), car cards with daily km, next due
+      and "Xizmat yozish", visit history with "show more".
+    - `CrmVisitFormScreen`: car, service day (up to 366 days back), odometer, lines from the
+      store's own products or manual lines, qty/price/interval km/next date per line with a live
+      "Taxminan … da qaytib keladi" preview, sale on/off, Naqd/Qarzga + paid now.
+    - `CrmRemindersScreen`: all / overdue · N / 7 days · N, search, call, done / move date /
+      cancel.
+  - Widgets (`crm_widgets.dart`): `PlateBadge`, `DriverPhoto`, `DueText`, `crmDayFormat`
+    (`dd.MM.yyyy`), `crmKmFormat`, `crmQtyFormat`.
+- **`features/notifications/`** (every role):
+  - `AppNotification` with a typed `CrmServiceDue` payload. The server stores no text; the app
+    renders it in its own language, for the staff or the driver audience.
+  - `unreadNotificationsProvider` (an `int`) is refreshed by `NotificationBellButton` every minute
+    and on app resume. `notificationsProvider` pages the list, marks one read optimistically, and
+    marks all read.
+  - `NotificationsScreen`: unread rows tinted with a dot; opening a staff CRM reminder takes
+    `RETAILER`/`RETAILER_ADMIN` to the driver.
+  - The bell is in the header of the owner/admin, agent, waiter, courier and super-admin homes,
+    and on the storefront profile tab when logged in, so a driver (a CUSTOMER) sees their
+    reminders.
+- **Routes:** `/crm/drivers`, `/crm/drivers/:id` (`RouteNames.crmDriverDetail(id)`),
+  `/crm/reminders`, `/notifications`.
+- **Strings:** ~112 `crm*` / `notif*` / `navCrm*` keys in all three ARBs. `crmVehicle` is the
+  singular "Mashina" for the visit form's car picker.
+- **Shared fix:** `ShortcutTile` shrinks a one-word label to fit one line (`FittedBox`) instead
+  of breaking it mid-word (Russian "Напоминания" came out as "Напоминани / я"). Labels with
+  spaces still wrap to two lines.
+- **Verified:**
+  - Unit tests: due-date/plate helpers, the CRM model parsers, the notification parser (108
+    total).
+  - iOS simulator (iPhone 16e) against the real backend. Seed: an auto-parts owner, two drivers,
+    a no-sale visit (one part overdue, one due in 2 days), two staff notifications. 16 checks in
+    Uzbek:
+    - Home tiles; bell 2; inbox texts with the driver note; opening a reminder → driver page,
+      bell 1.
+    - List and plate search; driver page (car, daily km, next due, history, no-bot text).
+    - Empty visit and unnamed manual line refused; the 5 000 km at 120 km/day preview (+42
+      days); the saved paid visit appears in the history.
+    - Reminder tab counts; marking done removes it; a new driver with a car lands on its page.
+    - DB afterwards: stock 10 → 9, a PAID 50 000 sale "CRM: 01 A 123 BC", the new oil reminder,
+      Antifriz DONE.
+  - A read-only Russian pass (8 checks), with screenshots of every screen.
+  - Fixed from those screenshots:
+    - A validation error hidden at the bottom of the long visit form (now also a SnackBar).
+    - White-on-white fields in the line cards (`DashFormTheme(onSheet: true)`).
+    - Truncated km/date labels (one field per row), and the Russian service-day/odometer labels
+      (stacked full width).
+    - The plural "Машины" over a single-car picker, and the "Напоминания" tile.
+  - **Not checked on a device:** a real camera photo upload, USD products, dark mode, the English
+    layout, Android.
+
+**C7 notes (2026-10-31):**
+- **Firebase only as the push transport.** This fits the Backend-Enhancement Track rule below: the
+  data stays in our Postgres; FCM just delivers. Project `bsmart-8e7cc`.
+  - `android/app/google-services.json` and `ios/Runner/GoogleService-Info.plist` are app config,
+    not secrets.
+  - The server's service account key is a secret and lives outside both repos (Optom_Savdo
+    `FIREBASE_SERVICE_ACCOUNT_PATH`).
+- **Packages:** `firebase_core 4.15.0` and `firebase_messaging 16.7.0`, pinned exactly. The 5.x /
+  17.x majors were only two weeks old.
+- **Android only for now:** `PushController.supported` is `Platform.isAndroid`. On iOS Firebase is
+  never started (no APNs key yet); the app still builds and the bell works as before. **To add
+  iPhone later:**
+  1. Enroll in the Apple Developer Program.
+  2. Create an APNs key and upload it in Firebase → Cloud Messaging.
+  3. Set the team, and add the Push Notifications capability and the Remote notifications
+     background mode in Xcode.
+  4. Add `GoogleService-Info.plist` to the Runner target.
+  5. Allow iOS in `supported`, and send `platform: 'IOS'`.
+- **Android setup:**
+  - The `com.google.gms.google-services` 4.4.3 Gradle plugin.
+  - `MainActivity` creates the `notifications` channel (name from `values*/strings.xml`:
+    Bildirishnomalar / Уведомления / Notifications).
+  - Manifest defaults: that channel, `@drawable/ic_stat_notification` (a monochrome bell) and
+    `@color/notification_color` (brand yellow).
+  - `POST_NOTIFICATIONS` was already declared (for courier tracking).
+- **`PushController`** (`features/notifications/presentation/push/`), kept alive by the app root
+  (`ref.watch(pushControllerProvider)`):
+  - Signed in → starts Firebase once, asks for notification permission (Android 13+), and
+    registers the token with `PUT /notifications/push-devices` in the interface language. It
+    registers again on token refresh and on language change.
+  - Logout → `unregisterPushDevice()` removes the device on the server while the session is still
+    valid, then deletes the token on the phone. On a forced logout only the phone's token is
+    deleted.
+  - `unregisterPushDevice()` is a top-level function, not a provider read: the controller watches
+    the session, so `SessionNotifier` reading the provider threw `CircularDependencyError`
+    (caught by the on-device test).
+  - Push while open → the bell refreshes and a SnackBar (`rootScaffoldMessengerKey` on
+    `MaterialApp`) offers "Ochish".
+  - Tapped push (from the background or a cold start) → marks it read and opens
+    `pushTargetRoute(data, role)`: the driver page for a staff CRM reminder (retailer
+    owner/admin), else the inbox.
+- **Verified (2026-10-31)** on the Pixel 9a emulator (Google Play image) against the real
+  backend + FCM:
+  - Token registered (ANDROID, uz).
+  - The real alert job's push shows a SnackBar with the app open, and the bell goes to 3.
+  - The language switch re-registers as `ru`.
+  - A background push arrives in Russian in the `notifications` channel with the bell icon.
+    Tapping it opens Jasur's driver page and marks it read.
+  - Logout removes the device.
+  - `pushTargetRoute` unit tests (110 total).
+  - iOS simulator: builds, logs in/out, no push calls.
+  - The emulator ran out of storage once mid-run (`INSTALL_FAILED_INSUFFICIENT_STORAGE`). A
+    reboot cleared it.
+- **Seen, not changed:** right after logout the app calls `GET /stores` without a session and gets
+  a 401. It's harmless and predates push.
+
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
 priority) a real-time layer — all as **new NestJS + PostgreSQL infrastructure**, never a

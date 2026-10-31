@@ -222,7 +222,7 @@ class _CrmVisitFormScreenState extends ConsumerState<CrmVisitFormScreen> {
             DropdownButtonFormField<String>(
               initialValue: _vehicleId,
               decoration: InputDecoration(
-                labelText: l10n.crmVehicles,
+                labelText: l10n.crmVehicle,
                 prefixIcon: const Icon(Icons.directions_car_rounded),
               ),
               items: [
@@ -240,39 +240,33 @@ class _CrmVisitFormScreenState extends ConsumerState<CrmVisitFormScreen> {
                 ),
               ),
             const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () async {
-                      final day = await _pickDay(
-                        initial: _serviceDate,
-                        first: _today.subtract(const Duration(days: 366)),
-                        last: _today,
-                      );
-                      if (day != null) setState(() => _serviceDate = day);
-                    },
-                    child: InputDecorator(
-                      decoration: InputDecoration(
-                        labelText: l10n.crmServiceDate,
-                        prefixIcon: const Icon(Icons.event_rounded),
-                      ),
-                      child: Text(crmDayFormat.format(_serviceDate)),
-                    ),
-                  ),
+            // One per row: side by side, the Russian labels didn't fit a phone's half width.
+            InkWell(
+              borderRadius: BorderRadius.circular(18),
+              onTap: () async {
+                final day = await _pickDay(
+                  initial: _serviceDate,
+                  first: _today.subtract(const Duration(days: 366)),
+                  last: _today,
+                );
+                if (day != null) setState(() => _serviceDate = day);
+              },
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: l10n.crmServiceDate,
+                  prefixIcon: const Icon(Icons.event_rounded),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    controller: _odometer,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: l10n.crmOdometer,
-                      prefixIcon: const Icon(Icons.speed_rounded),
-                    ),
-                  ),
-                ),
-              ],
+                child: Text(crmDayFormat.format(_serviceDate)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _odometer,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: l10n.crmOdometer,
+                prefixIcon: const Icon(Icons.speed_rounded),
+              ),
             ),
             DashSectionTitle(
               l10n.crmParts,

@@ -2139,6 +2139,7 @@
   "crmDailyKmInvalid": "1 dan 3000 gacha butun son kiriting",
   "crmActiveHint": "Nofaol haydovchiga eslatmalar yuborilmaydi",
   "crmVehicles": "Mashinalar",
+  "crmVehicle": "Mashina",
   "crmAddVehicle": "Mashina qo'shish",
   "crmEditVehicle": "Mashinani tahrirlash",
   "crmNoVehicles": "Mashina qo'shilmagan",
@@ -2378,5 +2379,6 @@
       }
     }
   },
-  "notifUnknown": "Yangi bildirishnoma"
+  "notifUnknown": "Yangi bildirishnoma",
+  "notifOpen": "Ochish"
 }

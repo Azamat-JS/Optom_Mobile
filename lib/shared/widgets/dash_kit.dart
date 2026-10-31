@@ -252,6 +252,7 @@ class ShortcutTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = BrandColors.of(context);
+    final labelStyle = TextStyle(color: colors.textPrimary, fontSize: 12.5, fontWeight: FontWeight.w700, height: 1.2);
     return Semantics(
       button: true,
       label: label,
@@ -282,13 +283,11 @@ class ShortcutTile extends StatelessWidget {
                 child: Icon(icon, color: highlight ? AppColors.onBrand : colors.textPrimary, size: 26),
               ),
               const SizedBox(height: 7),
-              Text(
-                label,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: colors.textPrimary, fontSize: 12.5, fontWeight: FontWeight.w700, height: 1.2),
-              ),
+              // A single long word ("Напоминания") would otherwise break mid-word; shrink it instead.
+              if (label.contains(' '))
+                Text(label, maxLines: 2, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: labelStyle)
+              else
+                FittedBox(fit: BoxFit.scaleDown, child: Text(label, maxLines: 1, style: labelStyle)),
             ],
           ),
         ),

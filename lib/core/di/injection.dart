@@ -291,6 +291,8 @@ import 'package:bsmart/features/notifications/domain/usecases/get_unread_notific
 import 'package:bsmart/features/notifications/domain/usecases/list_notifications_usecase.dart';
 import 'package:bsmart/features/notifications/domain/usecases/mark_all_notifications_read_usecase.dart';
 import 'package:bsmart/features/notifications/domain/usecases/mark_notification_read_usecase.dart';
+import 'package:bsmart/features/notifications/domain/usecases/register_push_device_usecase.dart';
+import 'package:bsmart/features/notifications/domain/usecases/remove_push_device_usecase.dart';
 
 const _bareDioInstance = 'bareDio';
 const _mainDioInstance = 'mainDio';
@@ -520,6 +522,8 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => ListNotificationsUseCase(getIt()));
   getIt.registerFactory(() => MarkAllNotificationsReadUseCase(getIt()));
   getIt.registerFactory(() => MarkNotificationReadUseCase(getIt()));
+  getIt.registerFactory(() => RegisterPushDeviceUseCase(getIt()));
+  getIt.registerFactory(() => RemovePushDeviceUseCase(getIt()));
   getIt.registerFactory(() => UpdateAgentPriceRangeUseCase(getIt()));
   getIt.registerFactory(() => UpdateLeadAgentUseCase(getIt()));
 

@@ -31,4 +31,11 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
 
   @override
   Future<Result<void>> markAllRead() => _guard(_remote.markAllRead);
+
+  @override
+  Future<Result<void>> registerPushDevice({required String token, required String platform, required String locale}) =>
+      _guard(() => _remote.registerPushDevice(token: token, platform: platform, locale: locale));
+
+  @override
+  Future<Result<void>> removePushDevice(String token) => _guard(() => _remote.removePushDevice(token));
 }

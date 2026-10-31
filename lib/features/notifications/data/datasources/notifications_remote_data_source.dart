@@ -24,4 +24,11 @@ class NotificationsRemoteDataSource {
   Future<void> markRead(String id) => _dio.patch<void>('/notifications/$id/read');
 
   Future<void> markAllRead() => _dio.post<void>('/notifications/read-all');
+
+  /// Binds this phone's FCM token to the signed-in user (C7). [platform] is `ANDROID` / `IOS`.
+  Future<void> registerPushDevice({required String token, required String platform, required String locale}) =>
+      _dio.put<void>('/notifications/push-devices', data: {'token': token, 'platform': platform, 'locale': locale});
+
+  Future<void> removePushDevice(String token) =>
+      _dio.post<void>('/notifications/push-devices/remove', data: {'token': token});
 }
