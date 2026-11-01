@@ -3964,4 +3964,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notifOpen => 'Open';
+
+  @override
+  String get specialBadge => 'Special';
+
+  @override
+  String get specialCustomersTitle => 'Special customers';
+
+  @override
+  String get specialFilterAll => 'All';
+
+  @override
+  String get specialListHint =>
+      'These customers always buy at the retail price. A product without a retail price is sold to them at the normal price.';
+
+  @override
+  String get specialEmpty =>
+      'No special customers. Open a customer and turn on \"Special customer\".';
+
+  @override
+  String get specialFieldTitle => 'Special customer';
+
+  @override
+  String get specialFieldHint => 'Always buys at the retail price';
+
+  @override
+  String get specialAppliedTitle => 'Special customer — retail price';
+
+  @override
+  String specialAppliedSaving(int count, String amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count products',
+      one: '$count product',
+    );
+    return '$_temp0 at the retail price, $amount less';
+  }
+
+  @override
+  String get specialAppliedNoSaving =>
+      'Products are priced at the retail price';
+
+  @override
+  String specialNoRetail(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count products have',
+      one: '$count product has',
+    );
+    return '$_temp0 no retail price — normal price';
+  }
+
+  @override
+  String get specialCrmHint =>
+      'The driver is a special customer: products are priced at the retail price';
+
+  @override
+  String get productsRetailPrice => 'Retail price';
+
+  @override
+  String get productsRetailPriceHint =>
+      'Optional. Special customers buy at this price';
+
+  @override
+  String get productsRetailPriceTooHigh =>
+      'The retail price can\'t be higher than the price';
+
+  @override
+  String productsRetailPriceWith(String amount) {
+    return 'Retail price: $amount';
+  }
 }

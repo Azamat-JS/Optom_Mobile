@@ -1092,5 +1092,21 @@
   "notifCallDriver": "Водитель не подключён к боту — позвоните: {phone}",
   "notifServiceDueDriver": "{store}: скоро обслуживание",
   "notifUnknown": "Новое уведомление",
-  "notifOpen": "Открыть"
+  "notifOpen": "Открыть",
+  "specialBadge": "Особый",
+  "specialCustomersTitle": "Особые клиенты",
+  "specialFilterAll": "Все",
+  "specialListHint": "Эти клиенты всегда покупают по розничной цене. Товар без розничной цены продаётся им по обычной цене.",
+  "specialEmpty": "Особых клиентов нет. Откройте клиента и включите «Особый клиент».",
+  "specialFieldTitle": "Особый клиент",
+  "specialFieldHint": "Всегда покупает по розничной цене",
+  "specialAppliedTitle": "Особый клиент — розничная цена",
+  "specialAppliedSaving": "{count, plural, one{{count} товар} few{{count} товара} other{{count} товаров}} по розничной цене, дешевле на {amount}",
+  "specialAppliedNoSaving": "Товары посчитаны по розничной цене",
+  "specialNoRetail": "{count, plural, one{У {count} товара} few{У {count} товаров} other{У {count} товаров}} нет розничной цены — по обычной цене",
+  "specialCrmHint": "Водитель — особый клиент: товары считаются по розничной цене",
+  "productsRetailPrice": "Розничная цена",
+  "productsRetailPriceHint": "Необязательно. Особые клиенты покупают по этой цене",
+  "productsRetailPriceTooHigh": "Розничная цена не может быть выше основной",
+  "productsRetailPriceWith": "Розничная цена: {amount}"
 }

@@ -11,6 +11,7 @@ import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/customers/domain/entities/customer.dart';
 import 'package:bsmart/features/customers/presentation/providers/customers_list_notifier.dart';
 import 'package:bsmart/features/customers/presentation/screens/customer_form_screen.dart';
+import 'package:bsmart/features/customers/presentation/widgets/special_customer_tag.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
 
@@ -61,11 +62,15 @@ class _CustomersListScreenState extends ConsumerState<CustomersListScreen> {
   }
 
   Future<void> _openForm({Customer? editing}) async {
+    // On the "Maxsus" list a new customer starts as special.
+    final specialOnly = ref.read(customersListProvider).valueOrNull?.query.specialOnly ?? false;
     // The form pops the saved Customer (the checkout picker uses it); waiting
     // for a bool here made every save from this list throw a TypeError.
-    final saved = await Navigator.of(
-      context,
-    ).push<Customer>(MaterialPageRoute(builder: (_) => CustomerFormScreen(editingCustomer: editing)));
+    final saved = await Navigator.of(context).push<Customer>(
+      MaterialPageRoute(
+        builder: (_) => CustomerFormScreen(editingCustomer: editing, initialSpecial: specialOnly),
+      ),
+    );
     if (saved != null) ref.read(customersListProvider.notifier).refresh();
   }
 
@@ -96,13 +101,33 @@ class _CustomersListScreenState extends ConsumerState<CustomersListScreen> {
     final l10n = context.l10n;
     final colors = BrandColors.of(context);
     final listState = ref.watch(customersListProvider);
+    final specialOnly = listState.valueOrNull?.query.specialOnly ?? false;
 
     return DashPage(
-      title: l10n.customersTitle,
-      header: DashSearchField(
-        controller: _searchController,
-        hint: l10n.customersSearchHint,
-        onChanged: _onSearchChanged,
+      title: specialOnly ? l10n.specialCustomersTitle : l10n.customersTitle,
+      header: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          DashSearchField(controller: _searchController, hint: l10n.customersSearchHint, onChanged: _onSearchChanged),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: PillToggle<bool>(
+              values: const [false, true],
+              selected: specialOnly,
+              expand: true,
+              label: (special) => special ? '★ ${l10n.specialCustomersTitle}' : l10n.specialFilterAll,
+              onChanged: (special) => ref.read(customersListProvider.notifier).setSpecialOnly(special),
+            ),
+          ),
+          if (specialOnly)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 10, 4, 0),
+              child: Text(
+                l10n.specialListHint,
+                style: TextStyle(color: colors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
+              ),
+            ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: l10n.customersNewTitle,
@@ -121,7 +146,10 @@ class _CustomersListScreenState extends ConsumerState<CustomersListScreen> {
           backgroundColor: AppColors.brandYellow,
           onRefresh: () => ref.read(customersListProvider.notifier).refresh(),
           child: state.items.isEmpty
-              ? DashEmptyState(icon: Icons.groups_rounded, text: l10n.customersNotFound)
+              ? DashEmptyState(
+                  icon: specialOnly ? Icons.star_outline_rounded : Icons.groups_rounded,
+                  text: specialOnly && (state.query.search ?? '').isEmpty ? l10n.specialEmpty : l10n.customersNotFound,
+                )
               : ListView.separated(
                   physics: const AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,
@@ -156,6 +184,7 @@ class _CustomersListScreenState extends ConsumerState<CustomersListScreen> {
                         ),
                       ),
                       title: customer.fullName,
+                      titleTrailing: customer.isSpecial ? const SpecialCustomerTag() : null,
                       subtitle: [
                         customer.phone ?? '—',
                         if (customer.address != null && customer.address!.isNotEmpty) customer.address!,

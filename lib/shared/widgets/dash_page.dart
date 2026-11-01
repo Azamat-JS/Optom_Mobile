@@ -199,6 +199,7 @@ class DashListCard extends StatelessWidget {
     this.leading,
     this.subtitle,
     this.trailing,
+    this.titleTrailing,
     this.onTap,
     this.dimmed = false,
     super.key,
@@ -206,6 +207,9 @@ class DashListCard extends StatelessWidget {
 
   final Widget? leading;
   final String title;
+
+  /// A small tag right after the title (the title shrinks to make room).
+  final Widget? titleTrailing;
   final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
@@ -226,11 +230,18 @@ class DashListCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: colors.textPrimary, fontSize: 15.5, fontWeight: FontWeight.w700),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: colors.textPrimary, fontSize: 15.5, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      if (titleTrailing != null) ...[const SizedBox(width: 6), titleTrailing!],
+                    ],
                   ),
                   if (subtitle != null && subtitle!.isNotEmpty)
                     Text(

@@ -1092,5 +1092,21 @@
   "notifCallDriver": "The driver isn't on the bot — call them: {phone}",
   "notifServiceDueDriver": "{store}: service coming up",
   "notifUnknown": "New notification",
-  "notifOpen": "Open"
+  "notifOpen": "Open",
+  "specialBadge": "Special",
+  "specialCustomersTitle": "Special customers",
+  "specialFilterAll": "All",
+  "specialListHint": "These customers always buy at the retail price. A product without a retail price is sold to them at the normal price.",
+  "specialEmpty": "No special customers. Open a customer and turn on \"Special customer\".",
+  "specialFieldTitle": "Special customer",
+  "specialFieldHint": "Always buys at the retail price",
+  "specialAppliedTitle": "Special customer — retail price",
+  "specialAppliedSaving": "{count, plural, one{{count} product} other{{count} products}} at the retail price, {amount} less",
+  "specialAppliedNoSaving": "Products are priced at the retail price",
+  "specialNoRetail": "{count, plural, one{{count} product has} other{{count} products have}} no retail price — normal price",
+  "specialCrmHint": "The driver is a special customer: products are priced at the retail price",
+  "productsRetailPrice": "Retail price",
+  "productsRetailPriceHint": "Optional. Special customers buy at this price",
+  "productsRetailPriceTooHigh": "The retail price can't be higher than the price",
+  "productsRetailPriceWith": "Retail price: {amount}"
 }

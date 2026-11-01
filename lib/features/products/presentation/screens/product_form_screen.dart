@@ -59,6 +59,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       'description': FormControl<String>(value: product?.description),
       'price': FormControl<String>(value: _plain(product?.price), validators: [Validators.required]),
       'costPrice': FormControl<String>(value: _plain(product?.costPrice)),
+      'retailPrice': FormControl<String>(value: _plain(product?.retailPrice)),
       'currency': FormControl<Currency>(value: product?.currency ?? Currency.uzs),
       'stock': FormControl<String>(value: product == null ? '0' : null),
       'unit': FormControl<ProductUnit>(value: product?.unit),
@@ -69,6 +70,8 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       'isActive': FormControl<bool>(value: product?.isActive ?? true),
     });
   }
+
+  static const _retailTooHigh = 'retailTooHigh';
 
   /// 62000.0 → "62000", 2.5 → "2.5" (no trailing ".0" in the fields).
   static String? _plain(double? v) =>
@@ -128,6 +131,8 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   }
 
   Future<void> _submit() async {
+    // Re-checked below on every submit.
+    _form.control('retailPrice').removeError(_retailTooHigh);
     if (_form.invalid || (!_isCatalogLinked && (_form.control('name').value as String?)?.isEmpty != false)) {
       _form.markAllAsTouched();
       setState(() => _errorMessage = _isCatalogLinked ? null : context.l10n.productsNameOrCatalog);
@@ -137,6 +142,15 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     final price = _parseDouble('price');
     if (price == null) {
       setState(() => _errorMessage = context.l10n.productsPriceInvalid);
+      return;
+    }
+    // Same rule as ProductService.assertValidRetailPrice on the server. Shown on the field itself:
+    // the form-level message sits below the fold.
+    final retailPrice = _parseDouble('retailPrice');
+    if (retailPrice != null && (retailPrice <= 0 || retailPrice > price)) {
+      _form.control('retailPrice')
+        ..setErrors({_retailTooHigh: true})
+        ..markAsTouched();
       return;
     }
 
@@ -153,6 +167,9 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           description: _isCatalogLinked ? null : _form.control('description').value as String?,
           price: price,
           costPrice: _parseDouble('costPrice'),
+          retailPrice: retailPrice,
+          // An emptied field removes the retail price.
+          clearRetailPrice: retailPrice == null && widget.editingProduct!.retailPrice != null,
           unit: _form.control('unit').value as ProductUnit?,
           sku: _form.control('sku').value as String?,
           barcode: _form.control('barcode').value as String?,
@@ -179,6 +196,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           description: _isCatalogLinked ? null : _form.control('description').value as String?,
           price: price,
           costPrice: _parseDouble('costPrice'),
+          retailPrice: retailPrice,
           currency: _form.control('currency').value as Currency,
           stock: _parseDouble('stock') ?? 0,
           unit: _form.control('unit').value as ProductUnit?,
@@ -253,6 +271,18 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 12),
+              ReactiveTextField<String>(
+                formControlName: 'retailPrice',
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                  labelText: l10n.productsRetailPrice,
+                  helperText: l10n.productsRetailPriceHint,
+                  errorMaxLines: 2,
+                  prefixIcon: Icon(Icons.star_rounded, color: colors.accentText),
+                ),
+                validationMessages: {_retailTooHigh: (_) => l10n.productsRetailPriceTooHigh},
               ),
               const SizedBox(height: 12),
               if (widget.isEditing)

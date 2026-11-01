@@ -17,6 +17,8 @@ import 'package:bsmart/features/sales/presentation/providers/pos_cart_notifier.d
 import 'package:bsmart/features/sales/presentation/providers/sales_list_notifier.dart';
 import 'package:bsmart/features/sales/presentation/screens/sale_detail_screen.dart';
 import 'package:bsmart/features/sales/presentation/widgets/customer_picker_sheet.dart';
+import 'package:bsmart/features/sales/presentation/widgets/special_pricing_notice.dart';
+import 'package:bsmart/features/customers/presentation/widgets/special_customer_tag.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/payment_method_tiles.dart';
 
@@ -126,8 +128,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     }
     final currency = cart.currency!;
     String money(double v) => CurrencyFormatter.format(v, currency);
+    // A special customer pays the retail price — the server charges exactly that (the app sends no
+    // line prices), so the bill must show it too. Another customer brings the stock prices back.
+    final special = _customer?.isSpecial ?? false;
+    final subtotal = cart.subtotalFor(specialCustomer: special);
     final discount = double.tryParse(_discountController.text.trim()) ?? 0;
-    final total = (cart.subtotal - discount).clamp(0, double.infinity).toDouble();
+    final total = (subtotal - discount).clamp(0, double.infinity).toDouble();
     final paidAmount = double.tryParse(_paidAmountController.text.trim()) ?? 0;
     final showMethods = _type == SaleType.paid || paidAmount > 0;
 
@@ -166,6 +172,13 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               ),
               DashSectionTitle(l10n.salesCustomer, padding: const EdgeInsets.fromLTRB(4, 18, 4, 10)),
               _CustomerCard(customer: _customer, onTap: _pickCustomer, missing: _errorMessage != null),
+              if (special) ...[
+                const SizedBox(height: 10),
+                SpecialPricingNotice(
+                  lines: [for (final line in cart.lines.values) (line.product, line.quantity)],
+                  currency: currency,
+                ),
+              ],
               DashSectionTitle(
                 l10n.commonProducts,
                 trailing: Text(
@@ -181,6 +194,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       if (i > 0) Divider(height: 1, indent: 68, color: colors.outline),
                       _LineRow(
                         line: line,
+                        specialCustomer: special,
                         onQuantity: (q) => ref.read(posCartProvider.notifier).updateQuantity(line.product.id, q),
                       ),
                     ],
@@ -227,7 +241,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 padding: const EdgeInsets.all(18),
                 child: Column(
                   children: [
-                    BillRow(label: l10n.commonSubtotal, value: money(cart.subtotal), muted: true),
+                    BillRow(label: l10n.commonSubtotal, value: money(subtotal), muted: true),
                     if (discount > 0) ...[
                       const SizedBox(height: 8),
                       BillRow(label: l10n.commonDiscount, value: '−${money(discount)}', muted: true),
@@ -337,11 +351,18 @@ class _CustomerCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    c?.fullName ?? l10n.commonPickCustomer,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w800),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          c?.fullName ?? l10n.commonPickCustomer,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w800),
+                        ),
+                      ),
+                      if (c != null && c.isSpecial) ...[const SizedBox(width: 6), const SpecialCustomerTag()],
+                    ],
                   ),
                   Text(
                     c == null ? l10n.salesCustomerHint : (c.phone ?? '—'),
@@ -370,9 +391,12 @@ class _CustomerCard extends StatelessWidget {
 }
 
 class _LineRow extends StatelessWidget {
-  const _LineRow({required this.line, required this.onQuantity});
+  const _LineRow({required this.line, required this.specialCustomer, required this.onQuantity});
 
   final PosCartLine line;
+
+  /// Priced for a special customer: the retail price, with the stock price struck through.
+  final bool specialCustomer;
   final ValueChanged<double> onQuantity;
 
   @override
@@ -383,6 +407,8 @@ class _LineRow extends StatelessWidget {
     final weighable = product.unit?.isWeighable == true;
     final q = line.quantity.toStringAsFixed(weighable && line.quantity.truncateToDouble() != line.quantity ? 2 : 0);
     final unit = product.unit == null ? '' : ' / ${product.unit!.shortLabel}';
+    final unitPrice = line.unitPriceFor(specialCustomer: specialCustomer);
+    final repriced = unitPrice != product.price;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Row(
@@ -413,15 +439,28 @@ class _LineRow extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: colors.textPrimary, fontSize: 14.5, fontWeight: FontWeight.w700),
                 ),
-                Text(
-                  '${CurrencyFormatter.format(product.price, product.currency)}$unit',
-                  maxLines: 1,
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      if (repriced)
+                        TextSpan(
+                          text: '${CurrencyFormatter.format(product.price, product.currency)} ',
+                          style: const TextStyle(decoration: TextDecoration.lineThrough),
+                        ),
+                      TextSpan(
+                        text: '${CurrencyFormatter.format(unitPrice, product.currency)}$unit',
+                        style: repriced ? TextStyle(color: colors.accentText, fontWeight: FontWeight.w800) : null,
+                      ),
+                    ],
+                  ),
+                  // Two prices side by side need the room.
+                  maxLines: repriced ? 2 : 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: colors.textMuted, fontSize: 12.5, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  CurrencyFormatter.format(line.total, product.currency),
+                  CurrencyFormatter.format(line.totalFor(specialCustomer: specialCustomer), product.currency),
                   style: TextStyle(color: colors.textPrimary, fontSize: 14, fontWeight: FontWeight.w800),
                 ),
               ],

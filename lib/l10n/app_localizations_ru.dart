@@ -3954,4 +3954,77 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get notifOpen => 'Открыть';
+
+  @override
+  String get specialBadge => 'Особый';
+
+  @override
+  String get specialCustomersTitle => 'Особые клиенты';
+
+  @override
+  String get specialFilterAll => 'Все';
+
+  @override
+  String get specialListHint =>
+      'Эти клиенты всегда покупают по розничной цене. Товар без розничной цены продаётся им по обычной цене.';
+
+  @override
+  String get specialEmpty =>
+      'Особых клиентов нет. Откройте клиента и включите «Особый клиент».';
+
+  @override
+  String get specialFieldTitle => 'Особый клиент';
+
+  @override
+  String get specialFieldHint => 'Всегда покупает по розничной цене';
+
+  @override
+  String get specialAppliedTitle => 'Особый клиент — розничная цена';
+
+  @override
+  String specialAppliedSaving(int count, String amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count товаров',
+      few: '$count товара',
+      one: '$count товар',
+    );
+    return '$_temp0 по розничной цене, дешевле на $amount';
+  }
+
+  @override
+  String get specialAppliedNoSaving => 'Товары посчитаны по розничной цене';
+
+  @override
+  String specialNoRetail(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'У $count товаров',
+      few: 'У $count товаров',
+      one: 'У $count товара',
+    );
+    return '$_temp0 нет розничной цены — по обычной цене';
+  }
+
+  @override
+  String get specialCrmHint =>
+      'Водитель — особый клиент: товары считаются по розничной цене';
+
+  @override
+  String get productsRetailPrice => 'Розничная цена';
+
+  @override
+  String get productsRetailPriceHint =>
+      'Необязательно. Особые клиенты покупают по этой цене';
+
+  @override
+  String get productsRetailPriceTooHigh =>
+      'Розничная цена не может быть выше основной';
+
+  @override
+  String productsRetailPriceWith(String amount) {
+    return 'Розничная цена: $amount';
+  }
 }

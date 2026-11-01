@@ -17,24 +17,30 @@ import 'package:bsmart/features/crm/presentation/widgets/crm_widgets.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/domain/entities/product_query.dart';
 import 'package:bsmart/features/products/domain/usecases/list_products_usecase.dart';
+import 'package:bsmart/features/sales/domain/pricing/special_pricing.dart';
+import 'package:bsmart/features/sales/presentation/widgets/special_pricing_notice.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// One line being entered: a store product, or a typed name.
 class _Line {
-  _Line.product(Product p)
+  /// For a special customer a product with a retail price is priced at it and locked: the server
+  /// charges exactly that (Optom_Savdo `sale/special-pricing.ts`).
+  _Line.product(Product p, {required bool specialCustomer})
     : productId = p.id,
       stock = p.stock,
       currency = p.currency,
       unitShort = p.unit?.shortLabel,
+      retailLocked = specialCustomer && retailPriceOf(p) != null,
       name = TextEditingController(text: p.name),
-      price = TextEditingController(text: _plain(p.price));
+      price = TextEditingController(text: _plain(effectiveUnitPrice(p, specialCustomer: specialCustomer)));
 
   _Line.manual()
     : productId = null,
       stock = null,
       currency = null,
       unitShort = null,
+      retailLocked = false,
       name = TextEditingController(),
       price = TextEditingController();
 
@@ -42,6 +48,7 @@ class _Line {
   final double? stock;
   final Currency? currency;
   final String? unitShort;
+  final bool retailLocked;
   final TextEditingController name;
   final TextEditingController price;
   final interval = TextEditingController();
@@ -85,6 +92,8 @@ class _CrmVisitFormScreenState extends ConsumerState<CrmVisitFormScreen> {
   bool _saving = false;
   String? _error;
 
+  /// The driver's sales are their linked customer's; a special one pays retail prices.
+  bool get _specialCustomer => widget.driver.customer?.isSpecial ?? false;
   CrmVehicle? get _vehicle => widget.driver.vehicles.where((v) => v.id == _vehicleId).firstOrNull;
   Currency get _currency => _lines.map((l) => l.currency).nonNulls.firstOrNull ?? Currency.uzs;
   double get _total =>
@@ -118,7 +127,7 @@ class _CrmVisitFormScreenState extends ConsumerState<CrmVisitFormScreen> {
       if (existing != null) {
         existing.quantity += 1;
       } else {
-        _lines.add(_Line.product(product));
+        _lines.add(_Line.product(product, specialCustomer: _specialCustomer));
       }
     });
   }
@@ -276,6 +285,10 @@ class _CrmVisitFormScreenState extends ConsumerState<CrmVisitFormScreen> {
                 label: Text(l10n.crmAddManual),
               ),
             ),
+            if (_specialCustomer && _recordSale) ...[
+              SpecialPricingNotice(hint: l10n.specialCrmHint),
+              const SizedBox(height: 10),
+            ],
             for (final l in _lines) ...[_lineCard(l), const SizedBox(height: 10)],
             OutlinedButton.icon(
               onPressed: _addProduct,
@@ -431,10 +444,13 @@ class _CrmVisitFormScreenState extends ConsumerState<CrmVisitFormScreen> {
                   Expanded(
                     child: TextField(
                       controller: l.price,
-                      enabled: _recordSale,
+                      enabled: _recordSale && !l.retailLocked,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       onChanged: (_) => setState(() {}),
-                      decoration: InputDecoration(labelText: l10n.commonPrice, isDense: true),
+                      decoration: InputDecoration(
+                        labelText: l.retailLocked ? l10n.productsRetailPrice : l10n.commonPrice,
+                        isDense: true,
+                      ),
                     ),
                   ),
                 ],

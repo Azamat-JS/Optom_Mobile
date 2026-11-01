@@ -3831,4 +3831,63 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get notifOpen => 'Ochish';
+
+  @override
+  String get specialBadge => 'Maxsus';
+
+  @override
+  String get specialCustomersTitle => 'Maxsus mijozlar';
+
+  @override
+  String get specialFilterAll => 'Hammasi';
+
+  @override
+  String get specialListHint =>
+      'Bu mijozlar har doim chakana narxda xarid qiladi. Chakana narxi yo\'q mahsulot ularga oddiy narxda sotiladi.';
+
+  @override
+  String get specialEmpty =>
+      'Maxsus mijozlar yo\'q. Mijozni tahrirlab, \"Maxsus mijoz\"ni yoqing.';
+
+  @override
+  String get specialFieldTitle => 'Maxsus mijoz';
+
+  @override
+  String get specialFieldHint => 'Har doim chakana narxda xarid qiladi';
+
+  @override
+  String get specialAppliedTitle => 'Maxsus mijoz — chakana narx';
+
+  @override
+  String specialAppliedSaving(int count, String amount) {
+    return '$count ta mahsulot chakana narxda, $amount arzonroq';
+  }
+
+  @override
+  String get specialAppliedNoSaving => 'Mahsulotlar chakana narxda hisoblandi';
+
+  @override
+  String specialNoRetail(int count) {
+    return '$count ta mahsulotning chakana narxi yo\'q — oddiy narxda';
+  }
+
+  @override
+  String get specialCrmHint =>
+      'Haydovchi maxsus mijoz: mahsulotlar chakana narxda hisoblanadi';
+
+  @override
+  String get productsRetailPrice => 'Chakana narx';
+
+  @override
+  String get productsRetailPriceHint =>
+      'Ixtiyoriy. Maxsus mijozlar shu narxda oladi';
+
+  @override
+  String get productsRetailPriceTooHigh =>
+      'Chakana narx asosiy narxdan qimmat bo\'lishi mumkin emas';
+
+  @override
+  String productsRetailPriceWith(String amount) {
+    return 'Chakana narx: $amount';
+  }
 }

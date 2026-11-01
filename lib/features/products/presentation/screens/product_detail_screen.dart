@@ -254,6 +254,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final colors = BrandColors.of(context);
     String money(double v) => CurrencyFormatter.format(v, product.currency);
     final cost = product.costPrice;
+    final retail = product.retailPrice;
     final profit = cost == null ? null : product.price - cost;
     return DashCard(
       padding: const EdgeInsets.all(18),
@@ -289,6 +290,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
           ),
+          if (retail != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              l10n.productsRetailPriceWith(money(retail)),
+              style: TextStyle(color: colors.accentText, fontSize: 13.5, fontWeight: FontWeight.w700),
+            ),
+          ],
           if (cost != null) ...[
             const SizedBox(height: 4),
             Text(

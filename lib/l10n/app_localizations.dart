@@ -6609,6 +6609,102 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Ochish'**
   String get notifOpen;
+
+  /// No description provided for @specialBadge.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maxsus'**
+  String get specialBadge;
+
+  /// No description provided for @specialCustomersTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maxsus mijozlar'**
+  String get specialCustomersTitle;
+
+  /// No description provided for @specialFilterAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hammasi'**
+  String get specialFilterAll;
+
+  /// No description provided for @specialListHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu mijozlar har doim chakana narxda xarid qiladi. Chakana narxi yo\'q mahsulot ularga oddiy narxda sotiladi.'**
+  String get specialListHint;
+
+  /// No description provided for @specialEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maxsus mijozlar yo\'q. Mijozni tahrirlab, \"Maxsus mijoz\"ni yoqing.'**
+  String get specialEmpty;
+
+  /// No description provided for @specialFieldTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maxsus mijoz'**
+  String get specialFieldTitle;
+
+  /// No description provided for @specialFieldHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Har doim chakana narxda xarid qiladi'**
+  String get specialFieldHint;
+
+  /// No description provided for @specialAppliedTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maxsus mijoz — chakana narx'**
+  String get specialAppliedTitle;
+
+  /// No description provided for @specialAppliedSaving.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta mahsulot chakana narxda, {amount} arzonroq'**
+  String specialAppliedSaving(int count, String amount);
+
+  /// No description provided for @specialAppliedNoSaving.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlar chakana narxda hisoblandi'**
+  String get specialAppliedNoSaving;
+
+  /// No description provided for @specialNoRetail.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta mahsulotning chakana narxi yo\'q — oddiy narxda'**
+  String specialNoRetail(int count);
+
+  /// No description provided for @specialCrmHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Haydovchi maxsus mijoz: mahsulotlar chakana narxda hisoblanadi'**
+  String get specialCrmHint;
+
+  /// No description provided for @productsRetailPrice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chakana narx'**
+  String get productsRetailPrice;
+
+  /// No description provided for @productsRetailPriceHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ixtiyoriy. Maxsus mijozlar shu narxda oladi'**
+  String get productsRetailPriceHint;
+
+  /// No description provided for @productsRetailPriceTooHigh.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chakana narx asosiy narxdan qimmat bo\'lishi mumkin emas'**
+  String get productsRetailPriceTooHigh;
+
+  /// No description provided for @productsRetailPriceWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chakana narx: {amount}'**
+  String productsRetailPriceWith(String amount);
 }
 
 class _AppLocalizationsDelegate

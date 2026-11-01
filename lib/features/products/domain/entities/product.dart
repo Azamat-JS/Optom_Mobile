@@ -29,6 +29,7 @@ class Product {
     this.description,
     required this.price,
     this.costPrice,
+    this.retailPrice,
     required this.currency,
     required this.stock,
     this.unit,
@@ -49,6 +50,10 @@ class Product {
   final String? description;
   final double price;
   final double? costPrice;
+
+  /// "Chakana narx": an optional lower price, never above [price]. Special customers always pay it
+  /// (see `special_pricing.dart`).
+  final double? retailPrice;
   final Currency currency;
   final double stock;
   final ProductUnit? unit;

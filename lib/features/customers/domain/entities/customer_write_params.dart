@@ -7,6 +7,7 @@ class CreateCustomerParams {
     this.address,
     this.notes,
     this.isActive,
+    this.isSpecial,
   });
 
   final String firstName;
@@ -15,6 +16,7 @@ class CreateCustomerParams {
   final String? address;
   final String? notes;
   final bool? isActive;
+  final bool? isSpecial;
 
   Map<String, dynamic> toRequestBody() => {
         'firstName': firstName,
@@ -23,19 +25,21 @@ class CreateCustomerParams {
         if (address != null && address!.isNotEmpty) 'address': address,
         if (notes != null && notes!.isNotEmpty) 'notes': notes,
         if (isActive != null) 'isActive': isActive,
+        if (isSpecial != null) 'isSpecial': isSpecial,
       };
 }
 
 /// Mirrors `UpdateCustomerDto` (a `PartialType` of the create DTO) — every
 /// field optional, only non-null ones are sent.
 class UpdateCustomerParams {
-  const UpdateCustomerParams({this.firstName, this.lastName, this.phone, this.address, this.notes});
+  const UpdateCustomerParams({this.firstName, this.lastName, this.phone, this.address, this.notes, this.isSpecial});
 
   final String? firstName;
   final String? lastName;
   final String? phone;
   final String? address;
   final String? notes;
+  final bool? isSpecial;
 
   Map<String, dynamic> toRequestBody() => {
         if (firstName != null) 'firstName': firstName,
@@ -43,5 +47,6 @@ class UpdateCustomerParams {
         if (phone != null) 'phone': phone,
         if (address != null) 'address': address,
         if (notes != null) 'notes': notes,
+        if (isSpecial != null) 'isSpecial': isSpecial,
       };
 }

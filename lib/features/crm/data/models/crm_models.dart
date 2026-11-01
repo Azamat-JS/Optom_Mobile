@@ -27,6 +27,7 @@ CrmDriver crmDriverFromJson(Map<String, dynamic> json) {
             fullName: _name(customer),
             phone: customer['phone'] as String?,
             isActive: customer['isActive'] as bool? ?? true,
+            isSpecial: customer['isSpecial'] as bool? ?? false,
           ),
     vehicles: [for (final v in (json['vehicles'] as List? ?? const [])) crmVehicleFromJson(v as Map<String, dynamic>)],
     createdAt: DateTime.parse(json['createdAt'] as String),

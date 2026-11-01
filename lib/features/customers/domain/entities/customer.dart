@@ -12,6 +12,7 @@ class Customer {
     this.address,
     this.notes,
     required this.isActive,
+    this.isSpecial = false,
     required this.createdAt,
   });
 
@@ -22,6 +23,10 @@ class Customer {
   final String? address;
   final String? notes;
   final bool isActive;
+
+  /// "Maxsus mijoz": always buys at the products' retail price — the server enforces it on every
+  /// sale (Optom_Savdo `sale/special-pricing.ts`), checkout mirrors it via `special_pricing.dart`.
+  final bool isSpecial;
   final DateTime createdAt;
 
   String get fullName => '$firstName $lastName'.trim();

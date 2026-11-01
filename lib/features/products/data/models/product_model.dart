@@ -27,6 +27,7 @@ Product productFromJson(Map<String, dynamic> json) {
     description: json['description'] as String?,
     price: parseDecimal(json['price']),
     costPrice: parseNullableDecimal(json['costPrice']),
+    retailPrice: parseNullableDecimal(json['retailPrice']),
     currency: Currency.fromWire(json['currency'] as String? ?? 'UZS'),
     stock: parseDecimal(json['stock'] ?? 0),
     unit: json['unit'] != null ? ProductUnit.fromWire(json['unit'] as String) : null,

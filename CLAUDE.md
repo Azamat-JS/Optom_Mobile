@@ -2627,6 +2627,47 @@ real sales, due dates, alert job, `Notification` inbox). This phase covers its m
 - **Seen, not changed:** right after logout the app calls `GET /stores` without a session and gets
   a 401. It's harmless and predates push.
 
+### Phase 12 — Special customers / Maxsus mijozlar (mobile; backend + web done in Optom_Savdo)
+
+**Done 2026-11-01.** Mirrors Optom_Savdo "Special Customers (Maxsus mijozlar)": a customer flagged
+`isSpecial` always buys at the product's retail price (`Product.retailPrice`). **The server enforces
+it** (`SaleService.createInTx` → `lineUnitPrice`), and bsmart's POS sends no line prices, so before
+this the server already charged retail while checkout showed the stock-price total.
+
+- **Models:** `Product.retailPrice` (parsed; `CreateProductParams.retailPrice`,
+  `UpdateProductParams.retailPrice` + `clearRetailPrice`, same null-vs-omitted rule as
+  `clearExpiryDate`). `Customer.isSpecial` (+ create/update params), `CustomerQuery.specialOnly` →
+  `isSpecial=true`. `CrmLinkedCustomer.isSpecial`.
+- **Rule on the client:** `features/sales/domain/pricing/special_pricing.dart`
+  (`retailPriceOf`, `effectiveUnitPrice`), mirroring the server; unit tested in
+  `test/features/sales/special_pricing_test.dart`. `PosCartLine.unitPriceFor/totalFor` and
+  `PosCartState.subtotalFor({specialCustomer})`; the old `total`/`subtotal` getters (Sell tab, which
+  doesn't know the customer yet) are the non-special case.
+- **Checkout:** once a special customer is picked, subtotal/total/debt use retail prices, each
+  repriced line shows the stock price struck through next to the retail one, and
+  `SpecialPricingNotice` says how much cheaper it is and how many lines have no retail price.
+  Picking someone else restores the stock prices.
+- **Customers:** a "Hammasi | ★ Maxsus mijozlar" toggle on the customers list (the special list,
+  with an explanation line); a new customer from that list starts special. The customer form has a
+  "Maxsus mijoz" switch. `SpecialCustomerTag` in the list (via `DashListCard.titleTrailing`, new),
+  the checkout customer card and `CustomerPickerSheet`.
+- **Products:** the product form has a "Chakana narx" field (optional, `0 < retail ≤ price`, the
+  server's rule; the error shows on the field because the form-level message is below the fold;
+  emptying it removes the retail price). The product detail price card shows it.
+- **CRM visit form:** for a driver whose customer is special, a product line is priced at the retail
+  price and its price field is locked, with a notice — the server prices the visit's sale and its
+  part rows the same way.
+- **Strings:** `special*`, `productsRetailPrice*` (uz/ru/en; ru uses plurals).
+- **Verified:** 115 unit tests, `flutter analyze` clean, and a 24-check temporary integration test
+  on the iPhone 17 simulator against the real local API (seeded auto-parts owner): list filter and
+  tags, new special customer from the list, edit-form switch, checkout 46 000 → 40 000 after picking
+  the special customer with the right notice, the saved sale at 10 000/unit, retail-price field
+  validation (shown on the field, also on a repeated tap) and save, CRM line locked at retail and
+  the visit's sale at retail, Russian plurals; screenshots in light, dark and Russian. Test rows
+  cleaned up; the test file was deleted (it depends on seeded data).
+- **Known gaps:** the Sell tab's product cards still show the stock price (the customer is chosen
+  at checkout). Agent sales don't use special customers (their own min–max rule).
+
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
 priority) a real-time layer — all as **new NestJS + PostgreSQL infrastructure**, never a

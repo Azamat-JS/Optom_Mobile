@@ -11,6 +11,7 @@ import 'package:bsmart/features/customers/domain/entities/customer_query.dart';
 import 'package:bsmart/features/customers/domain/entities/customer_write_params.dart';
 import 'package:bsmart/features/customers/domain/usecases/create_customer_usecase.dart';
 import 'package:bsmart/features/customers/domain/usecases/list_customers_usecase.dart';
+import 'package:bsmart/features/customers/presentation/widgets/special_customer_tag.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// A bottom sheet used by POS checkout to pick (or quick-create) a
@@ -161,9 +162,18 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
                                   style: const TextStyle(fontWeight: FontWeight.w800),
                                 ),
                               ),
-                              title: Text(
-                                customer.fullName,
-                                style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700),
+                              title: Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      customer.fullName,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700),
+                                    ),
+                                  ),
+                                  if (customer.isSpecial) ...[const SizedBox(width: 6), const SpecialCustomerTag()],
+                                ],
                               ),
                               subtitle: Text(customer.phone ?? '—', style: TextStyle(color: colors.textMuted)),
                               trailing: Icon(Icons.chevron_right_rounded, color: colors.textMuted),

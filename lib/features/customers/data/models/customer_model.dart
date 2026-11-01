@@ -8,5 +8,6 @@ Customer customerFromJson(Map<String, dynamic> json) => Customer(
       address: json['address'] as String?,
       notes: json['notes'] as String?,
       isActive: json['isActive'] as bool? ?? true,
+      isSpecial: json['isSpecial'] as bool? ?? false,
       createdAt: DateTime.parse(json['createdAt'] as String),
     );

@@ -2380,5 +2380,45 @@
     }
   },
   "notifUnknown": "Yangi bildirishnoma",
-  "notifOpen": "Ochish"
+  "notifOpen": "Ochish",
+  "specialBadge": "Maxsus",
+  "specialCustomersTitle": "Maxsus mijozlar",
+  "specialFilterAll": "Hammasi",
+  "specialListHint": "Bu mijozlar har doim chakana narxda xarid qiladi. Chakana narxi yo'q mahsulot ularga oddiy narxda sotiladi.",
+  "specialEmpty": "Maxsus mijozlar yo'q. Mijozni tahrirlab, \"Maxsus mijoz\"ni yoqing.",
+  "specialFieldTitle": "Maxsus mijoz",
+  "specialFieldHint": "Har doim chakana narxda xarid qiladi",
+  "specialAppliedTitle": "Maxsus mijoz — chakana narx",
+  "specialAppliedSaving": "{count} ta mahsulot chakana narxda, {amount} arzonroq",
+  "@specialAppliedSaving": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "specialAppliedNoSaving": "Mahsulotlar chakana narxda hisoblandi",
+  "specialNoRetail": "{count} ta mahsulotning chakana narxi yo'q — oddiy narxda",
+  "@specialNoRetail": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "specialCrmHint": "Haydovchi maxsus mijoz: mahsulotlar chakana narxda hisoblanadi",
+  "productsRetailPrice": "Chakana narx",
+  "productsRetailPriceHint": "Ixtiyoriy. Maxsus mijozlar shu narxda oladi",
+  "productsRetailPriceTooHigh": "Chakana narx asosiy narxdan qimmat bo'lishi mumkin emas",
+  "productsRetailPriceWith": "Chakana narx: {amount}",
+  "@productsRetailPriceWith": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  }
 }

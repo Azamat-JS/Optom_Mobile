@@ -31,12 +31,21 @@ class CrmDriver {
 }
 
 class CrmLinkedCustomer {
-  const CrmLinkedCustomer({required this.id, required this.fullName, this.phone, required this.isActive});
+  const CrmLinkedCustomer({
+    required this.id,
+    required this.fullName,
+    this.phone,
+    required this.isActive,
+    this.isSpecial = false,
+  });
 
   final String id;
   final String fullName;
   final String? phone;
   final bool isActive;
+
+  /// "Maxsus mijoz": the driver's services are charged retail prices.
+  final bool isSpecial;
 }
 
 /// One of a driver's cars. [plateNumber] is stored normalized ("01A123BC"); show it with

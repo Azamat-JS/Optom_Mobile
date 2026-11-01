@@ -56,6 +56,14 @@ class CustomersListNotifier extends AsyncNotifier<CustomersListState> {
     state = await AsyncValue.guard(() => _fetch(current.copyWith(page: 1, search: query)));
   }
 
+  /// All customers, or only the "Maxsus mijozlar" list.
+  Future<void> setSpecialOnly(bool specialOnly) async {
+    final current = state.valueOrNull?.query ?? const CustomerQuery();
+    if (current.specialOnly == specialOnly) return;
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _fetch(current.copyWith(page: 1, specialOnly: specialOnly)));
+  }
+
   Future<void> deactivate(String id) async {
     final result = await getIt<DeactivateCustomerUseCase>().call(id);
     result.fold((updated) {

@@ -13,6 +13,7 @@ class CreateProductParams {
     this.description,
     required this.price,
     this.costPrice,
+    this.retailPrice,
     this.currency = Currency.uzs,
     this.stock = 0,
     this.unit,
@@ -29,6 +30,7 @@ class CreateProductParams {
   final String? description;
   final double price;
   final double? costPrice;
+  final double? retailPrice;
   final Currency currency;
   final double stock;
   final ProductUnit? unit;
@@ -53,6 +55,7 @@ class CreateProductParams {
     }
     if (description != null) body['description'] = description;
     if (costPrice != null) body['costPrice'] = costPrice;
+    if (retailPrice != null) body['retailPrice'] = retailPrice;
     if (unit != null) body['unit'] = unit!.toWire();
     if (sku != null) body['sku'] = sku;
     if (barcode != null) body['barcode'] = barcode;
@@ -72,6 +75,8 @@ class UpdateProductParams {
     this.description,
     this.price,
     this.costPrice,
+    this.retailPrice,
+    this.clearRetailPrice = false,
     this.stock,
     this.unit,
     this.sku,
@@ -87,6 +92,11 @@ class UpdateProductParams {
   final String? description;
   final double? price;
   final double? costPrice;
+  final double? retailPrice;
+
+  /// `retailPrice: null` (removes it) is only sent when this is true — same null-vs-omitted rule
+  /// as [clearExpiryDate].
+  final bool clearRetailPrice;
   final double? stock;
   final ProductUnit? unit;
   final String? sku;
@@ -106,6 +116,10 @@ class UpdateProductParams {
         if (description != null) 'description': description,
         if (price != null) 'price': price,
         if (costPrice != null) 'costPrice': costPrice,
+        if (clearRetailPrice)
+          'retailPrice': null
+        else if (retailPrice != null)
+          'retailPrice': retailPrice,
         if (stock != null) 'stock': stock,
         if (unit != null) 'unit': unit!.toWire(),
         if (sku != null) 'sku': sku,

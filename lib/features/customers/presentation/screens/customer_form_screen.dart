@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/di/injection.dart';
+import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/customers/domain/entities/customer.dart';
 import 'package:bsmart/features/customers/domain/entities/customer_write_params.dart';
 import 'package:bsmart/features/customers/domain/usecases/create_customer_usecase.dart';
@@ -14,9 +15,12 @@ import 'package:bsmart/shared/widgets/dash_page.dart';
 /// POS's checkout customer picker (pushed for its `pop(true)`/`Customer`
 /// result rather than only a plain `bool`, see `pushForResult`).
 class CustomerFormScreen extends ConsumerStatefulWidget {
-  const CustomerFormScreen({super.key, this.editingCustomer});
+  const CustomerFormScreen({super.key, this.editingCustomer, this.initialSpecial = false});
 
   final Customer? editingCustomer;
+
+  /// A new customer starts as "Maxsus mijoz" (opened from the special customers list).
+  final bool initialSpecial;
 
   @override
   ConsumerState<CustomerFormScreen> createState() => _CustomerFormScreenState();
@@ -29,6 +33,7 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
   late final _phoneController = TextEditingController(text: widget.editingCustomer?.phone);
   late final _addressController = TextEditingController(text: widget.editingCustomer?.address);
   late final _notesController = TextEditingController(text: widget.editingCustomer?.notes);
+  late bool _isSpecial = widget.editingCustomer?.isSpecial ?? widget.initialSpecial;
   bool _isSaving = false;
   String? _errorMessage;
 
@@ -60,6 +65,7 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
               phone: _phoneController.text.trim(),
               address: _addressController.text.trim(),
               notes: _notesController.text.trim(),
+              isSpecial: _isSpecial,
             ),
           )
         : await getIt<CreateCustomerUseCase>().call(
@@ -69,6 +75,7 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
               phone: _phoneController.text.trim(),
               address: _addressController.text.trim().isEmpty ? null : _addressController.text.trim(),
               notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+              isSpecial: _isSpecial,
             ),
           );
 
@@ -146,6 +153,17 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                   prefixIcon: const Icon(Icons.edit_note_rounded),
                 ),
                 maxLines: 2,
+              ),
+              const SizedBox(height: 12),
+              DashCard(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                child: SwitchListTile(
+                  value: _isSpecial,
+                  onChanged: (v) => setState(() => _isSpecial = v),
+                  secondary: Icon(Icons.star_rounded, color: BrandColors.of(context).accentText),
+                  title: Text(l10n.specialFieldTitle, style: const TextStyle(fontWeight: FontWeight.w700)),
+                  subtitle: Text(l10n.specialFieldHint),
+                ),
               ),
               if (_errorMessage != null) ...[
                 const SizedBox(height: 14),

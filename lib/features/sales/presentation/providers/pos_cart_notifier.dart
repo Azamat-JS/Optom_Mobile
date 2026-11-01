@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
+import 'package:bsmart/features/sales/domain/pricing/special_pricing.dart';
 import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
 
 class PosCartLine {
@@ -11,7 +12,13 @@ class PosCartLine {
   final double quantity;
   final double discount;
 
-  double get total => quantity * product.price - discount;
+  double get total => totalFor(specialCustomer: false);
+
+  /// The line's unit price for the chosen customer — a special one pays the retail price.
+  double unitPriceFor({required bool specialCustomer}) => effectiveUnitPrice(product, specialCustomer: specialCustomer);
+
+  double totalFor({required bool specialCustomer}) =>
+      quantity * unitPriceFor(specialCustomer: specialCustomer) - discount;
 
   PosCartLine copyWith({double? quantity, double? discount}) {
     return PosCartLine(product: product, quantity: quantity ?? this.quantity, discount: discount ?? this.discount);
@@ -27,7 +34,11 @@ class PosCartState {
   final Map<String, PosCartLine> lines;
   final double saleDiscount;
 
-  double get subtotal => lines.values.fold(0, (sum, line) => sum + line.total);
+  double get subtotal => subtotalFor(specialCustomer: false);
+
+  /// Checkout's subtotal once the customer is known (the Sell tab doesn't know it yet).
+  double subtotalFor({required bool specialCustomer}) =>
+      lines.values.fold(0, (sum, line) => sum + line.totalFor(specialCustomer: specialCustomer));
   double get total => (subtotal - saleDiscount).clamp(0, double.infinity);
   int get itemCount => lines.length;
   bool get isEmpty => lines.isEmpty;
