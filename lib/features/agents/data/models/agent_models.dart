@@ -45,6 +45,7 @@ AgentStockItem agentStockItemFromJson(Map<String, dynamic> json) => AgentStockIt
   stock: parseDecimal(json['stock']),
   minPrice: parseDecimal(json['minPrice']),
   maxPrice: parseDecimal(json['maxPrice']),
+  discountPercent: parseDecimal(json['discountPercent'] ?? 0),
   product: agentProductRefFromJson(json['product'] as Map<String, dynamic>),
 );
 

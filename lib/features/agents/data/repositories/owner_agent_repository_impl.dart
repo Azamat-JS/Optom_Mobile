@@ -63,9 +63,9 @@ class OwnerAgentRepositoryImpl implements OwnerAgentRepository {
   Future<Result<void>> updatePriceRange(
     String leadId,
     String agentProductId, {
-    required double min,
-    required double max,
-  }) => _guard(() => _remote.updatePriceRange(leadId, agentProductId, min: min, max: max));
+    required double price,
+    required double discountPercent,
+  }) => _guard(() => _remote.updatePriceRange(leadId, agentProductId, price: price, discountPercent: discountPercent));
 
   @override
   Future<Result<AgentTransferDetail>> createTransfer(CreateAgentTransferParams params) =>

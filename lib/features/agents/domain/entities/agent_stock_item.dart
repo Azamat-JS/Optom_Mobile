@@ -14,7 +14,8 @@ class AgentProductRef {
 }
 
 /// The lead agent's stock of one product (`AgentProduct`), shared by its staff agents. Every sale
-/// line must be priced within [minPrice]…[maxPrice] — the owner's range, enforced server-side.
+/// line must be priced within [minPrice]…[maxPrice]: the owner's price ([maxPrice]) less at most
+/// [discountPercent], enforced server-side.
 class AgentStockItem {
   const AgentStockItem({
     required this.id,
@@ -22,6 +23,7 @@ class AgentStockItem {
     required this.stock,
     required this.minPrice,
     required this.maxPrice,
+    this.discountPercent = 0,
     required this.product,
   });
 
@@ -30,6 +32,7 @@ class AgentStockItem {
   final double stock;
   final double minPrice;
   final double maxPrice;
+  final double discountPercent;
   final AgentProductRef product;
 
   bool allows(double price) => price >= minPrice - 0.0005 && price <= maxPrice + 0.0005;

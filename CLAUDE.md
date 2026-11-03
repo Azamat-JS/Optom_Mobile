@@ -2489,6 +2489,15 @@ the total is refused before sending.
 - Verified: 2 unit tests (98 total), plus a simulator run: staff sale of 12 000 with 5 000 paid,
   20 000 refused, and the server's debt PARTIAL with 7 000 left and the 5 000 payment.
 
+#### Price + discount (2026-11-02)
+The owner no longer types a min/max. Per product it sets a **selling price** and a **discount %**
+(Optom_Savdo "Agents (Dillers)" → "Price + discount"). `AgentTransferFormScreen` lines and the
+lead agent page's `_PriceRangeDialog` send `{price, discountPercent}` and preview "Agentlar
+sotadi: min – max". Helpers `agentPriceRange`/`agentDiscountValid`/`agentPriceText` are in
+`agent_format.dart` (tested in `agent_price_test.dart`). `AgentStockItem`/`AgentTransferLine`
+gained `discountPercent`, and `TransferableProduct.agentMinPrice` became `agentDiscountPercent`.
+The server still returns `minPrice`/`maxPrice`, so the agent sell/checkout screens are unchanged.
+
 ### Phase 11 — CRM (auto parts) + in-app inbox (mobile; backend + web done in Optom_Savdo C1–C5)
 Optom_Savdo CLAUDE.md "CRM" is the authoritative design (flag, profiles, drivers/cars, visits as
 real sales, due dates, alert job, `Notification` inbox). This phase covers its milestones **C6**

@@ -5746,35 +5746,35 @@ abstract class AppLocalizations {
   /// **'Dillerda mahsulot yo\'q'**
   String get ownerStockEmpty;
 
-  /// No description provided for @ownerMinPrice.
+  /// No description provided for @ownerSellPrice.
   ///
   /// In uz, this message translates to:
-  /// **'Eng kam narx'**
-  String get ownerMinPrice;
+  /// **'Sotish narxi'**
+  String get ownerSellPrice;
 
-  /// No description provided for @ownerMaxPrice.
+  /// No description provided for @ownerDiscountPercent.
   ///
   /// In uz, this message translates to:
-  /// **'Eng yuqori narx'**
-  String get ownerMaxPrice;
+  /// **'Chegirma, %'**
+  String get ownerDiscountPercent;
 
   /// No description provided for @ownerEditRange.
   ///
   /// In uz, this message translates to:
-  /// **'Narx oralig\'ini o\'zgartirish'**
+  /// **'Narx va chegirmani o\'zgartirish'**
   String get ownerEditRange;
 
   /// No description provided for @ownerRangeUpdated.
   ///
   /// In uz, this message translates to:
-  /// **'Narx oralig\'i yangilandi'**
+  /// **'Narx va chegirma yangilandi'**
   String get ownerRangeUpdated;
 
-  /// No description provided for @ownerRangeInvalid.
+  /// No description provided for @ownerDiscountInvalid.
   ///
   /// In uz, this message translates to:
-  /// **'«{name}»: eng kam narx eng yuqori narxdan katta bo\'lmasin'**
-  String ownerRangeInvalid(String name);
+  /// **'«{name}»: chegirma 0 dan 100% gacha bo\'lsin'**
+  String ownerDiscountInvalid(String name);
 
   /// No description provided for @ownerPriceInvalid.
   ///
@@ -5782,11 +5782,23 @@ abstract class AppLocalizations {
   /// **'«{name}»: narxni kiriting'**
   String ownerPriceInvalid(String name);
 
-  /// No description provided for @ownerMinBelowPrice.
+  /// No description provided for @ownerPriceBelowOwed.
   ///
   /// In uz, this message translates to:
-  /// **'Eng kam narx diller to\'laydigan narxdan past'**
-  String get ownerMinBelowPrice;
+  /// **'Sotish narxi diller to\'laydigan narxdan past'**
+  String get ownerPriceBelowOwed;
+
+  /// No description provided for @ownerSellsFor.
+  ///
+  /// In uz, this message translates to:
+  /// **'Agentlar sotadi: {min} – {max}'**
+  String ownerSellsFor(String min, String max);
+
+  /// No description provided for @ownerDiscountUpTo.
+  ///
+  /// In uz, this message translates to:
+  /// **'−{percent}% gacha'**
+  String ownerDiscountUpTo(String percent);
 
   /// No description provided for @ownerConfirm.
   ///

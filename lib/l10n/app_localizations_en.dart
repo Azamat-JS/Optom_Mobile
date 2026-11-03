@@ -3452,20 +3452,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ownerStockEmpty => 'The lead agent holds no products';
 
   @override
-  String get ownerMinPrice => 'Min price';
+  String get ownerSellPrice => 'Selling price';
 
   @override
-  String get ownerMaxPrice => 'Max price';
+  String get ownerDiscountPercent => 'Discount, %';
 
   @override
-  String get ownerEditRange => 'Change price range';
+  String get ownerEditRange => 'Change price and discount';
 
   @override
-  String get ownerRangeUpdated => 'Price range updated';
+  String get ownerRangeUpdated => 'Price and discount updated';
 
   @override
-  String ownerRangeInvalid(String name) {
-    return '“$name”: min price must not exceed max price';
+  String ownerDiscountInvalid(String name) {
+    return '“$name”: discount must be 0–100%';
   }
 
   @override
@@ -3474,8 +3474,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get ownerMinBelowPrice =>
-      'Min price is below what the lead agent owes';
+  String get ownerPriceBelowOwed =>
+      'Selling price is below what the lead agent owes';
+
+  @override
+  String ownerSellsFor(String min, String max) {
+    return 'Agents sell for: $min – $max';
+  }
+
+  @override
+  String ownerDiscountUpTo(String percent) {
+    return 'up to −$percent%';
+  }
 
   @override
   String get ownerConfirm => 'Confirm';

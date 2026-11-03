@@ -50,21 +50,24 @@ void main() {
     expect(fresh.price, 10000);
     expect(fresh.currency, Currency.uzs);
     expect(fresh.stock, 50);
-    expect(fresh.agentMinPrice, isNull);
+    expect(fresh.agentMaxPrice, isNull);
+    expect(fresh.agentDiscountPercent, isNull);
 
-    final held = transferableProductFromJson(json(agent: {'stock': '8.000', 'minPrice': '11000.00', 'maxPrice': '14000.00'}));
+    final held = transferableProductFromJson(
+      json(agent: {'stock': '8.000', 'minPrice': '12600.00', 'maxPrice': '14000.00', 'discountPercent': '10.00'}),
+    );
     expect(held.agentStock, 8);
-    expect(held.agentMinPrice, 11000);
     expect(held.agentMaxPrice, 14000);
+    expect(held.agentDiscountPercent, 10);
   });
 
   test('transfer request body: no paidAmount when nothing paid, notes only when set', () {
-    const line = AgentTransferLineParams(productId: 'p1', quantity: 5, minPrice: 11000, maxPrice: 14000);
+    const line = AgentTransferLineParams(productId: 'p1', quantity: 5, price: 14000, discountPercent: 10);
     final unpaid = const CreateAgentTransferParams(leadAgentId: 'l1', lines: [line]).toRequestBody();
     expect(unpaid.containsKey('paidAmount'), isFalse);
     expect(unpaid.containsKey('notes'), isFalse);
     expect(unpaid['items'], [
-      {'productId': 'p1', 'quantity': 5.0, 'minPrice': 11000.0, 'maxPrice': 14000.0},
+      {'productId': 'p1', 'quantity': 5.0, 'price': 14000.0, 'discountPercent': 10.0},
     ]);
 
     final paid = const CreateAgentTransferParams(

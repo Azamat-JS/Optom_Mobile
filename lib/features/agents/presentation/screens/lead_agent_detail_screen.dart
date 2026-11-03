@@ -405,7 +405,7 @@ class _StockCard extends StatelessWidget {
                   style: TextStyle(fontSize: 12, color: colors.textSecondary),
                 ),
                 Text(
-                  l10n.agentTransferRange(l10n.agentPriceRange(money(item.minPrice), money(item.maxPrice))),
+                  l10n.agentTransferRange(agentPriceText(l10n, money(item.maxPrice), item.discountPercent)),
                   style: TextStyle(fontSize: 12, color: colors.textSecondary),
                 ),
               ],
@@ -422,8 +422,8 @@ class _StockCard extends StatelessWidget {
   }
 }
 
-/// "Narx oralig'ini o'zgartirish": the lead agent's current min–max for one product. Pops `true`
-/// once saved.
+/// "Narx va chegirmani o'zgartirish": the price the lead agent's team sells one product at and the
+/// discount (%) they may give off it. Pops `true` once saved.
 class _PriceRangeDialog extends StatefulWidget {
   const _PriceRangeDialog({required this.leadId, required this.item});
 
@@ -435,44 +435,47 @@ class _PriceRangeDialog extends StatefulWidget {
 }
 
 class _PriceRangeDialogState extends State<_PriceRangeDialog> {
-  late final _min = TextEditingController(text: agentQty(widget.item.minPrice));
-  late final _max = TextEditingController(text: agentQty(widget.item.maxPrice));
+  late final _price = TextEditingController(text: agentQty(widget.item.maxPrice));
+  late final _discount = TextEditingController(text: agentQty(widget.item.discountPercent));
   bool _busy = false;
   String? _error;
 
   @override
   void initState() {
     super.initState();
-    // An earlier error no longer applies once either price changes.
-    void clear() {
-      if (_error != null) setState(() => _error = null);
-    }
+    // An earlier error no longer applies once a field changes; the preview follows the fields.
+    void changed() => setState(() => _error = null);
 
-    _min.addListener(clear);
-    _max.addListener(clear);
+    _price.addListener(changed);
+    _discount.addListener(changed);
   }
 
   @override
   void dispose() {
-    _min.dispose();
-    _max.dispose();
+    _price.dispose();
+    _discount.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     final l10n = context.l10n;
     final name = widget.item.product.name;
-    final min = double.tryParse(_min.text.trim().replaceAll(',', '.'));
-    final max = double.tryParse(_max.text.trim().replaceAll(',', '.'));
-    if (min == null || max == null || min <= 0 || max <= 0) {
-      return setState(() => _error = l10n.ownerPriceInvalid(name));
+    final price = _parse(_price);
+    final discount = _parse(_discount);
+    if (price == null || price <= 0) return setState(() => _error = l10n.ownerPriceInvalid(name));
+    if (discount == null || !agentDiscountValid(discount)) {
+      return setState(() => _error = l10n.ownerDiscountInvalid(name));
     }
-    if (min > max) return setState(() => _error = l10n.ownerRangeInvalid(name));
     setState(() {
       _busy = true;
       _error = null;
     });
-    final result = await getIt<UpdateAgentPriceRangeUseCase>().call(widget.leadId, widget.item.id, min: min, max: max);
+    final result = await getIt<UpdateAgentPriceRangeUseCase>().call(
+      widget.leadId,
+      widget.item.id,
+      price: price,
+      discountPercent: discount,
+    );
     if (!mounted) return;
     result.fold(
       (_) => Navigator.of(context).pop(true),
@@ -483,9 +486,17 @@ class _PriceRangeDialogState extends State<_PriceRangeDialog> {
     );
   }
 
+  static double? _parse(TextEditingController c) => double.tryParse(c.text.trim().replaceAll(',', '.'));
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final price = _parse(_price);
+    final discount = _parse(_discount);
+    final range = price != null && price > 0 && discount != null && agentDiscountValid(discount)
+        ? agentPriceRange(price, discount)
+        : null;
+    String money(double v) => CurrencyFormatter.format(v, widget.item.currency);
     return AlertDialog(
       title: Text(l10n.ownerEditRange),
       content: Column(
@@ -495,16 +506,20 @@ class _PriceRangeDialogState extends State<_PriceRangeDialog> {
           Text(widget.item.product.name, style: const TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(height: 12),
           TextField(
-            controller: _min,
+            controller: _price,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: InputDecoration(labelText: l10n.ownerMinPrice),
+            decoration: InputDecoration(labelText: l10n.ownerSellPrice),
           ),
           const SizedBox(height: 10),
           TextField(
-            controller: _max,
+            controller: _discount,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: InputDecoration(labelText: l10n.ownerMaxPrice),
+            decoration: InputDecoration(labelText: l10n.ownerDiscountPercent),
           ),
+          if (range != null) ...[
+            const SizedBox(height: 10),
+            Text(l10n.ownerSellsFor(money(range.min), money(range.max))),
+          ],
           if (_error != null) ...[
             const SizedBox(height: 10),
             Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),

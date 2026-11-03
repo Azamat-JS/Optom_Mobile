@@ -3437,20 +3437,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ownerStockEmpty => 'У дилера нет товаров';
 
   @override
-  String get ownerMinPrice => 'Мин. цена';
+  String get ownerSellPrice => 'Цена продажи';
 
   @override
-  String get ownerMaxPrice => 'Макс. цена';
+  String get ownerDiscountPercent => 'Скидка, %';
 
   @override
-  String get ownerEditRange => 'Изменить диапазон цен';
+  String get ownerEditRange => 'Изменить цену и скидку';
 
   @override
-  String get ownerRangeUpdated => 'Диапазон цен обновлён';
+  String get ownerRangeUpdated => 'Цена и скидка обновлены';
 
   @override
-  String ownerRangeInvalid(String name) {
-    return '«$name»: мин. цена не должна быть больше макс.';
+  String ownerDiscountInvalid(String name) {
+    return '«$name»: скидка от 0 до 100%';
   }
 
   @override
@@ -3459,7 +3459,18 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get ownerMinBelowPrice => 'Мин. цена ниже цены, которую должен дилер';
+  String get ownerPriceBelowOwed =>
+      'Цена продажи ниже цены, которую должен дилер';
+
+  @override
+  String ownerSellsFor(String min, String max) {
+    return 'Агенты продают: $min – $max';
+  }
+
+  @override
+  String ownerDiscountUpTo(String percent) {
+    return 'до −$percent%';
+  }
 
   @override
   String get ownerConfirm => 'Подтвердить';

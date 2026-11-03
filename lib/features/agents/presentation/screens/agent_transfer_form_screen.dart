@@ -21,28 +21,29 @@ double? _num(TextEditingController c) => double.tryParse(c.text.trim().replaceAl
 InputDecoration _inCard(BuildContext context, String label, {String? hint}) =>
     InputDecoration(labelText: label, hintText: hint, filled: true, fillColor: DashColors.page(context));
 
-/// One picked product: quantity and the selling range, prefilled with the lead agent's current
-/// range for it, else its stock price.
+/// One picked product: quantity, the selling price and the discount (%) agents may give off it,
+/// prefilled with what the lead agent already sells it at, else its stock price and no discount.
 class _Line {
   _Line(this.product)
     : qty = TextEditingController(),
-      min = TextEditingController(text: agentQty(product.agentMinPrice ?? product.price)),
-      max = TextEditingController(text: agentQty(product.agentMaxPrice ?? product.price));
+      price = TextEditingController(text: agentQty(product.agentMaxPrice ?? product.price)),
+      discount = TextEditingController(text: agentQty(product.agentDiscountPercent ?? 0));
 
   final TransferableProduct product;
   final TextEditingController qty;
-  final TextEditingController min;
-  final TextEditingController max;
+  final TextEditingController price;
+  final TextEditingController discount;
 
   void dispose() {
     qty.dispose();
-    min.dispose();
-    max.dispose();
+    price.dispose();
+    discount.dispose();
   }
 }
 
 /// "Mahsulot berish" (owner): pick several products of the lead agent's store (one currency per
-/// transfer), a quantity and a min–max selling price for each, and how much was paid now. The lead
+/// transfer), a quantity, a selling price and the discount agents may give for each, and how much
+/// was paid now. The lead
 /// agent owes each product's stock price; the unpaid rest becomes its debt. Pops `true` once given.
 class AgentTransferFormScreen extends StatefulWidget {
   const AgentTransferFormScreen({required this.leadId, required this.leadName, super.key});
@@ -114,7 +115,8 @@ class _AgentTransferFormScreenState extends State<AgentTransferFormScreen> {
         HapticFeedback.selectionClick();
         final line = _Line(p);
         line.qty.addListener(() => setState(() {}));
-        line.min.addListener(() => setState(() {}));
+        line.price.addListener(() => setState(() {}));
+        line.discount.addListener(() => setState(() {}));
         _lines.add(line);
       }
     });
@@ -131,13 +133,15 @@ class _AgentTransferFormScreenState extends State<AgentTransferFormScreen> {
       if (qty > l.product.stock + 0.0005) {
         return setState(() => _error = l10n.agentQtyTooMuch(name, agentQty(l.product.stock, l.product.product.unit)));
       }
-      final min = _num(l.min);
-      final max = _num(l.max);
-      if (min == null || max == null || min <= 0 || max <= 0) {
-        return setState(() => _error = l10n.ownerPriceInvalid(name));
+      final price = _num(l.price);
+      final discount = _num(l.discount);
+      if (price == null || price <= 0) return setState(() => _error = l10n.ownerPriceInvalid(name));
+      if (discount == null || !agentDiscountValid(discount)) {
+        return setState(() => _error = l10n.ownerDiscountInvalid(name));
       }
-      if (min > max) return setState(() => _error = l10n.ownerRangeInvalid(name));
-      params.add(AgentTransferLineParams(productId: l.product.product.id, quantity: qty, minPrice: min, maxPrice: max));
+      params.add(
+        AgentTransferLineParams(productId: l.product.product.id, quantity: qty, price: price, discountPercent: discount),
+      );
     }
     final paid = _paid.text.trim().isEmpty ? 0.0 : _num(_paid);
     if (paid == null || paid < 0) return setState(() => _error = l10n.agentPayInvalid);
@@ -329,8 +333,12 @@ class _LineEditor extends StatelessWidget {
     final colors = BrandColors.of(context);
     final p = line.product;
     String money(double v) => CurrencyFormatter.format(v, p.currency);
-    final min = _num(line.min);
-    final belowPrice = min != null && min < p.price;
+    final price = _num(line.price);
+    final discount = _num(line.discount);
+    final belowPrice = price != null && price < p.price;
+    final range = price != null && price > 0 && discount != null && agentDiscountValid(discount)
+        ? agentPriceRange(price, discount)
+        : null;
     final qty = _num(line.qty) ?? 0;
 
     return DashCard(
@@ -382,24 +390,31 @@ class _LineEditor extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextField(
-                        controller: line.min,
+                        controller: line.price,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: _inCard(context, l10n.ownerMinPrice),
+                        decoration: _inCard(context, l10n.ownerSellPrice),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: TextField(
-                        controller: line.max,
+                        controller: line.discount,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: _inCard(context, l10n.ownerMaxPrice),
+                        decoration: _inCard(context, l10n.ownerDiscountPercent),
                       ),
                     ),
                   ],
                 ),
+                if (range != null) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    l10n.ownerSellsFor(money(range.min), money(range.max)),
+                    style: TextStyle(fontSize: 12, color: colors.textSecondary),
+                  ),
+                ],
                 if (belowPrice) ...[
                   const SizedBox(height: 6),
-                  Text(l10n.ownerMinBelowPrice, style: TextStyle(fontSize: 12, color: colors.accentText)),
+                  Text(l10n.ownerPriceBelowOwed, style: TextStyle(fontSize: 12, color: colors.accentText)),
                 ],
               ],
             ),

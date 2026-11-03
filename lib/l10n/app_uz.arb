@@ -2021,12 +2021,12 @@
   "ownerTabTransfers": "Berilganlar",
   "ownerTabCustomerDebts": "Mijoz qarzlari",
   "ownerStockEmpty": "Dillerda mahsulot yo'q",
-  "ownerMinPrice": "Eng kam narx",
-  "ownerMaxPrice": "Eng yuqori narx",
-  "ownerEditRange": "Narx oralig'ini o'zgartirish",
-  "ownerRangeUpdated": "Narx oralig'i yangilandi",
-  "ownerRangeInvalid": "«{name}»: eng kam narx eng yuqori narxdan katta bo'lmasin",
-  "@ownerRangeInvalid": {
+  "ownerSellPrice": "Sotish narxi",
+  "ownerDiscountPercent": "Chegirma, %",
+  "ownerEditRange": "Narx va chegirmani o'zgartirish",
+  "ownerRangeUpdated": "Narx va chegirma yangilandi",
+  "ownerDiscountInvalid": "«{name}»: chegirma 0 dan 100% gacha bo'lsin",
+  "@ownerDiscountInvalid": {
     "placeholders": {
       "name": {
         "type": "String"
@@ -2041,7 +2041,26 @@
       }
     }
   },
-  "ownerMinBelowPrice": "Eng kam narx diller to'laydigan narxdan past",
+  "ownerPriceBelowOwed": "Sotish narxi diller to'laydigan narxdan past",
+  "ownerSellsFor": "Agentlar sotadi: {min} – {max}",
+  "@ownerSellsFor": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "ownerDiscountUpTo": "−{percent}% gacha",
+  "@ownerDiscountUpTo": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
   "ownerConfirm": "Tasdiqlash",
   "ownerReject": "Rad etish",
   "ownerConfirmed": "Tasdiqlandi",

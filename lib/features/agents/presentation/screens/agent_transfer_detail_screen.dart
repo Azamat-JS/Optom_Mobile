@@ -125,7 +125,7 @@ class _AgentTransferDetailScreenState extends State<AgentTransferDetailScreen> {
                           Text(
                             [
                               l10n.agentTransferOwed(money(line.unitPrice)),
-                              l10n.agentTransferRange(l10n.agentPriceRange(money(line.minPrice), money(line.maxPrice))),
+                              l10n.agentTransferRange(agentPriceText(l10n, money(line.maxPrice), line.discountPercent)),
                             ].join(' · '),
                             style: TextStyle(fontSize: 13, color: colors.textSecondary),
                           ),

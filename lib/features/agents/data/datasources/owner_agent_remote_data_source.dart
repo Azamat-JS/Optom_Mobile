@@ -73,8 +73,15 @@ class OwnerAgentRemoteDataSource {
     return PaginatedResult.fromJson(response.data!, agentStockItemFromJson);
   }
 
-  Future<void> updatePriceRange(String leadId, String agentProductId, {required double min, required double max}) =>
-      _dio.patch<void>('/lead-agents/$leadId/stock/$agentProductId', data: {'minPrice': min, 'maxPrice': max});
+  Future<void> updatePriceRange(
+    String leadId,
+    String agentProductId, {
+    required double price,
+    required double discountPercent,
+  }) => _dio.patch<void>(
+    '/lead-agents/$leadId/stock/$agentProductId',
+    data: {'price': price, 'discountPercent': discountPercent},
+  );
 
   Future<AgentTransferDetail> createTransfer(CreateAgentTransferParams params) async {
     final response = await _dio.post<Map<String, dynamic>>('/agent-transfers', data: params.toRequestBody());

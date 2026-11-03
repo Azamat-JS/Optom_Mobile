@@ -6,6 +6,10 @@ class UpdateAgentPriceRangeUseCase {
 
   final OwnerAgentRepository _repository;
 
-  Future<Result<void>> call(String leadId, String agentProductId, {required double min, required double max}) =>
-      _repository.updatePriceRange(leadId, agentProductId, min: min, max: max);
+  Future<Result<void>> call(
+    String leadId,
+    String agentProductId, {
+    required double price,
+    required double discountPercent,
+  }) => _repository.updatePriceRange(leadId, agentProductId, price: price, discountPercent: discountPercent);
 }

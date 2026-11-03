@@ -37,7 +37,7 @@ TransferableProduct transferableProductFromJson(Map<String, dynamic> json) {
     currency: Currency.fromWire(json['currency'] as String),
     stock: parseDecimal(json['stock']),
     agentStock: agent == null ? null : parseDecimal(agent['stock']),
-    agentMinPrice: agent == null ? null : parseDecimal(agent['minPrice']),
     agentMaxPrice: agent == null ? null : parseDecimal(agent['maxPrice']),
+    agentDiscountPercent: agent == null ? null : parseDecimal(agent['discountPercent'] ?? 0),
   );
 }

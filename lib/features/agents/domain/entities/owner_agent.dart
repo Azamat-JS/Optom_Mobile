@@ -37,7 +37,8 @@ class LeadAgentSummary {
 }
 
 /// One of the owner's products (in the lead agent's store, in stock) that can be handed over. The
-/// lead agent owes [price]; [agentMinPrice]/[agentMaxPrice] are its current range for it, if any.
+/// lead agent owes [price]; [agentMaxPrice]/[agentDiscountPercent] are the price and discount its
+/// agents currently sell it at, if it already has the product.
 class TransferableProduct {
   const TransferableProduct({
     required this.product,
@@ -45,8 +46,8 @@ class TransferableProduct {
     required this.currency,
     required this.stock,
     this.agentStock,
-    this.agentMinPrice,
     this.agentMaxPrice,
+    this.agentDiscountPercent,
   });
 
   final AgentProductRef product;
@@ -54,28 +55,30 @@ class TransferableProduct {
   final Currency currency;
   final double stock;
   final double? agentStock;
-  final double? agentMinPrice;
   final double? agentMaxPrice;
+  final double? agentDiscountPercent;
 }
 
 class AgentTransferLineParams {
   const AgentTransferLineParams({
     required this.productId,
     required this.quantity,
-    required this.minPrice,
-    required this.maxPrice,
+    required this.price,
+    required this.discountPercent,
   });
 
   final String productId;
   final double quantity;
-  final double minPrice;
-  final double maxPrice;
+
+  /// What agents sell one unit for, and the discount (%) they may give off it.
+  final double price;
+  final double discountPercent;
 
   Map<String, dynamic> toJson() => {
     'productId': productId,
     'quantity': quantity,
-    'minPrice': minPrice,
-    'maxPrice': maxPrice,
+    'price': price,
+    'discountPercent': discountPercent,
   };
 }
 

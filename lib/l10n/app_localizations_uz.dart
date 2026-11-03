@@ -3327,20 +3327,20 @@ class AppLocalizationsUz extends AppLocalizations {
   String get ownerStockEmpty => 'Dillerda mahsulot yo\'q';
 
   @override
-  String get ownerMinPrice => 'Eng kam narx';
+  String get ownerSellPrice => 'Sotish narxi';
 
   @override
-  String get ownerMaxPrice => 'Eng yuqori narx';
+  String get ownerDiscountPercent => 'Chegirma, %';
 
   @override
-  String get ownerEditRange => 'Narx oralig\'ini o\'zgartirish';
+  String get ownerEditRange => 'Narx va chegirmani o\'zgartirish';
 
   @override
-  String get ownerRangeUpdated => 'Narx oralig\'i yangilandi';
+  String get ownerRangeUpdated => 'Narx va chegirma yangilandi';
 
   @override
-  String ownerRangeInvalid(String name) {
-    return '«$name»: eng kam narx eng yuqori narxdan katta bo\'lmasin';
+  String ownerDiscountInvalid(String name) {
+    return '«$name»: chegirma 0 dan 100% gacha bo\'lsin';
   }
 
   @override
@@ -3349,8 +3349,18 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get ownerMinBelowPrice =>
-      'Eng kam narx diller to\'laydigan narxdan past';
+  String get ownerPriceBelowOwed =>
+      'Sotish narxi diller to\'laydigan narxdan past';
+
+  @override
+  String ownerSellsFor(String min, String max) {
+    return 'Agentlar sotadi: $min – $max';
+  }
+
+  @override
+  String ownerDiscountUpTo(String percent) {
+    return '−$percent% gacha';
+  }
 
   @override
   String get ownerConfirm => 'Tasdiqlash';

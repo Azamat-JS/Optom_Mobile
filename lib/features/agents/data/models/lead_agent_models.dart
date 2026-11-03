@@ -111,6 +111,7 @@ AgentTransferDetail agentTransferDetailFromJson(Map<String, dynamic> json) {
             total: parseDecimal(line['total']),
             minPrice: parseDecimal(line['minPrice']),
             maxPrice: parseDecimal(line['maxPrice']),
+            discountPercent: parseDecimal(line['discountPercent'] ?? 0),
             costPrice: parseNullableDecimal(line['costPrice']),
           );
         }(),

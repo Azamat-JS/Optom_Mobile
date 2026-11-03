@@ -34,8 +34,8 @@ abstract class OwnerAgentRepository {
   Future<Result<void>> updatePriceRange(
     String leadId,
     String agentProductId, {
-    required double min,
-    required double max,
+    required double price,
+    required double discountPercent,
   });
 
   Future<Result<AgentTransferDetail>> createTransfer(CreateAgentTransferParams params);

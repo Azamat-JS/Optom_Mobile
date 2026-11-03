@@ -45,6 +45,7 @@ class AgentTransferLine {
     required this.total,
     required this.minPrice,
     required this.maxPrice,
+    this.discountPercent = 0,
     this.costPrice,
   });
 
@@ -62,6 +63,7 @@ class AgentTransferLine {
   final double total;
   final double minPrice;
   final double maxPrice;
+  final double discountPercent;
 
   /// The owner's own cost — sent to the owner only.
   final double? costPrice;
