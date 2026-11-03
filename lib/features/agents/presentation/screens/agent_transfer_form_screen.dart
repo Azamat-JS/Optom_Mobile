@@ -17,17 +17,21 @@ import 'package:bsmart/shared/widgets/dash_page.dart';
 
 double? _num(TextEditingController c) => double.tryParse(c.text.trim().replaceAll(',', '.'));
 
+/// An empty discount means none.
+double? _discount(TextEditingController c) => c.text.trim().isEmpty ? 0 : _num(c);
+
 /// Fields here sit on white cards, so they take the grey page fill to stay visible.
 InputDecoration _inCard(BuildContext context, String label, {String? hint}) =>
     InputDecoration(labelText: label, hintText: hint, filled: true, fillColor: DashColors.page(context));
 
-/// One picked product: quantity, the selling price and the discount (%) agents may give off it,
-/// prefilled with what the lead agent already sells it at, else its stock price and no discount.
+/// One picked product: quantity, the selling price and the discount (%) agents may give off it.
+/// The price is prefilled with what the lead agent already sells it at, else its stock price; the
+/// discount with the product's own discount limit, else empty (none). The owner may change both.
 class _Line {
   _Line(this.product)
     : qty = TextEditingController(),
       price = TextEditingController(text: agentQty(product.agentMaxPrice ?? product.price)),
-      discount = TextEditingController(text: agentQty(product.agentDiscountPercent ?? 0));
+      discount = TextEditingController(text: product.discountPercent == null ? '' : agentQty(product.discountPercent!));
 
   final TransferableProduct product;
   final TextEditingController qty;
@@ -134,7 +138,7 @@ class _AgentTransferFormScreenState extends State<AgentTransferFormScreen> {
         return setState(() => _error = l10n.agentQtyTooMuch(name, agentQty(l.product.stock, l.product.product.unit)));
       }
       final price = _num(l.price);
-      final discount = _num(l.discount);
+      final discount = _discount(l.discount);
       if (price == null || price <= 0) return setState(() => _error = l10n.ownerPriceInvalid(name));
       if (discount == null || !agentDiscountValid(discount)) {
         return setState(() => _error = l10n.ownerDiscountInvalid(name));
@@ -334,7 +338,7 @@ class _LineEditor extends StatelessWidget {
     final p = line.product;
     String money(double v) => CurrencyFormatter.format(v, p.currency);
     final price = _num(line.price);
-    final discount = _num(line.discount);
+    final discount = _discount(line.discount);
     final belowPrice = price != null && price < p.price;
     final range = price != null && price > 0 && discount != null && agentDiscountValid(discount)
         ? agentPriceRange(price, discount)

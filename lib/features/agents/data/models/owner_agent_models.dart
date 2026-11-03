@@ -39,5 +39,6 @@ TransferableProduct transferableProductFromJson(Map<String, dynamic> json) {
     agentStock: agent == null ? null : parseDecimal(agent['stock']),
     agentMaxPrice: agent == null ? null : parseDecimal(agent['maxPrice']),
     agentDiscountPercent: agent == null ? null : parseDecimal(agent['discountPercent'] ?? 0),
+    discountPercent: parseNullableDecimal(json['discountPercent']),
   );
 }

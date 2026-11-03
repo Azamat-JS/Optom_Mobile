@@ -17,6 +17,7 @@ import 'package:bsmart/features/crm/presentation/widgets/crm_widgets.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/domain/entities/product_query.dart';
 import 'package:bsmart/features/products/domain/usecases/list_products_usecase.dart';
+import 'package:bsmart/features/sales/domain/pricing/discount_limit.dart';
 import 'package:bsmart/features/sales/domain/pricing/special_pricing.dart';
 import 'package:bsmart/features/sales/presentation/widgets/special_pricing_notice.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
@@ -32,6 +33,8 @@ class _Line {
       currency = p.currency,
       unitShort = p.unit?.shortLabel,
       retailLocked = specialCustomer && retailPriceOf(p) != null,
+      minPrice = minUnitPrice(p),
+      discountPercent = discountLimitOf(p),
       name = TextEditingController(text: p.name),
       price = TextEditingController(text: _plain(effectiveUnitPrice(p, specialCustomer: specialCustomer)));
 
@@ -41,6 +44,8 @@ class _Line {
       currency = null,
       unitShort = null,
       retailLocked = false,
+      minPrice = null,
+      discountPercent = null,
       name = TextEditingController(),
       price = TextEditingController();
 
@@ -49,6 +54,11 @@ class _Line {
   final Currency? currency;
   final String? unitShort;
   final bool retailLocked;
+
+  /// The product's lowest allowed price under its owner's discount limit (null = no limit); the
+  /// server refuses a sale below it (Optom_Savdo `sale/discount-limit.ts`).
+  final double? minPrice;
+  final double? discountPercent;
   final TextEditingController name;
   final TextEditingController price;
   final interval = TextEditingController();
@@ -56,6 +66,11 @@ class _Line {
 
   /// Set by hand; null = from km.
   DateTime? dueDate;
+
+  bool get belowLimit {
+    final p = double.tryParse(price.text.replaceAll(',', '.'));
+    return minPrice != null && p != null && p < minPrice! - 0.005;
+  }
 
   void dispose() {
     name.dispose();
@@ -155,6 +170,11 @@ class _CrmVisitFormScreenState extends ConsumerState<CrmVisitFormScreen> {
       if (_recordSale && l.stock != null && l.quantity > l.stock!) return l10n.crmNotEnoughStock(name);
       final price = double.tryParse(l.price.text.replaceAll(',', '.'));
       if (_recordSale && (price == null || price <= 0)) return l10n.crmPriceMissing(name);
+      if (_recordSale && l.belowLimit) {
+        final minText = CurrencyFormatter.format(((l.minPrice! * 100) - 1e-6).ceilToDouble() / 100, l.currency!);
+        final pct = l.discountPercent!;
+        return l10n.crmPriceBelowLimit(name, pct == pct.truncateToDouble() ? pct.toStringAsFixed(0) : '$pct', minText);
+      }
       if (l.dueDate != null && !l.dueDate!.isAfter(_serviceDate)) return l10n.crmDueAfterService(name);
       if (l.interval.text.trim().isNotEmpty && l.dueDate == null && _vehicle!.dailyKm == null) {
         return l10n.crmDueNeeded(name);
@@ -450,6 +470,9 @@ class _CrmVisitFormScreenState extends ConsumerState<CrmVisitFormScreen> {
                       decoration: InputDecoration(
                         labelText: l.retailLocked ? l10n.productsRetailPrice : l10n.commonPrice,
                         isDense: true,
+                        // A red outline only; the message names the limit on save.
+                        errorText: _recordSale && l.belowLimit ? '' : null,
+                        errorStyle: const TextStyle(height: 0, fontSize: 0),
                       ),
                     ),
                   ),

@@ -2677,6 +2677,28 @@ this the server already charged retail while checkout showed the stock-price tot
 - **Known gaps:** the Sell tab's product cards still show the stock price (the customer is chosen
   at checkout). Agent sales don't use special customers (their own min–max rule).
 
+### Phase 13 — Product discount limit (mobile; backend + web done in Optom_Savdo)
+
+**Done 2026-11-03.** Mirrors Optom_Savdo "Product Discount Limit": an owner may set, per product,
+the most % that may be taken off its price when selling (`Product.discountPercent`, null = no
+limit). **The server enforces it on every sale**; the app only keeps its screens within it.
+
+- **Rule on the client:** `features/sales/domain/pricing/discount_limit.dart` (`minUnitPrice`,
+  `maxLineDiscountPercent`, `lineDiscountAmount`, `maxSaleDiscount`, `isValidDiscountPercent`),
+  unit tested in `test/features/sales/discount_limit_test.dart`. A retail price counts as allowed
+  even below the % floor.
+- **Products:** "Chegirma, %" field on the product form (empty = no limit; 0–100, 2 decimals;
+  `UpdateProductParams.clearDiscountPercent` sends `null` when emptied). The detail price card shows
+  "Chegirma ko'pi bilan 10% · eng past narx …".
+- **POS:** `PosCartLine.discountPercent` replaced the never-set `discount` amount; the amount is
+  derived (`discountFor`) at the price the customer pays, capped by `maxPercentFor`. Checkout lines
+  have a "Chegirma berish" link → `_LineDiscountDialog`; the sale-level discount field shows the cap
+  and checkout refuses more. A parked cart's stored amount is turned back into a percent on restore.
+- **CRM visit form:** a product line priced below its floor gets a red outline and a save message.
+- **Diller transfer form:** the discount starts with the product's own limit (`TransferableProduct
+  .discountPercent`), else empty (= 0); the owner may change it.
+- **Verified:** `flutter analyze` clean, 126 unit tests. **Not run on a simulator or phone yet.**
+
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
 priority) a real-time layer — all as **new NestJS + PostgreSQL infrastructure**, never a

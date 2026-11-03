@@ -1110,5 +1110,19 @@
   "productsRetailPrice": "Retail price",
   "productsRetailPriceHint": "Optional. Special customers buy at this price",
   "productsRetailPriceTooHigh": "The retail price can't be higher than the price",
-  "productsRetailPriceWith": "Retail price: {amount}"
+  "productsRetailPriceWith": "Retail price: {amount}",
+  "productsDiscountPercent": "Discount, %",
+  "productsDiscountPercentNone": "No limit",
+  "productsDiscountPercentHint": "The most you and your admins may take off the price when selling. Also prefilled when sending the product to a diller. Empty = no limit.",
+  "productsDiscountPercentRange": "Discount must be 0–100 with at most 2 decimals",
+  "productsDiscountLimitWith": "Discount up to {percent}% · lowest price {amount}",
+  "salesDiscountTooHigh": "The overall discount can be at most {amount} — some products have a discount limit",
+  "salesDiscountMax": "At most {amount} under the products' discount limits",
+  "salesLineDiscountApplied": "Discount {percent}% (−{amount})",
+  "salesLineDiscountAdd": "Add a discount",
+  "salesLineDiscountAddUpTo": "Add a discount (up to {percent}%)",
+  "salesLineDiscountLabel": "Discount, %",
+  "salesLineDiscountMax": "At most {percent}%",
+  "salesLineDiscountRange": "Enter 0 to {max}% (at most 2 decimals)",
+  "crmPriceBelowLimit": "\"{name}\": discount at most {percent}% — price not below {amount}"
 }

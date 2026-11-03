@@ -4038,4 +4038,64 @@ class AppLocalizationsRu extends AppLocalizations {
   String productsRetailPriceWith(String amount) {
     return 'Розничная цена: $amount';
   }
+
+  @override
+  String get productsDiscountPercent => 'Скидка, %';
+
+  @override
+  String get productsDiscountPercentNone => 'Без ограничения';
+
+  @override
+  String get productsDiscountPercentHint =>
+      'Максимальная скидка от цены при продаже (для вас и ваших админов). Также подставляется при передаче товара дилеру. Пусто — без ограничения.';
+
+  @override
+  String get productsDiscountPercentRange =>
+      'Скидка от 0 до 100, не более 2 знаков после запятой';
+
+  @override
+  String productsDiscountLimitWith(String percent, String amount) {
+    return 'Скидка до $percent% · минимальная цена $amount';
+  }
+
+  @override
+  String salesDiscountTooHigh(String amount) {
+    return 'Общая скидка не может превышать $amount — у товаров есть ограничение скидки';
+  }
+
+  @override
+  String salesDiscountMax(String amount) {
+    return 'С учётом ограничений скидки товаров — не больше $amount';
+  }
+
+  @override
+  String salesLineDiscountApplied(String percent, String amount) {
+    return 'Скидка $percent% (−$amount)';
+  }
+
+  @override
+  String get salesLineDiscountAdd => 'Дать скидку';
+
+  @override
+  String salesLineDiscountAddUpTo(String percent) {
+    return 'Дать скидку (до $percent%)';
+  }
+
+  @override
+  String get salesLineDiscountLabel => 'Скидка, %';
+
+  @override
+  String salesLineDiscountMax(String percent) {
+    return 'Не больше $percent%';
+  }
+
+  @override
+  String salesLineDiscountRange(String max) {
+    return 'Введите от 0 до $max% (не более 2 знаков после запятой)';
+  }
+
+  @override
+  String crmPriceBelowLimit(String name, String percent, String amount) {
+    return '\"$name\": скидка не больше $percent% — цена не ниже $amount';
+  }
 }

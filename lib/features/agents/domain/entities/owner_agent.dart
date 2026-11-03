@@ -48,6 +48,7 @@ class TransferableProduct {
     this.agentStock,
     this.agentMaxPrice,
     this.agentDiscountPercent,
+    this.discountPercent,
   });
 
   final AgentProductRef product;
@@ -57,6 +58,9 @@ class TransferableProduct {
   final double? agentStock;
   final double? agentMaxPrice;
   final double? agentDiscountPercent;
+
+  /// The product's own discount limit (null = none) — the transfer's discount starts with it.
+  final double? discountPercent;
 }
 
 class AgentTransferLineParams {

@@ -17,6 +17,7 @@ import 'package:bsmart/features/products/domain/usecases/get_product_usecase.dar
 import 'package:bsmart/features/products/domain/usecases/share_to_catalog_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/upload_product_image_usecase.dart';
 import 'package:bsmart/features/products/presentation/widgets/stock_adjust_sheet.dart';
+import 'package:bsmart/features/sales/domain/pricing/discount_limit.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
 
@@ -255,6 +256,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     String money(double v) => CurrencyFormatter.format(v, product.currency);
     final cost = product.costPrice;
     final retail = product.retailPrice;
+    final discountLimit = product.discountPercent;
     final profit = cost == null ? null : product.price - cost;
     return DashCard(
       padding: const EdgeInsets.all(18),
@@ -295,6 +297,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             Text(
               l10n.productsRetailPriceWith(money(retail)),
               style: TextStyle(color: colors.accentText, fontSize: 13.5, fontWeight: FontWeight.w700),
+            ),
+          ],
+          if (discountLimit != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              l10n.productsDiscountLimitWith(
+                discountLimit == discountLimit.truncateToDouble()
+                    ? discountLimit.toStringAsFixed(0)
+                    : discountLimit.toString(),
+                money(minUnitPrice(product)!),
+              ),
+              style: TextStyle(color: colors.textSecondary, fontSize: 13.5, fontWeight: FontWeight.w700),
             ),
           ],
           if (cost != null) ...[

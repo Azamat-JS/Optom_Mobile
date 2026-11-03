@@ -1110,5 +1110,19 @@
   "productsRetailPrice": "Розничная цена",
   "productsRetailPriceHint": "Необязательно. Особые клиенты покупают по этой цене",
   "productsRetailPriceTooHigh": "Розничная цена не может быть выше основной",
-  "productsRetailPriceWith": "Розничная цена: {amount}"
+  "productsRetailPriceWith": "Розничная цена: {amount}",
+  "productsDiscountPercent": "Скидка, %",
+  "productsDiscountPercentNone": "Без ограничения",
+  "productsDiscountPercentHint": "Максимальная скидка от цены при продаже (для вас и ваших админов). Также подставляется при передаче товара дилеру. Пусто — без ограничения.",
+  "productsDiscountPercentRange": "Скидка от 0 до 100, не более 2 знаков после запятой",
+  "productsDiscountLimitWith": "Скидка до {percent}% · минимальная цена {amount}",
+  "salesDiscountTooHigh": "Общая скидка не может превышать {amount} — у товаров есть ограничение скидки",
+  "salesDiscountMax": "С учётом ограничений скидки товаров — не больше {amount}",
+  "salesLineDiscountApplied": "Скидка {percent}% (−{amount})",
+  "salesLineDiscountAdd": "Дать скидку",
+  "salesLineDiscountAddUpTo": "Дать скидку (до {percent}%)",
+  "salesLineDiscountLabel": "Скидка, %",
+  "salesLineDiscountMax": "Не больше {percent}%",
+  "salesLineDiscountRange": "Введите от 0 до {max}% (не более 2 знаков после запятой)",
+  "crmPriceBelowLimit": "\"{name}\": скидка не больше {percent}% — цена не ниже {amount}"
 }

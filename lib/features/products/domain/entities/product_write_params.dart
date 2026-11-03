@@ -14,6 +14,7 @@ class CreateProductParams {
     required this.price,
     this.costPrice,
     this.retailPrice,
+    this.discountPercent,
     this.currency = Currency.uzs,
     this.stock = 0,
     this.unit,
@@ -31,6 +32,9 @@ class CreateProductParams {
   final double price;
   final double? costPrice;
   final double? retailPrice;
+
+  /// The product's discount limit in % (0–100); null = no limit.
+  final double? discountPercent;
   final Currency currency;
   final double stock;
   final ProductUnit? unit;
@@ -56,6 +60,7 @@ class CreateProductParams {
     if (description != null) body['description'] = description;
     if (costPrice != null) body['costPrice'] = costPrice;
     if (retailPrice != null) body['retailPrice'] = retailPrice;
+    if (discountPercent != null) body['discountPercent'] = discountPercent;
     if (unit != null) body['unit'] = unit!.toWire();
     if (sku != null) body['sku'] = sku;
     if (barcode != null) body['barcode'] = barcode;
@@ -77,6 +82,8 @@ class UpdateProductParams {
     this.costPrice,
     this.retailPrice,
     this.clearRetailPrice = false,
+    this.discountPercent,
+    this.clearDiscountPercent = false,
     this.stock,
     this.unit,
     this.sku,
@@ -97,6 +104,10 @@ class UpdateProductParams {
   /// `retailPrice: null` (removes it) is only sent when this is true — same null-vs-omitted rule
   /// as [clearExpiryDate].
   final bool clearRetailPrice;
+  final double? discountPercent;
+
+  /// `discountPercent: null` (no limit any more) is only sent when this is true.
+  final bool clearDiscountPercent;
   final double? stock;
   final ProductUnit? unit;
   final String? sku;
@@ -120,6 +131,10 @@ class UpdateProductParams {
           'retailPrice': null
         else if (retailPrice != null)
           'retailPrice': retailPrice,
+        if (clearDiscountPercent)
+          'discountPercent': null
+        else if (discountPercent != null)
+          'discountPercent': discountPercent,
         if (stock != null) 'stock': stock,
         if (unit != null) 'unit': unit!.toWire(),
         if (sku != null) 'sku': sku,

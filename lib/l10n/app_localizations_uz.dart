@@ -3900,4 +3900,64 @@ class AppLocalizationsUz extends AppLocalizations {
   String productsRetailPriceWith(String amount) {
     return 'Chakana narx: $amount';
   }
+
+  @override
+  String get productsDiscountPercent => 'Chegirma, %';
+
+  @override
+  String get productsDiscountPercentNone => 'Cheklov yo\'q';
+
+  @override
+  String get productsDiscountPercentHint =>
+      'Sotishda narxdan ko\'pi bilan shuncha foiz chegirma berish mumkin (siz va adminlaringiz). Dillerga yuborishda ham shu foiz taklif qilinadi. Bo\'sh — cheklov yo\'q.';
+
+  @override
+  String get productsDiscountPercentRange =>
+      'Chegirma 0 dan 100 gacha, ko\'pi bilan 2 kasr xonali bo\'lsin';
+
+  @override
+  String productsDiscountLimitWith(String percent, String amount) {
+    return 'Chegirma ko\'pi bilan $percent% · eng past narx $amount';
+  }
+
+  @override
+  String salesDiscountTooHigh(String amount) {
+    return 'Umumiy chegirma ko\'pi bilan $amount bo\'lishi mumkin — mahsulotlarning chegirma cheklovi bor';
+  }
+
+  @override
+  String salesDiscountMax(String amount) {
+    return 'Mahsulotlarning chegirma cheklovi bo\'yicha ko\'pi bilan $amount';
+  }
+
+  @override
+  String salesLineDiscountApplied(String percent, String amount) {
+    return 'Chegirma $percent% (−$amount)';
+  }
+
+  @override
+  String get salesLineDiscountAdd => 'Chegirma berish';
+
+  @override
+  String salesLineDiscountAddUpTo(String percent) {
+    return 'Chegirma berish (ko\'pi bilan $percent%)';
+  }
+
+  @override
+  String get salesLineDiscountLabel => 'Chegirma, %';
+
+  @override
+  String salesLineDiscountMax(String percent) {
+    return 'Ko\'pi bilan $percent%';
+  }
+
+  @override
+  String salesLineDiscountRange(String max) {
+    return '0 dan $max% gacha kiriting (ko\'pi bilan 2 kasr xonasi)';
+  }
+
+  @override
+  String crmPriceBelowLimit(String name, String percent, String amount) {
+    return '\"$name\": chegirma ko\'pi bilan $percent% — narx $amount dan past bo\'lmasin';
+  }
 }

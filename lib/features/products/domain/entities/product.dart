@@ -30,6 +30,7 @@ class Product {
     required this.price,
     this.costPrice,
     this.retailPrice,
+    this.discountPercent,
     required this.currency,
     required this.stock,
     this.unit,
@@ -54,6 +55,11 @@ class Product {
   /// "Chakana narx": an optional lower price, never above [price]. Special customers always pay it
   /// (see `special_pricing.dart`).
   final double? retailPrice;
+
+  /// "Chegirma, %": the most the owner and their admins may take off [price] when selling; null =
+  /// no limit. The server enforces it on every sale (see `discount_limit.dart`), and a diller
+  /// transfer starts with it.
+  final double? discountPercent;
   final Currency currency;
   final double stock;
   final ProductUnit? unit;

@@ -6717,6 +6717,90 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Chakana narx: {amount}'**
   String productsRetailPriceWith(String amount);
+
+  /// No description provided for @productsDiscountPercent.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chegirma, %'**
+  String get productsDiscountPercent;
+
+  /// No description provided for @productsDiscountPercentNone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Cheklov yo\'q'**
+  String get productsDiscountPercentNone;
+
+  /// No description provided for @productsDiscountPercentHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sotishda narxdan ko\'pi bilan shuncha foiz chegirma berish mumkin (siz va adminlaringiz). Dillerga yuborishda ham shu foiz taklif qilinadi. Bo\'sh — cheklov yo\'q.'**
+  String get productsDiscountPercentHint;
+
+  /// No description provided for @productsDiscountPercentRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chegirma 0 dan 100 gacha, ko\'pi bilan 2 kasr xonali bo\'lsin'**
+  String get productsDiscountPercentRange;
+
+  /// No description provided for @productsDiscountLimitWith.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chegirma ko\'pi bilan {percent}% · eng past narx {amount}'**
+  String productsDiscountLimitWith(String percent, String amount);
+
+  /// No description provided for @salesDiscountTooHigh.
+  ///
+  /// In uz, this message translates to:
+  /// **'Umumiy chegirma ko\'pi bilan {amount} bo\'lishi mumkin — mahsulotlarning chegirma cheklovi bor'**
+  String salesDiscountTooHigh(String amount);
+
+  /// No description provided for @salesDiscountMax.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mahsulotlarning chegirma cheklovi bo\'yicha ko\'pi bilan {amount}'**
+  String salesDiscountMax(String amount);
+
+  /// No description provided for @salesLineDiscountApplied.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chegirma {percent}% (−{amount})'**
+  String salesLineDiscountApplied(String percent, String amount);
+
+  /// No description provided for @salesLineDiscountAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chegirma berish'**
+  String get salesLineDiscountAdd;
+
+  /// No description provided for @salesLineDiscountAddUpTo.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chegirma berish (ko\'pi bilan {percent}%)'**
+  String salesLineDiscountAddUpTo(String percent);
+
+  /// No description provided for @salesLineDiscountLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chegirma, %'**
+  String get salesLineDiscountLabel;
+
+  /// No description provided for @salesLineDiscountMax.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ko\'pi bilan {percent}%'**
+  String salesLineDiscountMax(String percent);
+
+  /// No description provided for @salesLineDiscountRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'0 dan {max}% gacha kiriting (ko\'pi bilan 2 kasr xonasi)'**
+  String salesLineDiscountRange(String max);
+
+  /// No description provided for @crmPriceBelowLimit.
+  ///
+  /// In uz, this message translates to:
+  /// **'\"{name}\": chegirma ko\'pi bilan {percent}% — narx {amount} dan past bo\'lmasin'**
+  String crmPriceBelowLimit(String name, String percent, String amount);
 }
 
 class _AppLocalizationsDelegate

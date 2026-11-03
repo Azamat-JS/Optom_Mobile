@@ -107,7 +107,13 @@ class _SharedCartSheetState extends ConsumerState<SharedCartSheet> {
         for (var i = 0; i < popped.items.length; i++) {
           final item = popped.items[i];
           productResults[i].fold(
-            (product) => lines.add(PosCartLine(product: product, quantity: item.quantity, discount: item.discount)),
+            // A parked cart stores the discount amount; the percent is re-derived from it (and
+            // re-capped by the product's current limit when the line is priced).
+            (product) {
+              final gross = item.quantity * item.unitPrice;
+              final percent = gross > 0 ? (item.discount / gross * 10000).roundToDouble() / 100 : 0.0;
+              lines.add(PosCartLine(product: product, quantity: item.quantity, discountPercent: percent));
+            },
             (_) => skipped++,
           );
         }

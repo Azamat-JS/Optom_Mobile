@@ -28,14 +28,14 @@ void main() {
   test('cart totals follow the customer, matching the server', () {
     final cart = PosCartState(
       lines: {
-        'flour': PosCartLine(product: _product('flour', retail: 10000), quantity: 3, discount: 500),
+        'flour': PosCartLine(product: _product('flour', retail: 10000), quantity: 3, discountPercent: 5),
         'sugar': PosCartLine(product: _product('sugar', price: 5000), quantity: 2),
       },
     );
-    // 3 × 10 000 − 500 + 2 × 5 000
-    expect(cart.subtotalFor(specialCustomer: true), 39500);
-    // 3 × 12 000 − 500 + 2 × 5 000
-    expect(cart.subtotalFor(specialCustomer: false), 45500);
-    expect(cart.subtotal, 45500);
+    // 3 × 10 000 − 5 % + 2 × 5 000
+    expect(cart.subtotalFor(specialCustomer: true), 38500);
+    // 3 × 12 000 − 5 % + 2 × 5 000
+    expect(cart.subtotalFor(specialCustomer: false), 44200);
+    expect(cart.subtotal, 44200);
   });
 }

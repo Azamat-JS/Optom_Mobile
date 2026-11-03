@@ -2439,5 +2439,87 @@
         "type": "String"
       }
     }
+  },
+  "productsDiscountPercent": "Chegirma, %",
+  "productsDiscountPercentNone": "Cheklov yo'q",
+  "productsDiscountPercentHint": "Sotishda narxdan ko'pi bilan shuncha foiz chegirma berish mumkin (siz va adminlaringiz). Dillerga yuborishda ham shu foiz taklif qilinadi. Bo'sh — cheklov yo'q.",
+  "productsDiscountPercentRange": "Chegirma 0 dan 100 gacha, ko'pi bilan 2 kasr xonali bo'lsin",
+  "productsDiscountLimitWith": "Chegirma ko'pi bilan {percent}% · eng past narx {amount}",
+  "@productsDiscountLimitWith": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "salesDiscountTooHigh": "Umumiy chegirma ko'pi bilan {amount} bo'lishi mumkin — mahsulotlarning chegirma cheklovi bor",
+  "@salesDiscountTooHigh": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "salesDiscountMax": "Mahsulotlarning chegirma cheklovi bo'yicha ko'pi bilan {amount}",
+  "@salesDiscountMax": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "salesLineDiscountApplied": "Chegirma {percent}% (−{amount})",
+  "@salesLineDiscountApplied": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "salesLineDiscountAdd": "Chegirma berish",
+  "salesLineDiscountAddUpTo": "Chegirma berish (ko'pi bilan {percent}%)",
+  "@salesLineDiscountAddUpTo": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "salesLineDiscountLabel": "Chegirma, %",
+  "salesLineDiscountMax": "Ko'pi bilan {percent}%",
+  "@salesLineDiscountMax": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "salesLineDiscountRange": "0 dan {max}% gacha kiriting (ko'pi bilan 2 kasr xonasi)",
+  "@salesLineDiscountRange": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "crmPriceBelowLimit": "\"{name}\": chegirma ko'pi bilan {percent}% — narx {amount} dan past bo'lmasin",
+  "@crmPriceBelowLimit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
   }
 }

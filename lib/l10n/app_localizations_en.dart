@@ -4046,4 +4046,64 @@ class AppLocalizationsEn extends AppLocalizations {
   String productsRetailPriceWith(String amount) {
     return 'Retail price: $amount';
   }
+
+  @override
+  String get productsDiscountPercent => 'Discount, %';
+
+  @override
+  String get productsDiscountPercentNone => 'No limit';
+
+  @override
+  String get productsDiscountPercentHint =>
+      'The most you and your admins may take off the price when selling. Also prefilled when sending the product to a diller. Empty = no limit.';
+
+  @override
+  String get productsDiscountPercentRange =>
+      'Discount must be 0–100 with at most 2 decimals';
+
+  @override
+  String productsDiscountLimitWith(String percent, String amount) {
+    return 'Discount up to $percent% · lowest price $amount';
+  }
+
+  @override
+  String salesDiscountTooHigh(String amount) {
+    return 'The overall discount can be at most $amount — some products have a discount limit';
+  }
+
+  @override
+  String salesDiscountMax(String amount) {
+    return 'At most $amount under the products\' discount limits';
+  }
+
+  @override
+  String salesLineDiscountApplied(String percent, String amount) {
+    return 'Discount $percent% (−$amount)';
+  }
+
+  @override
+  String get salesLineDiscountAdd => 'Add a discount';
+
+  @override
+  String salesLineDiscountAddUpTo(String percent) {
+    return 'Add a discount (up to $percent%)';
+  }
+
+  @override
+  String get salesLineDiscountLabel => 'Discount, %';
+
+  @override
+  String salesLineDiscountMax(String percent) {
+    return 'At most $percent%';
+  }
+
+  @override
+  String salesLineDiscountRange(String max) {
+    return 'Enter 0 to $max% (at most 2 decimals)';
+  }
+
+  @override
+  String crmPriceBelowLimit(String name, String percent, String amount) {
+    return '\"$name\": discount at most $percent% — price not below $amount';
+  }
 }
