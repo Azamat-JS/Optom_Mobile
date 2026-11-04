@@ -88,17 +88,27 @@ class AgentTransferLineParams {
 
 /// Mirrors `CreateAgentTransferDto`: whatever isn't paid now becomes the lead agent's debt.
 class CreateAgentTransferParams {
-  const CreateAgentTransferParams({required this.leadAgentId, required this.lines, this.paidAmount = 0, this.notes});
+  const CreateAgentTransferParams({
+    required this.leadAgentId,
+    required this.lines,
+    this.paidAmount = 0,
+    this.salaryPercent = 0,
+    this.notes,
+  });
 
   final String leadAgentId;
   final List<AgentTransferLineParams> lines;
   final double paidAmount;
+
+  /// The lead agent's salary on this transfer (% of what its team sells from it).
+  final double salaryPercent;
   final String? notes;
 
   Map<String, dynamic> toRequestBody() => {
     'leadAgentId': leadAgentId,
     'items': [for (final l in lines) l.toJson()],
     if (paidAmount > 0) 'paidAmount': paidAmount,
+    if (salaryPercent > 0) 'salaryPercent': salaryPercent,
     if (notes != null && notes!.isNotEmpty) 'notes': notes,
   };
 }

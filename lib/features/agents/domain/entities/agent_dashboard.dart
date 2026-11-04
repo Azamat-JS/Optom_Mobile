@@ -11,6 +11,7 @@ class AgentSummary {
     required this.openDebtCount,
     this.debtToOwner,
     this.stockValue,
+    this.salary,
   });
 
   final int todayCount;
@@ -23,6 +24,19 @@ class AgentSummary {
   /// Lead agent only.
   final MoneyByCurrency? debtToOwner;
   final MoneyByCurrency? stockValue;
+
+  /// The lead agent's salary (its own view and the owner's team view; never a staff agent's).
+  final AgentSalarySummary? salary;
+}
+
+/// The lead agent's salary: each transfer's % of what its team sold from that transfer's units
+/// (see Optom_Savdo CLAUDE.md "Agents (Dillers)" → "Diller salary"). Per currency, never summed.
+class AgentSalarySummary {
+  const AgentSalarySummary({required this.today, required this.last30, required this.total});
+
+  final MoneyByCurrency today;
+  final MoneyByCurrency last30;
+  final MoneyByCurrency total;
 }
 
 /// The windows `GET /agent/profit?period=` accepts that this app offers.
@@ -45,6 +59,7 @@ class AgentProfitStats {
     required this.netProfit,
     required this.pendingProfit,
     required this.ownDebts,
+    this.salaryIncome = 0,
   });
 
   final int salesCount;
@@ -53,6 +68,9 @@ class AgentProfitStats {
   final double netProfit;
   final double pendingProfit;
   final double ownDebts;
+
+  /// The lead agent's salary on sales in the window — already added into [netProfit].
+  final double salaryIncome;
 }
 
 class AgentProfit {

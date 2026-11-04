@@ -1139,5 +1139,22 @@
   "productsMoveNoteHistory": "Past sales stay with the store where they were made.",
   "productsMoveNoteBlocked": "If the receiving store already uses the same barcode or PLU, or a product is in an unapproved order, nothing is moved.",
   "productsMoveSubmit": "Send",
-  "productsMoveDone": "{count, plural, one{{count} product} other{{count} products}} moved to “{store}”"
+  "productsMoveDone": "{count, plural, one{{count} product} other{{count} products}} moved to “{store}”",
+  "agentSalaryPercent": "Lead agent salary, %",
+  "agentSalaryPercentHint": "The lead agent earns this % of what its team sells from this transfer. Other transfers keep their own %.",
+  "agentSalaryEstimate": "If everything sells at this price: ~{amount}",
+  "agentSalaryPercentInvalid": "Salary %: 0–100, at most 2 decimals",
+  "agentSalaryTitle": "Lead agent salary",
+  "agentSalaryEdit": "Correct %",
+  "agentSalaryEditHint": "The new % applies to every sale from this transfer, including earlier ones.",
+  "agentSalarySold": "Sold from this transfer",
+  "agentSalaryEarned": "Salary earned",
+  "agentSalaryNone": "No salary % on this transfer",
+  "agentSalaryPercentSaved": "Salary % saved",
+  "agentSalaryLine": "Salary: {amount} ({percent}%)",
+  "agentMySalary30": "My salary (30 days)",
+  "agentLeadSalary30": "Lead agent salary (30 days)",
+  "agentSalaryAllTime": "Salary, all time",
+  "agentSalaryTotalLine": "Total: {total}",
+  "agentProfitSalary": "My salary"
 }

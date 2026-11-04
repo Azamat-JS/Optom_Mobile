@@ -4015,4 +4015,64 @@ class AppLocalizationsUz extends AppLocalizations {
   String productsMoveDone(int count, String store) {
     return '$count ta mahsulot «$store» do\'koniga o\'tkazildi';
   }
+
+  @override
+  String get agentSalaryPercent => 'Diller maoshi, %';
+
+  @override
+  String get agentSalaryPercentHint =>
+      'Jamoasi shu o\'tkazmadan sotganining shu foizi dillerga maosh bo\'ladi. Boshqa o\'tkazmalarga ta\'sir qilmaydi.';
+
+  @override
+  String agentSalaryEstimate(String amount) {
+    return 'Hammasi shu narxda sotilsa, maosh: ~$amount';
+  }
+
+  @override
+  String get agentSalaryPercentInvalid =>
+      'Maosh foizi 0–100, ko\'pi bilan 2 xonali kasr';
+
+  @override
+  String get agentSalaryTitle => 'Diller maoshi';
+
+  @override
+  String get agentSalaryEdit => 'Foizni tuzatish';
+
+  @override
+  String get agentSalaryEditHint =>
+      'Yangi foiz shu o\'tkazmadan qilingan barcha sotuvlarga, avvalgilariga ham qo\'llanadi.';
+
+  @override
+  String get agentSalarySold => 'Shu o\'tkazmadan sotildi';
+
+  @override
+  String get agentSalaryEarned => 'Hisoblangan maosh';
+
+  @override
+  String get agentSalaryNone => 'Bu o\'tkazmada maosh foizi belgilanmagan';
+
+  @override
+  String get agentSalaryPercentSaved => 'Maosh foizi saqlandi';
+
+  @override
+  String agentSalaryLine(String amount, String percent) {
+    return 'Maosh: $amount ($percent%)';
+  }
+
+  @override
+  String get agentMySalary30 => 'Maoshim (30 kun)';
+
+  @override
+  String get agentLeadSalary30 => 'Diller maoshi (30 kun)';
+
+  @override
+  String get agentSalaryAllTime => 'Maosh, jami';
+
+  @override
+  String agentSalaryTotalLine(String total) {
+    return 'Jami: $total';
+  }
+
+  @override
+  String get agentProfitSalary => 'Maoshim';
 }

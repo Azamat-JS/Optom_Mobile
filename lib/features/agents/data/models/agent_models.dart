@@ -136,6 +136,12 @@ AgentSummary agentSummaryFromJson(Map<String, dynamic> json) {
     openDebtCount: (json['openDebtCount'] as num?)?.toInt() ?? 0,
     debtToOwner: json['debtToOwner'] == null ? null : _money(json['debtToOwner']),
     stockValue: json['stockValue'] == null ? null : _money(json['stockValue']),
+    salary: json['salary'] is Map<String, dynamic>
+        ? () {
+            final s = json['salary'] as Map<String, dynamic>;
+            return AgentSalarySummary(today: _money(s['today']), last30: _money(s['last30']), total: _money(s['total']));
+          }()
+        : null,
   );
 }
 
@@ -146,6 +152,7 @@ AgentProfitStats _profitStats(Map<String, dynamic> json) => AgentProfitStats(
   netProfit: parseDecimal(json['netProfit'] ?? 0),
   pendingProfit: parseDecimal(json['pendingProfit'] ?? 0),
   ownDebts: parseDecimal(json['ownDebts'] ?? 0),
+  salaryIncome: parseDecimal(json['salaryIncome'] ?? 0),
 );
 
 AgentProfit agentProfitFromJson(Map<String, dynamic> json) {

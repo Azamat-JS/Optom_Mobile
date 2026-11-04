@@ -115,7 +115,8 @@ class AgentReturnCard extends StatelessWidget {
   }
 }
 
-/// A transfer: number, date, item count, paid on hand-over and still owed, total and debt status.
+/// A transfer: number, date, item count, paid on hand-over and still owed, the lead agent's salary
+/// earned on it, total and debt status.
 class AgentTransferCard extends StatelessWidget {
   const AgentTransferCard({required this.transfer, required this.onTap, super.key});
 
@@ -155,6 +156,11 @@ class AgentTransferCard extends StatelessWidget {
                       color: Theme.of(context).colorScheme.error,
                       fontWeight: FontWeight.w700,
                     ),
+                  ),
+                if (t.salaryPercent > 0)
+                  Text(
+                    l10n.agentSalaryLine(money(t.salaryEarned), agentQty(t.salaryPercent)),
+                    style: TextStyle(fontSize: 12, color: colors.textSecondary, fontWeight: FontWeight.w700),
                   ),
               ],
             ),

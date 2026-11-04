@@ -4177,4 +4177,64 @@ class AppLocalizationsRu extends AppLocalizations {
     );
     return '$_temp0 в магазин «$store»';
   }
+
+  @override
+  String get agentSalaryPercent => 'Зарплата дилера, %';
+
+  @override
+  String get agentSalaryPercentHint =>
+      'Дилер получает этот процент от продаж своей команды из этой передачи. На другие передачи не влияет.';
+
+  @override
+  String agentSalaryEstimate(String amount) {
+    return 'Если всё продастся по этой цене: ~$amount';
+  }
+
+  @override
+  String get agentSalaryPercentInvalid =>
+      'Процент зарплаты: 0–100, не более 2 знаков после запятой';
+
+  @override
+  String get agentSalaryTitle => 'Зарплата дилера';
+
+  @override
+  String get agentSalaryEdit => 'Исправить процент';
+
+  @override
+  String get agentSalaryEditHint =>
+      'Новый процент применится ко всем продажам из этой передачи, включая прошлые.';
+
+  @override
+  String get agentSalarySold => 'Продано из этой передачи';
+
+  @override
+  String get agentSalaryEarned => 'Начисленная зарплата';
+
+  @override
+  String get agentSalaryNone => 'Для этой передачи процент зарплаты не задан';
+
+  @override
+  String get agentSalaryPercentSaved => 'Процент зарплаты сохранён';
+
+  @override
+  String agentSalaryLine(String amount, String percent) {
+    return 'Зарплата: $amount ($percent%)';
+  }
+
+  @override
+  String get agentMySalary30 => 'Моя зарплата (30 дн.)';
+
+  @override
+  String get agentLeadSalary30 => 'Зарплата дилера (30 дн.)';
+
+  @override
+  String get agentSalaryAllTime => 'Зарплата, всего';
+
+  @override
+  String agentSalaryTotalLine(String total) {
+    return 'Всего: $total';
+  }
+
+  @override
+  String get agentProfitSalary => 'Моя зарплата';
 }

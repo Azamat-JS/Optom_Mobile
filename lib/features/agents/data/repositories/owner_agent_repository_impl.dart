@@ -72,6 +72,10 @@ class OwnerAgentRepositoryImpl implements OwnerAgentRepository {
       _guard(() => _remote.createTransfer(params));
 
   @override
+  Future<Result<AgentTransferDetail>> updateTransferSalary(String transferId, double salaryPercent) =>
+      _guard(() => _remote.updateTransferSalary(transferId, salaryPercent));
+
+  @override
   Future<Result<PaginatedResult<AgentTransfer>>> transfers(String leadId, {int page = 1}) =>
       _guard(() => _remote.transfers(leadId, page: page));
 

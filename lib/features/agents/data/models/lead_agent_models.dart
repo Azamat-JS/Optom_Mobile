@@ -75,6 +75,7 @@ AgentReturnDetail agentReturnDetailFromJson(Map<String, dynamic> json) => AgentR
 
 AgentTransfer agentTransferFromJson(Map<String, dynamic> json) {
   final debt = json['debt'] as Map<String, dynamic>?;
+  final salary = json['salary'] as Map<String, dynamic>?;
   return AgentTransfer(
     id: json['id'] as String,
     transferNumber: json['transferNumber'] as String,
@@ -87,6 +88,10 @@ AgentTransfer agentTransferFromJson(Map<String, dynamic> json) {
     notes: json['notes'] as String?,
     debtBalance: debt == null ? null : parseDecimal(debt['balance']),
     debtStatus: debt == null ? null : DebtStatus.fromWire(debt['status'] as String),
+    salaryPercent: parseDecimal(json['salaryPercent'] ?? 0),
+    salarySoldQuantity: parseDecimal(salary?['soldQuantity'] ?? 0),
+    salarySoldRevenue: parseDecimal(salary?['soldRevenue'] ?? 0),
+    salaryEarned: parseDecimal(salary?['salary'] ?? 0),
   );
 }
 

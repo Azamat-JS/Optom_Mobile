@@ -2498,6 +2498,50 @@ sotadi: min – max". Helpers `agentPriceRange`/`agentDiscountValid`/`agentPrice
 gained `discountPercent`, and `TransferableProduct.agentMinPrice` became `agentDiscountPercent`.
 The server still returns `minPrice`/`maxPrice`, so the agent sell/checkout screens are unchanged.
 
+#### Diller salary (2026-11-04)
+The owner sets the lead agent's salary % on each transfer; the salary is that % of what the
+team sells from that transfer's units (Optom_Savdo "Agents (Dillers)" → "Diller salary"). The
+backend computes everything; the app only sends the % and shows the figures.
+- **Data:**
+  - `AgentTransfer` gained `salaryPercent`, `salarySoldQuantity`, `salarySoldRevenue` and
+    `salaryEarned` (from the row's `salary` object; 0 when an older server omits it).
+  - `AgentSummary.salary` (`AgentSalarySummary` today / last30 / total, per currency): null for
+    a staff agent.
+  - `AgentProfitStats.salaryIncome`.
+  - `CreateAgentTransferParams.salaryPercent` (sent only above 0).
+  - New `UpdateAgentTransferSalaryUseCase` → `PATCH /agent-transfers/:id/salary`.
+- **Owner:**
+  - `AgentTransferFormScreen` has a "Diller maoshi, %" field in the total card, with an inline
+    error outside 0–100 / 2 decimals and "~estimate if everything sells at this price".
+  - The lead agent page's team card gained "Diller maoshi (30 kun)" and "Maosh, jami".
+  - Transfer cards show "Maosh: X (N%)".
+  - `AgentTransferDetailScreen(onSalaryChanged:)` shows a salary card (%, sold from this
+    transfer, earned) with "Foizni tuzatish" (`_SalaryPercentDialog`). Only the owner's page
+    passes `onSalaryChanged`, which refreshes the transfers tab and the team card.
+- **Lead agent:**
+  - A "Maoshim (30 kun)" `StatTile` with "Jami: …" under it. "Today · total" didn't fit a
+    half-width tile in uz or ru.
+  - A "+ Maoshim" row on the profit card (already in the server's net profit).
+  - The same salary card, read-only, on received transfers.
+- **Not on mobile:** the owner's own net profit isn't shown in the app at all (web only), so the
+  "− Diller maoshi" line exists on the web dashboard only.
+- **Verified:**
+  - `flutter analyze` clean, **136 unit tests** (5 new in `agent_salary_test.dart`).
+  - A temporary integration test (deleted) on the iPhone 17 simulator against the local backend,
+    with a host seed (owner, product, lead + staff agent, a 5 % transfer and a staff sale of
+    4 × 1 300). Run with `flutter drive` + `--dart-define-from-file`: passing JWTs through
+    individual `--dart-define`s came through mangled.
+    - Owner: team card 260; transfers tab "Maosh: 260 so'm (5%)"; detail; 101 % refused;
+      corrected to 10 % → 520, tab and card refresh.
+    - Owner: new transfer form with an inline error at 101, "~455" at 7 %, saved as 7.00
+      (checked in the DB).
+    - Lead agent: tile 520; profit card 5 200 − 4 000 + 520 = 1 720; Kirimlar "Maosh: 520";
+      detail without the edit button. Russian layout as well.
+    - Staff agent: no salary tile.
+  - Fixed from screenshots: the tile subtitle was cut off.
+  - DB back to baseline.
+  - **Not checked:** Android, dark mode, USD transfers on a device.
+
 ### Phase 11 — CRM (auto parts) + in-app inbox (mobile; backend + web done in Optom_Savdo C1–C5)
 Optom_Savdo CLAUDE.md "CRM" is the authoritative design (flag, profiles, drivers/cars, visits as
 real sales, due dates, alert job, `Notification` inbox). This phase covers its milestones **C6**

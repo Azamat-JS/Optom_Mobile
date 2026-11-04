@@ -155,7 +155,18 @@ class _LeadAgentDetailScreenState extends ConsumerState<LeadAgentDetailScreen> {
             transfer: t,
             onTap: () => Navigator.of(
               context,
-            ).push(MaterialPageRoute<void>(builder: (_) => AgentTransferDetailScreen(transferId: t.id))),
+            ).push(
+              MaterialPageRoute<void>(
+                builder: (_) => AgentTransferDetailScreen(
+                  transferId: t.id,
+                  // A corrected % changes the transfer row and the team's salary figures.
+                  onSalaryChanged: () {
+                    ref.invalidate(leadTeamSummaryProvider(_id));
+                    if (mounted) setState(() => _tick++);
+                  },
+                ),
+              ),
+            ),
           ),
         );
       case _Tab.payments:
@@ -366,6 +377,10 @@ class _TeamCard extends ConsumerWidget {
                   label: '${l10n.agentCustomersOwe} · ${l10n.agentOpenDebts(team.openDebtCount)}',
                   value: agentMoneyBoth(team.customerDebt),
                 ),
+                if (team.salary != null) ...[
+                  BillRow(label: l10n.agentLeadSalary30, value: agentMoneyBoth(team.salary!.last30)),
+                  BillRow(label: l10n.agentSalaryAllTime, value: agentMoneyBoth(team.salary!.total), muted: true),
+                ],
               ],
             ),
           ),

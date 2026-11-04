@@ -40,6 +40,9 @@ abstract class OwnerAgentRepository {
 
   Future<Result<AgentTransferDetail>> createTransfer(CreateAgentTransferParams params);
 
+  /// Corrects a transfer's salary %; the server re-derives what it already earned.
+  Future<Result<AgentTransferDetail>> updateTransferSalary(String transferId, double salaryPercent);
+
   Future<Result<PaginatedResult<AgentTransfer>>> transfers(String leadId, {int page = 1});
 
   Future<Result<PaginatedResult<AgentPaymentRequest>>> payments(String leadId, {int page = 1});

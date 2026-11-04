@@ -218,6 +218,16 @@ class _StatGrid extends ConsumerWidget {
           onTap: () => onOpenTab(1),
           index: 4,
         ),
+      if (isLead && summary.salary != null)
+        StatTile(
+          icon: Icons.percent_rounded,
+          label: l10n.agentMySalary30,
+          value: money(summary.salary!.last30),
+          // A half-width tile fits one figure; today's share is on the profit card.
+          subtitle: l10n.agentSalaryTotalLine(money(summary.salary!.total)),
+          tint: BrandColors.of(context).success,
+          index: 5,
+        ),
     ];
     return GridView.count(
       crossAxisCount: 2,
@@ -292,6 +302,8 @@ class _ProfitCardState extends ConsumerState<_ProfitCard> {
                   BillRow(label: l10n.agentProfitCost, value: money(stats.cost), muted: true),
                   if (stats.pendingProfit > 0)
                     BillRow(label: l10n.agentProfitPending, value: money(stats.pendingProfit), muted: true),
+                  if (stats.salaryIncome > 0)
+                    BillRow(label: l10n.agentProfitSalary, value: '+${money(stats.salaryIncome)}'),
                   if (stats.ownDebts > 0)
                     BillRow(label: l10n.agentOwedToOwner, value: money(stats.ownDebts), muted: true),
                   const SizedBox(height: 8),

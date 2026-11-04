@@ -46,8 +46,8 @@ class _Line {
 }
 
 /// "Mahsulot berish" (owner): pick several products of the lead agent's store (one currency per
-/// transfer), a quantity, a selling price and the discount agents may give for each, and how much
-/// was paid now. The lead
+/// transfer), a quantity, a selling price and the discount agents may give for each, how much
+/// was paid now, and the lead agent's salary % on this transfer. The lead
 /// agent owes each product's stock price; the unpaid rest becomes its debt. Pops `true` once given.
 class AgentTransferFormScreen extends StatefulWidget {
   const AgentTransferFormScreen({required this.leadId, required this.leadName, super.key});
@@ -62,6 +62,7 @@ class AgentTransferFormScreen extends StatefulWidget {
 class _AgentTransferFormScreenState extends State<AgentTransferFormScreen> {
   final _search = TextEditingController();
   final _paid = TextEditingController();
+  final _salary = TextEditingController();
   final _notes = TextEditingController();
   final List<_Line> _lines = [];
   List<TransferableProduct>? _results;
@@ -79,6 +80,7 @@ class _AgentTransferFormScreenState extends State<AgentTransferFormScreen> {
     super.initState();
     _load('');
     _paid.addListener(() => setState(() {}));
+    _salary.addListener(() => setState(() {}));
   }
 
   @override
@@ -86,6 +88,7 @@ class _AgentTransferFormScreenState extends State<AgentTransferFormScreen> {
     _debounce?.cancel();
     _search.dispose();
     _paid.dispose();
+    _salary.dispose();
     _notes.dispose();
     for (final l in _lines) {
       l.dispose();
@@ -150,13 +153,21 @@ class _AgentTransferFormScreenState extends State<AgentTransferFormScreen> {
     final paid = _paid.text.trim().isEmpty ? 0.0 : _num(_paid);
     if (paid == null || paid < 0) return setState(() => _error = l10n.agentPayInvalid);
     if (paid > _total + 0.0005) return setState(() => _error = l10n.ownerTransferPaidTooMuch);
+    final salary = _discount(_salary);
+    if (salary == null || !agentDiscountValid(salary)) return setState(() => _error = l10n.agentSalaryPercentInvalid);
 
     setState(() {
       _busy = true;
       _error = null;
     });
     final result = await getIt<CreateAgentTransferUseCase>().call(
-      CreateAgentTransferParams(leadAgentId: widget.leadId, lines: params, paidAmount: paid, notes: _notes.text.trim()),
+      CreateAgentTransferParams(
+        leadAgentId: widget.leadId,
+        lines: params,
+        paidAmount: paid,
+        salaryPercent: salary,
+        notes: _notes.text.trim(),
+      ),
     );
     if (!mounted) return;
     result.fold(
@@ -180,6 +191,13 @@ class _AgentTransferFormScreenState extends State<AgentTransferFormScreen> {
     final results = _results;
     String money(double v, Currency c) => CurrencyFormatter.format(v, c);
     final debt = (_total - (_num(_paid) ?? 0)).clamp(0, double.infinity).toDouble();
+    // The diller's salary on this transfer: this % of what its team sells from these units. The
+    // estimate assumes everything sells at the price set here (agents may sell lower).
+    final salary = _discount(_salary);
+    final salaryValid = salary != null && agentDiscountValid(salary);
+    final salaryEstimate = salaryValid
+        ? _lines.fold<double>(0, (sum, l) => sum + (_num(l.qty) ?? 0) * (_num(l.price) ?? 0) * salary / 100)
+        : 0.0;
 
     return DashPage(
       title: l10n.ownerGiveProducts,
@@ -222,6 +240,24 @@ class _AgentTransferFormScreenState extends State<AgentTransferFormScreen> {
                         color: debt > 0 ? Theme.of(context).colorScheme.error : colors.success,
                       ),
                     ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: _salary,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: _inCard(context, l10n.agentSalaryPercent, hint: '0').copyWith(
+                        errorText: salaryValid ? null : l10n.agentSalaryPercentInvalid,
+                        errorMaxLines: 2,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(l10n.agentSalaryPercentHint, style: TextStyle(fontSize: 12, color: colors.textMuted)),
+                    if (salaryValid && salary > 0 && salaryEstimate > 0) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.agentSalaryEstimate(money((salaryEstimate * 100).roundToDouble() / 100, currency)),
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                      ),
+                    ],
                     const SizedBox(height: 10),
                     TextField(controller: _notes, decoration: _inCard(context, l10n.commonNoteOptional)),
                   ],

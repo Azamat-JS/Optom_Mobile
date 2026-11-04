@@ -18,6 +18,10 @@ class AgentTransfer {
     this.notes,
     this.debtBalance,
     this.debtStatus,
+    this.salaryPercent = 0,
+    this.salarySoldQuantity = 0,
+    this.salarySoldRevenue = 0,
+    this.salaryEarned = 0,
   });
 
   final String id;
@@ -31,6 +35,14 @@ class AgentTransfer {
   final String? notes;
   final double? debtBalance;
   final DebtStatus? debtStatus;
+
+  /// The lead agent's salary on this transfer: this % of what its team sells from these units.
+  final double salaryPercent;
+
+  /// Sold so far from this transfer, what it sold for, and the salary earned on it.
+  final double salarySoldQuantity;
+  final double salarySoldRevenue;
+  final double salaryEarned;
 }
 
 class AgentTransferLine {

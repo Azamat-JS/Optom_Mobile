@@ -6891,6 +6891,108 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'{count} ta mahsulot «{store}» do\'koniga o\'tkazildi'**
   String productsMoveDone(int count, String store);
+
+  /// No description provided for @agentSalaryPercent.
+  ///
+  /// In uz, this message translates to:
+  /// **'Diller maoshi, %'**
+  String get agentSalaryPercent;
+
+  /// No description provided for @agentSalaryPercentHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jamoasi shu o\'tkazmadan sotganining shu foizi dillerga maosh bo\'ladi. Boshqa o\'tkazmalarga ta\'sir qilmaydi.'**
+  String get agentSalaryPercentHint;
+
+  /// No description provided for @agentSalaryEstimate.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hammasi shu narxda sotilsa, maosh: ~{amount}'**
+  String agentSalaryEstimate(String amount);
+
+  /// No description provided for @agentSalaryPercentInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maosh foizi 0–100, ko\'pi bilan 2 xonali kasr'**
+  String get agentSalaryPercentInvalid;
+
+  /// No description provided for @agentSalaryTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Diller maoshi'**
+  String get agentSalaryTitle;
+
+  /// No description provided for @agentSalaryEdit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Foizni tuzatish'**
+  String get agentSalaryEdit;
+
+  /// No description provided for @agentSalaryEditHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi foiz shu o\'tkazmadan qilingan barcha sotuvlarga, avvalgilariga ham qo\'llanadi.'**
+  String get agentSalaryEditHint;
+
+  /// No description provided for @agentSalarySold.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shu o\'tkazmadan sotildi'**
+  String get agentSalarySold;
+
+  /// No description provided for @agentSalaryEarned.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisoblangan maosh'**
+  String get agentSalaryEarned;
+
+  /// No description provided for @agentSalaryNone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu o\'tkazmada maosh foizi belgilanmagan'**
+  String get agentSalaryNone;
+
+  /// No description provided for @agentSalaryPercentSaved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maosh foizi saqlandi'**
+  String get agentSalaryPercentSaved;
+
+  /// No description provided for @agentSalaryLine.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maosh: {amount} ({percent}%)'**
+  String agentSalaryLine(String amount, String percent);
+
+  /// No description provided for @agentMySalary30.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maoshim (30 kun)'**
+  String get agentMySalary30;
+
+  /// No description provided for @agentLeadSalary30.
+  ///
+  /// In uz, this message translates to:
+  /// **'Diller maoshi (30 kun)'**
+  String get agentLeadSalary30;
+
+  /// No description provided for @agentSalaryAllTime.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maosh, jami'**
+  String get agentSalaryAllTime;
+
+  /// No description provided for @agentSalaryTotalLine.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami: {total}'**
+  String agentSalaryTotalLine(String total);
+
+  /// No description provided for @agentProfitSalary.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maoshim'**
+  String get agentProfitSalary;
 }
 
 class _AppLocalizationsDelegate

@@ -88,6 +88,14 @@ class OwnerAgentRemoteDataSource {
     return agentTransferDetailFromJson(response.data!);
   }
 
+  Future<AgentTransferDetail> updateTransferSalary(String transferId, double salaryPercent) async {
+    final response = await _dio.patch<Map<String, dynamic>>(
+      '/agent-transfers/$transferId/salary',
+      data: {'salaryPercent': salaryPercent},
+    );
+    return agentTransferDetailFromJson(response.data!);
+  }
+
   Future<PaginatedResult<AgentTransfer>> transfers(String leadId, {int page = 1}) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/agent-transfers',

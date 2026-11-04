@@ -1139,5 +1139,22 @@
   "productsMoveNoteHistory": "Прошлые продажи остаются в магазине, где они были сделаны.",
   "productsMoveNoteBlocked": "Если в магазине-получателе уже занят такой штрихкод или PLU, или товар есть в неподтверждённом заказе, ничего не переносится.",
   "productsMoveSubmit": "Отправить",
-  "productsMoveDone": "{count, plural, one{{count} товар перенесён} few{{count} товара перенесены} many{{count} товаров перенесено} other{{count} товара перенесено}} в магазин «{store}»"
+  "productsMoveDone": "{count, plural, one{{count} товар перенесён} few{{count} товара перенесены} many{{count} товаров перенесено} other{{count} товара перенесено}} в магазин «{store}»",
+  "agentSalaryPercent": "Зарплата дилера, %",
+  "agentSalaryPercentHint": "Дилер получает этот процент от продаж своей команды из этой передачи. На другие передачи не влияет.",
+  "agentSalaryEstimate": "Если всё продастся по этой цене: ~{amount}",
+  "agentSalaryPercentInvalid": "Процент зарплаты: 0–100, не более 2 знаков после запятой",
+  "agentSalaryTitle": "Зарплата дилера",
+  "agentSalaryEdit": "Исправить процент",
+  "agentSalaryEditHint": "Новый процент применится ко всем продажам из этой передачи, включая прошлые.",
+  "agentSalarySold": "Продано из этой передачи",
+  "agentSalaryEarned": "Начисленная зарплата",
+  "agentSalaryNone": "Для этой передачи процент зарплаты не задан",
+  "agentSalaryPercentSaved": "Процент зарплаты сохранён",
+  "agentSalaryLine": "Зарплата: {amount} ({percent}%)",
+  "agentMySalary30": "Моя зарплата (30 дн.)",
+  "agentLeadSalary30": "Зарплата дилера (30 дн.)",
+  "agentSalaryAllTime": "Зарплата, всего",
+  "agentSalaryTotalLine": "Всего: {total}",
+  "agentProfitSalary": "Моя зарплата"
 }

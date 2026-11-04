@@ -2563,5 +2563,46 @@
         "type": "String"
       }
     }
-  }
+  },
+  "agentSalaryPercent": "Diller maoshi, %",
+  "agentSalaryPercentHint": "Jamoasi shu o'tkazmadan sotganining shu foizi dillerga maosh bo'ladi. Boshqa o'tkazmalarga ta'sir qilmaydi.",
+  "agentSalaryEstimate": "Hammasi shu narxda sotilsa, maosh: ~{amount}",
+  "@agentSalaryEstimate": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "agentSalaryPercentInvalid": "Maosh foizi 0–100, ko'pi bilan 2 xonali kasr",
+  "agentSalaryTitle": "Diller maoshi",
+  "agentSalaryEdit": "Foizni tuzatish",
+  "agentSalaryEditHint": "Yangi foiz shu o'tkazmadan qilingan barcha sotuvlarga, avvalgilariga ham qo'llanadi.",
+  "agentSalarySold": "Shu o'tkazmadan sotildi",
+  "agentSalaryEarned": "Hisoblangan maosh",
+  "agentSalaryNone": "Bu o'tkazmada maosh foizi belgilanmagan",
+  "agentSalaryPercentSaved": "Maosh foizi saqlandi",
+  "agentSalaryLine": "Maosh: {amount} ({percent}%)",
+  "@agentSalaryLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "agentMySalary30": "Maoshim (30 kun)",
+  "agentLeadSalary30": "Diller maoshi (30 kun)",
+  "agentSalaryAllTime": "Maosh, jami",
+  "agentSalaryTotalLine": "Jami: {total}",
+  "@agentSalaryTotalLine": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "agentProfitSalary": "Maoshim"
 }

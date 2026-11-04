@@ -124,6 +124,7 @@ import 'package:bsmart/features/agents/domain/usecases/delete_agent_staff_usecas
 import 'package:bsmart/features/agents/domain/usecases/confirm_agent_payment_usecase.dart';
 import 'package:bsmart/features/agents/domain/usecases/confirm_agent_return_usecase.dart';
 import 'package:bsmart/features/agents/domain/usecases/create_agent_transfer_usecase.dart';
+import 'package:bsmart/features/agents/domain/usecases/update_agent_transfer_salary_usecase.dart';
 import 'package:bsmart/features/agents/domain/usecases/create_lead_agent_usecase.dart';
 import 'package:bsmart/features/agents/domain/usecases/delete_lead_agent_usecase.dart';
 import 'package:bsmart/features/agents/domain/usecases/get_lead_agent_summary_usecase.dart';
@@ -482,6 +483,7 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => ConfirmAgentPaymentUseCase(getIt()));
   getIt.registerFactory(() => ConfirmAgentReturnUseCase(getIt()));
   getIt.registerFactory(() => CreateAgentTransferUseCase(getIt()));
+  getIt.registerFactory(() => UpdateAgentTransferSalaryUseCase(getIt()));
   getIt.registerFactory(() => CreateLeadAgentUseCase(getIt()));
   getIt.registerFactory(() => DeleteLeadAgentUseCase(getIt()));
   getIt.registerFactory(() => GetLeadAgentSummaryUseCase(getIt()));

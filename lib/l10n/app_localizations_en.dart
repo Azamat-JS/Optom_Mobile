@@ -4172,4 +4172,63 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0 moved to “$store”';
   }
+
+  @override
+  String get agentSalaryPercent => 'Lead agent salary, %';
+
+  @override
+  String get agentSalaryPercentHint =>
+      'The lead agent earns this % of what its team sells from this transfer. Other transfers keep their own %.';
+
+  @override
+  String agentSalaryEstimate(String amount) {
+    return 'If everything sells at this price: ~$amount';
+  }
+
+  @override
+  String get agentSalaryPercentInvalid => 'Salary %: 0–100, at most 2 decimals';
+
+  @override
+  String get agentSalaryTitle => 'Lead agent salary';
+
+  @override
+  String get agentSalaryEdit => 'Correct %';
+
+  @override
+  String get agentSalaryEditHint =>
+      'The new % applies to every sale from this transfer, including earlier ones.';
+
+  @override
+  String get agentSalarySold => 'Sold from this transfer';
+
+  @override
+  String get agentSalaryEarned => 'Salary earned';
+
+  @override
+  String get agentSalaryNone => 'No salary % on this transfer';
+
+  @override
+  String get agentSalaryPercentSaved => 'Salary % saved';
+
+  @override
+  String agentSalaryLine(String amount, String percent) {
+    return 'Salary: $amount ($percent%)';
+  }
+
+  @override
+  String get agentMySalary30 => 'My salary (30 days)';
+
+  @override
+  String get agentLeadSalary30 => 'Lead agent salary (30 days)';
+
+  @override
+  String get agentSalaryAllTime => 'Salary, all time';
+
+  @override
+  String agentSalaryTotalLine(String total) {
+    return 'Total: $total';
+  }
+
+  @override
+  String get agentProfitSalary => 'My salary';
 }
