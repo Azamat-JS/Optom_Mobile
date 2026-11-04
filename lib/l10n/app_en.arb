@@ -1124,5 +1124,20 @@
   "salesLineDiscountLabel": "Discount, %",
   "salesLineDiscountMax": "At most {percent}%",
   "salesLineDiscountRange": "Enter 0 to {max}% (at most 2 decimals)",
-  "crmPriceBelowLimit": "\"{name}\": discount at most {percent}% — price not below {amount}"
+  "crmPriceBelowLimit": "\"{name}\": discount at most {percent}% — price not below {amount}",
+  "productsSelect": "Select",
+  "productsSelectAll": "Select all",
+  "productsSelectedCount": "{count} selected",
+  "productsSelectionHint": "Tap the products to send",
+  "productsMoveAction": "To another store",
+  "productsMoveBarLabel": "Selected products",
+  "productsMoveTitle": "Send to another store",
+  "productsMoveFrom": "{count, plural, one{{count} product} other{{count} products}} will leave the “{store}” list and move to the chosen store's products.",
+  "productsMoveTarget": "Which store",
+  "productsMovePickStore": "Choose a store",
+  "productsMoveNoteMoves": "Stock, prices, images and purchase history move with the product.",
+  "productsMoveNoteHistory": "Past sales stay with the store where they were made.",
+  "productsMoveNoteBlocked": "If the receiving store already uses the same barcode or PLU, or a product is in an unapproved order, nothing is moved.",
+  "productsMoveSubmit": "Send",
+  "productsMoveDone": "{count, plural, one{{count} product} other{{count} products}} moved to “{store}”"
 }

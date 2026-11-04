@@ -12,7 +12,11 @@ import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/categories/domain/entities/category.dart';
 import 'package:bsmart/features/categories/presentation/providers/categories_provider.dart';
+import 'package:bsmart/features/products/domain/entities/product.dart';
+import 'package:bsmart/features/products/domain/product_move_targets.dart';
+import 'package:bsmart/features/products/presentation/providers/product_move_targets_provider.dart';
 import 'package:bsmart/features/products/presentation/providers/products_list_notifier.dart';
+import 'package:bsmart/features/products/presentation/widgets/move_products_sheet.dart';
 import 'package:bsmart/features/products/presentation/widgets/product_list_item.dart';
 import 'package:bsmart/shared/widgets/barcode_scanner_screen.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
@@ -21,6 +25,11 @@ import 'package:bsmart/shared/widgets/dash_page.dart';
 /// The tenant's own inventory. Phase 9 U4c1: `DashPage` with scan and
 /// category-filter buttons, a search field, the active category as a
 /// removable chip, product rows as cards, and a yellow add button.
+///
+/// Phase 14: an owner with another active store gets a selection mode (the
+/// "Tanlash" button, or a long press on a product) to send the selected
+/// products to that store ([MoveProductsSheet]). Hidden for staff, restaurants
+/// and single-store owners (see [productMoveTargets]).
 class ProductsListScreen extends ConsumerStatefulWidget {
   const ProductsListScreen({super.key});
 
@@ -33,6 +42,10 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
   final _scrollController = ScrollController();
   Timer? _debounce;
   String? _selectedCategoryId;
+
+  /// Selection mode for "Boshqa do'konga yuborish" and the products picked in it.
+  bool _selecting = false;
+  final Set<String> _picked = {};
 
   @override
   void initState() {
@@ -62,8 +75,51 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
   void _onSearchChanged(String value) {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 400), () {
+      _clearPicked();
       ref.read(productsListProvider.notifier).search(value);
     });
+  }
+
+  // A new search or filter replaces the list, so a selection would hide
+  // products the owner can no longer see; it starts over instead.
+  void _clearPicked() {
+    if (_picked.isNotEmpty) setState(_picked.clear);
+  }
+
+  void _startSelecting([String? productId]) => setState(() {
+    _selecting = true;
+    if (productId != null) _picked.add(productId);
+  });
+
+  void _stopSelecting() => setState(() {
+    _selecting = false;
+    _picked.clear();
+  });
+
+  void _togglePicked(String productId) =>
+      setState(() => _picked.contains(productId) ? _picked.remove(productId) : _picked.add(productId));
+
+  void _toggleAllLoaded(List<String> loadedIds) => setState(() {
+    if (loadedIds.every(_picked.contains)) {
+      _picked.removeAll(loadedIds);
+    } else {
+      _picked.addAll(loadedIds);
+    }
+  });
+
+  Future<void> _sendToStore(ProductMoveTargets targets) async {
+    final result = await MoveProductsSheet.show(
+      context,
+      productIds: _picked.toList(),
+      source: targets.source,
+      targets: targets.targets,
+    );
+    if (result == null || !mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.l10n.productsMoveDone(result.moved, result.targetStoreName))));
+    _stopSelecting();
+    await ref.read(productsListProvider.notifier).refresh();
   }
 
   Future<void> _scanBarcode() async {
@@ -72,12 +128,14 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
     ).push<String>(MaterialPageRoute(builder: (_) => BarcodeScannerScreen(title: context.l10n.productsFindTitle)));
     if (code == null) return;
     _searchController.text = code;
+    _clearPicked();
     ref.read(productsListProvider.notifier).search(code);
   }
 
   void _setCategory(String? id) {
     if (id == _selectedCategoryId) return;
     setState(() => _selectedCategoryId = id);
+    _clearPicked();
     ref.read(productsListProvider.notifier).filterByCategory(id);
   }
 
@@ -105,18 +163,36 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
     final l10n = context.l10n;
     final listState = ref.watch(productsListProvider);
     final selected = _selectedCategoryId;
+    final moveTargets = ref.watch(productMoveTargetsProvider);
+    final canMove = moveTargets.targets.isNotEmpty;
+    // Off as soon as moving isn't possible any more (e.g. the owner switched store).
+    final selecting = _selecting && canMove;
+    final loadedIds = <String>[for (final p in listState.valueOrNull?.items ?? const <Product>[]) p.id];
 
-    return DashPage(
-      title: l10n.productsTitle,
-      actions: [
-        DashRoundButton(icon: Icons.qr_code_scanner_rounded, tooltip: l10n.productsFindTitle, onTap: _scanBarcode),
-        DashRoundButton(
-          icon: Icons.tune_rounded,
-          tooltip: l10n.commonCategory,
-          highlight: selected != null,
-          onTap: _openCategoryFilter,
-        ),
-      ],
+    final page = DashPage(
+      title: selecting ? l10n.productsSelectedCount(_picked.length) : l10n.productsTitle,
+      showBack: !selecting,
+      actions: selecting
+          ? [
+              DashRoundButton(
+                icon: Icons.select_all_rounded,
+                tooltip: l10n.productsSelectAll,
+                highlight: loadedIds.isNotEmpty && loadedIds.every(_picked.contains),
+                onTap: loadedIds.isEmpty ? null : () => _toggleAllLoaded(loadedIds),
+              ),
+              DashRoundButton(icon: Icons.close_rounded, tooltip: l10n.commonCancel, onTap: _stopSelecting),
+            ]
+          : [
+              if (canMove)
+                DashRoundButton(icon: Icons.checklist_rounded, tooltip: l10n.productsSelect, onTap: _startSelecting),
+              DashRoundButton(icon: Icons.qr_code_scanner_rounded, tooltip: l10n.productsFindTitle, onTap: _scanBarcode),
+              DashRoundButton(
+                icon: Icons.tune_rounded,
+                tooltip: l10n.commonCategory,
+                highlight: selected != null,
+                onTap: _openCategoryFilter,
+              ),
+            ],
       header: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -130,13 +206,31 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
               onPressed: _openCategoryFilter,
             ),
           ],
+          if (selecting) ...[
+            const SizedBox(height: 10),
+            Text(
+              l10n.productsSelectionHint,
+              style: TextStyle(color: BrandColors.of(context).textMuted, fontSize: 13, fontWeight: FontWeight.w600),
+            ).animate().fadeIn(duration: AppMotion.fast),
+          ],
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: l10n.productsNewTitle,
-        onPressed: () => context.push(RouteNames.productNew),
-        child: const Icon(Icons.add_rounded),
-      ),
+      floatingActionButton: selecting
+          ? null
+          : FloatingActionButton(
+              tooltip: l10n.productsNewTitle,
+              onPressed: () => context.push(RouteNames.productNew),
+              child: const Icon(Icons.add_rounded),
+            ),
+      bottomBar: selecting && _picked.isNotEmpty
+          ? DashCartBar(
+              count: _picked.length,
+              countLabel: l10n.productsMoveBarLabel,
+              total: l10n.commonProductCount(_picked.length),
+              actionLabel: l10n.productsMoveAction,
+              onTap: () => _sendToStore(moveTargets),
+            ).animate().slideY(begin: 1, duration: AppMotion.standard, curve: AppMotion.emphasized)
+          : null,
       body: listState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => DashEmptyState(
@@ -166,12 +260,26 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
                     final product = state.items[index];
                     return ProductListItem(
                       product: product,
-                      onTap: () => context.push(RouteNames.productDetail(product.id)),
+                      selectionMode: selecting,
+                      selected: selecting && _picked.contains(product.id),
+                      onTap: selecting
+                          ? () => _togglePicked(product.id)
+                          : () => context.push(RouteNames.productDetail(product.id)),
+                      onLongPress: canMove && !selecting ? () => _startSelecting(product.id) : null,
                     ).animate().fadeIn(delay: (25 * (index % 12)).ms, duration: AppMotion.standard);
                   },
                 ),
         ),
       ),
+    );
+
+    // Back (button or gesture) leaves selection mode before it leaves the screen.
+    return PopScope(
+      canPop: !selecting,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && selecting) _stopSelecting();
+      },
+      child: page,
     );
   }
 }

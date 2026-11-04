@@ -3960,4 +3960,59 @@ class AppLocalizationsUz extends AppLocalizations {
   String crmPriceBelowLimit(String name, String percent, String amount) {
     return '\"$name\": chegirma ko\'pi bilan $percent% — narx $amount dan past bo\'lmasin';
   }
+
+  @override
+  String get productsSelect => 'Tanlash';
+
+  @override
+  String get productsSelectAll => 'Hammasini tanlash';
+
+  @override
+  String productsSelectedCount(int count) {
+    return '$count ta tanlandi';
+  }
+
+  @override
+  String get productsSelectionHint =>
+      'Yuboriladigan mahsulotlarni bosib tanlang';
+
+  @override
+  String get productsMoveAction => 'Boshqa do\'konga';
+
+  @override
+  String get productsMoveBarLabel => 'Tanlangan mahsulotlar';
+
+  @override
+  String get productsMoveTitle => 'Boshqa do\'konga yuborish';
+
+  @override
+  String productsMoveFrom(int count, String store) {
+    return '$count ta mahsulot «$store» ro\'yxatidan olinib, tanlangan do\'konning mahsulotlariga o\'tkaziladi.';
+  }
+
+  @override
+  String get productsMoveTarget => 'Qaysi do\'konga';
+
+  @override
+  String get productsMovePickStore => 'Do\'konni tanlang';
+
+  @override
+  String get productsMoveNoteMoves =>
+      'Qoldiq, narxlar, rasmlar va kirim tarixi mahsulot bilan birga o\'tadi.';
+
+  @override
+  String get productsMoveNoteHistory =>
+      'Oldingi sotuvlar sotilgan do\'konida qoladi.';
+
+  @override
+  String get productsMoveNoteBlocked =>
+      'Qabul qiluvchi do\'konda shu shtrix-kod yoki PLU band bo\'lsa, yoki mahsulot tasdiqlanmagan buyurtmada bo\'lsa, hech narsa o\'tkazilmaydi.';
+
+  @override
+  String get productsMoveSubmit => 'Yuborish';
+
+  @override
+  String productsMoveDone(int count, String store) {
+    return '$count ta mahsulot «$store» do\'koniga o\'tkazildi';
+  }
 }

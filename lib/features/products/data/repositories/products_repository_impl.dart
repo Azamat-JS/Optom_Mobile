@@ -6,6 +6,7 @@ import 'package:bsmart/core/network/result.dart';
 import 'package:bsmart/features/products/data/datasources/products_remote_data_source.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/domain/entities/product_image.dart';
+import 'package:bsmart/features/products/domain/entities/product_move_result.dart';
 import 'package:bsmart/features/products/domain/entities/product_query.dart';
 import 'package:bsmart/features/products/domain/entities/product_write_params.dart';
 import 'package:bsmart/features/products/domain/repositories/products_repository.dart';
@@ -56,6 +57,15 @@ class ProductsRepositoryImpl implements ProductsRepository {
     try {
       await _remote.delete(id);
       return const Result.ok(null);
+    } on DioException catch (e) {
+      return Result.err(mapDioException(e));
+    }
+  }
+
+  @override
+  Future<Result<ProductMoveResult>> moveToStore(List<String> productIds, String targetStoreId) async {
+    try {
+      return Result.ok(await _remote.moveToStore(productIds, targetStoreId));
     } on DioException catch (e) {
       return Result.err(mapDioException(e));
     }

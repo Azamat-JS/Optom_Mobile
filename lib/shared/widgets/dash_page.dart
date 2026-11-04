@@ -201,6 +201,8 @@ class DashListCard extends StatelessWidget {
     this.trailing,
     this.titleTrailing,
     this.onTap,
+    this.onLongPress,
+    this.outlineColor,
     this.dimmed = false,
     super.key,
   });
@@ -213,6 +215,10 @@ class DashListCard extends StatelessWidget {
   final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+
+  /// See [DashCard.outlineColor].
+  final Color? outlineColor;
   final bool dimmed;
 
   @override
@@ -223,6 +229,8 @@ class DashListCard extends StatelessWidget {
       child: DashCard(
         padding: const EdgeInsets.all(12),
         onTap: onTap,
+        onLongPress: onLongPress,
+        outlineColor: outlineColor,
         child: Row(
           children: [
             if (leading != null) ...[leading!, const SizedBox(width: 12)],

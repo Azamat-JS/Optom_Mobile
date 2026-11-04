@@ -26,20 +26,35 @@ abstract final class DashColors {
 
 /// White rounded card (raised grey in dark mode).
 class DashCard extends StatelessWidget {
-  const DashCard({required this.child, this.padding = const EdgeInsets.all(16), this.onTap, super.key});
+  const DashCard({
+    required this.child,
+    this.padding = const EdgeInsets.all(16),
+    this.onTap,
+    this.onLongPress,
+    this.outlineColor,
+    super.key,
+  });
 
   final Widget child;
   final EdgeInsets padding;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+
+  /// A 2 px outline, e.g. for a selected card. None by default.
+  final Color? outlineColor;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: DashColors.card(context),
-      borderRadius: BorderRadius.circular(22),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(22),
+        side: outlineColor == null ? BorderSide.none : BorderSide(color: outlineColor!, width: 2),
+      ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
         child: Padding(padding: padding, child: child),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:bsmart/core/network/paginated_result.dart';
 import 'package:bsmart/core/network/result.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/domain/entities/product_image.dart';
+import 'package:bsmart/features/products/domain/entities/product_move_result.dart';
 import 'package:bsmart/features/products/domain/entities/product_query.dart';
 import 'package:bsmart/features/products/domain/entities/product_write_params.dart';
 
@@ -15,6 +16,9 @@ abstract class ProductsRepository {
   Future<Result<Product>> update(String id, UpdateProductParams params);
 
   Future<Result<void>> delete(String id);
+
+  /// Owner only: sends products of the active store to another store.
+  Future<Result<ProductMoveResult>> moveToStore(List<String> productIds, String targetStoreId);
 
   /// Backs the quick stock-adjust sheet (separate from the full edit form).
   Future<Result<Product>> receiveStock(String id, ReceiveStockParams params);

@@ -1124,5 +1124,20 @@
   "salesLineDiscountLabel": "Скидка, %",
   "salesLineDiscountMax": "Не больше {percent}%",
   "salesLineDiscountRange": "Введите от 0 до {max}% (не более 2 знаков после запятой)",
-  "crmPriceBelowLimit": "\"{name}\": скидка не больше {percent}% — цена не ниже {amount}"
+  "crmPriceBelowLimit": "\"{name}\": скидка не больше {percent}% — цена не ниже {amount}",
+  "productsSelect": "Выбрать",
+  "productsSelectAll": "Выбрать все",
+  "productsSelectedCount": "{count, plural, one{Выбран {count}} few{Выбрано {count}} many{Выбрано {count}} other{Выбрано {count}}}",
+  "productsSelectionHint": "Нажмите на товары, которые нужно отправить",
+  "productsMoveAction": "В другой магазин",
+  "productsMoveBarLabel": "Выбранные товары",
+  "productsMoveTitle": "Отправить в другой магазин",
+  "productsMoveFrom": "{count, plural, one{{count} товар будет убран из списка «{store}» и перенесён} few{{count} товара будут убраны из списка «{store}» и перенесены} many{{count} товаров будут убраны из списка «{store}» и перенесены} other{{count} товара будут убраны из списка «{store}» и перенесены}} в товары выбранного магазина.",
+  "productsMoveTarget": "В какой магазин",
+  "productsMovePickStore": "Выберите магазин",
+  "productsMoveNoteMoves": "Остаток, цены, фото и история приходов переносятся вместе с товаром.",
+  "productsMoveNoteHistory": "Прошлые продажи остаются в магазине, где они были сделаны.",
+  "productsMoveNoteBlocked": "Если в магазине-получателе уже занят такой штрихкод или PLU, или товар есть в неподтверждённом заказе, ничего не переносится.",
+  "productsMoveSubmit": "Отправить",
+  "productsMoveDone": "{count, plural, one{{count} товар перенесён} few{{count} товара перенесены} many{{count} товаров перенесено} other{{count} товара перенесено}} в магазин «{store}»"
 }

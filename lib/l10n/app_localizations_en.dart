@@ -4106,4 +4106,70 @@ class AppLocalizationsEn extends AppLocalizations {
   String crmPriceBelowLimit(String name, String percent, String amount) {
     return '\"$name\": discount at most $percent% — price not below $amount';
   }
+
+  @override
+  String get productsSelect => 'Select';
+
+  @override
+  String get productsSelectAll => 'Select all';
+
+  @override
+  String productsSelectedCount(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get productsSelectionHint => 'Tap the products to send';
+
+  @override
+  String get productsMoveAction => 'To another store';
+
+  @override
+  String get productsMoveBarLabel => 'Selected products';
+
+  @override
+  String get productsMoveTitle => 'Send to another store';
+
+  @override
+  String productsMoveFrom(int count, String store) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count products',
+      one: '$count product',
+    );
+    return '$_temp0 will leave the “$store” list and move to the chosen store\'s products.';
+  }
+
+  @override
+  String get productsMoveTarget => 'Which store';
+
+  @override
+  String get productsMovePickStore => 'Choose a store';
+
+  @override
+  String get productsMoveNoteMoves =>
+      'Stock, prices, images and purchase history move with the product.';
+
+  @override
+  String get productsMoveNoteHistory =>
+      'Past sales stay with the store where they were made.';
+
+  @override
+  String get productsMoveNoteBlocked =>
+      'If the receiving store already uses the same barcode or PLU, or a product is in an unapproved order, nothing is moved.';
+
+  @override
+  String get productsMoveSubmit => 'Send';
+
+  @override
+  String productsMoveDone(int count, String store) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count products',
+      one: '$count product',
+    );
+    return '$_temp0 moved to “$store”';
+  }
 }

@@ -2699,6 +2699,53 @@ limit). **The server enforces it on every sale**; the app only keeps its screens
   .discountPercent`), else empty (= 0); the owner may change it.
 - **Verified:** `flutter analyze` clean, 126 unit tests. **Not run on a simulator or phone yet.**
 
+### Phase 14 — Move products to another store / Boshqa do'konga (mobile; backend + web done in Optom_Savdo)
+
+**Done 2026-11-04.** Mirrors Optom_Savdo "Moving Products Between Stores": a business owner selects
+products on the Products list and sends them to another of their stores. The whole product moves
+(stock, prices, images, purchase batches); past sales stay where they were made. Uses
+`POST /products/move-to-store {productIds, targetStoreId}`; all or nothing, the server's refusal
+text (barcode/PLU taken in the target, product in an unapproved order or an open restaurant order)
+is shown as is.
+
+- **Who sees it** (`features/products/domain/product_move_targets.dart`, unit tested in
+  `test/features/products/product_move_targets_test.dart`): only SELLER/RETAILER owners, not
+  admins or other staff (the server refuses them too), **not restaurants (user decision)**, and only
+  with another *active* store. The source store is the active one, falling back like the server:
+  default store, else the first. `productMoveTargetsProvider` reads it from the session, the store
+  roster (watched only for owners, `GET /stores` is owner-only) and the active store.
+- **Data:** `ProductsRepository.moveToStore` → `ProductMoveResult {moved, targetStoreId,
+  targetStoreName}`; `MoveProductsToStoreUseCase` (registered in `injection.dart`).
+- **Products list** (`products_list_screen.dart`): a "Tanlash" round button (checklist icon) or a
+  long press on a product starts selection mode. The title becomes "N ta tanlandi", the header
+  actions become select-all-loaded and close, the add button hides, a tap toggles a product, and the
+  dark `DashCartBar` ("Tanlangan mahsulotlar · N ta mahsulot · Boshqa do'konga") opens the sheet.
+  Back (button or gesture, via `PopScope`) ends selection before leaving the screen. A new search,
+  scan or category clears the selection, so nothing hidden stays selected. After a move: snackbar,
+  selection ends, the list refreshes.
+- **`ProductListItem`**: `selectionMode`/`selected`/`onLongPress` (a round tick on the photo, a
+  yellow outline). **`DashCard`/`DashListCard`** gained `onLongPress` and `outlineColor` (both
+  optional, nothing else changes).
+- **`MoveProductsSheet`**: the source store, the other active stores as cards (preselected when
+  there's one), notes on what moves / stays / blocks it, the server's reason in red with the sheet
+  left open, "Yuborish" with a spinner.
+- **Strings:** `productsSelect*`, `productsMove*` (uz/ru/en; ru uses plurals, and
+  `productsMoveFrom` puts the whole phrase inside the plural so "убран … перенесён" agree).
+- **Verified (2026-11-04):** `flutter analyze` clean, 135 unit tests (9 new). A 27-check temporary
+  integration test on the iPhone 17 simulator against the real local API (seeded owner with 3 stores
+  incl. an inactive one, an admin, a restaurant owner with 2 stores):
+  - Owner: Tanlash button; long press + tap select two; sheet lists only the other active store and
+    names the source; send → snackbar, rows leave the list, selection ends.
+  - Barcode clash refused with the product named, sheet stays open; Back ends selection; select
+    all / none.
+  - In the other store the products are there and the first store is the target. Russian sheet.
+  - Admin: no button, long press does nothing. Restaurant owner: no button.
+  - DB checked afterwards: the two products and their batches in the new store, the clashing one
+    unmoved. Test rows cleaned up; the test file was deleted (it depends on seeded data).
+  - Not checked on Android, in dark mode, or on a real phone.
+- **Known gaps:** no bulk delete in the app's selection mode (the web has one); moving only from
+  the list, not from a product's detail screen.
+
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
 priority) a real-time layer — all as **new NestJS + PostgreSQL infrastructure**, never a

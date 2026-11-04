@@ -4098,4 +4098,83 @@ class AppLocalizationsRu extends AppLocalizations {
   String crmPriceBelowLimit(String name, String percent, String amount) {
     return '\"$name\": скидка не больше $percent% — цена не ниже $amount';
   }
+
+  @override
+  String get productsSelect => 'Выбрать';
+
+  @override
+  String get productsSelectAll => 'Выбрать все';
+
+  @override
+  String productsSelectedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Выбрано $count',
+      many: 'Выбрано $count',
+      few: 'Выбрано $count',
+      one: 'Выбран $count',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get productsSelectionHint =>
+      'Нажмите на товары, которые нужно отправить';
+
+  @override
+  String get productsMoveAction => 'В другой магазин';
+
+  @override
+  String get productsMoveBarLabel => 'Выбранные товары';
+
+  @override
+  String get productsMoveTitle => 'Отправить в другой магазин';
+
+  @override
+  String productsMoveFrom(int count, String store) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count товара будут убраны из списка «$store» и перенесены',
+      many: '$count товаров будут убраны из списка «$store» и перенесены',
+      few: '$count товара будут убраны из списка «$store» и перенесены',
+      one: '$count товар будет убран из списка «$store» и перенесён',
+    );
+    return '$_temp0 в товары выбранного магазина.';
+  }
+
+  @override
+  String get productsMoveTarget => 'В какой магазин';
+
+  @override
+  String get productsMovePickStore => 'Выберите магазин';
+
+  @override
+  String get productsMoveNoteMoves =>
+      'Остаток, цены, фото и история приходов переносятся вместе с товаром.';
+
+  @override
+  String get productsMoveNoteHistory =>
+      'Прошлые продажи остаются в магазине, где они были сделаны.';
+
+  @override
+  String get productsMoveNoteBlocked =>
+      'Если в магазине-получателе уже занят такой штрихкод или PLU, или товар есть в неподтверждённом заказе, ничего не переносится.';
+
+  @override
+  String get productsMoveSubmit => 'Отправить';
+
+  @override
+  String productsMoveDone(int count, String store) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count товара перенесено',
+      many: '$count товаров перенесено',
+      few: '$count товара перенесены',
+      one: '$count товар перенесён',
+    );
+    return '$_temp0 в магазин «$store»';
+  }
 }

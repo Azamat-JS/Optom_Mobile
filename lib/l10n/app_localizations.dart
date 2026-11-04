@@ -6801,6 +6801,96 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'\"{name}\": chegirma ko\'pi bilan {percent}% — narx {amount} dan past bo\'lmasin'**
   String crmPriceBelowLimit(String name, String percent, String amount);
+
+  /// No description provided for @productsSelect.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tanlash'**
+  String get productsSelect;
+
+  /// No description provided for @productsSelectAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hammasini tanlash'**
+  String get productsSelectAll;
+
+  /// No description provided for @productsSelectedCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta tanlandi'**
+  String productsSelectedCount(int count);
+
+  /// No description provided for @productsSelectionHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yuboriladigan mahsulotlarni bosib tanlang'**
+  String get productsSelectionHint;
+
+  /// No description provided for @productsMoveAction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqa do\'konga'**
+  String get productsMoveAction;
+
+  /// No description provided for @productsMoveBarLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tanlangan mahsulotlar'**
+  String get productsMoveBarLabel;
+
+  /// No description provided for @productsMoveTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqa do\'konga yuborish'**
+  String get productsMoveTitle;
+
+  /// No description provided for @productsMoveFrom.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta mahsulot «{store}» ro\'yxatidan olinib, tanlangan do\'konning mahsulotlariga o\'tkaziladi.'**
+  String productsMoveFrom(int count, String store);
+
+  /// No description provided for @productsMoveTarget.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaysi do\'konga'**
+  String get productsMoveTarget;
+
+  /// No description provided for @productsMovePickStore.
+  ///
+  /// In uz, this message translates to:
+  /// **'Do\'konni tanlang'**
+  String get productsMovePickStore;
+
+  /// No description provided for @productsMoveNoteMoves.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldiq, narxlar, rasmlar va kirim tarixi mahsulot bilan birga o\'tadi.'**
+  String get productsMoveNoteMoves;
+
+  /// No description provided for @productsMoveNoteHistory.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oldingi sotuvlar sotilgan do\'konida qoladi.'**
+  String get productsMoveNoteHistory;
+
+  /// No description provided for @productsMoveNoteBlocked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qabul qiluvchi do\'konda shu shtrix-kod yoki PLU band bo\'lsa, yoki mahsulot tasdiqlanmagan buyurtmada bo\'lsa, hech narsa o\'tkazilmaydi.'**
+  String get productsMoveNoteBlocked;
+
+  /// No description provided for @productsMoveSubmit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yuborish'**
+  String get productsMoveSubmit;
+
+  /// No description provided for @productsMoveDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta mahsulot «{store}» do\'koniga o\'tkazildi'**
+  String productsMoveDone(int count, String store);
 }
 
 class _AppLocalizationsDelegate

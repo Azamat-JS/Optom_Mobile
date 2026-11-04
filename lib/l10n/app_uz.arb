@@ -2521,5 +2521,47 @@
         "type": "String"
       }
     }
+  },
+  "productsSelect": "Tanlash",
+  "productsSelectAll": "Hammasini tanlash",
+  "productsSelectedCount": "{count} ta tanlandi",
+  "@productsSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "productsSelectionHint": "Yuboriladigan mahsulotlarni bosib tanlang",
+  "productsMoveAction": "Boshqa do'konga",
+  "productsMoveBarLabel": "Tanlangan mahsulotlar",
+  "productsMoveTitle": "Boshqa do'konga yuborish",
+  "productsMoveFrom": "{count} ta mahsulot «{store}» ro'yxatidan olinib, tanlangan do'konning mahsulotlariga o'tkaziladi.",
+  "@productsMoveFrom": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "productsMoveTarget": "Qaysi do'konga",
+  "productsMovePickStore": "Do'konni tanlang",
+  "productsMoveNoteMoves": "Qoldiq, narxlar, rasmlar va kirim tarixi mahsulot bilan birga o'tadi.",
+  "productsMoveNoteHistory": "Oldingi sotuvlar sotilgan do'konida qoladi.",
+  "productsMoveNoteBlocked": "Qabul qiluvchi do'konda shu shtrix-kod yoki PLU band bo'lsa, yoki mahsulot tasdiqlanmagan buyurtmada bo'lsa, hech narsa o'tkazilmaydi.",
+  "productsMoveSubmit": "Yuborish",
+  "productsMoveDone": "{count} ta mahsulot «{store}» do'koniga o'tkazildi",
+  "@productsMoveDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "store": {
+        "type": "String"
+      }
+    }
   }
 }
