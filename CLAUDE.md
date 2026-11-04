@@ -2709,13 +2709,19 @@ text (barcode/PLU taken in the target, product in an unapproved order or an open
 is shown as is.
 
 - **Who sees it** (`features/products/domain/product_move_targets.dart`, unit tested in
-  `test/features/products/product_move_targets_test.dart`): only SELLER/RETAILER owners, not
-  admins or other staff (the server refuses them too), **not restaurants (user decision)**, and only
-  with another *active* store. The source store is the active one, falling back like the server:
-  default store, else the first. `productMoveTargetsProvider` reads it from the session, the store
-  roster (watched only for owners, `GET /stores` is owner-only) and the active store.
-- **Data:** `ProductsRepository.moveToStore` → `ProductMoveResult {moved, targetStoreId,
-  targetStoreName}`; `MoveProductsToStoreUseCase` (registered in `injection.dart`).
+  `test/features/products/product_move_targets_test.dart`): `canMoveProducts` = owners **and their
+  admins** (SELLER/SELLER_ADMIN/RETAILER/RETAILER_ADMIN; admins added the same day, user
+  decision), never waiters/couriers/agents (the server refuses them too), **not restaurants (user
+  decision; an admin inherits its owner's business type)**. The stores come from the server:
+  `GET /products/move-to-store/targets` → the source (the owner's active store, or an admin's own
+  store) and the owner's other *active* stores; no targets hides the action.
+  `productMoveTargetsProvider` (a `FutureProvider`, refetched on account or active-store change)
+  only calls it when `canMoveProducts` allows. Admins can't read `GET /stores` (owner-only), which
+  is why the picker no longer uses the store roster.
+- **Data:** `ProductsRepository.moveTargets` → `ProductMoveTargets` (`ProductMoveStore {id, name,
+  address, isDefault}`) and `ProductsRepository.moveToStore` → `ProductMoveResult {moved,
+  targetStoreId, targetStoreName}`; `GetProductMoveTargetsUseCase` / `MoveProductsToStoreUseCase`
+  (registered in `injection.dart`).
 - **Products list** (`products_list_screen.dart`): a "Tanlash" round button (checklist icon) or a
   long press on a product starts selection mode. The title becomes "N ta tanlandi", the header
   actions become select-all-loaded and close, the add button hides, a tap toggles a product, and the
@@ -2739,7 +2745,14 @@ is shown as is.
   - Barcode clash refused with the product named, sheet stays open; Back ends selection; select
     all / none.
   - In the other store the products are there and the first store is the target. Russian sheet.
-  - Admin: no button, long press does nothing. Restaurant owner: no button.
+  - Admin: no button, long press does nothing. Restaurant owner: no button. *(Superseded the
+    same day when admins were allowed, see below.)*
+  - **Re-run after admins were allowed** (15 checks, same simulator, freshly seeded): owner move,
+    clash refusal, targets following the owner's store switch; the admin (locked to Markaz) sees
+    the button, long press selects, the sheet names its own store as the source and offers only
+    the other active store, the product leaves its list (DB: in Chilonzor, updated by the
+    RETAILER_ADMIN); restaurant owner still has no button. 131 unit tests. Test rows cleaned up,
+    test file deleted.
   - DB checked afterwards: the two products and their batches in the new store, the clashing one
     unmoved. Test rows cleaned up; the test file was deleted (it depends on seeded data).
   - Not checked on Android, in dark mode, or on a real phone.

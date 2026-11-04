@@ -8,7 +8,7 @@ import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/features/products/domain/entities/product_move_result.dart';
 import 'package:bsmart/features/products/domain/usecases/move_products_to_store_usecase.dart';
-import 'package:bsmart/features/stores/domain/entities/store.dart';
+import 'package:bsmart/features/products/domain/product_move_targets.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 
 /// "Boshqa do'konga yuborish": pick one of the owner's other active stores and
@@ -20,14 +20,14 @@ class MoveProductsSheet extends StatefulWidget {
   const MoveProductsSheet({super.key, required this.productIds, required this.source, required this.targets});
 
   final List<String> productIds;
-  final Store? source;
-  final List<Store> targets;
+  final ProductMoveStore? source;
+  final List<ProductMoveStore> targets;
 
   static Future<ProductMoveResult?> show(
     BuildContext context, {
     required List<String> productIds,
-    required Store? source,
-    required List<Store> targets,
+    required ProductMoveStore? source,
+    required List<ProductMoveStore> targets,
   }) => showModalBottomSheet<ProductMoveResult>(
     context: context,
     showDragHandle: true,
@@ -153,7 +153,7 @@ class _MoveProductsSheetState extends State<MoveProductsSheet> {
 class _StoreOption extends StatelessWidget {
   const _StoreOption({required this.store, required this.selected, required this.onTap});
 
-  final Store store;
+  final ProductMoveStore store;
   final bool selected;
   final VoidCallback? onTap;
 

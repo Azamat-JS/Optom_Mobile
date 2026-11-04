@@ -190,6 +190,7 @@ import 'package:bsmart/features/products/domain/usecases/get_best_selling_produc
 import 'package:bsmart/features/products/domain/usecases/delete_product_image_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/delete_product_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/move_products_to_store_usecase.dart';
+import 'package:bsmart/features/products/domain/usecases/get_product_move_targets_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/get_next_plu_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/get_product_usecase.dart';
 import 'package:bsmart/features/products/domain/usecases/list_products_usecase.dart';
@@ -391,6 +392,7 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => UpdateProductUseCase(getIt()));
   getIt.registerFactory(() => DeleteProductUseCase(getIt()));
   getIt.registerFactory(() => MoveProductsToStoreUseCase(getIt()));
+  getIt.registerFactory(() => GetProductMoveTargetsUseCase(getIt()));
   getIt.registerFactory(() => ReceiveStockUseCase(getIt()));
   getIt.registerFactory(() => AssignBarcodeUseCase(getIt()));
   getIt.registerFactory(() => ShareToCatalogUseCase(getIt()));

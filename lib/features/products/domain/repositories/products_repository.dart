@@ -3,6 +3,7 @@ import 'package:bsmart/core/network/result.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/domain/entities/product_image.dart';
 import 'package:bsmart/features/products/domain/entities/product_move_result.dart';
+import 'package:bsmart/features/products/domain/product_move_targets.dart';
 import 'package:bsmart/features/products/domain/entities/product_query.dart';
 import 'package:bsmart/features/products/domain/entities/product_write_params.dart';
 
@@ -17,7 +18,10 @@ abstract class ProductsRepository {
 
   Future<Result<void>> delete(String id);
 
-  /// Owner only: sends products of the active store to another store.
+  /// Owner/admin: the active store and the stores its products may be sent to.
+  Future<Result<ProductMoveTargets>> moveTargets();
+
+  /// Owner/admin: sends products of the active store to another store.
   Future<Result<ProductMoveResult>> moveToStore(List<String> productIds, String targetStoreId);
 
   /// Backs the quick stock-adjust sheet (separate from the full edit form).

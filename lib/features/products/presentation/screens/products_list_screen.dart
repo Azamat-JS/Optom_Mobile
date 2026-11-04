@@ -28,8 +28,9 @@ import 'package:bsmart/shared/widgets/dash_page.dart';
 ///
 /// Phase 14: an owner with another active store gets a selection mode (the
 /// "Tanlash" button, or a long press on a product) to send the selected
-/// products to that store ([MoveProductsSheet]). Hidden for staff, restaurants
-/// and single-store owners (see [productMoveTargets]).
+/// products to that store ([MoveProductsSheet]). Owners and admins (an admin
+/// sends from its own store); hidden for other staff, restaurants and a
+/// business with no other active store (see [canMoveProducts]).
 class ProductsListScreen extends ConsumerStatefulWidget {
   const ProductsListScreen({super.key});
 
@@ -163,7 +164,7 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
     final l10n = context.l10n;
     final listState = ref.watch(productsListProvider);
     final selected = _selectedCategoryId;
-    final moveTargets = ref.watch(productMoveTargetsProvider);
+    final moveTargets = ref.watch(productMoveTargetsProvider).valueOrNull ?? noProductMoveTargets;
     final canMove = moveTargets.targets.isNotEmpty;
     // Off as soon as moving isn't possible any more (e.g. the owner switched store).
     final selecting = _selecting && canMove;

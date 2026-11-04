@@ -1,33 +1,46 @@
 import 'package:bsmart/core/enums/business_type.dart';
 import 'package:bsmart/core/enums/user_role.dart';
-import 'package:bsmart/features/stores/domain/entities/store.dart';
 
-/// Where the selected products would leave from, and the stores they may go
-/// to ("Boshqa do'konga yuborish", Optom_Savdo CLAUDE.md "Moving Products
-/// Between Stores").
-typedef ProductMoveTargets = ({Store? source, List<Store> targets});
+/// A store in the "Boshqa do'konga yuborish" picker (Optom_Savdo CLAUDE.md
+/// "Moving Products Between Stores"). Comes from
+/// `GET /products/move-to-store/targets`, which admins may call — unlike
+/// `GET /stores`, which is owner-only.
+class ProductMoveStore {
+  const ProductMoveStore({required this.id, required this.name, this.address, this.isDefault = false});
 
-const ProductMoveTargets noProductMoveTargets = (source: null, targets: <Store>[]);
+  final String id;
+  final String name;
+  final String? address;
+  final bool isDefault;
 
-/// Only the business owner (SELLER/RETAILER, not their admins or other staff;
-/// the server refuses them too), and not a restaurant (it doesn't need it, user
-/// decision 2026-11-04). The source is the active store, falling back the way
-/// the server does when none is saved: the default store, else the first one.
-/// Targets are the owner's other *active* stores — empty means the action
-/// doesn't show (e.g. a single-store owner).
-ProductMoveTargets productMoveTargets({
-  required UserRole role,
-  required bool isStaff,
-  required BusinessType? businessType,
-  required List<Store> stores,
-  required String? activeStoreId,
-}) {
-  final isOwner = !isStaff && (role == UserRole.seller || role == UserRole.retailer);
-  if (!isOwner || businessType == BusinessType.restaurant || stores.isEmpty) return noProductMoveTargets;
+  factory ProductMoveStore.fromJson(Map<String, dynamic> json) => ProductMoveStore(
+    id: json['id'] as String,
+    name: json['name'] as String,
+    address: json['address'] as String?,
+    isDefault: json['isDefault'] as bool? ?? false,
+  );
+}
 
-  final source =
-      stores.where((s) => s.id == activeStoreId).firstOrNull ??
-      stores.where((s) => s.isDefault).firstOrNull ??
-      stores.first;
-  return (source: source, targets: stores.where((s) => s.id != source.id && s.isActive).toList());
+/// Where the selected products leave from (the active store; an admin's own
+/// store) and the owner's other active stores they may go to. No targets →
+/// the action doesn't show.
+typedef ProductMoveTargets = ({ProductMoveStore? source, List<ProductMoveStore> targets});
+
+const ProductMoveTargets noProductMoveTargets = (source: null, targets: <ProductMoveStore>[]);
+
+ProductMoveTargets productMoveTargetsFromJson(Map<String, dynamic> json) {
+  final source = json['source'];
+  return (
+    source: source is Map<String, dynamic> ? ProductMoveStore.fromJson(source) : null,
+    targets: [for (final t in json['targets'] as List<dynamic>? ?? const []) ProductMoveStore.fromJson(t as Map<String, dynamic>)],
+  );
+}
+
+/// Business owners and their admins (user decision 2026-11-04; an admin sends
+/// from the store it is locked to), never waiters/couriers/agents (the server
+/// refuses them too), and not restaurants (they don't need it, user decision
+/// 2026-11-04 — an admin inherits its owner's business type).
+bool canMoveProducts({required UserRole role, required BusinessType? businessType}) {
+  const roles = {UserRole.seller, UserRole.sellerAdmin, UserRole.retailer, UserRole.retailerAdmin};
+  return roles.contains(role) && businessType != BusinessType.restaurant;
 }

@@ -5,6 +5,7 @@ import 'package:bsmart/features/products/data/models/product_model.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/domain/entities/product_image.dart';
 import 'package:bsmart/features/products/domain/entities/product_move_result.dart';
+import 'package:bsmart/features/products/domain/product_move_targets.dart';
 import 'package:bsmart/features/products/domain/entities/product_query.dart';
 import 'package:bsmart/features/products/domain/entities/product_write_params.dart';
 
@@ -42,7 +43,13 @@ class ProductsRemoteDataSource {
 
   Future<void> delete(String id) => _dio.delete<void>('/products/$id');
 
-  /// Owner only; the source is the active store (`X-Store-Id`).
+  /// Owner/admin: the active store and the other stores its products may go to.
+  Future<ProductMoveTargets> moveTargets() async {
+    final response = await _dio.get<Map<String, dynamic>>('/products/move-to-store/targets');
+    return productMoveTargetsFromJson(response.data!);
+  }
+
+  /// Owner/admin; the source is the active store (`X-Store-Id`, or an admin's own store).
   Future<ProductMoveResult> moveToStore(List<String> productIds, String targetStoreId) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/products/move-to-store',
