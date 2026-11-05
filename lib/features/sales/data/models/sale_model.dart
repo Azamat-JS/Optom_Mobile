@@ -70,6 +70,8 @@ Sale saleFromJson(Map<String, dynamic> json) {
     items: itemsJson.map((e) => saleItemFromJson(e as Map<String, dynamic>)).toList(),
     payments: paymentsJson.map((e) => salePaymentFromJson(e as Map<String, dynamic>)).toList(),
     debt: saleDebtRefFromJson(json['debt']),
+    // Absent on a server from before manual revenues existed.
+    isManualRevenue: json['isManualRevenue'] as bool? ?? false,
     createdAt: DateTime.parse(json['createdAt'] as String),
   );
 }

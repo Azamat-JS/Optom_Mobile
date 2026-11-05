@@ -97,6 +97,7 @@ class Sale {
     this.items = const [],
     this.payments = const [],
     this.debt,
+    this.isManualRevenue = false,
     required this.createdAt,
   });
 
@@ -114,7 +115,16 @@ class Sale {
   final List<SaleItem> items;
   final List<SalePayment> payments;
   final SaleDebtRef? debt;
+
+  /// A manual revenue ("Qo'lda kiritilgan daromad"): money from goods that
+  /// were never entered in the app — a PAID sale with one product-less line.
+  final bool isManualRevenue;
   final DateTime createdAt;
 
-  bool get canReturn => status == SaleStatus.completed || status == SaleStatus.partiallyReturned;
+  /// A manual revenue moved no stock, so it's cancelled instead of returned.
+  bool get canReturn =>
+      !isManualRevenue && (status == SaleStatus.completed || status == SaleStatus.partiallyReturned);
+
+  /// Only a manual revenue can be cancelled (`PATCH /sales/:id/cancel`).
+  bool get canCancel => isManualRevenue && status == SaleStatus.completed;
 }

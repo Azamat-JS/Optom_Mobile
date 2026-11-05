@@ -31,6 +31,17 @@ class SalesRemoteDataSource {
     return saleFromJson(response.data!);
   }
 
+  Future<Sale> createManualRevenue(CreateManualRevenueParams params) async {
+    final response = await _dio.post<Map<String, dynamic>>('/sales/manual-revenue', data: params.toRequestBody());
+    return saleFromJson(response.data!);
+  }
+
+  /// Manual revenues only — a real sale is undone with a return (400 otherwise).
+  Future<Sale> cancel(String saleId) async {
+    final response = await _dio.patch<Map<String, dynamic>>('/sales/$saleId/cancel');
+    return saleFromJson(response.data!);
+  }
+
   Future<Sale> createReturn(String saleId, CreateSaleReturnParams params) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/sales/$saleId/returns',

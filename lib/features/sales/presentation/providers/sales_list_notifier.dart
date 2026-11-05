@@ -44,6 +44,15 @@ class SalesListNotifier extends AsyncNotifier<SalesListState> {
     state = await AsyncValue.guard(() => _fetch(current.copyWith(page: 1)));
   }
 
+  /// Real sales, manual revenues, or both (null) — filtered by the server, so
+  /// pagination stays correct.
+  Future<void> setKind(SaleKind? kind) async {
+    final current = state.valueOrNull?.query ?? const SaleQuery();
+    if (current.kind == kind && state.hasValue) return;
+    state = const AsyncLoading<SalesListState>().copyWithPrevious(state);
+    state = await AsyncValue.guard(() => _fetch(current.withKind(kind)));
+  }
+
   Future<void> loadMore() async {
     final current = state.valueOrNull;
     if (current == null || !current.hasNext || current.isLoadingMore) return;

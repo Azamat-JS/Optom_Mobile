@@ -11,11 +11,14 @@ import 'package:bsmart/core/theme/app_motion.dart';
 import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/sales/domain/entities/sale.dart';
+import 'package:bsmart/features/dashboard/presentation/providers/dashboard_provider.dart';
+import 'package:bsmart/features/sales/domain/usecases/cancel_manual_revenue_usecase.dart';
 import 'package:bsmart/features/sales/domain/usecases/get_sale_usecase.dart';
 import 'package:bsmart/features/sales/presentation/providers/sales_list_notifier.dart';
 import 'package:bsmart/features/sales/presentation/screens/sale_return_screen.dart';
 import 'package:bsmart/features/sales/presentation/widgets/sale_status_badge.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
+import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// A sale's receipt-like detail — items, totals, payment(s)/debt, and
 /// (while [Sale.canReturn]) a "Qaytarish" action. There is no separate
@@ -25,6 +28,10 @@ import 'package:bsmart/shared/widgets/dash_kit.dart';
 /// Phase 9 U4b: a header card with the total (and a success check right
 /// after checkout), then receipt-style cards with dashed dividers. Right
 /// after checkout the bottom button starts the next sale.
+///
+/// A manual revenue (Optom_Savdo "Manual Revenue") has no products: the
+/// screen shows what it is instead of a product list, and offers
+/// "Bekor qilish" (with a confirmation) instead of a return.
 class SaleDetailScreen extends ConsumerStatefulWidget {
   const SaleDetailScreen({super.key, required this.saleId, this.justCreated = false});
 
@@ -40,6 +47,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
 
   Sale? _sale;
   String? _errorMessage;
+  bool _isCancelling = false;
 
   @override
   void initState() {
@@ -65,6 +73,47 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
       // Keep the app-wide sales history's status pill in step.
       ref.read(salesListProvider.notifier).refresh();
     }
+  }
+
+  Future<void> _confirmCancel() async {
+    final sale = _sale;
+    if (sale == null) return;
+    final l10n = context.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.manualRevenueCancelTitle),
+        content: Text(l10n.manualRevenueCancelText(CurrencyFormatter.format(sale.total, sale.currency))),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.manualRevenueKeep)),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.manualRevenueCancelConfirm),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _isCancelling = true);
+    final result = await getIt<CancelManualRevenueUseCase>().call(sale.id);
+    if (!mounted) return;
+    setState(() => _isCancelling = false);
+    final messenger = ScaffoldMessenger.of(context);
+    result.fold(
+      (cancelled) {
+        setState(() => _sale = cancelled);
+        ref.read(salesListProvider.notifier).refresh();
+        ref.invalidate(dashboardProvider);
+        messenger.showSnackBar(SnackBar(content: Text(l10n.manualRevenueCancelled)));
+      },
+      // E.g. already cancelled from another device: show why, then reload the real state.
+      (failure) {
+        messenger.showSnackBar(SnackBar(content: Text(failure.message)));
+        _load();
+      },
+    );
   }
 
   @override
@@ -115,7 +164,11 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        sale?.saleNumber ?? l10n.salesSale,
+                        sale == null
+                            ? l10n.salesSale
+                            : sale.isManualRevenue
+                            ? l10n.manualRevenueDetailTitle
+                            : sale.saleNumber,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: colors.textPrimary, fontSize: 20, fontWeight: FontWeight.w800),
@@ -128,7 +181,30 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: sale == null || (!widget.justCreated && !sale.canReturn)
+        bottomNavigationBar: sale == null
+            ? null
+            : sale.canCancel
+            ? SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+                  child: OutlinedButton.icon(
+                    key: const Key('manualRevenueCancel'),
+                    onPressed: _isCancelling ? null : _confirmCancel,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.error,
+                      side: BorderSide(color: Theme.of(context).colorScheme.error),
+                      minimumSize: const Size.fromHeight(54),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                    ),
+                    icon: _isCancelling
+                        ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Icon(Icons.block_rounded),
+                    label: Text(l10n.manualRevenueCancel),
+                  ),
+                ),
+              )
+            : (!widget.justCreated && !sale.canReturn)
             ? null
             : SafeArea(
                 top: false,
@@ -221,6 +297,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                   alignment: WrapAlignment.center,
                   children: [
                     SaleTypeBadge(type: sale.type),
+                    if (sale.isManualRevenue) DashTag(label: l10n.manualRevenueTag, color: colors.accentText),
                     SaleStatusBadge(status: sale.status),
                   ],
                 ),
@@ -236,63 +313,83 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
               ],
             ),
           ).animate().fadeIn(duration: AppMotion.standard),
-          DashSectionTitle(
-            l10n.commonProducts,
-            trailing: Text(
-              l10n.commonProductCount(sale.items.length),
-              style: TextStyle(color: colors.textMuted, fontWeight: FontWeight.w700),
-            ),
-          ),
-          DashCard(
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              children: [
-                for (final (i, item) in sale.items.indexed) ...[
-                  if (i > 0) const SizedBox(height: 12),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.productName,
-                              style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700),
-                            ),
-                            Text(
-                              '${qty(item.quantity)} × ${money(item.unitPrice)}',
-                              style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
-                            ),
-                            if (item.returnedQuantity > 0)
-                              Text(
-                                l10n.salesReturnedQty(qty(item.returnedQuantity)),
-                                style: TextStyle(color: error, fontSize: 12.5, fontWeight: FontWeight.w700),
-                              ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        money(item.total),
-                        style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w800),
-                      ),
-                    ],
+          if (sale.isManualRevenue) ...[
+            const SizedBox(height: 12),
+            DashCard(
+              padding: const EdgeInsets.all(18),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.info_outline_rounded, color: colors.accentText),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      l10n.manualRevenueDetailHint,
+                      style: TextStyle(color: colors.textSecondary, fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ],
-                const SizedBox(height: 16),
-                DashedDivider(color: colors.outline),
-                const SizedBox(height: 14),
-                BillRow(label: l10n.commonSubtotal, value: money(sale.subtotal), muted: true),
-                if (sale.discount > 0) ...[
-                  const SizedBox(height: 6),
-                  BillRow(label: l10n.commonDiscount, value: '−${money(sale.discount)}', muted: true),
-                ],
-                const SizedBox(height: 10),
-                BillRow(label: l10n.commonTotal, value: money(sale.total), strong: true),
-              ],
+              ),
             ),
-          ),
+          ] else ...[
+            DashSectionTitle(
+              l10n.commonProducts,
+              trailing: Text(
+                l10n.commonProductCount(sale.items.length),
+                style: TextStyle(color: colors.textMuted, fontWeight: FontWeight.w700),
+              ),
+            ),
+            DashCard(
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                children: [
+                  for (final (i, item) in sale.items.indexed) ...[
+                    if (i > 0) const SizedBox(height: 12),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.productName,
+                                style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700),
+                              ),
+                              Text(
+                                '${qty(item.quantity)} × ${money(item.unitPrice)}',
+                                style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
+                              ),
+                              if (item.returnedQuantity > 0)
+                                Text(
+                                  l10n.salesReturnedQty(qty(item.returnedQuantity)),
+                                  style: TextStyle(color: error, fontSize: 12.5, fontWeight: FontWeight.w700),
+                                ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          money(item.total),
+                          style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w800),
+                        ),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  DashedDivider(color: colors.outline),
+                  const SizedBox(height: 14),
+                  BillRow(label: l10n.commonSubtotal, value: money(sale.subtotal), muted: true),
+                  if (sale.discount > 0) ...[
+                    const SizedBox(height: 6),
+                    BillRow(label: l10n.commonDiscount, value: '−${money(sale.discount)}', muted: true),
+                  ],
+                  const SizedBox(height: 10),
+                  BillRow(label: l10n.commonTotal, value: money(sale.total), strong: true),
+                ],
+              ),
+            ),
+          ],
           if (sale.debt != null) ...[
             const SizedBox(height: 12),
             DashCard(

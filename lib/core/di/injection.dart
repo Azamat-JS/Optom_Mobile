@@ -251,6 +251,8 @@ import 'package:bsmart/features/sales/data/repositories/shared_cart_repository_i
 import 'package:bsmart/features/sales/domain/repositories/sales_repository.dart';
 import 'package:bsmart/features/sales/domain/repositories/shared_cart_repository.dart';
 import 'package:bsmart/features/sales/domain/usecases/create_sale_return_usecase.dart';
+import 'package:bsmart/features/sales/domain/usecases/create_manual_revenue_usecase.dart';
+import 'package:bsmart/features/sales/domain/usecases/cancel_manual_revenue_usecase.dart';
 import 'package:bsmart/features/sales/domain/usecases/create_sale_usecase.dart';
 import 'package:bsmart/features/sales/domain/usecases/get_sale_usecase.dart';
 import 'package:bsmart/features/sales/domain/usecases/list_sales_usecase.dart';
@@ -593,6 +595,8 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => GetSaleUseCase(getIt()));
   getIt.registerFactory(() => CreateSaleUseCase(getIt()));
   getIt.registerFactory(() => CreateSaleReturnUseCase(getIt()));
+  getIt.registerFactory(() => CreateManualRevenueUseCase(getIt()));
+  getIt.registerFactory(() => CancelManualRevenueUseCase(getIt()));
 
   // --- features/sales/shared_cart (POS park/resume) ---
   getIt.registerLazySingleton(() => SharedCartRemoteDataSource(mainDio));

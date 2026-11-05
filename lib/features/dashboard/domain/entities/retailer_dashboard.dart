@@ -12,6 +12,7 @@ class RetailerDashboard {
     required this.paymentBreakdown,
     required this.salesTrend,
     required this.inventory,
+    this.manualRevenue,
     required this.generatedAt,
   });
 
@@ -24,6 +25,7 @@ class RetailerDashboard {
   final PaymentBreakdownByCurrency paymentBreakdown;
   final TrendPointsByCurrency salesTrend;
   final InventoryStatsByCurrency inventory;
+  final ManualRevenueStats? manualRevenue;
   final DateTime generatedAt;
 
   factory RetailerDashboard.fromJson(Map<String, dynamic> json) => RetailerDashboard(
@@ -36,6 +38,7 @@ class RetailerDashboard {
         paymentBreakdown: PaymentBreakdownByCurrency.fromJson(json['paymentBreakdown'] as Map<String, dynamic>),
         salesTrend: TrendPointsByCurrency.fromJson(json['salesTrend'] as Map<String, dynamic>),
         inventory: InventoryStatsByCurrency.fromJson(json['inventory'] as Map<String, dynamic>),
+        manualRevenue: ManualRevenueStats.tryParse(json['manualRevenue']),
         generatedAt: DateTime.parse(json['generatedAt'] as String),
       );
 }

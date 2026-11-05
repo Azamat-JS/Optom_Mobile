@@ -4231,4 +4231,155 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agentProfitSalary => 'My salary';
+
+  @override
+  String get manualRevenueAdd => 'Add revenue';
+
+  @override
+  String get manualRevenueTitle => 'Record revenue manually';
+
+  @override
+  String get manualRevenueIntro =>
+      'Record money from selling goods that aren\'t in the app as revenue';
+
+  @override
+  String get manualRevenueAmount => 'Amount';
+
+  @override
+  String get manualRevenueAmountMissing => 'Enter the amount';
+
+  @override
+  String get manualRevenueAmountInvalid =>
+      'The amount must be a positive number (at most 2 decimals)';
+
+  @override
+  String get manualRevenueAmountTooLarge => 'The amount is too large';
+
+  @override
+  String get manualRevenueMethod => 'Payment method';
+
+  @override
+  String get manualRevenueDate => 'Date (optional)';
+
+  @override
+  String get manualRevenueDateNow => 'Now';
+
+  @override
+  String get manualRevenueDateHint => 'If left empty, the current time is used';
+
+  @override
+  String get manualRevenueDateClear => 'Clear the date';
+
+  @override
+  String get manualRevenueCustomer => 'Customer (optional)';
+
+  @override
+  String get manualRevenueCustomerNone => 'No customer';
+
+  @override
+  String get manualRevenueCustomerPick => 'From list';
+
+  @override
+  String get manualRevenueCustomerNew => 'New';
+
+  @override
+  String get manualRevenueCustomerNoneHint =>
+      'The revenue is recorded under the walk-in customer';
+
+  @override
+  String get manualRevenuePickCustomer => 'Pick a customer';
+
+  @override
+  String get manualRevenuePickMissing => 'Pick a customer from the list';
+
+  @override
+  String get manualRevenueFirstName => 'First name';
+
+  @override
+  String get manualRevenueLastName => 'Last name (optional)';
+
+  @override
+  String get manualRevenuePhone => 'Phone number';
+
+  @override
+  String get manualRevenueReturningHint =>
+      'If a customer with this number exists, the revenue goes to them';
+
+  @override
+  String get manualRevenueNameMissing => 'Enter the customer\'s name';
+
+  @override
+  String get manualRevenuePhoneInvalid => 'Invalid phone number';
+
+  @override
+  String get manualRevenueSave => 'Save revenue';
+
+  @override
+  String get manualRevenueCreated => 'Revenue added';
+
+  @override
+  String get manualRevenueTag => 'Manual';
+
+  @override
+  String get manualRevenueFilter => 'Manual';
+
+  @override
+  String get manualRevenueDetailTitle => 'Manually recorded revenue';
+
+  @override
+  String get manualRevenueDetailHint =>
+      'Money for goods that aren\'t in the app. Stock wasn\'t changed.';
+
+  @override
+  String get manualRevenueCancel => 'Cancel';
+
+  @override
+  String get manualRevenueCancelTitle => 'Cancel this revenue?';
+
+  @override
+  String manualRevenueCancelText(String amount) {
+    return '$amount will be removed from reports, cash totals and net profit. This can\'t be undone.';
+  }
+
+  @override
+  String get manualRevenueCancelConfirm => 'Yes, cancel it';
+
+  @override
+  String get manualRevenueKeep => 'No';
+
+  @override
+  String get manualRevenueCancelled => 'Revenue cancelled';
+
+  @override
+  String get manualRevenueSection => 'Manually recorded revenue';
+
+  @override
+  String get manualRevenueDashboardHint =>
+      'Money for goods that aren\'t in the app. Also counted in cash totals and reports.';
+
+  @override
+  String get manualRevenueToday => 'Today';
+
+  @override
+  String get manualRevenueLast30 => 'Last 30 days';
+
+  @override
+  String get manualRevenueAllTime => 'All time';
+
+  @override
+  String manualRevenueEntries(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entries',
+      one: '$count entry',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get manualRevenueViewAll => 'View all';
+
+  @override
+  String get manualRevenueEmpty => 'No manually recorded revenue';
 }

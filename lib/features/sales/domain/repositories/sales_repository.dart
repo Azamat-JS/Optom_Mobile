@@ -12,4 +12,8 @@ abstract class SalesRepository {
   Future<Result<Sale>> create(CreateSaleParams params);
 
   Future<Result<Sale>> createReturn(String saleId, CreateSaleReturnParams params);
+
+  Future<Result<Sale>> createManualRevenue(CreateManualRevenueParams params);
+
+  Future<Result<Sale>> cancelManualRevenue(String saleId);
 }

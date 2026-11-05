@@ -4075,4 +4075,150 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get agentProfitSalary => 'Maoshim';
+
+  @override
+  String get manualRevenueAdd => 'Daromad qo\'shish';
+
+  @override
+  String get manualRevenueTitle => 'Qo\'lda daromad kiritish';
+
+  @override
+  String get manualRevenueIntro =>
+      'Ilovaga kiritilmagan mahsulotlar sotuvidan tushgan pulni daromad sifatida yozing';
+
+  @override
+  String get manualRevenueAmount => 'Summa';
+
+  @override
+  String get manualRevenueAmountMissing => 'Summani kiriting';
+
+  @override
+  String get manualRevenueAmountInvalid =>
+      'Summa musbat son bo\'lishi kerak (ko\'pi bilan 2 kasr xonasi)';
+
+  @override
+  String get manualRevenueAmountTooLarge => 'Summa juda katta';
+
+  @override
+  String get manualRevenueMethod => 'To\'lov usuli';
+
+  @override
+  String get manualRevenueDate => 'Sana (ixtiyoriy)';
+
+  @override
+  String get manualRevenueDateNow => 'Hozirgi vaqt';
+
+  @override
+  String get manualRevenueDateHint =>
+      'Kiritilmasa, hozirgi vaqt bilan yoziladi';
+
+  @override
+  String get manualRevenueDateClear => 'Sanani tozalash';
+
+  @override
+  String get manualRevenueCustomer => 'Mijoz (ixtiyoriy)';
+
+  @override
+  String get manualRevenueCustomerNone => 'Mijozsiz';
+
+  @override
+  String get manualRevenueCustomerPick => 'Ro\'yxatdan';
+
+  @override
+  String get manualRevenueCustomerNew => 'Yangi';
+
+  @override
+  String get manualRevenueCustomerNoneHint =>
+      'Daromad \"Mehmon xaridor\" nomiga yoziladi';
+
+  @override
+  String get manualRevenuePickCustomer => 'Mijozni tanlang';
+
+  @override
+  String get manualRevenuePickMissing => 'Ro\'yxatdan mijozni tanlang';
+
+  @override
+  String get manualRevenueFirstName => 'Ism';
+
+  @override
+  String get manualRevenueLastName => 'Familiya (ixtiyoriy)';
+
+  @override
+  String get manualRevenuePhone => 'Telefon raqami';
+
+  @override
+  String get manualRevenueReturningHint =>
+      'Bu raqamli mijoz bo\'lsa, daromad unga yoziladi';
+
+  @override
+  String get manualRevenueNameMissing => 'Mijoz ismini kiriting';
+
+  @override
+  String get manualRevenuePhoneInvalid => 'Telefon raqami noto\'g\'ri';
+
+  @override
+  String get manualRevenueSave => 'Daromadni saqlash';
+
+  @override
+  String get manualRevenueCreated => 'Daromad qo\'shildi';
+
+  @override
+  String get manualRevenueTag => 'Qo\'lda';
+
+  @override
+  String get manualRevenueFilter => 'Qo\'lda';
+
+  @override
+  String get manualRevenueDetailTitle => 'Qo\'lda kiritilgan daromad';
+
+  @override
+  String get manualRevenueDetailHint =>
+      'Ilovaga kiritilmagan mahsulotlardan tushgan pul. Ombordagi qoldiq o\'zgarmagan.';
+
+  @override
+  String get manualRevenueCancel => 'Bekor qilish';
+
+  @override
+  String get manualRevenueCancelTitle => 'Daromadni bekor qilasizmi?';
+
+  @override
+  String manualRevenueCancelText(String amount) {
+    return '$amount hisobotlardan, kassa tushumidan va sof foydadan olib tashlanadi. Buni qaytarib bo\'lmaydi.';
+  }
+
+  @override
+  String get manualRevenueCancelConfirm => 'Ha, bekor qilish';
+
+  @override
+  String get manualRevenueKeep => 'Yo\'q';
+
+  @override
+  String get manualRevenueCancelled => 'Daromad bekor qilindi';
+
+  @override
+  String get manualRevenueSection => 'Qo\'lda kiritilgan daromad';
+
+  @override
+  String get manualRevenueDashboardHint =>
+      'Ilovaga kiritilmagan mahsulotlardan tushgan pul. Kassa va hisobotlarga ham qo\'shiladi.';
+
+  @override
+  String get manualRevenueToday => 'Bugun';
+
+  @override
+  String get manualRevenueLast30 => 'Oxirgi 30 kun';
+
+  @override
+  String get manualRevenueAllTime => 'Jami';
+
+  @override
+  String manualRevenueEntries(int count) {
+    return '$count ta yozuv';
+  }
+
+  @override
+  String get manualRevenueViewAll => 'Barchasi';
+
+  @override
+  String get manualRevenueEmpty => 'Qo\'lda kiritilgan daromadlar yo\'q';
 }

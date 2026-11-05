@@ -2803,6 +2803,65 @@ is shown as is.
 - **Known gaps:** no bulk delete in the app's selection mode (the web has one); moving only from
   the list, not from a product's detail screen.
 
+### Phase 15 — Manual revenue / Qo'lda kiritilgan daromad (mobile; backend + web done in Optom_Savdo)
+
+**Done 2026-11-05.** Mirrors Optom_Savdo "Manual Revenue": an owner or their admin records money
+taken for goods never entered in the app, so it counts as revenue. Amount, currency, payment
+method; optional day (empty = saved now) and customer. Uses `POST /sales/manual-revenue` and
+`PATCH /sales/:id/cancel`; the server checks everything again.
+
+- **Rules on the client** (`features/sales/domain/manual_revenue.dart`, unit tested in
+  `test/features/sales/manual_revenue_test.dart`):
+  - The day is a **Tashkent** calendar day. No day or today sends no `date`; a past day sends
+    `YYYY-MM-DD`.
+  - The picker offers today back to 366 days.
+  - Amounts take spaces and a comma decimal, at most 2 decimals; the phone takes 9–15 digits.
+- **Data:**
+  - `Sale.isManualRevenue` (absent = false). `canReturn` is false for it; `canCancel` = manual and
+    COMPLETED.
+  - `SaleQuery.kind` (`SaleKind.sale|manual`, `withKind`).
+  - `CreateManualRevenueParams` (+ `ManualRevenueCustomer`).
+  - `SalesRepository.createManualRevenue` / `cancelManualRevenue` behind
+    `CreateManualRevenueUseCase` / `CancelManualRevenueUseCase` (registered in `injection.dart`).
+  - `ManualRevenueStats` (`core/entities/reporting_shared.dart`) on both dashboards, **optional**
+    (`tryParse`), so a server without the block still loads the home screen.
+- **Screens:**
+  - `ManualRevenueFormScreen`: amount + UZS/USD pill, `PaymentMethodTiles`, date field with clear,
+    customer pill "Mijozsiz / Ro'yxatdan / Yangi" (`CustomerPickerSheet`, or name + phone). On save
+    it refreshes the sales list and the dashboard, then pops with a snackbar.
+    - Fields re-validate as they're corrected (`onUserInteraction`).
+    - Save closes the keyboard and scrolls a missing customer into view (its warning used to
+      sit hidden behind the keyboard).
+  - Sales history: a "Qo'lda" chip (server-side `kind=manual`, so paging is right; paid/debt stay
+    client filters), a "Daromad qo'shish" extended FAB, a "Qo'lda" tag and card icon on rows.
+    `SalesListScreen(manualOnly: true)` opens on that chip.
+  - Sale detail: for a manual revenue the title is "Qo'lda kiritilgan daromad", a hint card
+    replaces the product list, no "Qaytarish"; a red "Bekor qilish" with a confirmation dialog.
+    A failed cancel (e.g. done elsewhere) shows the server's reason and reloads.
+  - Home (owners **and admins**, both see this screen): a "Qo'lda kiritilgan daromad" section under
+    the tiles, rows for Bugun / Oxirgi 30 kun / Jami in the toggled currency (amount on the right,
+    one size), "Daromad qo'shish" and "Barchasi".
+- **Strings:** `manualRevenue*` (uz/ru/en; ru/en plurals for the entry count). The chip and the
+  customer options are short on purpose: "Qo'lda daromad" and "Ism va telefon" were cut off at
+  phone width.
+- **Verified (2026-11-05):**
+  - `flutter analyze` clean, 147 unit tests.
+  - A 20-step temporary integration test on the iPhone 17 simulator against the real local API
+    (seeded retailer owner + admin), run in light and dark:
+    - Empty section; form refusals (empty, 3 decimals, new customer without a name, pick mode
+      without a customer).
+    - Card + date 2 days back + new customer → dashboard 30 days / all time.
+    - "Barchasi" → manual list; cash walk-in from the FAB; detail → cancel with confirmation.
+    - USD + Click for a customer picked from the sheet; chips (fit on screen, Qarzga → none,
+      Qo'lda → 3); home USD toggle; Russian section and plurals.
+    - Admin records a Payme revenue and sees it today.
+  - DB checked afterwards (7 checks: methods, backdated noon-Tashkent date, customers, store,
+    cancelled sale with soft-deleted payment, admin row on the owner's ledger). Test rows cleaned
+    up; the test file was deleted (it depends on seeded data).
+  - Not checked on Android or a real phone.
+- **Known gaps:** no notes field and no split payment (as on the web); the dashboard's UZS/USD
+  toggle is app-wide and survives a logout (pre-existing, seen during the test).
+
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest
 priority) a real-time layer — all as **new NestJS + PostgreSQL infrastructure**, never a

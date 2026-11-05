@@ -25,6 +25,7 @@ class DashboardData {
       (wholesaler?.paymentBreakdown ?? retailer?.paymentBreakdown)!;
   TrendPointsByCurrency get salesTrend => (wholesaler?.salesTrend ?? retailer?.salesTrend)!;
   InventoryStatsByCurrency get inventory => (wholesaler?.inventory ?? retailer?.inventory)!;
+  ManualRevenueStats? get manualRevenue => wholesaler?.manualRevenue ?? retailer?.manualRevenue;
 }
 
 class DashboardNotifier extends AsyncNotifier<DashboardData> {

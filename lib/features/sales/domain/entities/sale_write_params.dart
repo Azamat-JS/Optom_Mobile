@@ -1,3 +1,4 @@
+import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/payment_method.dart';
 import 'package:bsmart/core/enums/sale_enums.dart';
 
@@ -86,5 +87,52 @@ class CreateSaleReturnParams {
         'items': items.map((i) => i.toRequestBody()).toList(),
         if (reason != null && reason!.isNotEmpty) 'reason': reason,
         if (refundMethod != null) 'refundMethod': refundMethod!.toWire(),
+      };
+}
+
+/// `CreateManualRevenueDto.customer`: found by phone (last 9 digits) among the
+/// store's customers, else created.
+class ManualRevenueCustomer {
+  const ManualRevenueCustomer({required this.firstName, this.lastName, required this.phone});
+
+  final String firstName;
+  final String? lastName;
+  final String phone;
+
+  Map<String, dynamic> toRequestBody() => {
+        'firstName': firstName,
+        if (lastName != null && lastName!.isNotEmpty) 'lastName': lastName,
+        'phone': phone,
+      };
+}
+
+/// Mirrors `CreateManualRevenueDto` (`POST /sales/manual-revenue`). Send
+/// [customerId] or [customer], never both; neither = the walk-in buyer.
+/// [date] is a `YYYY-MM-DD` Tashkent day, omitted for now
+/// (see `manualRevenueDateParam`).
+class CreateManualRevenueParams {
+  const CreateManualRevenueParams({
+    required this.amount,
+    required this.currency,
+    required this.paymentMethod,
+    this.date,
+    this.customerId,
+    this.customer,
+  }) : assert(customerId == null || customer == null);
+
+  final double amount;
+  final Currency currency;
+  final PaymentMethod paymentMethod;
+  final String? date;
+  final String? customerId;
+  final ManualRevenueCustomer? customer;
+
+  Map<String, dynamic> toRequestBody() => {
+        'amount': amount,
+        'currency': currency.toWire(),
+        'paymentMethod': paymentMethod.toWire(),
+        if (date != null) 'date': date,
+        if (customerId != null) 'customerId': customerId,
+        if (customer != null) 'customer': customer!.toRequestBody(),
       };
 }

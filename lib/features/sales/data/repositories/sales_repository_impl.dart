@@ -42,6 +42,24 @@ class SalesRepositoryImpl implements SalesRepository {
   }
 
   @override
+  Future<Result<Sale>> createManualRevenue(CreateManualRevenueParams params) async {
+    try {
+      return Result.ok(await _remote.createManualRevenue(params));
+    } on DioException catch (e) {
+      return Result.err(mapDioException(e));
+    }
+  }
+
+  @override
+  Future<Result<Sale>> cancelManualRevenue(String saleId) async {
+    try {
+      return Result.ok(await _remote.cancel(saleId));
+    } on DioException catch (e) {
+      return Result.err(mapDioException(e));
+    }
+  }
+
+  @override
   Future<Result<Sale>> createReturn(String saleId, CreateSaleReturnParams params) async {
     try {
       return Result.ok(await _remote.createReturn(saleId, params));

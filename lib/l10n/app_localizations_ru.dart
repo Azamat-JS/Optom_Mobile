@@ -4237,4 +4237,157 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get agentProfitSalary => 'Моя зарплата';
+
+  @override
+  String get manualRevenueAdd => 'Добавить доход';
+
+  @override
+  String get manualRevenueTitle => 'Ручной ввод дохода';
+
+  @override
+  String get manualRevenueIntro =>
+      'Запишите как доход деньги от продажи товаров, которых нет в приложении';
+
+  @override
+  String get manualRevenueAmount => 'Сумма';
+
+  @override
+  String get manualRevenueAmountMissing => 'Введите сумму';
+
+  @override
+  String get manualRevenueAmountInvalid =>
+      'Сумма должна быть положительным числом (не более 2 знаков после запятой)';
+
+  @override
+  String get manualRevenueAmountTooLarge => 'Слишком большая сумма';
+
+  @override
+  String get manualRevenueMethod => 'Способ оплаты';
+
+  @override
+  String get manualRevenueDate => 'Дата (необязательно)';
+
+  @override
+  String get manualRevenueDateNow => 'Текущее время';
+
+  @override
+  String get manualRevenueDateHint =>
+      'Если не указать, будет записано текущее время';
+
+  @override
+  String get manualRevenueDateClear => 'Очистить дату';
+
+  @override
+  String get manualRevenueCustomer => 'Клиент (необязательно)';
+
+  @override
+  String get manualRevenueCustomerNone => 'Без клиента';
+
+  @override
+  String get manualRevenueCustomerPick => 'Из списка';
+
+  @override
+  String get manualRevenueCustomerNew => 'Новый';
+
+  @override
+  String get manualRevenueCustomerNoneHint =>
+      'Доход будет записан на «Гостевого покупателя»';
+
+  @override
+  String get manualRevenuePickCustomer => 'Выберите клиента';
+
+  @override
+  String get manualRevenuePickMissing => 'Выберите клиента из списка';
+
+  @override
+  String get manualRevenueFirstName => 'Имя';
+
+  @override
+  String get manualRevenueLastName => 'Фамилия (необязательно)';
+
+  @override
+  String get manualRevenuePhone => 'Номер телефона';
+
+  @override
+  String get manualRevenueReturningHint =>
+      'Если клиент с этим номером уже есть, доход запишется на него';
+
+  @override
+  String get manualRevenueNameMissing => 'Введите имя клиента';
+
+  @override
+  String get manualRevenuePhoneInvalid => 'Неверный номер телефона';
+
+  @override
+  String get manualRevenueSave => 'Сохранить доход';
+
+  @override
+  String get manualRevenueCreated => 'Доход добавлен';
+
+  @override
+  String get manualRevenueTag => 'Вручную';
+
+  @override
+  String get manualRevenueFilter => 'Вручную';
+
+  @override
+  String get manualRevenueDetailTitle => 'Доход, введённый вручную';
+
+  @override
+  String get manualRevenueDetailHint =>
+      'Деньги за товары, которых нет в приложении. Остатки на складе не менялись.';
+
+  @override
+  String get manualRevenueCancel => 'Отменить';
+
+  @override
+  String get manualRevenueCancelTitle => 'Отменить доход?';
+
+  @override
+  String manualRevenueCancelText(String amount) {
+    return '$amount будет убрано из отчётов, кассы и чистой прибыли. Это нельзя вернуть.';
+  }
+
+  @override
+  String get manualRevenueCancelConfirm => 'Да, отменить';
+
+  @override
+  String get manualRevenueKeep => 'Нет';
+
+  @override
+  String get manualRevenueCancelled => 'Доход отменён';
+
+  @override
+  String get manualRevenueSection => 'Доход, введённый вручную';
+
+  @override
+  String get manualRevenueDashboardHint =>
+      'Деньги за товары, которых нет в приложении. Также учитываются в кассе и отчётах.';
+
+  @override
+  String get manualRevenueToday => 'Сегодня';
+
+  @override
+  String get manualRevenueLast30 => 'Последние 30 дней';
+
+  @override
+  String get manualRevenueAllTime => 'Всего';
+
+  @override
+  String manualRevenueEntries(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count записей',
+      few: '$count записи',
+      one: '$count запись',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get manualRevenueViewAll => 'Все';
+
+  @override
+  String get manualRevenueEmpty => 'Доходов, введённых вручную, нет';
 }

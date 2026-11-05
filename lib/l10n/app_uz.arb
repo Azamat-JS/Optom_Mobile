@@ -2604,5 +2604,64 @@
       }
     }
   },
-  "agentProfitSalary": "Maoshim"
+  "agentProfitSalary": "Maoshim",
+  "manualRevenueAdd": "Daromad qo'shish",
+  "manualRevenueTitle": "Qo'lda daromad kiritish",
+  "manualRevenueIntro": "Ilovaga kiritilmagan mahsulotlar sotuvidan tushgan pulni daromad sifatida yozing",
+  "manualRevenueAmount": "Summa",
+  "manualRevenueAmountMissing": "Summani kiriting",
+  "manualRevenueAmountInvalid": "Summa musbat son bo'lishi kerak (ko'pi bilan 2 kasr xonasi)",
+  "manualRevenueAmountTooLarge": "Summa juda katta",
+  "manualRevenueMethod": "To'lov usuli",
+  "manualRevenueDate": "Sana (ixtiyoriy)",
+  "manualRevenueDateNow": "Hozirgi vaqt",
+  "manualRevenueDateHint": "Kiritilmasa, hozirgi vaqt bilan yoziladi",
+  "manualRevenueDateClear": "Sanani tozalash",
+  "manualRevenueCustomer": "Mijoz (ixtiyoriy)",
+  "manualRevenueCustomerNone": "Mijozsiz",
+  "manualRevenueCustomerPick": "Ro'yxatdan",
+  "manualRevenueCustomerNew": "Yangi",
+  "manualRevenueCustomerNoneHint": "Daromad \"Mehmon xaridor\" nomiga yoziladi",
+  "manualRevenuePickCustomer": "Mijozni tanlang",
+  "manualRevenuePickMissing": "Ro'yxatdan mijozni tanlang",
+  "manualRevenueFirstName": "Ism",
+  "manualRevenueLastName": "Familiya (ixtiyoriy)",
+  "manualRevenuePhone": "Telefon raqami",
+  "manualRevenueReturningHint": "Bu raqamli mijoz bo'lsa, daromad unga yoziladi",
+  "manualRevenueNameMissing": "Mijoz ismini kiriting",
+  "manualRevenuePhoneInvalid": "Telefon raqami noto'g'ri",
+  "manualRevenueSave": "Daromadni saqlash",
+  "manualRevenueCreated": "Daromad qo'shildi",
+  "manualRevenueTag": "Qo'lda",
+  "manualRevenueFilter": "Qo'lda",
+  "manualRevenueDetailTitle": "Qo'lda kiritilgan daromad",
+  "manualRevenueDetailHint": "Ilovaga kiritilmagan mahsulotlardan tushgan pul. Ombordagi qoldiq o'zgarmagan.",
+  "manualRevenueCancel": "Bekor qilish",
+  "manualRevenueCancelTitle": "Daromadni bekor qilasizmi?",
+  "manualRevenueCancelText": "{amount} hisobotlardan, kassa tushumidan va sof foydadan olib tashlanadi. Buni qaytarib bo'lmaydi.",
+  "@manualRevenueCancelText": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "manualRevenueCancelConfirm": "Ha, bekor qilish",
+  "manualRevenueKeep": "Yo'q",
+  "manualRevenueCancelled": "Daromad bekor qilindi",
+  "manualRevenueSection": "Qo'lda kiritilgan daromad",
+  "manualRevenueDashboardHint": "Ilovaga kiritilmagan mahsulotlardan tushgan pul. Kassa va hisobotlarga ham qo'shiladi.",
+  "manualRevenueToday": "Bugun",
+  "manualRevenueLast30": "Oxirgi 30 kun",
+  "manualRevenueAllTime": "Jami",
+  "manualRevenueEntries": "{count} ta yozuv",
+  "@manualRevenueEntries": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "manualRevenueViewAll": "Barchasi",
+  "manualRevenueEmpty": "Qo'lda kiritilgan daromadlar yo'q"
 }

@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:bsmart/core/entities/reporting_shared.dart';
 import 'package:bsmart/core/enums/business_type.dart';
 import 'package:bsmart/core/enums/currency.dart';
 import 'package:bsmart/core/enums/user_role.dart';
@@ -19,6 +20,8 @@ import 'package:bsmart/features/dashboard/presentation/widgets/currency_toggle.d
 import 'package:bsmart/features/dashboard/presentation/widgets/income_debt_bar_chart.dart';
 import 'package:bsmart/features/dashboard/presentation/widgets/payment_breakdown_chart.dart';
 import 'package:bsmart/features/dashboard/presentation/widgets/sales_trend_chart.dart';
+import 'package:bsmart/features/sales/presentation/screens/manual_revenue_form_screen.dart';
+import 'package:bsmart/features/sales/presentation/screens/sales_list_screen.dart';
 import 'package:bsmart/features/stores/presentation/widgets/store_switcher.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/features/notifications/presentation/widgets/notification_bell_button.dart';
@@ -168,6 +171,8 @@ class _Body extends ConsumerWidget {
           if (dashboardAsync.valueOrNull case final data?) ...[
             const SizedBox(height: 12),
             _Tiles(data: data, currency: currency),
+            // Missing only on a server from before manual revenues existed.
+            if (data.manualRevenue case final stats?) _ManualRevenueSection(stats: stats, currency: currency),
           ],
           DashSectionTitle(l10n.homeSections),
           _Shortcuts(isOwner: isOwner),
@@ -374,6 +379,107 @@ class _Tiles extends StatelessWidget {
   }
 }
 
+/// Manual revenues (Optom_Savdo "Manual Revenue"): money from goods that were
+/// never entered in the app — today, the last 30 days and all time, in the
+/// toggled currency, with shortcuts to add one and to see them all.
+class _ManualRevenueSection extends StatelessWidget {
+  const _ManualRevenueSection({required this.stats, required this.currency});
+
+  final ManualRevenueStats stats;
+  final Currency currency;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colors = BrandColors.of(context);
+    final uzs = currency == Currency.uzs;
+    CountAndAmount pick(CountAndAmountByCurrency v) => uzs ? v.uzs : v.usd;
+    final figures = [
+      (l10n.manualRevenueToday, pick(stats.today)),
+      (l10n.manualRevenueLast30, pick(stats.last30)),
+      (l10n.manualRevenueAllTime, pick(stats.allTime)),
+    ];
+
+    return Column(
+      key: const Key('manualRevenueSection'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        DashSectionTitle(
+          l10n.manualRevenueSection,
+          trailing: TextButton(
+            key: const Key('manualRevenueViewAll'),
+            onPressed: () =>
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SalesListScreen(manualOnly: true))),
+            child: Text(l10n.manualRevenueViewAll),
+          ),
+        ),
+        DashCard(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.manualRevenueDashboardHint,
+                style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 14),
+              // One row per period, the amount on the right: big sums keep one size.
+              for (final (i, (label, value)) in figures.indexed) ...[
+                if (i > 0) Divider(height: 18, color: colors.outline),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            label,
+                            style: TextStyle(color: colors.textPrimary, fontSize: 14.5, fontWeight: FontWeight.w700),
+                          ),
+                          Text(
+                            l10n.manualRevenueEntries(value.count),
+                            style: TextStyle(color: colors.textMuted, fontSize: 12.5, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Flexible(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            CurrencyFormatter.format(value.amount, currency),
+                            style: TextStyle(color: colors.textPrimary, fontSize: 17, fontWeight: FontWeight.w800),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                key: const Key('manualRevenueAddFromHome'),
+                onPressed: () =>
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ManualRevenueFormScreen())),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                icon: const Icon(Icons.add_card_rounded),
+                label: Text(l10n.manualRevenueAdd),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ).animate().fadeIn(duration: AppMotion.standard);
+  }
+}
+
 /// Every section the role can open, as a visible grid.
 class _Shortcuts extends ConsumerWidget {
   const _Shortcuts({required this.isOwner});
@@ -391,7 +497,8 @@ class _Shortcuts extends ConsumerWidget {
     final courierFeatureEnabled = user?.courierFeatureEnabled ?? false;
     // CRM (SUPER_ADMIN add-on): auto-parts businesses only; a store admin inherits its owner's
     // flag and businessType. The server re-checks every call.
-    final crm = (user?.crmEnabled ?? false) &&
+    final crm =
+        (user?.crmEnabled ?? false) &&
         user?.businessType == BusinessType.autoParts &&
         (user?.role == UserRole.retailer || user?.role == UserRole.retailerAdmin);
     void go(String route) => context.push(route);
@@ -415,7 +522,11 @@ class _Shortcuts extends ConsumerWidget {
       if (!isOwner || courierFeatureEnabled)
         ShortcutTile(icon: Icons.map_rounded, label: l10n.navFleetMap, onTap: () => go(RouteNames.fleetMap)),
       if (crm) ...[
-        ShortcutTile(icon: Icons.directions_car_rounded, label: l10n.navCrmDrivers, onTap: () => go(RouteNames.crmDrivers)),
+        ShortcutTile(
+          icon: Icons.directions_car_rounded,
+          label: l10n.navCrmDrivers,
+          onTap: () => go(RouteNames.crmDrivers),
+        ),
         ShortcutTile(
           icon: Icons.notifications_active_rounded,
           label: l10n.navCrmReminders,

@@ -46,6 +46,27 @@ class CountAndAmountByCurrency {
       );
 }
 
+/// The dashboards' `manualRevenue` block (Optom_Savdo "Manual Revenue"):
+/// manual revenues today, over the last 30 days (today included) and all
+/// time, per currency; cancelled ones left out.
+class ManualRevenueStats {
+  const ManualRevenueStats({required this.today, required this.last30, required this.allTime});
+
+  final CountAndAmountByCurrency today;
+  final CountAndAmountByCurrency last30;
+  final CountAndAmountByCurrency allTime;
+
+  /// Null when the server doesn't send the block (one deployed before it existed).
+  static ManualRevenueStats? tryParse(Object? json) {
+    if (json is! Map<String, dynamic>) return null;
+    return ManualRevenueStats(
+      today: CountAndAmountByCurrency.fromJson(json['today'] as Map<String, dynamic>),
+      last30: CountAndAmountByCurrency.fromJson(json['last30'] as Map<String, dynamic>),
+      allTime: CountAndAmountByCurrency.fromJson(json['allTime'] as Map<String, dynamic>),
+    );
+  }
+}
+
 /// `outstandingDebts`/`customerDebts`/`wholesalerDebts`-style shape:
 /// count + balance + originalAmount.
 class DebtSummary {

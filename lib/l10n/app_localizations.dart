@@ -6993,6 +6993,276 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Maoshim'**
   String get agentProfitSalary;
+
+  /// No description provided for @manualRevenueAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Daromad qo\'shish'**
+  String get manualRevenueAdd;
+
+  /// No description provided for @manualRevenueTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'lda daromad kiritish'**
+  String get manualRevenueTitle;
+
+  /// No description provided for @manualRevenueIntro.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ilovaga kiritilmagan mahsulotlar sotuvidan tushgan pulni daromad sifatida yozing'**
+  String get manualRevenueIntro;
+
+  /// No description provided for @manualRevenueAmount.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summa'**
+  String get manualRevenueAmount;
+
+  /// No description provided for @manualRevenueAmountMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summani kiriting'**
+  String get manualRevenueAmountMissing;
+
+  /// No description provided for @manualRevenueAmountInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summa musbat son bo\'lishi kerak (ko\'pi bilan 2 kasr xonasi)'**
+  String get manualRevenueAmountInvalid;
+
+  /// No description provided for @manualRevenueAmountTooLarge.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summa juda katta'**
+  String get manualRevenueAmountTooLarge;
+
+  /// No description provided for @manualRevenueMethod.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov usuli'**
+  String get manualRevenueMethod;
+
+  /// No description provided for @manualRevenueDate.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sana (ixtiyoriy)'**
+  String get manualRevenueDate;
+
+  /// No description provided for @manualRevenueDateNow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozirgi vaqt'**
+  String get manualRevenueDateNow;
+
+  /// No description provided for @manualRevenueDateHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kiritilmasa, hozirgi vaqt bilan yoziladi'**
+  String get manualRevenueDateHint;
+
+  /// No description provided for @manualRevenueDateClear.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sanani tozalash'**
+  String get manualRevenueDateClear;
+
+  /// No description provided for @manualRevenueCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijoz (ixtiyoriy)'**
+  String get manualRevenueCustomer;
+
+  /// No description provided for @manualRevenueCustomerNone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozsiz'**
+  String get manualRevenueCustomerNone;
+
+  /// No description provided for @manualRevenueCustomerPick.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ro\'yxatdan'**
+  String get manualRevenueCustomerPick;
+
+  /// No description provided for @manualRevenueCustomerNew.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi'**
+  String get manualRevenueCustomerNew;
+
+  /// No description provided for @manualRevenueCustomerNoneHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Daromad \"Mehmon xaridor\" nomiga yoziladi'**
+  String get manualRevenueCustomerNoneHint;
+
+  /// No description provided for @manualRevenuePickCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijozni tanlang'**
+  String get manualRevenuePickCustomer;
+
+  /// No description provided for @manualRevenuePickMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ro\'yxatdan mijozni tanlang'**
+  String get manualRevenuePickMissing;
+
+  /// No description provided for @manualRevenueFirstName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ism'**
+  String get manualRevenueFirstName;
+
+  /// No description provided for @manualRevenueLastName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Familiya (ixtiyoriy)'**
+  String get manualRevenueLastName;
+
+  /// No description provided for @manualRevenuePhone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon raqami'**
+  String get manualRevenuePhone;
+
+  /// No description provided for @manualRevenueReturningHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu raqamli mijoz bo\'lsa, daromad unga yoziladi'**
+  String get manualRevenueReturningHint;
+
+  /// No description provided for @manualRevenueNameMissing.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijoz ismini kiriting'**
+  String get manualRevenueNameMissing;
+
+  /// No description provided for @manualRevenuePhoneInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon raqami noto\'g\'ri'**
+  String get manualRevenuePhoneInvalid;
+
+  /// No description provided for @manualRevenueSave.
+  ///
+  /// In uz, this message translates to:
+  /// **'Daromadni saqlash'**
+  String get manualRevenueSave;
+
+  /// No description provided for @manualRevenueCreated.
+  ///
+  /// In uz, this message translates to:
+  /// **'Daromad qo\'shildi'**
+  String get manualRevenueCreated;
+
+  /// No description provided for @manualRevenueTag.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'lda'**
+  String get manualRevenueTag;
+
+  /// No description provided for @manualRevenueFilter.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'lda'**
+  String get manualRevenueFilter;
+
+  /// No description provided for @manualRevenueDetailTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'lda kiritilgan daromad'**
+  String get manualRevenueDetailTitle;
+
+  /// No description provided for @manualRevenueDetailHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ilovaga kiritilmagan mahsulotlardan tushgan pul. Ombordagi qoldiq o\'zgarmagan.'**
+  String get manualRevenueDetailHint;
+
+  /// No description provided for @manualRevenueCancel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilish'**
+  String get manualRevenueCancel;
+
+  /// No description provided for @manualRevenueCancelTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Daromadni bekor qilasizmi?'**
+  String get manualRevenueCancelTitle;
+
+  /// No description provided for @manualRevenueCancelText.
+  ///
+  /// In uz, this message translates to:
+  /// **'{amount} hisobotlardan, kassa tushumidan va sof foydadan olib tashlanadi. Buni qaytarib bo\'lmaydi.'**
+  String manualRevenueCancelText(String amount);
+
+  /// No description provided for @manualRevenueCancelConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ha, bekor qilish'**
+  String get manualRevenueCancelConfirm;
+
+  /// No description provided for @manualRevenueKeep.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yo\'q'**
+  String get manualRevenueKeep;
+
+  /// No description provided for @manualRevenueCancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Daromad bekor qilindi'**
+  String get manualRevenueCancelled;
+
+  /// No description provided for @manualRevenueSection.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'lda kiritilgan daromad'**
+  String get manualRevenueSection;
+
+  /// No description provided for @manualRevenueDashboardHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ilovaga kiritilmagan mahsulotlardan tushgan pul. Kassa va hisobotlarga ham qo\'shiladi.'**
+  String get manualRevenueDashboardHint;
+
+  /// No description provided for @manualRevenueToday.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bugun'**
+  String get manualRevenueToday;
+
+  /// No description provided for @manualRevenueLast30.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oxirgi 30 kun'**
+  String get manualRevenueLast30;
+
+  /// No description provided for @manualRevenueAllTime.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami'**
+  String get manualRevenueAllTime;
+
+  /// No description provided for @manualRevenueEntries.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta yozuv'**
+  String manualRevenueEntries(int count);
+
+  /// No description provided for @manualRevenueViewAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barchasi'**
+  String get manualRevenueViewAll;
+
+  /// No description provided for @manualRevenueEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'lda kiritilgan daromadlar yo\'q'**
+  String get manualRevenueEmpty;
 }
 
 class _AppLocalizationsDelegate
