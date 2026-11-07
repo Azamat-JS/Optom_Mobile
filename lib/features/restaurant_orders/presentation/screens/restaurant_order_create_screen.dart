@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bsmart/features/warehouse/domain/entities/dish.dart';
+import 'package:bsmart/features/warehouse/presentation/providers/warehouse_providers.dart';
+import 'package:bsmart/features/warehouse/presentation/widgets/warehouse_widgets.dart';
 import 'package:bsmart/core/di/injection.dart';
 import 'package:bsmart/core/entities/geo_point.dart';
 import 'package:bsmart/core/enums/currency.dart';
@@ -74,7 +77,7 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
     final selected = await showModalBottomSheet<Product>(
       context: context,
       isScrollControlled: true,
-      builder: (context) => const _MenuSearchSheet(),
+      builder: (context) => _MenuSearchSheet(availability: ref.read(dishAvailabilityProvider).valueOrNull ?? const {}),
     );
     if (selected == null) return;
     setState(() {
@@ -137,6 +140,8 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
     final l10n = context.l10n;
     final colors = BrandColors.of(context);
     final tablesAsync = ref.watch(restaurantTablesListProvider);
+    // Loaded now so the menu sheet can show which dishes the kitchen can make.
+    ref.watch(dishAvailabilityProvider);
     final count = _cart.fold<int>(0, (sum, line) => sum + line.quantity);
 
     return DashPage(
@@ -349,7 +354,11 @@ class _TablePill extends StatelessWidget {
 }
 
 class _MenuSearchSheet extends StatefulWidget {
-  const _MenuSearchSheet();
+  const _MenuSearchSheet({required this.availability});
+
+  /// Whether each dish can be made from the warehouse now — shown, never blocking (the waiter
+  /// still takes the order; the shortage is the owner's to fix).
+  final Map<String, DishAvailabilityEntry> availability;
 
   @override
   State<_MenuSearchSheet> createState() => _MenuSearchSheetState();
@@ -457,6 +466,13 @@ class _MenuSearchSheetState extends State<_MenuSearchSheet> {
                               product.name,
                               style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700),
                             ),
+                            subtitle: switch (widget.availability[product.id]) {
+                              final dish? when dish.status != DishStatus.noRecipe => Align(
+                                alignment: Alignment.centerLeft,
+                                child: DishAvailabilityTag(status: dish.status, portions: dish.portions),
+                              ),
+                              _ => null,
+                            },
                             trailing: Text(
                               CurrencyFormatter.format(product.price, product.currency),
                               style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w800),

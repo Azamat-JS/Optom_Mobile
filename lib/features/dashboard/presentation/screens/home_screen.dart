@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:bsmart/features/warehouse/presentation/providers/warehouse_providers.dart';
 import 'package:bsmart/core/entities/reporting_shared.dart';
 import 'package:bsmart/core/enums/business_type.dart';
 import 'package:bsmart/core/enums/currency.dart';
@@ -78,7 +79,10 @@ class _Body extends ConsumerWidget {
     final initial = firstName.isEmpty ? '?' : firstName.characters.first.toUpperCase();
 
     return RefreshIndicator(
-      onRefresh: () => ref.read(dashboardProvider.notifier).refresh(),
+      onRefresh: () {
+        ref.invalidate(warehouseSummaryProvider);
+        return ref.read(dashboardProvider.notifier).refresh();
+      },
       color: AppColors.onBrand,
       backgroundColor: AppColors.brandYellow,
       child: ListView(
@@ -501,6 +505,7 @@ class _Shortcuts extends ConsumerWidget {
         (user?.crmEnabled ?? false) &&
         user?.businessType == BusinessType.autoParts &&
         (user?.role == UserRole.retailer || user?.role == UserRole.retailerAdmin);
+    final warehouse = isRestaurant ? ref.watch(warehouseSummaryProvider).valueOrNull : null;
     void go(String route) => context.push(route);
 
     final items = <ShortcutTile>[
@@ -543,6 +548,20 @@ class _Shortcuts extends ConsumerWidget {
           icon: Icons.table_restaurant_rounded,
           label: l10n.navTables,
           onTap: () => go(RouteNames.restaurantTables),
+        ),
+        // Warehouse + recipes: owner and admins (Optom_Savdo "Restaurant Warehouse & Recipes").
+        // Badges: ingredients low or out / dishes that can't be made now.
+        ShortcutTile(
+          icon: Icons.warehouse_rounded,
+          label: l10n.navWarehouse,
+          badge: (warehouse?.ingredientsLow ?? 0) + (warehouse?.ingredientsOut ?? 0),
+          onTap: () => go(RouteNames.warehouse),
+        ),
+        ShortcutTile(
+          icon: Icons.menu_book_rounded,
+          label: l10n.navRecipes,
+          badge: warehouse?.dishesUnavailable ?? 0,
+          onTap: () => go(RouteNames.recipes),
         ),
       ],
       if (isOwner) ...[

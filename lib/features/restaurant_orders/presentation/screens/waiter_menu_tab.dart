@@ -6,6 +6,9 @@ import 'package:bsmart/core/theme/app_colors.dart';
 import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/products/presentation/providers/products_list_notifier.dart';
+import 'package:bsmart/features/warehouse/domain/entities/dish.dart';
+import 'package:bsmart/features/warehouse/presentation/providers/warehouse_providers.dart';
+import 'package:bsmart/features/warehouse/presentation/widgets/warehouse_widgets.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// Read-only "Menu" — a restaurant's own inventory (`features/products`),
@@ -23,6 +26,8 @@ class WaiterMenuTab extends ConsumerWidget {
     final l10n = context.l10n;
     final colors = BrandColors.of(context);
     final productsAsync = ref.watch(productsListProvider);
+    // Whether each dish can be made from the warehouse now (dishes with a recipe only).
+    final availability = ref.watch(dishAvailabilityProvider).valueOrNull ?? const {};
 
     return productsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -34,7 +39,10 @@ class WaiterMenuTab extends ConsumerWidget {
       data: (state) => RefreshIndicator(
         color: AppColors.onBrand,
         backgroundColor: AppColors.brandYellow,
-        onRefresh: () => ref.read(productsListProvider.notifier).refresh(),
+        onRefresh: () {
+          ref.invalidate(dishAvailabilityProvider);
+          return ref.read(productsListProvider.notifier).refresh();
+        },
         child: state.items.isEmpty
             ? DashEmptyState(icon: Icons.restaurant_menu_rounded, text: l10n.restMenuEmpty)
             : ListView.separated(
@@ -44,6 +52,7 @@ class WaiterMenuTab extends ConsumerWidget {
                 separatorBuilder: (_, _) => const SizedBox(height: 10),
                 itemBuilder: (context, index) {
                   final product = state.items[index];
+                  final dish = availability[product.id];
                   return DashListCard(
                     dimmed: !product.isActive,
                     leading: DashThumb(url: product.primaryImage?.url, icon: Icons.restaurant_menu_rounded, size: 52),
@@ -60,6 +69,10 @@ class WaiterMenuTab extends ConsumerWidget {
                         if (!product.isActive) ...[
                           const SizedBox(height: 4),
                           DashTag(label: l10n.commonInactive, color: Theme.of(context).colorScheme.error),
+                        ],
+                        if (dish != null && dish.status != DishStatus.noRecipe) ...[
+                          const SizedBox(height: 4),
+                          DishAvailabilityTag(status: dish.status, portions: dish.portions),
                         ],
                       ],
                     ),

@@ -93,6 +93,10 @@ abstract final class RouteNames {
   static const couriers = '/couriers';
   static const fleetMap = '/fleet-map';
 
+  // --- Restaurant warehouse + recipes (Optom_Savdo "Restaurant Warehouse & Recipes") ---
+  static const warehouse = '/warehouse';
+  static const recipes = '/recipes';
+
   // --- Phase 10: agents, the business owner's side ---
   static const leadAgents = '/lead-agents';
 

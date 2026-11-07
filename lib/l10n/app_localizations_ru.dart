@@ -4390,4 +4390,528 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get manualRevenueEmpty => 'Доходов, введённых вручную, нет';
+
+  @override
+  String get commonOptional => 'Необязательно';
+
+  @override
+  String get navWarehouse => 'Склад';
+
+  @override
+  String get navRecipes => 'Рецепты';
+
+  @override
+  String enumIngredientUnit(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'kilogram': 'Килограмм (кг)',
+      'gram': 'Грамм (г)',
+      'litr': 'Литр (л)',
+      'millilitr': 'Миллилитр (мл)',
+      'dona': 'Штука',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumIngredientUnitShort(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'kilogram': 'кг',
+      'gram': 'г',
+      'litr': 'л',
+      'millilitr': 'мл',
+      'dona': 'шт',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get whTitle => 'Склад';
+
+  @override
+  String get whRecipesTitle => 'Рецепты';
+
+  @override
+  String get whForbidden =>
+      'Склад и рецепты доступны только владельцу ресторана и администраторам';
+
+  @override
+  String get whSearchHint => 'Поиск продукта…';
+
+  @override
+  String get whSearchDishHint => 'Поиск блюда…';
+
+  @override
+  String get whAdd => 'Добавить продукт';
+
+  @override
+  String get whFilterLow => 'Заканчиваются';
+
+  @override
+  String get whFilterOut => 'Закончились';
+
+  @override
+  String get whFilterUnavailable => 'Нельзя приготовить';
+
+  @override
+  String get whFilterEnough => 'Достаточно';
+
+  @override
+  String get whFilterNoRecipe => 'Без рецепта';
+
+  @override
+  String get whStatTotal => 'Продукты';
+
+  @override
+  String get whStatLow => 'Заканчиваются';
+
+  @override
+  String get whStatOut => 'Закончились';
+
+  @override
+  String get whStatValue => 'Стоимость склада';
+
+  @override
+  String get whEmpty =>
+      'На складе пока нет продуктов. Добавьте помидоры, картофель, мясо и т.д.';
+
+  @override
+  String get whLevelOk => 'Достаточно';
+
+  @override
+  String get whLevelLow => 'Заканчивается';
+
+  @override
+  String get whLevelOut => 'Закончился';
+
+  @override
+  String whMinShort(String value) {
+    return 'Мин: $value';
+  }
+
+  @override
+  String whAvgPerUnit(String price, String unit) {
+    return '$price / $unit';
+  }
+
+  @override
+  String get whNewTitle => 'Новый продукт';
+
+  @override
+  String get whEditTitle => 'Изменить продукт';
+
+  @override
+  String get whName => 'Название';
+
+  @override
+  String get whNameHint => 'Например: Помидоры';
+
+  @override
+  String get whNameRequired => 'Введите название';
+
+  @override
+  String get whUnit => 'Единица измерения';
+
+  @override
+  String get whUnitHint =>
+      'Потом изменить нельзя — рецепты и история в этой единице.';
+
+  @override
+  String get whUnitLocked => 'Единицу измерения изменить нельзя.';
+
+  @override
+  String whMinStock(String unit) {
+    return 'Минимальный остаток ($unit)';
+  }
+
+  @override
+  String get whMinStockHint =>
+      'Когда остаток опустится до этого значения, продукт отметится как заканчивающийся.';
+
+  @override
+  String get whOpeningTitle => 'Текущий остаток';
+
+  @override
+  String get whOpeningHint =>
+      'Необязательно. Без цены себестоимость остатка будет неизвестна.';
+
+  @override
+  String whStockOnHand(String unit) {
+    return 'Текущий остаток ($unit)';
+  }
+
+  @override
+  String whPricePerUnit(String unit) {
+    return 'Цена за 1 $unit (сум)';
+  }
+
+  @override
+  String get whPriceNeedsStock =>
+      'Цена сохраняется только с остатком — сначала введите остаток';
+
+  @override
+  String get whActiveHint =>
+      'Неактивный продукт продолжает работать в рецептах.';
+
+  @override
+  String get whAmountInvalid => 'Введите корректное количество (до 4 знаков)';
+
+  @override
+  String get whAmountPositive => 'Количество должно быть больше 0';
+
+  @override
+  String get whPriceInvalid => 'Введите корректную цену';
+
+  @override
+  String get whInStock => 'Остаток';
+
+  @override
+  String get whNegativeHint =>
+      'Кухня израсходовала больше, чем записано — оформите приход или пересчёт';
+
+  @override
+  String get whNoCost => 'Цена неизвестна';
+
+  @override
+  String whValue(String value) {
+    return 'Стоимость: $value';
+  }
+
+  @override
+  String get whAvgCost => 'Средняя цена';
+
+  @override
+  String get whReceiveShort => 'Приход';
+
+  @override
+  String get whAdjustShort => 'Пересчёт / списание';
+
+  @override
+  String get whUsedIn => 'В рецептах';
+
+  @override
+  String whPerPortionValue(String value) {
+    return '$value / порция';
+  }
+
+  @override
+  String get whHistory => 'История движения';
+
+  @override
+  String get whHistoryEmpty => 'Движений пока нет';
+
+  @override
+  String get whShowMore => 'Показать ещё';
+
+  @override
+  String get whReversed => 'возвращено';
+
+  @override
+  String whBalance(String value) {
+    return 'Остаток: $value';
+  }
+
+  @override
+  String get whMoveReceipt => 'Приход';
+
+  @override
+  String get whMoveUsage => 'Ушло на блюдо';
+
+  @override
+  String get whMoveRestore => 'Возвращено (отмена)';
+
+  @override
+  String get whMoveAdjustment => 'Корректировка пересчёта';
+
+  @override
+  String get whMoveWaste => 'Списано';
+
+  @override
+  String get whDeleteTitle => 'Удалить продукт';
+
+  @override
+  String whDeleteConfirm(String name) {
+    return '«$name» будет удалён со склада. История сохранится.';
+  }
+
+  @override
+  String whDeleteInRecipes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Продукт используется в $count рецептах',
+      few: 'Продукт используется в $count рецептах',
+      one: 'Продукт используется в $count рецепте',
+    );
+    return '$_temp0. Сначала уберите его из рецептов.';
+  }
+
+  @override
+  String whDeleted(String name) {
+    return '«$name» удалён';
+  }
+
+  @override
+  String whReceiveTitle(String name) {
+    return 'Приход: $name';
+  }
+
+  @override
+  String whReceiveQty(String unit) {
+    return 'Количество ($unit)';
+  }
+
+  @override
+  String get whPriceTotal => 'Общая сумма';
+
+  @override
+  String get whPriceSom => 'Цена (сум)';
+
+  @override
+  String whAfterReceipt(String stock) {
+    return 'После прихода: $stock';
+  }
+
+  @override
+  String whPriceSummary(String unitPrice, String unit, String total) {
+    return '$unitPrice / $unit, итого $total';
+  }
+
+  @override
+  String get whReceiveNoteHint => 'Например: с рынка';
+
+  @override
+  String get whReceiveSubmit => 'Сохранить приход';
+
+  @override
+  String whReceiveDone(String name) {
+    return 'Приход «$name» сохранён';
+  }
+
+  @override
+  String whAdjustTitle(String name) {
+    return '$name: остаток';
+  }
+
+  @override
+  String get whCount => 'Пересчёт';
+
+  @override
+  String get whWaste => 'Списание';
+
+  @override
+  String get whCountHint =>
+      'Введите фактическое количество — остаток станет равен ему.';
+
+  @override
+  String get whWasteHint =>
+      'Введите испорченное количество — оно спишется с остатка.';
+
+  @override
+  String whCounted(String unit) {
+    return 'Фактическое количество ($unit)';
+  }
+
+  @override
+  String whWasted(String unit) {
+    return 'Списываемое количество ($unit)';
+  }
+
+  @override
+  String get whCountSame => 'Совпадает с остатком — изменений нет';
+
+  @override
+  String whChange(String value) {
+    return 'Изменение: $value';
+  }
+
+  @override
+  String get whWasteNoteHint => 'Например: испортилось';
+
+  @override
+  String get whCountDone => 'Остаток исправлен';
+
+  @override
+  String get whWasteDone => 'Списано';
+
+  @override
+  String whPortions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count порций',
+      few: '$count порции',
+      one: '$count порция',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get whDishOk => 'Можно приготовить';
+
+  @override
+  String get whDishUnavailable => 'Не хватает продуктов';
+
+  @override
+  String whDishLowPortions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Осталось $count порций',
+      few: 'Осталось $count порции',
+      one: 'Осталась $count порция',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String whUnavailableBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count блюд сейчас нельзя приготовить',
+      few: '$count блюда сейчас нельзя приготовить',
+      one: '$count блюдо сейчас нельзя приготовить',
+    );
+    return '$_temp0 — не хватает продуктов. Оформите приход или временно уберите из меню.';
+  }
+
+  @override
+  String get whDishesEmpty =>
+      'В меню нет блюд. Сначала добавьте блюдо в разделе «Товары».';
+
+  @override
+  String get whNoRecipe => 'Нет рецепта';
+
+  @override
+  String whIngredientCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count продуктов',
+      few: '$count продукта',
+      one: '$count продукт',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String whShortLine(String name, String short) {
+    return '$name: не хватает $short';
+  }
+
+  @override
+  String get whCostUnknown => 'Есть продукт без цены';
+
+  @override
+  String whPortionCostValue(String value) {
+    return 'Себестоимость $value';
+  }
+
+  @override
+  String whPriceValue(String value) {
+    return 'цена $value';
+  }
+
+  @override
+  String whMarginValue(int percent) {
+    return 'прибыль $percent%';
+  }
+
+  @override
+  String whRecipeTitle(String name) {
+    return 'Рецепт: $name';
+  }
+
+  @override
+  String get whRecipeHint =>
+      'Продукты на одну порцию. Списываются со склада, когда блюдо уходит на кухню или продаётся на кассе.';
+
+  @override
+  String get whRecipeNoIngredients =>
+      'На складе нет продуктов. Сначала добавьте их в разделе «Склад».';
+
+  @override
+  String whLineN(int n) {
+    return 'Продукт $n';
+  }
+
+  @override
+  String get whRemoveLine => 'Удалить строку';
+
+  @override
+  String get whIngredient => 'Продукт';
+
+  @override
+  String get whPickIngredient => 'Выберите продукт';
+
+  @override
+  String get whAlreadyInRecipe => 'Уже в рецепте';
+
+  @override
+  String get whPerPortionAmount => 'На 1 порцию';
+
+  @override
+  String whLineStock(String stock, String need) {
+    return 'На складе $stock, на порцию $need';
+  }
+
+  @override
+  String whLinePortions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'хватит на $count порций',
+      few: 'хватит на $count порции',
+      one: 'хватит на $count порцию',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get whLimiting => 'закончится первым';
+
+  @override
+  String get whAddLine => 'Добавить продукт';
+
+  @override
+  String get whRecipeNotes => 'Примечание к приготовлению';
+
+  @override
+  String get whCanMakeNow => 'Можно приготовить сейчас';
+
+  @override
+  String get whPortionCost => 'Себестоимость порции';
+
+  @override
+  String get whMenuPrice => 'Цена в меню';
+
+  @override
+  String get whMargin => 'Прибыль';
+
+  @override
+  String get whRecipeNeedOne => 'Добавьте хотя бы один продукт';
+
+  @override
+  String whRecipeBadQty(String name) {
+    return 'Введите корректное количество для «$name»';
+  }
+
+  @override
+  String get whRecipeSaved => 'Рецепт сохранён';
+
+  @override
+  String get whRecipeDelete => 'Удалить рецепт';
+
+  @override
+  String get whRecipeDeleteTitle => 'Удалить рецепт';
+
+  @override
+  String whRecipeDeleteConfirm(String name) {
+    return 'Рецепт «$name» будет удалён. Блюдо больше не будет списывать продукты.';
+  }
+
+  @override
+  String get whRecipeDeleted => 'Рецепт удалён';
 }

@@ -289,6 +289,23 @@ import 'package:bsmart/features/crm/domain/usecases/update_crm_driver_usecase.da
 import 'package:bsmart/features/crm/domain/usecases/update_crm_reminder_usecase.dart';
 import 'package:bsmart/features/crm/domain/usecases/update_crm_vehicle_usecase.dart';
 import 'package:bsmart/features/crm/domain/usecases/upload_crm_driver_photo_usecase.dart';
+import 'package:bsmart/features/warehouse/data/datasources/warehouse_remote_data_source.dart';
+import 'package:bsmart/features/warehouse/data/repositories/warehouse_repository_impl.dart';
+import 'package:bsmart/features/warehouse/domain/repositories/warehouse_repository.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/adjust_ingredient_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/create_ingredient_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/delete_ingredient_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/delete_recipe_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/get_dish_availability_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/get_ingredient_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/get_recipe_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/get_warehouse_summary_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/list_ingredient_movements_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/list_ingredients_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/list_menu_dishes_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/receive_ingredient_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/save_recipe_usecase.dart';
+import 'package:bsmart/features/warehouse/domain/usecases/update_ingredient_usecase.dart';
 import 'package:bsmart/features/notifications/data/datasources/notifications_remote_data_source.dart';
 import 'package:bsmart/features/notifications/data/repositories/notifications_repository_impl.dart';
 import 'package:bsmart/features/notifications/domain/repositories/notifications_repository.dart';
@@ -522,6 +539,24 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => UpdateCrmReminderUseCase(getIt()));
   getIt.registerFactory(() => UpdateCrmVehicleUseCase(getIt()));
   getIt.registerFactory(() => UploadCrmDriverPhotoUseCase(getIt()));
+
+  // --- features/warehouse (restaurant ingredients + recipes — Optom_Savdo "Restaurant Warehouse & Recipes") ---
+  getIt.registerLazySingleton(() => WarehouseRemoteDataSource(mainDio));
+  getIt.registerLazySingleton<WarehouseRepository>(() => WarehouseRepositoryImpl(getIt()));
+  getIt.registerFactory(() => AdjustIngredientUseCase(getIt()));
+  getIt.registerFactory(() => CreateIngredientUseCase(getIt()));
+  getIt.registerFactory(() => DeleteIngredientUseCase(getIt()));
+  getIt.registerFactory(() => DeleteRecipeUseCase(getIt()));
+  getIt.registerFactory(() => GetDishAvailabilityUseCase(getIt()));
+  getIt.registerFactory(() => GetIngredientUseCase(getIt()));
+  getIt.registerFactory(() => GetRecipeUseCase(getIt()));
+  getIt.registerFactory(() => GetWarehouseSummaryUseCase(getIt()));
+  getIt.registerFactory(() => ListIngredientMovementsUseCase(getIt()));
+  getIt.registerFactory(() => ListIngredientsUseCase(getIt()));
+  getIt.registerFactory(() => ListMenuDishesUseCase(getIt()));
+  getIt.registerFactory(() => ReceiveIngredientUseCase(getIt()));
+  getIt.registerFactory(() => SaveRecipeUseCase(getIt()));
+  getIt.registerFactory(() => UpdateIngredientUseCase(getIt()));
 
   // --- features/notifications (in-app inbox, every role) ---
   getIt.registerLazySingleton(() => NotificationsRemoteDataSource(mainDio));

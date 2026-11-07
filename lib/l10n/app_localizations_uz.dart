@@ -4221,4 +4221,487 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get manualRevenueEmpty => 'Qo\'lda kiritilgan daromadlar yo\'q';
+
+  @override
+  String get commonOptional => 'Ixtiyoriy';
+
+  @override
+  String get navWarehouse => 'Ombor';
+
+  @override
+  String get navRecipes => 'Retseptlar';
+
+  @override
+  String enumIngredientUnit(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'kilogram': 'Kilogramm (kg)',
+      'gram': 'Gramm (g)',
+      'litr': 'Litr (l)',
+      'millilitr': 'Millilitr (ml)',
+      'dona': 'Dona',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumIngredientUnitShort(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'kilogram': 'kg',
+      'gram': 'g',
+      'litr': 'l',
+      'millilitr': 'ml',
+      'dona': 'dona',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get whTitle => 'Ombor';
+
+  @override
+  String get whRecipesTitle => 'Retseptlar';
+
+  @override
+  String get whForbidden =>
+      'Ombor va retseptlar faqat restoran egasi va adminlari uchun';
+
+  @override
+  String get whSearchHint => 'Masalliq qidirish…';
+
+  @override
+  String get whSearchDishHint => 'Taom qidirish…';
+
+  @override
+  String get whAdd => 'Masalliq qo\'shish';
+
+  @override
+  String get whFilterLow => 'Kam qolgan';
+
+  @override
+  String get whFilterOut => 'Tugagan';
+
+  @override
+  String get whFilterUnavailable => 'Tayyorlab bo\'lmaydi';
+
+  @override
+  String get whFilterEnough => 'Yetarli';
+
+  @override
+  String get whFilterNoRecipe => 'Retseptsiz';
+
+  @override
+  String get whStatTotal => 'Masalliqlar';
+
+  @override
+  String get whStatLow => 'Kam qolgan';
+
+  @override
+  String get whStatOut => 'Tugagan';
+
+  @override
+  String get whStatValue => 'Ombor qiymati';
+
+  @override
+  String get whEmpty =>
+      'Omborda hali masalliq yo\'q. Pomidor, kartoshka, go\'sht kabi masalliqlarni qo\'shing.';
+
+  @override
+  String get whLevelOk => 'Yetarli';
+
+  @override
+  String get whLevelLow => 'Kam qoldi';
+
+  @override
+  String get whLevelOut => 'Tugagan';
+
+  @override
+  String whMinShort(String value) {
+    return 'Min: $value';
+  }
+
+  @override
+  String whAvgPerUnit(String price, String unit) {
+    return '$price / $unit';
+  }
+
+  @override
+  String get whNewTitle => 'Yangi masalliq';
+
+  @override
+  String get whEditTitle => 'Masalliqni tahrirlash';
+
+  @override
+  String get whName => 'Nomi';
+
+  @override
+  String get whNameHint => 'Masalan: Pomidor';
+
+  @override
+  String get whNameRequired => 'Nomini kiriting';
+
+  @override
+  String get whUnit => 'O\'lchov birligi';
+
+  @override
+  String get whUnitHint =>
+      'Keyin o\'zgartirib bo\'lmaydi — retseptlar va tarix shu birlikda.';
+
+  @override
+  String get whUnitLocked => 'O\'lchov birligini o\'zgartirib bo\'lmaydi.';
+
+  @override
+  String whMinStock(String unit) {
+    return 'Minimal qoldiq ($unit)';
+  }
+
+  @override
+  String get whMinStockHint =>
+      'Qoldiq shu miqdorga tushsa, \"kam qoldi\" deb ko\'rsatiladi.';
+
+  @override
+  String get whOpeningTitle => 'Hozir bor qoldiq';
+
+  @override
+  String get whOpeningHint =>
+      'Ixtiyoriy. Narxsiz qoldiq tannarxi noma\'lum bo\'lib qoladi.';
+
+  @override
+  String whStockOnHand(String unit) {
+    return 'Hozirgi qoldiq ($unit)';
+  }
+
+  @override
+  String whPricePerUnit(String unit) {
+    return '1 $unit narxi (so\'m)';
+  }
+
+  @override
+  String get whPriceNeedsStock =>
+      'Narx faqat qoldiq bilan saqlanadi — avval qoldiqni kiriting';
+
+  @override
+  String get whActiveHint =>
+      'Nofaol masalliq mavjud retseptlarda ishlayveradi.';
+
+  @override
+  String get whAmountInvalid =>
+      'Miqdorni to\'g\'ri kiriting (4 xonagacha kasr)';
+
+  @override
+  String get whAmountPositive => 'Miqdor 0 dan katta bo\'lishi kerak';
+
+  @override
+  String get whPriceInvalid => 'Narxni to\'g\'ri kiriting';
+
+  @override
+  String get whInStock => 'Hozirgi qoldiq';
+
+  @override
+  String get whNegativeHint =>
+      'Oshxona qayd etilganidan ko\'proq ishlatgan — kirim yoki sanoq qiling';
+
+  @override
+  String get whNoCost => 'Narxi noma\'lum';
+
+  @override
+  String whValue(String value) {
+    return 'Qiymati: $value';
+  }
+
+  @override
+  String get whAvgCost => 'O\'rtacha narx';
+
+  @override
+  String get whReceiveShort => 'Kirim';
+
+  @override
+  String get whAdjustShort => 'Sanoq / chiqarish';
+
+  @override
+  String get whUsedIn => 'Retseptlarda';
+
+  @override
+  String whPerPortionValue(String value) {
+    return '$value / porsiya';
+  }
+
+  @override
+  String get whHistory => 'Harakatlar tarixi';
+
+  @override
+  String get whHistoryEmpty => 'Hali harakat yo\'q';
+
+  @override
+  String get whShowMore => 'Yana ko\'rsatish';
+
+  @override
+  String get whReversed => 'qaytarilgan';
+
+  @override
+  String whBalance(String value) {
+    return 'Qoldiq: $value';
+  }
+
+  @override
+  String get whMoveReceipt => 'Kirim';
+
+  @override
+  String get whMoveUsage => 'Taomga ketdi';
+
+  @override
+  String get whMoveRestore => 'Qaytarildi (bekor qilingan)';
+
+  @override
+  String get whMoveAdjustment => 'Sanoq tuzatishi';
+
+  @override
+  String get whMoveWaste => 'Hisobdan chiqarildi';
+
+  @override
+  String get whDeleteTitle => 'Masalliqni o\'chirish';
+
+  @override
+  String whDeleteConfirm(String name) {
+    return '\"$name\" ombordan o\'chiriladi. Tarixi saqlanib qoladi.';
+  }
+
+  @override
+  String whDeleteInRecipes(int count) {
+    return 'Bu masalliq $count ta retseptda ishlatilgan. Avval retseptlardan olib tashlang.';
+  }
+
+  @override
+  String whDeleted(String name) {
+    return '$name o\'chirildi';
+  }
+
+  @override
+  String whReceiveTitle(String name) {
+    return 'Kirim: $name';
+  }
+
+  @override
+  String whReceiveQty(String unit) {
+    return 'Kelgan miqdor ($unit)';
+  }
+
+  @override
+  String get whPriceTotal => 'Umumiy summa';
+
+  @override
+  String get whPriceSom => 'Narx (so\'m)';
+
+  @override
+  String whAfterReceipt(String stock) {
+    return 'Kirimdan keyin: $stock';
+  }
+
+  @override
+  String whPriceSummary(String unitPrice, String unit, String total) {
+    return '$unitPrice / $unit, jami $total';
+  }
+
+  @override
+  String get whReceiveNoteHint => 'Masalan: bozordan';
+
+  @override
+  String get whReceiveSubmit => 'Kirimni saqlash';
+
+  @override
+  String whReceiveDone(String name) {
+    return '$name kirimi saqlandi';
+  }
+
+  @override
+  String whAdjustTitle(String name) {
+    return '$name: qoldiq';
+  }
+
+  @override
+  String get whCount => 'Sanoq';
+
+  @override
+  String get whWaste => 'Hisobdan chiqarish';
+
+  @override
+  String get whCountHint =>
+      'Sanab chiqqan miqdoringizni kiriting — qoldiq shunga tenglanadi.';
+
+  @override
+  String get whWasteHint =>
+      'Buzilgan yoki tashlangan miqdorni kiriting — qoldiqdan ayriladi.';
+
+  @override
+  String whCounted(String unit) {
+    return 'Sanalgan miqdor ($unit)';
+  }
+
+  @override
+  String whWasted(String unit) {
+    return 'Chiqariladigan miqdor ($unit)';
+  }
+
+  @override
+  String get whCountSame => 'Qoldiq bilan bir xil — o\'zgarish yo\'q';
+
+  @override
+  String whChange(String value) {
+    return 'O\'zgarish: $value';
+  }
+
+  @override
+  String get whWasteNoteHint => 'Masalan: chirib qolgan';
+
+  @override
+  String get whCountDone => 'Qoldiq tuzatildi';
+
+  @override
+  String get whWasteDone => 'Hisobdan chiqarildi';
+
+  @override
+  String whPortions(int count) {
+    return '$count porsiya';
+  }
+
+  @override
+  String get whDishOk => 'Tayyorlash mumkin';
+
+  @override
+  String get whDishUnavailable => 'Masalliq yetmaydi';
+
+  @override
+  String whDishLowPortions(int count) {
+    return '$count porsiya qoldi';
+  }
+
+  @override
+  String whUnavailableBanner(int count) {
+    return '$count ta taomni hozir tayyorlab bo\'lmaydi — masalliq yetmaydi. Omborga kirim qiling yoki menyudan vaqtincha olib qo\'ying.';
+  }
+
+  @override
+  String get whDishesEmpty =>
+      'Menyuda taom yo\'q. Avval Mahsulotlar bo\'limida taom qo\'shing.';
+
+  @override
+  String get whNoRecipe => 'Retsept yo\'q';
+
+  @override
+  String whIngredientCount(int count) {
+    return '$count ta masalliq';
+  }
+
+  @override
+  String whShortLine(String name, String short) {
+    return '$name: $short yetmaydi';
+  }
+
+  @override
+  String get whCostUnknown => 'Narxi noma\'lum masalliq bor';
+
+  @override
+  String whPortionCostValue(String value) {
+    return 'Tannarx $value';
+  }
+
+  @override
+  String whPriceValue(String value) {
+    return 'narx $value';
+  }
+
+  @override
+  String whMarginValue(int percent) {
+    return 'foyda $percent%';
+  }
+
+  @override
+  String whRecipeTitle(String name) {
+    return 'Retsept: $name';
+  }
+
+  @override
+  String get whRecipeHint =>
+      'Bir porsiya uchun masalliqlar. Taom oshxonaga yuborilganda yoki kassada sotilganda shular ombordan ayriladi.';
+
+  @override
+  String get whRecipeNoIngredients =>
+      'Omborda masalliq yo\'q. Avval Ombor bo\'limida masalliqlarni qo\'shing.';
+
+  @override
+  String whLineN(int n) {
+    return '$n-masalliq';
+  }
+
+  @override
+  String get whRemoveLine => 'Qatorni o\'chirish';
+
+  @override
+  String get whIngredient => 'Masalliq';
+
+  @override
+  String get whPickIngredient => 'Masalliqni tanlang';
+
+  @override
+  String get whAlreadyInRecipe => 'Retseptda bor';
+
+  @override
+  String get whPerPortionAmount => '1 porsiyaga';
+
+  @override
+  String whLineStock(String stock, String need) {
+    return 'Omborda $stock, porsiyaga $need';
+  }
+
+  @override
+  String whLinePortions(int count) {
+    return '$count porsiyaga yetadi';
+  }
+
+  @override
+  String get whLimiting => 'birinchi tugaydi';
+
+  @override
+  String get whAddLine => 'Masalliq qo\'shish';
+
+  @override
+  String get whRecipeNotes => 'Tayyorlash izohi';
+
+  @override
+  String get whCanMakeNow => 'Hozir tayyorlash mumkin';
+
+  @override
+  String get whPortionCost => '1 porsiya tannarxi';
+
+  @override
+  String get whMenuPrice => 'Menyudagi narx';
+
+  @override
+  String get whMargin => 'Foyda';
+
+  @override
+  String get whRecipeNeedOne => 'Kamida bitta masalliq qo\'shing';
+
+  @override
+  String whRecipeBadQty(String name) {
+    return '\"$name\" miqdorini to\'g\'ri kiriting';
+  }
+
+  @override
+  String get whRecipeSaved => 'Retsept saqlandi';
+
+  @override
+  String get whRecipeDelete => 'Retseptni o\'chirish';
+
+  @override
+  String get whRecipeDeleteTitle => 'Retseptni o\'chirish';
+
+  @override
+  String whRecipeDeleteConfirm(String name) {
+    return '\"$name\" retsepti o\'chiriladi. Taom endi ombordan masalliq olmaydi.';
+  }
+
+  @override
+  String get whRecipeDeleted => 'Retsept o\'chirildi';
 }

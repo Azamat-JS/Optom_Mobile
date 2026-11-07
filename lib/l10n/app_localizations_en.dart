@@ -4382,4 +4382,521 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get manualRevenueEmpty => 'No manually recorded revenue';
+
+  @override
+  String get commonOptional => 'Optional';
+
+  @override
+  String get navWarehouse => 'Warehouse';
+
+  @override
+  String get navRecipes => 'Recipes';
+
+  @override
+  String enumIngredientUnit(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'kilogram': 'Kilogram (kg)',
+      'gram': 'Gram (g)',
+      'litr': 'Litre (l)',
+      'millilitr': 'Millilitre (ml)',
+      'dona': 'Piece',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumIngredientUnitShort(String unit) {
+    String _temp0 = intl.Intl.selectLogic(unit, {
+      'kilogram': 'kg',
+      'gram': 'g',
+      'litr': 'l',
+      'millilitr': 'ml',
+      'dona': 'pcs',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get whTitle => 'Warehouse';
+
+  @override
+  String get whRecipesTitle => 'Recipes';
+
+  @override
+  String get whForbidden =>
+      'The warehouse and recipes are for a restaurant\'s owner and admins only';
+
+  @override
+  String get whSearchHint => 'Search ingredients…';
+
+  @override
+  String get whSearchDishHint => 'Search dishes…';
+
+  @override
+  String get whAdd => 'Add ingredient';
+
+  @override
+  String get whFilterLow => 'Running low';
+
+  @override
+  String get whFilterOut => 'Out';
+
+  @override
+  String get whFilterUnavailable => 'Can\'t be made';
+
+  @override
+  String get whFilterEnough => 'Enough';
+
+  @override
+  String get whFilterNoRecipe => 'No recipe';
+
+  @override
+  String get whStatTotal => 'Ingredients';
+
+  @override
+  String get whStatLow => 'Running low';
+
+  @override
+  String get whStatOut => 'Out of stock';
+
+  @override
+  String get whStatValue => 'Stock value';
+
+  @override
+  String get whEmpty =>
+      'No ingredients yet. Add tomatoes, potatoes, meat and so on.';
+
+  @override
+  String get whLevelOk => 'In stock';
+
+  @override
+  String get whLevelLow => 'Running low';
+
+  @override
+  String get whLevelOut => 'Out';
+
+  @override
+  String whMinShort(String value) {
+    return 'Min: $value';
+  }
+
+  @override
+  String whAvgPerUnit(String price, String unit) {
+    return '$price / $unit';
+  }
+
+  @override
+  String get whNewTitle => 'New ingredient';
+
+  @override
+  String get whEditTitle => 'Edit ingredient';
+
+  @override
+  String get whName => 'Name';
+
+  @override
+  String get whNameHint => 'e.g. Tomatoes';
+
+  @override
+  String get whNameRequired => 'Enter a name';
+
+  @override
+  String get whUnit => 'Unit';
+
+  @override
+  String get whUnitHint =>
+      'Can\'t be changed later — recipes and history use this unit.';
+
+  @override
+  String get whUnitLocked => 'The unit can\'t be changed.';
+
+  @override
+  String whMinStock(String unit) {
+    return 'Minimum stock ($unit)';
+  }
+
+  @override
+  String get whMinStockHint =>
+      'At or below this the ingredient shows as running low.';
+
+  @override
+  String get whOpeningTitle => 'Stock on hand now';
+
+  @override
+  String get whOpeningHint =>
+      'Optional. Without a price its cost stays unknown.';
+
+  @override
+  String whStockOnHand(String unit) {
+    return 'Stock on hand ($unit)';
+  }
+
+  @override
+  String whPricePerUnit(String unit) {
+    return 'Price per $unit (so\'m)';
+  }
+
+  @override
+  String get whPriceNeedsStock =>
+      'A price is only saved with stock — enter the stock first';
+
+  @override
+  String get whActiveHint =>
+      'An inactive ingredient keeps working in existing recipes.';
+
+  @override
+  String get whAmountInvalid => 'Enter a valid amount (up to 4 decimals)';
+
+  @override
+  String get whAmountPositive => 'The amount must be above 0';
+
+  @override
+  String get whPriceInvalid => 'Enter a valid price';
+
+  @override
+  String get whInStock => 'In stock';
+
+  @override
+  String get whNegativeHint =>
+      'The kitchen used more than recorded — receive stock or do a count';
+
+  @override
+  String get whNoCost => 'No price yet';
+
+  @override
+  String whValue(String value) {
+    return 'Worth $value';
+  }
+
+  @override
+  String get whAvgCost => 'Average cost';
+
+  @override
+  String get whReceiveShort => 'Receive';
+
+  @override
+  String get whAdjustShort => 'Count / write off';
+
+  @override
+  String get whUsedIn => 'Used in recipes';
+
+  @override
+  String whPerPortionValue(String value) {
+    return '$value / portion';
+  }
+
+  @override
+  String get whHistory => 'Stock history';
+
+  @override
+  String get whHistoryEmpty => 'No movements yet';
+
+  @override
+  String get whShowMore => 'Show more';
+
+  @override
+  String get whReversed => 'returned';
+
+  @override
+  String whBalance(String value) {
+    return 'Balance: $value';
+  }
+
+  @override
+  String get whMoveReceipt => 'Received';
+
+  @override
+  String get whMoveUsage => 'Used in a dish';
+
+  @override
+  String get whMoveRestore => 'Returned (cancelled)';
+
+  @override
+  String get whMoveAdjustment => 'Count correction';
+
+  @override
+  String get whMoveWaste => 'Written off';
+
+  @override
+  String get whDeleteTitle => 'Delete ingredient';
+
+  @override
+  String whDeleteConfirm(String name) {
+    return '\"$name\" will be removed from the warehouse. Its history is kept.';
+  }
+
+  @override
+  String whDeleteInRecipes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Used in $count recipes',
+      one: 'Used in $count recipe',
+    );
+    return '$_temp0. Remove it from them first.';
+  }
+
+  @override
+  String whDeleted(String name) {
+    return '$name deleted';
+  }
+
+  @override
+  String whReceiveTitle(String name) {
+    return 'Receive: $name';
+  }
+
+  @override
+  String whReceiveQty(String unit) {
+    return 'Quantity received ($unit)';
+  }
+
+  @override
+  String get whPriceTotal => 'Total paid';
+
+  @override
+  String get whPriceSom => 'Price (so\'m)';
+
+  @override
+  String whAfterReceipt(String stock) {
+    return 'After this: $stock';
+  }
+
+  @override
+  String whPriceSummary(String unitPrice, String unit, String total) {
+    return '$unitPrice / $unit, total $total';
+  }
+
+  @override
+  String get whReceiveNoteHint => 'e.g. from the market';
+
+  @override
+  String get whReceiveSubmit => 'Save receipt';
+
+  @override
+  String whReceiveDone(String name) {
+    return '$name received';
+  }
+
+  @override
+  String whAdjustTitle(String name) {
+    return '$name: stock';
+  }
+
+  @override
+  String get whCount => 'Count';
+
+  @override
+  String get whWaste => 'Write off';
+
+  @override
+  String get whCountHint => 'Enter what you counted — the stock is set to it.';
+
+  @override
+  String get whWasteHint =>
+      'Enter the spoiled amount — it\'s taken off the stock.';
+
+  @override
+  String whCounted(String unit) {
+    return 'Counted amount ($unit)';
+  }
+
+  @override
+  String whWasted(String unit) {
+    return 'Amount to write off ($unit)';
+  }
+
+  @override
+  String get whCountSame => 'Same as the stock — nothing changes';
+
+  @override
+  String whChange(String value) {
+    return 'Change: $value';
+  }
+
+  @override
+  String get whWasteNoteHint => 'e.g. spoiled';
+
+  @override
+  String get whCountDone => 'Stock corrected';
+
+  @override
+  String get whWasteDone => 'Written off';
+
+  @override
+  String whPortions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count portions',
+      one: '$count portion',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get whDishOk => 'Can be made';
+
+  @override
+  String get whDishUnavailable => 'Not enough ingredients';
+
+  @override
+  String whDishLowPortions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count portions left',
+      one: '$count portion left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String whUnavailableBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dishes can\'t',
+      one: '$count dish can\'t',
+    );
+    return '$_temp0 be made right now — ingredients are short. Receive stock or take them off the menu for now.';
+  }
+
+  @override
+  String get whDishesEmpty =>
+      'No dishes on the menu. Add one under Products first.';
+
+  @override
+  String get whNoRecipe => 'No recipe';
+
+  @override
+  String whIngredientCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ingredients',
+      one: '$count ingredient',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String whShortLine(String name, String short) {
+    return '$name: $short short';
+  }
+
+  @override
+  String get whCostUnknown => 'An ingredient has no price';
+
+  @override
+  String whPortionCostValue(String value) {
+    return 'Cost $value';
+  }
+
+  @override
+  String whPriceValue(String value) {
+    return 'price $value';
+  }
+
+  @override
+  String whMarginValue(int percent) {
+    return 'margin $percent%';
+  }
+
+  @override
+  String whRecipeTitle(String name) {
+    return 'Recipe: $name';
+  }
+
+  @override
+  String get whRecipeHint =>
+      'Ingredients for one portion. They\'re taken from the warehouse when the dish goes to the kitchen or is sold at the till.';
+
+  @override
+  String get whRecipeNoIngredients =>
+      'The warehouse has no ingredients. Add them under Warehouse first.';
+
+  @override
+  String whLineN(int n) {
+    return 'Ingredient $n';
+  }
+
+  @override
+  String get whRemoveLine => 'Remove line';
+
+  @override
+  String get whIngredient => 'Ingredient';
+
+  @override
+  String get whPickIngredient => 'Pick an ingredient';
+
+  @override
+  String get whAlreadyInRecipe => 'Already in the recipe';
+
+  @override
+  String get whPerPortionAmount => 'Per portion';
+
+  @override
+  String whLineStock(String stock, String need) {
+    return '$stock in stock, $need per portion';
+  }
+
+  @override
+  String whLinePortions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'enough for $count portions',
+      one: 'enough for $count portion',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get whLimiting => 'runs out first';
+
+  @override
+  String get whAddLine => 'Add ingredient';
+
+  @override
+  String get whRecipeNotes => 'Preparation notes';
+
+  @override
+  String get whCanMakeNow => 'Can be made now';
+
+  @override
+  String get whPortionCost => 'Cost per portion';
+
+  @override
+  String get whMenuPrice => 'Menu price';
+
+  @override
+  String get whMargin => 'Margin';
+
+  @override
+  String get whRecipeNeedOne => 'Add at least one ingredient';
+
+  @override
+  String whRecipeBadQty(String name) {
+    return 'Enter a valid amount for \"$name\"';
+  }
+
+  @override
+  String get whRecipeSaved => 'Recipe saved';
+
+  @override
+  String get whRecipeDelete => 'Delete recipe';
+
+  @override
+  String get whRecipeDeleteTitle => 'Delete recipe';
+
+  @override
+  String whRecipeDeleteConfirm(String name) {
+    return 'The recipe of \"$name\" will be deleted. The dish will no longer take ingredients.';
+  }
+
+  @override
+  String get whRecipeDeleted => 'Recipe deleted';
 }

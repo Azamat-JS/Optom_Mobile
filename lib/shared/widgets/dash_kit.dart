@@ -255,7 +255,14 @@ class StatTile extends StatelessWidget {
 
 /// Icon-on-tile shortcut ("Mahsulotlar", "Mijozlar" …) for the home grid.
 class ShortcutTile extends StatelessWidget {
-  const ShortcutTile({required this.icon, required this.label, required this.onTap, this.highlight = false, super.key});
+  const ShortcutTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.highlight = false,
+    this.badge = 0,
+    super.key,
+  });
 
   final IconData icon;
   final String label;
@@ -264,13 +271,16 @@ class ShortcutTile extends StatelessWidget {
   /// Yellow tile for the primary action (Kassa).
   final bool highlight;
 
+  /// A red count on the tile's corner (e.g. ingredients running out); hidden at 0.
+  final int badge;
+
   @override
   Widget build(BuildContext context) {
     final colors = BrandColors.of(context);
     final labelStyle = TextStyle(color: colors.textPrimary, fontSize: 12.5, fontWeight: FontWeight.w700, height: 1.2);
     return Semantics(
       button: true,
-      label: label,
+      label: badge > 0 ? '$label, $badge' : label,
       excludeSemantics: true,
       child: InkWell(
         onTap: onTap,
@@ -295,7 +305,31 @@ class ShortcutTile extends StatelessWidget {
                           ),
                         ],
                 ),
-                child: Icon(icon, color: highlight ? AppColors.onBrand : colors.textPrimary, size: 26),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(icon, color: highlight ? AppColors.onBrand : colors.textPrimary, size: 26),
+                    if (badge > 0)
+                      Positioned(
+                        top: -10,
+                        right: -12,
+                        child: Container(
+                          constraints: const BoxConstraints(minWidth: 20),
+                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.error,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            badge > 99 ? '99+' : '$badge',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
               const SizedBox(height: 7),
               // A single long word ("Напоминания") would otherwise break mid-word; shrink it instead.

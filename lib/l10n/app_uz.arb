@@ -2663,5 +2663,399 @@
     }
   },
   "manualRevenueViewAll": "Barchasi",
-  "manualRevenueEmpty": "Qo'lda kiritilgan daromadlar yo'q"
+  "manualRevenueEmpty": "Qo'lda kiritilgan daromadlar yo'q",
+  "commonOptional": "Ixtiyoriy",
+  "navWarehouse": "Ombor",
+  "navRecipes": "Retseptlar",
+  "enumIngredientUnit": "{unit, select, kilogram{Kilogramm (kg)} gram{Gramm (g)} litr{Litr (l)} millilitr{Millilitr (ml)} dona{Dona} other{}}",
+  "@enumIngredientUnit": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "enumIngredientUnitShort": "{unit, select, kilogram{kg} gram{g} litr{l} millilitr{ml} dona{dona} other{}}",
+  "@enumIngredientUnitShort": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "whTitle": "Ombor",
+  "whRecipesTitle": "Retseptlar",
+  "whForbidden": "Ombor va retseptlar faqat restoran egasi va adminlari uchun",
+  "whSearchHint": "Masalliq qidirish…",
+  "whSearchDishHint": "Taom qidirish…",
+  "whAdd": "Masalliq qo'shish",
+  "whFilterLow": "Kam qolgan",
+  "whFilterOut": "Tugagan",
+  "whFilterUnavailable": "Tayyorlab bo'lmaydi",
+  "whFilterEnough": "Yetarli",
+  "whFilterNoRecipe": "Retseptsiz",
+  "whStatTotal": "Masalliqlar",
+  "whStatLow": "Kam qolgan",
+  "whStatOut": "Tugagan",
+  "whStatValue": "Ombor qiymati",
+  "whEmpty": "Omborda hali masalliq yo'q. Pomidor, kartoshka, go'sht kabi masalliqlarni qo'shing.",
+  "whLevelOk": "Yetarli",
+  "whLevelLow": "Kam qoldi",
+  "whLevelOut": "Tugagan",
+  "whMinShort": "Min: {value}",
+  "@whMinShort": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "whAvgPerUnit": "{price} / {unit}",
+  "@whAvgPerUnit": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "whNewTitle": "Yangi masalliq",
+  "whEditTitle": "Masalliqni tahrirlash",
+  "whName": "Nomi",
+  "whNameHint": "Masalan: Pomidor",
+  "whNameRequired": "Nomini kiriting",
+  "whUnit": "O'lchov birligi",
+  "whUnitHint": "Keyin o'zgartirib bo'lmaydi — retseptlar va tarix shu birlikda.",
+  "whUnitLocked": "O'lchov birligini o'zgartirib bo'lmaydi.",
+  "whMinStock": "Minimal qoldiq ({unit})",
+  "@whMinStock": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "whMinStockHint": "Qoldiq shu miqdorga tushsa, \"kam qoldi\" deb ko'rsatiladi.",
+  "whOpeningTitle": "Hozir bor qoldiq",
+  "whOpeningHint": "Ixtiyoriy. Narxsiz qoldiq tannarxi noma'lum bo'lib qoladi.",
+  "whStockOnHand": "Hozirgi qoldiq ({unit})",
+  "@whStockOnHand": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "whPricePerUnit": "1 {unit} narxi (so'm)",
+  "@whPricePerUnit": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "whPriceNeedsStock": "Narx faqat qoldiq bilan saqlanadi — avval qoldiqni kiriting",
+  "whActiveHint": "Nofaol masalliq mavjud retseptlarda ishlayveradi.",
+  "whAmountInvalid": "Miqdorni to'g'ri kiriting (4 xonagacha kasr)",
+  "whAmountPositive": "Miqdor 0 dan katta bo'lishi kerak",
+  "whPriceInvalid": "Narxni to'g'ri kiriting",
+  "whInStock": "Hozirgi qoldiq",
+  "whNegativeHint": "Oshxona qayd etilganidan ko'proq ishlatgan — kirim yoki sanoq qiling",
+  "whNoCost": "Narxi noma'lum",
+  "whValue": "Qiymati: {value}",
+  "@whValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "whAvgCost": "O'rtacha narx",
+  "whReceiveShort": "Kirim",
+  "whAdjustShort": "Sanoq / chiqarish",
+  "whUsedIn": "Retseptlarda",
+  "whPerPortionValue": "{value} / porsiya",
+  "@whPerPortionValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "whHistory": "Harakatlar tarixi",
+  "whHistoryEmpty": "Hali harakat yo'q",
+  "whShowMore": "Yana ko'rsatish",
+  "whReversed": "qaytarilgan",
+  "whBalance": "Qoldiq: {value}",
+  "@whBalance": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "whMoveReceipt": "Kirim",
+  "whMoveUsage": "Taomga ketdi",
+  "whMoveRestore": "Qaytarildi (bekor qilingan)",
+  "whMoveAdjustment": "Sanoq tuzatishi",
+  "whMoveWaste": "Hisobdan chiqarildi",
+  "whDeleteTitle": "Masalliqni o'chirish",
+  "whDeleteConfirm": "\"{name}\" ombordan o'chiriladi. Tarixi saqlanib qoladi.",
+  "@whDeleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "whDeleteInRecipes": "Bu masalliq {count} ta retseptda ishlatilgan. Avval retseptlardan olib tashlang.",
+  "@whDeleteInRecipes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "whDeleted": "{name} o'chirildi",
+  "@whDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "whReceiveTitle": "Kirim: {name}",
+  "@whReceiveTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "whReceiveQty": "Kelgan miqdor ({unit})",
+  "@whReceiveQty": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "whPriceTotal": "Umumiy summa",
+  "whPriceSom": "Narx (so'm)",
+  "whAfterReceipt": "Kirimdan keyin: {stock}",
+  "@whAfterReceipt": {
+    "placeholders": {
+      "stock": {
+        "type": "String"
+      }
+    }
+  },
+  "whPriceSummary": "{unitPrice} / {unit}, jami {total}",
+  "@whPriceSummary": {
+    "placeholders": {
+      "unitPrice": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "whReceiveNoteHint": "Masalan: bozordan",
+  "whReceiveSubmit": "Kirimni saqlash",
+  "whReceiveDone": "{name} kirimi saqlandi",
+  "@whReceiveDone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "whAdjustTitle": "{name}: qoldiq",
+  "@whAdjustTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "whCount": "Sanoq",
+  "whWaste": "Hisobdan chiqarish",
+  "whCountHint": "Sanab chiqqan miqdoringizni kiriting — qoldiq shunga tenglanadi.",
+  "whWasteHint": "Buzilgan yoki tashlangan miqdorni kiriting — qoldiqdan ayriladi.",
+  "whCounted": "Sanalgan miqdor ({unit})",
+  "@whCounted": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "whWasted": "Chiqariladigan miqdor ({unit})",
+  "@whWasted": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "whCountSame": "Qoldiq bilan bir xil — o'zgarish yo'q",
+  "whChange": "O'zgarish: {value}",
+  "@whChange": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "whWasteNoteHint": "Masalan: chirib qolgan",
+  "whCountDone": "Qoldiq tuzatildi",
+  "whWasteDone": "Hisobdan chiqarildi",
+  "whPortions": "{count} porsiya",
+  "@whPortions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "whDishOk": "Tayyorlash mumkin",
+  "whDishUnavailable": "Masalliq yetmaydi",
+  "whDishLowPortions": "{count} porsiya qoldi",
+  "@whDishLowPortions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "whUnavailableBanner": "{count} ta taomni hozir tayyorlab bo'lmaydi — masalliq yetmaydi. Omborga kirim qiling yoki menyudan vaqtincha olib qo'ying.",
+  "@whUnavailableBanner": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "whDishesEmpty": "Menyuda taom yo'q. Avval Mahsulotlar bo'limida taom qo'shing.",
+  "whNoRecipe": "Retsept yo'q",
+  "whIngredientCount": "{count} ta masalliq",
+  "@whIngredientCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "whShortLine": "{name}: {short} yetmaydi",
+  "@whShortLine": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "short": {
+        "type": "String"
+      }
+    }
+  },
+  "whCostUnknown": "Narxi noma'lum masalliq bor",
+  "whPortionCostValue": "Tannarx {value}",
+  "@whPortionCostValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "whPriceValue": "narx {value}",
+  "@whPriceValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "whMarginValue": "foyda {percent}%",
+  "@whMarginValue": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "whRecipeTitle": "Retsept: {name}",
+  "@whRecipeTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "whRecipeHint": "Bir porsiya uchun masalliqlar. Taom oshxonaga yuborilganda yoki kassada sotilganda shular ombordan ayriladi.",
+  "whRecipeNoIngredients": "Omborda masalliq yo'q. Avval Ombor bo'limida masalliqlarni qo'shing.",
+  "whLineN": "{n}-masalliq",
+  "@whLineN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "whRemoveLine": "Qatorni o'chirish",
+  "whIngredient": "Masalliq",
+  "whPickIngredient": "Masalliqni tanlang",
+  "whAlreadyInRecipe": "Retseptda bor",
+  "whPerPortionAmount": "1 porsiyaga",
+  "whLineStock": "Omborda {stock}, porsiyaga {need}",
+  "@whLineStock": {
+    "placeholders": {
+      "stock": {
+        "type": "String"
+      },
+      "need": {
+        "type": "String"
+      }
+    }
+  },
+  "whLinePortions": "{count} porsiyaga yetadi",
+  "@whLinePortions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "whLimiting": "birinchi tugaydi",
+  "whAddLine": "Masalliq qo'shish",
+  "whRecipeNotes": "Tayyorlash izohi",
+  "whCanMakeNow": "Hozir tayyorlash mumkin",
+  "whPortionCost": "1 porsiya tannarxi",
+  "whMenuPrice": "Menyudagi narx",
+  "whMargin": "Foyda",
+  "whRecipeNeedOne": "Kamida bitta masalliq qo'shing",
+  "whRecipeBadQty": "\"{name}\" miqdorini to'g'ri kiriting",
+  "@whRecipeBadQty": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "whRecipeSaved": "Retsept saqlandi",
+  "whRecipeDelete": "Retseptni o'chirish",
+  "whRecipeDeleteTitle": "Retseptni o'chirish",
+  "whRecipeDeleteConfirm": "\"{name}\" retsepti o'chiriladi. Taom endi ombordan masalliq olmaydi.",
+  "@whRecipeDeleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "whRecipeDeleted": "Retsept o'chirildi"
 }

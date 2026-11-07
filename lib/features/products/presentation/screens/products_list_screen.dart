@@ -18,6 +18,7 @@ import 'package:bsmart/features/products/presentation/providers/product_move_tar
 import 'package:bsmart/features/products/presentation/providers/products_list_notifier.dart';
 import 'package:bsmart/features/products/presentation/widgets/move_products_sheet.dart';
 import 'package:bsmart/features/products/presentation/widgets/product_list_item.dart';
+import 'package:bsmart/features/warehouse/presentation/providers/warehouse_providers.dart';
 import 'package:bsmart/shared/widgets/barcode_scanner_screen.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
@@ -169,6 +170,8 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
     // Off as soon as moving isn't possible any more (e.g. the owner switched store).
     final selecting = _selecting && canMove;
     final loadedIds = <String>[for (final p in listState.valueOrNull?.items ?? const <Product>[]) p.id];
+    // Restaurants: whether each dish can be made from the warehouse now (empty for others).
+    final dishAvailability = ref.watch(dishAvailabilityProvider).valueOrNull ?? const {};
 
     final page = DashPage(
       title: selecting ? l10n.productsSelectedCount(_picked.length) : l10n.productsTitle,
@@ -242,7 +245,10 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
         data: (state) => RefreshIndicator(
           color: AppColors.onBrand,
           backgroundColor: AppColors.brandYellow,
-          onRefresh: () => ref.read(productsListProvider.notifier).refresh(),
+          onRefresh: () {
+            ref.invalidate(dishAvailabilityProvider);
+            return ref.read(productsListProvider.notifier).refresh();
+          },
           child: state.items.isEmpty
               ? DashEmptyState(icon: Icons.inventory_2_rounded, text: l10n.productsNotFound)
               : ListView.separated(
@@ -263,6 +269,7 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
                       product: product,
                       selectionMode: selecting,
                       selected: selecting && _picked.contains(product.id),
+                      availability: dishAvailability[product.id],
                       onTap: selecting
                           ? () => _togglePicked(product.id)
                           : () => context.push(RouteNames.productDetail(product.id)),

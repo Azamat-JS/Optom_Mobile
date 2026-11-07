@@ -7263,6 +7263,768 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Qo\'lda kiritilgan daromadlar yo\'q'**
   String get manualRevenueEmpty;
+
+  /// No description provided for @commonOptional.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ixtiyoriy'**
+  String get commonOptional;
+
+  /// No description provided for @navWarehouse.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ombor'**
+  String get navWarehouse;
+
+  /// No description provided for @navRecipes.
+  ///
+  /// In uz, this message translates to:
+  /// **'Retseptlar'**
+  String get navRecipes;
+
+  /// No description provided for @enumIngredientUnit.
+  ///
+  /// In uz, this message translates to:
+  /// **'{unit, select, kilogram{Kilogramm (kg)} gram{Gramm (g)} litr{Litr (l)} millilitr{Millilitr (ml)} dona{Dona} other{}}'**
+  String enumIngredientUnit(String unit);
+
+  /// No description provided for @enumIngredientUnitShort.
+  ///
+  /// In uz, this message translates to:
+  /// **'{unit, select, kilogram{kg} gram{g} litr{l} millilitr{ml} dona{dona} other{}}'**
+  String enumIngredientUnitShort(String unit);
+
+  /// No description provided for @whTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ombor'**
+  String get whTitle;
+
+  /// No description provided for @whRecipesTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Retseptlar'**
+  String get whRecipesTitle;
+
+  /// No description provided for @whForbidden.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ombor va retseptlar faqat restoran egasi va adminlari uchun'**
+  String get whForbidden;
+
+  /// No description provided for @whSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalliq qidirish…'**
+  String get whSearchHint;
+
+  /// No description provided for @whSearchDishHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Taom qidirish…'**
+  String get whSearchDishHint;
+
+  /// No description provided for @whAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalliq qo\'shish'**
+  String get whAdd;
+
+  /// No description provided for @whFilterLow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kam qolgan'**
+  String get whFilterLow;
+
+  /// No description provided for @whFilterOut.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tugagan'**
+  String get whFilterOut;
+
+  /// No description provided for @whFilterUnavailable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tayyorlab bo\'lmaydi'**
+  String get whFilterUnavailable;
+
+  /// No description provided for @whFilterEnough.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetarli'**
+  String get whFilterEnough;
+
+  /// No description provided for @whFilterNoRecipe.
+  ///
+  /// In uz, this message translates to:
+  /// **'Retseptsiz'**
+  String get whFilterNoRecipe;
+
+  /// No description provided for @whStatTotal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalliqlar'**
+  String get whStatTotal;
+
+  /// No description provided for @whStatLow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kam qolgan'**
+  String get whStatLow;
+
+  /// No description provided for @whStatOut.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tugagan'**
+  String get whStatOut;
+
+  /// No description provided for @whStatValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ombor qiymati'**
+  String get whStatValue;
+
+  /// No description provided for @whEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Omborda hali masalliq yo\'q. Pomidor, kartoshka, go\'sht kabi masalliqlarni qo\'shing.'**
+  String get whEmpty;
+
+  /// No description provided for @whLevelOk.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yetarli'**
+  String get whLevelOk;
+
+  /// No description provided for @whLevelLow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kam qoldi'**
+  String get whLevelLow;
+
+  /// No description provided for @whLevelOut.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tugagan'**
+  String get whLevelOut;
+
+  /// No description provided for @whMinShort.
+  ///
+  /// In uz, this message translates to:
+  /// **'Min: {value}'**
+  String whMinShort(String value);
+
+  /// No description provided for @whAvgPerUnit.
+  ///
+  /// In uz, this message translates to:
+  /// **'{price} / {unit}'**
+  String whAvgPerUnit(String price, String unit);
+
+  /// No description provided for @whNewTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi masalliq'**
+  String get whNewTitle;
+
+  /// No description provided for @whEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalliqni tahrirlash'**
+  String get whEditTitle;
+
+  /// No description provided for @whName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomi'**
+  String get whName;
+
+  /// No description provided for @whNameHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalan: Pomidor'**
+  String get whNameHint;
+
+  /// No description provided for @whNameRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomini kiriting'**
+  String get whNameRequired;
+
+  /// No description provided for @whUnit.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'lchov birligi'**
+  String get whUnit;
+
+  /// No description provided for @whUnitHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Keyin o\'zgartirib bo\'lmaydi — retseptlar va tarix shu birlikda.'**
+  String get whUnitHint;
+
+  /// No description provided for @whUnitLocked.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'lchov birligini o\'zgartirib bo\'lmaydi.'**
+  String get whUnitLocked;
+
+  /// No description provided for @whMinStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Minimal qoldiq ({unit})'**
+  String whMinStock(String unit);
+
+  /// No description provided for @whMinStockHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldiq shu miqdorga tushsa, \"kam qoldi\" deb ko\'rsatiladi.'**
+  String get whMinStockHint;
+
+  /// No description provided for @whOpeningTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozir bor qoldiq'**
+  String get whOpeningTitle;
+
+  /// No description provided for @whOpeningHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ixtiyoriy. Narxsiz qoldiq tannarxi noma\'lum bo\'lib qoladi.'**
+  String get whOpeningHint;
+
+  /// No description provided for @whStockOnHand.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozirgi qoldiq ({unit})'**
+  String whStockOnHand(String unit);
+
+  /// No description provided for @whPricePerUnit.
+  ///
+  /// In uz, this message translates to:
+  /// **'1 {unit} narxi (so\'m)'**
+  String whPricePerUnit(String unit);
+
+  /// No description provided for @whPriceNeedsStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx faqat qoldiq bilan saqlanadi — avval qoldiqni kiriting'**
+  String get whPriceNeedsStock;
+
+  /// No description provided for @whActiveHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nofaol masalliq mavjud retseptlarda ishlayveradi.'**
+  String get whActiveHint;
+
+  /// No description provided for @whAmountInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Miqdorni to\'g\'ri kiriting (4 xonagacha kasr)'**
+  String get whAmountInvalid;
+
+  /// No description provided for @whAmountPositive.
+  ///
+  /// In uz, this message translates to:
+  /// **'Miqdor 0 dan katta bo\'lishi kerak'**
+  String get whAmountPositive;
+
+  /// No description provided for @whPriceInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narxni to\'g\'ri kiriting'**
+  String get whPriceInvalid;
+
+  /// No description provided for @whInStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozirgi qoldiq'**
+  String get whInStock;
+
+  /// No description provided for @whNegativeHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oshxona qayd etilganidan ko\'proq ishlatgan — kirim yoki sanoq qiling'**
+  String get whNegativeHint;
+
+  /// No description provided for @whNoCost.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narxi noma\'lum'**
+  String get whNoCost;
+
+  /// No description provided for @whValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qiymati: {value}'**
+  String whValue(String value);
+
+  /// No description provided for @whAvgCost.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'rtacha narx'**
+  String get whAvgCost;
+
+  /// No description provided for @whReceiveShort.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kirim'**
+  String get whReceiveShort;
+
+  /// No description provided for @whAdjustShort.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sanoq / chiqarish'**
+  String get whAdjustShort;
+
+  /// No description provided for @whUsedIn.
+  ///
+  /// In uz, this message translates to:
+  /// **'Retseptlarda'**
+  String get whUsedIn;
+
+  /// No description provided for @whPerPortionValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'{value} / porsiya'**
+  String whPerPortionValue(String value);
+
+  /// No description provided for @whHistory.
+  ///
+  /// In uz, this message translates to:
+  /// **'Harakatlar tarixi'**
+  String get whHistory;
+
+  /// No description provided for @whHistoryEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali harakat yo\'q'**
+  String get whHistoryEmpty;
+
+  /// No description provided for @whShowMore.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yana ko\'rsatish'**
+  String get whShowMore;
+
+  /// No description provided for @whReversed.
+  ///
+  /// In uz, this message translates to:
+  /// **'qaytarilgan'**
+  String get whReversed;
+
+  /// No description provided for @whBalance.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldiq: {value}'**
+  String whBalance(String value);
+
+  /// No description provided for @whMoveReceipt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kirim'**
+  String get whMoveReceipt;
+
+  /// No description provided for @whMoveUsage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Taomga ketdi'**
+  String get whMoveUsage;
+
+  /// No description provided for @whMoveRestore.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytarildi (bekor qilingan)'**
+  String get whMoveRestore;
+
+  /// No description provided for @whMoveAdjustment.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sanoq tuzatishi'**
+  String get whMoveAdjustment;
+
+  /// No description provided for @whMoveWaste.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisobdan chiqarildi'**
+  String get whMoveWaste;
+
+  /// No description provided for @whDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalliqni o\'chirish'**
+  String get whDeleteTitle;
+
+  /// No description provided for @whDeleteConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'\"{name}\" ombordan o\'chiriladi. Tarixi saqlanib qoladi.'**
+  String whDeleteConfirm(String name);
+
+  /// No description provided for @whDeleteInRecipes.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu masalliq {count} ta retseptda ishlatilgan. Avval retseptlardan olib tashlang.'**
+  String whDeleteInRecipes(int count);
+
+  /// No description provided for @whDeleted.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} o\'chirildi'**
+  String whDeleted(String name);
+
+  /// No description provided for @whReceiveTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kirim: {name}'**
+  String whReceiveTitle(String name);
+
+  /// No description provided for @whReceiveQty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kelgan miqdor ({unit})'**
+  String whReceiveQty(String unit);
+
+  /// No description provided for @whPriceTotal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Umumiy summa'**
+  String get whPriceTotal;
+
+  /// No description provided for @whPriceSom.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narx (so\'m)'**
+  String get whPriceSom;
+
+  /// No description provided for @whAfterReceipt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kirimdan keyin: {stock}'**
+  String whAfterReceipt(String stock);
+
+  /// No description provided for @whPriceSummary.
+  ///
+  /// In uz, this message translates to:
+  /// **'{unitPrice} / {unit}, jami {total}'**
+  String whPriceSummary(String unitPrice, String unit, String total);
+
+  /// No description provided for @whReceiveNoteHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalan: bozordan'**
+  String get whReceiveNoteHint;
+
+  /// No description provided for @whReceiveSubmit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kirimni saqlash'**
+  String get whReceiveSubmit;
+
+  /// No description provided for @whReceiveDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name} kirimi saqlandi'**
+  String whReceiveDone(String name);
+
+  /// No description provided for @whAdjustTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name}: qoldiq'**
+  String whAdjustTitle(String name);
+
+  /// No description provided for @whCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sanoq'**
+  String get whCount;
+
+  /// No description provided for @whWaste.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisobdan chiqarish'**
+  String get whWaste;
+
+  /// No description provided for @whCountHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sanab chiqqan miqdoringizni kiriting — qoldiq shunga tenglanadi.'**
+  String get whCountHint;
+
+  /// No description provided for @whWasteHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buzilgan yoki tashlangan miqdorni kiriting — qoldiqdan ayriladi.'**
+  String get whWasteHint;
+
+  /// No description provided for @whCounted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sanalgan miqdor ({unit})'**
+  String whCounted(String unit);
+
+  /// No description provided for @whWasted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chiqariladigan miqdor ({unit})'**
+  String whWasted(String unit);
+
+  /// No description provided for @whCountSame.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldiq bilan bir xil — o\'zgarish yo\'q'**
+  String get whCountSame;
+
+  /// No description provided for @whChange.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'zgarish: {value}'**
+  String whChange(String value);
+
+  /// No description provided for @whWasteNoteHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalan: chirib qolgan'**
+  String get whWasteNoteHint;
+
+  /// No description provided for @whCountDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qoldiq tuzatildi'**
+  String get whCountDone;
+
+  /// No description provided for @whWasteDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisobdan chiqarildi'**
+  String get whWasteDone;
+
+  /// No description provided for @whPortions.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} porsiya'**
+  String whPortions(int count);
+
+  /// No description provided for @whDishOk.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tayyorlash mumkin'**
+  String get whDishOk;
+
+  /// No description provided for @whDishUnavailable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalliq yetmaydi'**
+  String get whDishUnavailable;
+
+  /// No description provided for @whDishLowPortions.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} porsiya qoldi'**
+  String whDishLowPortions(int count);
+
+  /// No description provided for @whUnavailableBanner.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta taomni hozir tayyorlab bo\'lmaydi — masalliq yetmaydi. Omborga kirim qiling yoki menyudan vaqtincha olib qo\'ying.'**
+  String whUnavailableBanner(int count);
+
+  /// No description provided for @whDishesEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Menyuda taom yo\'q. Avval Mahsulotlar bo\'limida taom qo\'shing.'**
+  String get whDishesEmpty;
+
+  /// No description provided for @whNoRecipe.
+  ///
+  /// In uz, this message translates to:
+  /// **'Retsept yo\'q'**
+  String get whNoRecipe;
+
+  /// No description provided for @whIngredientCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta masalliq'**
+  String whIngredientCount(int count);
+
+  /// No description provided for @whShortLine.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name}: {short} yetmaydi'**
+  String whShortLine(String name, String short);
+
+  /// No description provided for @whCostUnknown.
+  ///
+  /// In uz, this message translates to:
+  /// **'Narxi noma\'lum masalliq bor'**
+  String get whCostUnknown;
+
+  /// No description provided for @whPortionCostValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tannarx {value}'**
+  String whPortionCostValue(String value);
+
+  /// No description provided for @whPriceValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'narx {value}'**
+  String whPriceValue(String value);
+
+  /// No description provided for @whMarginValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'foyda {percent}%'**
+  String whMarginValue(int percent);
+
+  /// No description provided for @whRecipeTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Retsept: {name}'**
+  String whRecipeTitle(String name);
+
+  /// No description provided for @whRecipeHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bir porsiya uchun masalliqlar. Taom oshxonaga yuborilganda yoki kassada sotilganda shular ombordan ayriladi.'**
+  String get whRecipeHint;
+
+  /// No description provided for @whRecipeNoIngredients.
+  ///
+  /// In uz, this message translates to:
+  /// **'Omborda masalliq yo\'q. Avval Ombor bo\'limida masalliqlarni qo\'shing.'**
+  String get whRecipeNoIngredients;
+
+  /// No description provided for @whLineN.
+  ///
+  /// In uz, this message translates to:
+  /// **'{n}-masalliq'**
+  String whLineN(int n);
+
+  /// No description provided for @whRemoveLine.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qatorni o\'chirish'**
+  String get whRemoveLine;
+
+  /// No description provided for @whIngredient.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalliq'**
+  String get whIngredient;
+
+  /// No description provided for @whPickIngredient.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalliqni tanlang'**
+  String get whPickIngredient;
+
+  /// No description provided for @whAlreadyInRecipe.
+  ///
+  /// In uz, this message translates to:
+  /// **'Retseptda bor'**
+  String get whAlreadyInRecipe;
+
+  /// No description provided for @whPerPortionAmount.
+  ///
+  /// In uz, this message translates to:
+  /// **'1 porsiyaga'**
+  String get whPerPortionAmount;
+
+  /// No description provided for @whLineStock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Omborda {stock}, porsiyaga {need}'**
+  String whLineStock(String stock, String need);
+
+  /// No description provided for @whLinePortions.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} porsiyaga yetadi'**
+  String whLinePortions(int count);
+
+  /// No description provided for @whLimiting.
+  ///
+  /// In uz, this message translates to:
+  /// **'birinchi tugaydi'**
+  String get whLimiting;
+
+  /// No description provided for @whAddLine.
+  ///
+  /// In uz, this message translates to:
+  /// **'Masalliq qo\'shish'**
+  String get whAddLine;
+
+  /// No description provided for @whRecipeNotes.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tayyorlash izohi'**
+  String get whRecipeNotes;
+
+  /// No description provided for @whCanMakeNow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozir tayyorlash mumkin'**
+  String get whCanMakeNow;
+
+  /// No description provided for @whPortionCost.
+  ///
+  /// In uz, this message translates to:
+  /// **'1 porsiya tannarxi'**
+  String get whPortionCost;
+
+  /// No description provided for @whMenuPrice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Menyudagi narx'**
+  String get whMenuPrice;
+
+  /// No description provided for @whMargin.
+  ///
+  /// In uz, this message translates to:
+  /// **'Foyda'**
+  String get whMargin;
+
+  /// No description provided for @whRecipeNeedOne.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kamida bitta masalliq qo\'shing'**
+  String get whRecipeNeedOne;
+
+  /// No description provided for @whRecipeBadQty.
+  ///
+  /// In uz, this message translates to:
+  /// **'\"{name}\" miqdorini to\'g\'ri kiriting'**
+  String whRecipeBadQty(String name);
+
+  /// No description provided for @whRecipeSaved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Retsept saqlandi'**
+  String get whRecipeSaved;
+
+  /// No description provided for @whRecipeDelete.
+  ///
+  /// In uz, this message translates to:
+  /// **'Retseptni o\'chirish'**
+  String get whRecipeDelete;
+
+  /// No description provided for @whRecipeDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Retseptni o\'chirish'**
+  String get whRecipeDeleteTitle;
+
+  /// No description provided for @whRecipeDeleteConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'\"{name}\" retsepti o\'chiriladi. Taom endi ombordan masalliq olmaydi.'**
+  String whRecipeDeleteConfirm(String name);
+
+  /// No description provided for @whRecipeDeleted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Retsept o\'chirildi'**
+  String get whRecipeDeleted;
 }
 
 class _AppLocalizationsDelegate

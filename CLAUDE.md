@@ -344,6 +344,19 @@ features/
                      notifiers (paginated)
       screens/     → AgentHomeScreen (tab shell: home, sell, sales, debtors), the four tabs,
                      AgentCheckoutScreen, AgentSaleDetailScreen, AgentDebtDetailScreen
+  warehouse/           → Phase 16: restaurant ingredients + recipes — see "Phase 16" below
+    data/{datasources,models,repositories}/   → one WarehouseRepository over /ingredients + /recipes
+    domain/{entities,repositories,usecases}/  → Ingredient, IngredientMovement, MenuDish/RecipeDetail/
+                                                 DishAvailability, params; warehouse_math.dart
+                                                 (units, portions, amount parsing — server mirror)
+    presentation/
+      providers/   → ingredientsList/recipesMenu notifiers, ingredientDetail/recipeDetail families,
+                     ingredientMovements (paged), dishAvailability (menu tags), warehouseSummary
+                     (home badges), refreshWarehouseViews()
+      screens/     → WarehouseScreen, IngredientFormScreen, IngredientDetailScreen,
+                     IngredientReceiveScreen, IngredientAdjustScreen, RecipesScreen,
+                     RecipeEditorScreen
+      widgets/     → warehouse_widgets.dart (quantity/so'm format, level + dish tags, error text)
 
 shared/widgets/
   barcode_scanner_screen.dart   → full-screen mobile_scanner camera view, reused by products now and POS later
@@ -2861,6 +2874,72 @@ method; optional day (empty = saved now) and customer. Uses `POST /sales/manual-
   - Not checked on Android or a real phone.
 - **Known gaps:** no notes field and no split payment (as on the web); the dashboard's UZS/USD
   toggle is app-wide and survives a logout (pre-existing, seen during the test).
+
+### Phase 16 — Restaurant warehouse & recipes / Ombor va Retseptlar (mobile; backend + web done in Optom_Savdo)
+
+**Done 2026-11-07.** Mirrors Optom_Savdo "Restaurant Warehouse & Recipes": a restaurant's owner and
+admins keep raw ingredients, write a recipe per dish (one portion), and see which dishes the stock
+can make. Uses `/ingredients/*` and `/recipes/*` as they are; the server computes every figure
+(stock, average cost, portions, shortages) and takes ingredients when food goes to the kitchen or
+is sold.
+
+- **Gate:** `canManageWarehouseProvider` = `businessType == restaurant` and `retailer` /
+  `retailerAdmin`. Waiters may only read `/recipes/availability` (`canReadDishAvailabilityProvider`).
+  A 403 renders `whForbidden`.
+- **`features/warehouse/`** (14 use cases, one `WarehouseRepository`):
+  - `core/enums/ingredient_unit.dart` (`KILOGRAM | GRAM | LITR | MILLILITR | DONA`, dimension,
+    `toBase`).
+  - `domain/warehouse_math.dart` (unit tested): `compatibleUnits`, `portionUnitFor` (g for kg, ml
+    for l), `convertQty`, `portionsFrom` (same epsilon as the server's exact division),
+    `parseAmount` (spaces, comma or dot, max decimals). Only for live previews.
+  - Parsers (`warehouse_models.dart`, unit tested against real response shapes; Decimals arrive
+    as strings).
+  - Providers: `ingredientsListProvider` / `recipesMenuProvider` (search, filter, paging; rebuilt
+    on user or active-store change), `ingredientDetailProvider` / `recipeDetailProvider`
+    (autoDispose families), `ingredientMovementsProvider` (30 per page), `dishAvailabilityProvider`
+    (menu tags; empty on error or for other roles), `warehouseSummaryProvider` (home badges).
+    `refreshWarehouseViews(ref)` reloads them after any change (lists keep their filters).
+- **Screens:**
+  - `WarehouseScreen` ("Ombor"): search, Barchasi / Kam qolgan / Tugagan chips with counts, four
+    stat cards (count, stock value, low, out), rows with stock, minimum, average cost and level.
+  - `IngredientFormScreen`: name, unit chips (locked once created), minimum, and on create the stock
+    on hand + price per unit (a price without stock is refused: the server would drop it).
+  - `IngredientDetailScreen`: dark stock card (level, minimum, average, value, a hint when stock is
+    negative), "Kirim" and "Sanoq / chiqarish", recipes using it, paged history with what caused
+    each change (order/sale number + dish, actor, receipt price, "qaytarilgan").
+  - `IngredientReceiveScreen` (price per unit or total, live "after / per unit / total" line) and
+    `IngredientAdjustScreen` (count or write-off, live change, same count refused).
+  - `RecipesScreen` ("Retseptlar"): status chips with counts, a red banner when dishes can't be
+    made, cards with the shortage per ingredient and cost / price / margin.
+  - `RecipeEditorScreen`: line cards (ingredient picker sheet with stock, amount, compatible unit
+    chips, "stock, per portion · N portions · runs out first"), notes, a summary card (portions,
+    cost per portion, menu price, margin), delete recipe.
+- **Elsewhere:** home tiles "Ombor" / "Retseptlar" for restaurant owner and admins, with red
+  badges (`ShortcutTile.badge`: ingredients low or out / dishes that can't be made). Availability
+  tags ("20 porsiya" / "3 porsiya qoldi" / "Masalliq yetmaydi") on the products list, the waiter's
+  menu tab and the restaurant order menu sheet.
+- **Lesson:** forms are `SingleChildScrollView` + `Column`, not a `ListView`: a field scrolled out
+  of a lazy `ListView` is unmounted, and `FormState.validate()` skips it (an empty name passed).
+- **Strings:** ~127 `wh*` keys + `navWarehouse` / `navRecipes` / `enumIngredientUnit(Short)` /
+  `commonOptional` (uz/ru/en; ru/en plurals for portions and counts).
+- **Verified (2026-11-07):**
+  - `flutter analyze` clean, 161 unit tests (14 new).
+  - A 21-step temporary integration test on the iPhone 16e simulator against the real local API
+    (seeded restaurant: owner, admin, waiter, Plov/Salat/Choy, Go'sht 3 kg @ 90 000):
+    - Home tiles; list stats (270 000 stock value).
+    - Form refusals (no name, price without stock); create Pomidor 1 kg @ 8 000.
+    - Receive 2 kg for 20 000 (preview, average 9 333); count 3 refused, 2,5 saved, history.
+    - Plov 150 g → 20 portions, cost 13 500, margin; Salat 3000 g → unavailable, banner,
+      "Pomidor: 0,5 kg yetmaydi"; chip filter kept when reopened.
+    - Home badge Retseptlar 1; products list tags; deleting a used ingredient refused; recipe
+      deleted.
+    - Dark mode, Russian (units, plural "20 порций"), admin warehouse, waiter menu tag and no tile.
+  - DB afterwards: stock and average match, Σ movements = stock, Plov stored as 150 GRAM, Salat's
+    recipe gone. Test rows cleaned up; the test file was deleted (it depends on seeded data).
+  - Not checked on Android or a real phone.
+- **Known gaps:** none of the online-orders / kitchen-hold additions of the same day are in the app
+  yet (POS online section, "Online" tag, kitchen hold hint); the restaurant board still works
+  as before with them.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

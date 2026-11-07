@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:bsmart/features/warehouse/presentation/screens/recipes_screen.dart';
+import 'package:bsmart/features/warehouse/presentation/screens/warehouse_screen.dart';
+
 import 'package:bsmart/core/enums/user_role.dart';
 import 'package:bsmart/core/router/route_names.dart';
 import 'package:bsmart/core/router/transitions.dart';
@@ -310,6 +313,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.leadAgents,
         pageBuilder: (context, state) => fadeThroughPage(state: state, child: const LeadAgentsListScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.warehouse,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const WarehouseScreen()),
+      ),
+      GoRoute(
+        path: RouteNames.recipes,
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const RecipesScreen()),
       ),
       GoRoute(
         path: RouteNames.fleetMap,

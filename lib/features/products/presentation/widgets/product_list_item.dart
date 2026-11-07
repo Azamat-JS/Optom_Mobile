@@ -7,6 +7,8 @@ import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/products/domain/entities/product.dart';
+import 'package:bsmart/features/warehouse/domain/entities/dish.dart';
+import 'package:bsmart/features/warehouse/presentation/widgets/warehouse_widgets.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
 
 /// A product row card: photo, name, stock · category, price. Out of stock
@@ -22,6 +24,7 @@ class ProductListItem extends StatelessWidget {
     this.onLongPress,
     this.selectionMode = false,
     this.selected = false,
+    this.availability,
   });
 
   final Product product;
@@ -29,6 +32,9 @@ class ProductListItem extends StatelessWidget {
   final VoidCallback? onLongPress;
   final bool selectionMode;
   final bool selected;
+
+  /// A restaurant dish with a recipe: whether the warehouse can make it now.
+  final DishAvailabilityEntry? availability;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +74,10 @@ class ProductListItem extends StatelessWidget {
           if (product.isActive && product.stock <= 0) ...[
             const SizedBox(height: 4),
             DashTag(label: l10n.posOutOfStock, color: error),
+          ],
+          if (availability != null && availability!.status != DishStatus.noRecipe) ...[
+            const SizedBox(height: 4),
+            DishAvailabilityTag(status: availability!.status, portions: availability!.portions),
           ],
         ],
       ),
