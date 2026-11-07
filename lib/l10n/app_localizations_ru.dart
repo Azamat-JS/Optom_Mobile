@@ -4914,4 +4914,209 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get whRecipeDeleted => 'Рецепт удалён';
+
+  @override
+  String get rposFilterAll => 'Все';
+
+  @override
+  String get rposFilterBusy => 'Занятые';
+
+  @override
+  String get rposFilterFree => 'Свободные';
+
+  @override
+  String get rposFilterReady => 'Готово';
+
+  @override
+  String get rposFilterUnpaid => 'Ждут оплаты';
+
+  @override
+  String get rposStateFree => 'Свободен';
+
+  @override
+  String get rposStateOpen => 'Занят';
+
+  @override
+  String get rposStateReady => 'Готово';
+
+  @override
+  String get rposStateUnpaid => 'Оплата';
+
+  @override
+  String get rposTapToOrder => 'Принять заказ';
+
+  @override
+  String get rposReadyToServe => 'Готово — отнесите';
+
+  @override
+  String get rposTakePayment => 'Обслужен — примите оплату';
+
+  @override
+  String rposMoreItems(int n) {
+    return '+ещё $n';
+  }
+
+  @override
+  String rposBills(int n) {
+    return 'Счетов: $n';
+  }
+
+  @override
+  String get rposTakenAtCashier => 'Принят на кассе';
+
+  @override
+  String rposServicePercent(String percent) {
+    return '+$percent% обслуживание';
+  }
+
+  @override
+  String get rposTakeaway => 'С собой';
+
+  @override
+  String get rposTakeawayTitle => 'С собой — новый заказ';
+
+  @override
+  String get rposTakeawayHint => 'На кухню уйдёт после оплаты';
+
+  @override
+  String get rposTakeawayHeld => 'Уйдёт на кухню после оплаты';
+
+  @override
+  String get rposOtherOrders => 'Другие заказы';
+
+  @override
+  String get rposNoOtherOrders => 'Других заказов нет';
+
+  @override
+  String get rposNoTables => 'Столы ещё не добавлены';
+
+  @override
+  String get rposNoTablesHint => 'Добавьте столы или залы в разделе «Столы».';
+
+  @override
+  String get rposNoMatches => 'Нет столов по этому фильтру';
+
+  @override
+  String get rposServedUnpaid =>
+      'Официант отметил «Подано» — оплата ещё не принята';
+
+  @override
+  String get rposRemove => 'Убрать';
+
+  @override
+  String get rposRemoveHowMany => 'Сколько убрать?';
+
+  @override
+  String rposRemoveOne(String name) {
+    return 'Убрать «$name»?';
+  }
+
+  @override
+  String rposRemoved(String name, int n) {
+    return '$name: убрано $n';
+  }
+
+  @override
+  String get rposLastItem => 'Нельзя убрать последнее блюдо — отмените заказ';
+
+  @override
+  String get rposKitchenNotified => 'Кухня получит чек об отмене';
+
+  @override
+  String get rposNotSentToKitchen => 'Ещё не отправлено на кухню';
+
+  @override
+  String get rposAddDishes => 'Добавить блюда';
+
+  @override
+  String rposAddDishesTo(String order) {
+    return '$order — добавить блюда';
+  }
+
+  @override
+  String get rposNewBill => 'Открыть отдельный счёт';
+
+  @override
+  String rposNewOrderFor(String table) {
+    return '$table — новый заказ';
+  }
+
+  @override
+  String get rposSendToKitchen => 'Отправить на кухню';
+
+  @override
+  String get rposAddToOrder => 'Добавить к заказу';
+
+  @override
+  String get rposPickDishes => 'Выберите блюда из меню';
+
+  @override
+  String get rposPay => 'Перейти к оплате';
+
+  @override
+  String get rposPayHint => 'После оплаты стол освободится';
+
+  @override
+  String get rposToPay => 'К оплате';
+
+  @override
+  String get rposAlreadyPaid => 'Этот заказ уже оплачен';
+
+  @override
+  String rposOrderSent(String table) {
+    return '$table: заказ отправлен на кухню';
+  }
+
+  @override
+  String rposItemsAdded(String order) {
+    return '$order: блюда добавлены';
+  }
+
+  @override
+  String get rposCustomerOptional => 'Клиент (необязательно)';
+
+  @override
+  String get rposWalkInCustomer => 'Гость';
+
+  @override
+  String get rposDebtNeedsCustomer => 'Чтобы записать в долг, выберите клиента';
+
+  @override
+  String rposOrderLabel(String number) {
+    return 'Заказ #$number';
+  }
+
+  @override
+  String rposOrderLabelTakeaway(String number) {
+    return 'Заказ #$number · С собой';
+  }
+
+  @override
+  String get rposDiscardTitle => 'Выбранные блюда не отправлены. Выйти?';
+
+  @override
+  String get rposDiscardLeave => 'Выйти';
+
+  @override
+  String get rposCancelConfirm => 'Отменить этот счёт? Кухня будет уведомлена.';
+
+  @override
+  String get rposTableBusy => 'занят';
+
+  @override
+  String get rposWaiterBusyHint =>
+      'В занятый стол блюда добавляет кассир или админ';
+
+  @override
+  String get rposJustNow => 'сейчас';
+
+  @override
+  String rposElapsedMin(int n) {
+    return '$n мин';
+  }
+
+  @override
+  String rposElapsedHour(int h, int m) {
+    return '$h ч $m мин';
+  }
 }

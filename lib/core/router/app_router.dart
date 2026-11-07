@@ -52,7 +52,7 @@ import 'package:bsmart/features/products/domain/entities/product.dart';
 import 'package:bsmart/features/products/presentation/screens/product_detail_screen.dart';
 import 'package:bsmart/features/products/presentation/screens/product_form_screen.dart';
 import 'package:bsmart/features/products/presentation/screens/products_list_screen.dart';
-import 'package:bsmart/features/sales/presentation/screens/pos_screen.dart';
+import 'package:bsmart/features/restaurant_pos/presentation/screens/pos_entry_screen.dart';
 import 'package:bsmart/features/sales/presentation/screens/sales_list_screen.dart';
 import 'package:bsmart/features/settings/presentation/screens/settings_screen.dart';
 import 'package:bsmart/features/crm/presentation/screens/crm_driver_detail_screen.dart';
@@ -240,7 +240,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: RouteNames.pos,
-        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const PosScreen()),
+        pageBuilder: (context, state) => fadeThroughPage(state: state, child: const PosEntryScreen()),
       ),
       GoRoute(
         path: RouteNames.sales,

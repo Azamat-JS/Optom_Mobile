@@ -39,6 +39,9 @@ import 'package:bsmart/features/customers/domain/repositories/customers_reposito
 import 'package:bsmart/features/customers/domain/usecases/create_customer_usecase.dart';
 import 'package:bsmart/features/customers/domain/usecases/deactivate_customer_usecase.dart';
 import 'package:bsmart/features/customers/domain/usecases/delete_customer_usecase.dart';
+import 'package:bsmart/features/customers/domain/usecases/resolve_walk_in_customer_usecase.dart';
+import 'package:bsmart/features/restaurant_orders/domain/usecases/list_unpaid_restaurant_orders_usecase.dart';
+import 'package:bsmart/features/restaurant_orders/domain/usecases/remove_restaurant_order_item_usecase.dart';
 import 'package:bsmart/features/customers/domain/usecases/get_customer_usecase.dart';
 import 'package:bsmart/features/customers/domain/usecases/list_customers_usecase.dart';
 import 'package:bsmart/features/customers/domain/usecases/update_customer_usecase.dart';
@@ -590,6 +593,8 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => AcceptRestaurantOrderUseCase(getIt()));
   getIt.registerFactory(() => AssignRestaurantOrderCourierUseCase(getIt()));
   getIt.registerFactory(() => ListRestaurantOrderCouriersUseCase(getIt()));
+  getIt.registerFactory(() => ListUnpaidRestaurantOrdersUseCase(getIt()));
+  getIt.registerFactory(() => RemoveRestaurantOrderItemUseCase(getIt()));
 
   // --- features/dashboard ---
   getIt.registerLazySingleton(() => ReportingRemoteDataSource(mainDio));
@@ -622,6 +627,7 @@ void setupDependencyInjection() {
   getIt.registerFactory(() => UpdateCustomerUseCase(getIt()));
   getIt.registerFactory(() => DeactivateCustomerUseCase(getIt()));
   getIt.registerFactory(() => DeleteCustomerUseCase(getIt()));
+  getIt.registerFactory(() => ResolveWalkInCustomerUseCase(getIt()));
 
   // --- features/sales (POS Sell tab reuses this same B2C endpoint) ---
   getIt.registerLazySingleton(() => SalesRemoteDataSource(mainDio));

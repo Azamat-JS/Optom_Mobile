@@ -25,6 +25,21 @@ class RestaurantOrdersRemoteDataSource {
     return response.data!.map((e) => restaurantOrderFromJson(e as Map<String, dynamic>)).toList();
   }
 
+  /// Owner/admin: open orders plus dine-in ones a waiter served but nobody charged yet.
+  Future<List<RestaurantOrder>> findUnpaid() async {
+    final response = await _dio.get<List<dynamic>>('/restaurant-orders/unpaid');
+    return response.data!.map((e) => restaurantOrderFromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  /// Owner/admin: takes [quantity] portions off a line (null = the whole line).
+  Future<RestaurantOrder> removeItem(String id, String itemId, int? quantity) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/restaurant-orders/$id/items/$itemId/remove',
+      data: {'quantity': ?quantity},
+    );
+    return restaurantOrderFromJson(response.data!);
+  }
+
   Future<RestaurantOrder> findOne(String id) async {
     final response = await _dio.get<Map<String, dynamic>>('/restaurant-orders/$id');
     return restaurantOrderFromJson(response.data!);

@@ -15,6 +15,7 @@ class CreateRestaurantOrderParams {
     required this.items,
     this.discount,
     this.courierId,
+    this.takeaway = false,
   });
 
   final RestaurantOrderType type;
@@ -30,6 +31,9 @@ class CreateRestaurantOrderParams {
   final double? discount;
   final String? courierId;
 
+  /// A walk-in takeaway (owner/admin only): DINE_IN with no table, sent to the kitchen once paid.
+  final bool takeaway;
+
   Map<String, dynamic> toRequestBody() => {
         'type': type.toWire(),
         if (tableId != null) 'tableId': tableId,
@@ -42,5 +46,6 @@ class CreateRestaurantOrderParams {
         'items': items.map((i) => i.toRequestBody()).toList(),
         if (discount != null) 'discount': discount,
         if (courierId != null) 'courierId': courierId,
+        if (takeaway) 'takeaway': true,
       };
 }

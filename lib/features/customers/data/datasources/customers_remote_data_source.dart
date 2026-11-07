@@ -20,6 +20,12 @@ class CustomersRemoteDataSource {
     return PaginatedResult.fromJson(response.data!, customerFromJson);
   }
 
+  /// The store's walk-in buyer ("Mehmon xaridor"), created on first use.
+  Future<Customer> resolveWalkIn() async {
+    final response = await _dio.post<Map<String, dynamic>>('/customers/walk-in');
+    return customerFromJson(response.data!);
+  }
+
   Future<Customer> getById(String id) async {
     final response = await _dio.get<Map<String, dynamic>>('/customers/$id');
     return customerFromJson(response.data!);

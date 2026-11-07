@@ -4704,4 +4704,212 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get whRecipeDeleted => 'Retsept o\'chirildi';
+
+  @override
+  String get rposFilterAll => 'Hammasi';
+
+  @override
+  String get rposFilterBusy => 'Band';
+
+  @override
+  String get rposFilterFree => 'Bo\'sh';
+
+  @override
+  String get rposFilterReady => 'Tayyor';
+
+  @override
+  String get rposFilterUnpaid => 'To\'lov kutilmoqda';
+
+  @override
+  String get rposStateFree => 'Bo\'sh';
+
+  @override
+  String get rposStateOpen => 'Band';
+
+  @override
+  String get rposStateReady => 'Tayyor';
+
+  @override
+  String get rposStateUnpaid => 'To\'lov';
+
+  @override
+  String get rposTapToOrder => 'Buyurtma olish';
+
+  @override
+  String get rposReadyToServe => 'Tayyor — olib boring';
+
+  @override
+  String get rposTakePayment => 'Xizmat qilindi — to\'lovni oling';
+
+  @override
+  String rposMoreItems(int n) {
+    return '+$n ta yana';
+  }
+
+  @override
+  String rposBills(int n) {
+    return '$n ta hisob';
+  }
+
+  @override
+  String get rposTakenAtCashier => 'Kassada olingan';
+
+  @override
+  String rposServicePercent(String percent) {
+    return '+$percent% xizmat';
+  }
+
+  @override
+  String get rposTakeaway => 'Olib ketish';
+
+  @override
+  String get rposTakeawayTitle => 'Olib ketish — yangi buyurtma';
+
+  @override
+  String get rposTakeawayHint => 'Oshxonaga to\'lovdan keyin yuboriladi';
+
+  @override
+  String get rposTakeawayHeld => 'To\'langach oshxonaga yuboriladi';
+
+  @override
+  String get rposOtherOrders => 'Boshqa buyurtmalar';
+
+  @override
+  String get rposNoOtherOrders => 'Boshqa buyurtma yo\'q';
+
+  @override
+  String get rposNoTables => 'Hali stol qo\'shilmagan';
+
+  @override
+  String get rposNoTablesHint =>
+      '«Stollar» bo\'limida stol yoki xonalarni qo\'shing.';
+
+  @override
+  String get rposNoMatches => 'Bu filtr bo\'yicha stol yo\'q';
+
+  @override
+  String get rposServedUnpaid =>
+      'Ofitsiant «Berildi» deb belgilagan — to\'lov hali olinmagan';
+
+  @override
+  String get rposRemove => 'Olib tashlash';
+
+  @override
+  String get rposRemoveHowMany => 'Nechtasini olib tashlaysiz?';
+
+  @override
+  String rposRemoveOne(String name) {
+    return '«$name» olib tashlansinmi?';
+  }
+
+  @override
+  String rposRemoved(String name, int n) {
+    return '$name: $n ta olib tashlandi';
+  }
+
+  @override
+  String get rposLastItem =>
+      'Oxirgi taomni olib bo\'lmaydi — buyurtmani bekor qiling';
+
+  @override
+  String get rposKitchenNotified => 'Oshxona chek orqali xabardor qilinadi';
+
+  @override
+  String get rposNotSentToKitchen => 'Oshxonaga hali yuborilmagan';
+
+  @override
+  String get rposAddDishes => 'Taom qo\'shish';
+
+  @override
+  String rposAddDishesTo(String order) {
+    return '$order — taom qo\'shish';
+  }
+
+  @override
+  String get rposNewBill => 'Alohida hisob ochish';
+
+  @override
+  String rposNewOrderFor(String table) {
+    return '$table — yangi buyurtma';
+  }
+
+  @override
+  String get rposSendToKitchen => 'Oshxonaga yuborish';
+
+  @override
+  String get rposAddToOrder => 'Qo\'shib yuborish';
+
+  @override
+  String get rposPickDishes => 'Menyudan taom tanlang';
+
+  @override
+  String get rposPay => 'To\'lovga o\'tish';
+
+  @override
+  String get rposPayHint => 'To\'lovdan keyin stol bo\'shaydi';
+
+  @override
+  String get rposToPay => 'To\'lov uchun';
+
+  @override
+  String get rposAlreadyPaid => 'Bu buyurtma allaqachon to\'langan';
+
+  @override
+  String rposOrderSent(String table) {
+    return '$table: buyurtma oshxonaga yuborildi';
+  }
+
+  @override
+  String rposItemsAdded(String order) {
+    return '$order: taomlar qo\'shildi';
+  }
+
+  @override
+  String get rposCustomerOptional => 'Mijoz (ixtiyoriy)';
+
+  @override
+  String get rposWalkInCustomer => 'Mehmon xaridor';
+
+  @override
+  String get rposDebtNeedsCustomer => 'Qarzga yozish uchun mijozni tanlang';
+
+  @override
+  String rposOrderLabel(String number) {
+    return 'Buyurtma #$number';
+  }
+
+  @override
+  String rposOrderLabelTakeaway(String number) {
+    return 'Buyurtma #$number · Olib ketish';
+  }
+
+  @override
+  String get rposDiscardTitle => 'Tanlangan taomlar yuborilmagan. Chiqasizmi?';
+
+  @override
+  String get rposDiscardLeave => 'Chiqish';
+
+  @override
+  String get rposCancelConfirm =>
+      'Bu hisob bekor qilinsinmi? Oshxona xabardor qilinadi.';
+
+  @override
+  String get rposTableBusy => 'band';
+
+  @override
+  String get rposWaiterBusyHint =>
+      'Band stolga taomni kassir yoki admin qo\'shadi';
+
+  @override
+  String get rposJustNow => 'hozir';
+
+  @override
+  String rposElapsedMin(int n) {
+    return '$n daq';
+  }
+
+  @override
+  String rposElapsedHour(int h, int m) {
+    return '$h soat $m daq';
+  }
 }

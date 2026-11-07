@@ -24,6 +24,15 @@ class CustomersRepositoryImpl implements CustomersRepository {
   }
 
   @override
+  Future<Result<Customer>> resolveWalkIn() async {
+    try {
+      return Result.ok(await _remote.resolveWalkIn());
+    } on DioException catch (e) {
+      return Result.err(mapDioException(e));
+    }
+  }
+
+  @override
   Future<Result<Customer>> getById(String id) async {
     try {
       return Result.ok(await _remote.getById(id));

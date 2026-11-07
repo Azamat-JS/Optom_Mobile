@@ -12,6 +12,7 @@ class CreateSaleItemParams {
     required this.quantity,
     this.unitPrice,
     this.discount,
+    this.costPrice,
   });
 
   final String? productId;
@@ -20,12 +21,16 @@ class CreateSaleItemParams {
   final double? unitPrice;
   final double? discount;
 
+  /// Only for a line without a product (e.g. a restaurant's service charge: 0 = pure income).
+  final double? costPrice;
+
   Map<String, dynamic> toRequestBody() => {
         if (productId != null) 'productId': productId,
         if (productName != null) 'productName': productName,
         'quantity': quantity,
         if (unitPrice != null) 'unitPrice': unitPrice,
         if (discount != null && discount! > 0) 'discount': discount,
+        if (costPrice != null) 'costPrice': costPrice,
       };
 }
 
@@ -41,7 +46,11 @@ class CreateSaleParams {
     this.dueDate,
     this.debtNotes,
     this.paidAmount,
+    this.restaurantOrderId,
   });
+
+  /// The restaurant order this sale pays (the Kassa's "To'lovga o'tish"): links it and frees the table.
+  final String? restaurantOrderId;
 
   final String customerId;
   final SaleType type;
@@ -63,6 +72,7 @@ class CreateSaleParams {
         if (dueDate != null) 'dueDate': dueDate!.toUtc().toIso8601String(),
         if (debtNotes != null && debtNotes!.isNotEmpty) 'debtNotes': debtNotes,
         if (paidAmount != null && paidAmount! > 0) 'paidAmount': paidAmount,
+        if (restaurantOrderId != null) 'restaurantOrderId': restaurantOrderId,
       };
 }
 

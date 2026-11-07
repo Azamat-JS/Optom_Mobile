@@ -72,9 +72,10 @@ bool canShareTrackingLink(RestaurantOrder order, UserRole role) {
   return order.courier != null && order.courierAcceptedAt != null;
 }
 
-/// A table/customer can always order more food while the order is still
-/// open — owner/admin and waiter only, never courier.
+/// Adding or taking off dishes is the owner's or an admin's job at the Kassa — a waiter only takes
+/// the order (Optom_Savdo "Restaurant POS"). Allowed until the bill is paid, also after a waiter
+/// marked it served.
 bool canAddItems(RestaurantOrder order, UserRole role) {
-  if (order.status.isTerminal) return false;
-  return role == UserRole.retailer || role == UserRole.retailerAdmin || role == UserRole.waiter;
+  if (role != UserRole.retailer && role != UserRole.retailerAdmin) return false;
+  return order.isEditable;
 }

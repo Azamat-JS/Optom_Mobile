@@ -344,6 +344,15 @@ features/
                      notifiers (paginated)
       screens/     → AgentHomeScreen (tab shell: home, sell, sales, debtors), the four tabs,
                      AgentCheckoutScreen, AgentSaleDetailScreen, AgentDebtDetailScreen
+  restaurant_pos/      → Phase 17: a restaurant's Kassa by table — see "Phase 17" below
+    presentation/
+      providers/   → unpaidRestaurantOrdersProvider (GET /restaurant-orders/unpaid), PosTableView +
+                     buildPosTableViews / otherPosOrders
+      restaurant_pos_actions.dart → takeTableOrder, startTakeaway, payRestaurantOrder,
+                     refreshRestaurantPos
+      screens/     → PosEntryScreen (the Kassa route), RestaurantPosScreen, PosTableScreen,
+                     DishPickerScreen, RestaurantCheckoutScreen, PosOtherOrdersScreen
+      widgets/     → PosTableCard (+ ElapsedLabel), PosBillCard (+ remove-dish sheet, payableFor)
   warehouse/           → Phase 16: restaurant ingredients + recipes — see "Phase 16" below
     data/{datasources,models,repositories}/   → one WarehouseRepository over /ingredients + /recipes
     domain/{entities,repositories,usecases}/  → Ingredient, IngredientMovement, MenuDish/RecipeDetail/
@@ -2940,6 +2949,58 @@ is sold.
 - **Known gaps:** none of the online-orders / kitchen-hold additions of the same day are in the app
   yet (POS online section, "Online" tag, kitchen hold hint); the restaurant board still works
   as before with them.
+
+### Phase 17 — Restaurant Kassa by table + takeaway (mobile; backend + web done in Optom_Savdo)
+
+**Finalized (2026-11-07, user request):** the app now matches Optom_Savdo "Restaurant POS" and its
+"Takeaway" part. Read that section for the server rules; only the app side is here.
+
+- **Kassa route:** `RouteNames.pos` renders `PosEntryScreen`: `businessType RESTAURANT` →
+  `RestaurantPosScreen`, everyone else the product register (`PosScreen`, unchanged).
+- **`RestaurantPosScreen`:** "Olib ketish" and "Boshqa buyurtmalar" (badge = deliveries + unpaid
+  takeaways) buttons, filter chips (Hammasi / Band / Bo'sh / Tayyor / To'lov kutilmoqda), a 2-column
+  grid (3 from 600 dp) of `PosTableCard`: free green, busy amber, READY violet, served-and-unpaid
+  blue "To'lov"; dishes, elapsed time, grand total, waiter. Reloads every 15 s while on screen, on
+  app resume and after every action (the app has no live socket for restaurant orders).
+- **Tapping a table:** a free one goes straight to `DishPickerScreen` (menu with availability tags,
+  tap to add, stepper, order note) and then opens the table. A busy one opens `PosTableScreen`: one
+  `PosBillCard` per bill — dishes with a bin (sheet with a 1..n stepper; the last dish can't go),
+  "Taom qo'shish", the kitchen status button, cancel (confirm dialog), a discount, the payable total
+  (`payableFor`, both percents on the discounted food total) and "To'lovga o'tish"; plus "Alohida
+  hisob ochish". The table screen closes itself once its bills are gone **and it's on top again**
+  (watching `ModalRoute.isCurrent`): checkout replaces itself with the receipt, so the checkout's
+  push future returns while the receipt is still showing; popping then closed the receipt (caught
+  in the simulator run, see below).
+- **`RestaurantCheckoutScreen`:** customer optional (none = `POST /customers/walk-in`, new
+  `ResolveWalkInCustomerUseCase`; required for debt), paid/debt + payment method tiles, service
+  charge and waiter percent switches, sends the bill's own lines at their prices + the percent lines
+  (`costPrice` 0 / = amount) + `restaurantOrderId` (`CreateSaleParams`/`CreateSaleItemParams`
+  gained both fields). Then `SaleDetailScreen(orderLabel: "Buyurtma #K3F9QX[ · Olib ketish]")`.
+  `payRestaurantOrder` re-reads the order first (409 avoided: an already paid bill shows a message).
+- **Takeaway:** "Olib ketish" → `DishPickerScreen` → `CreateRestaurantOrderParams(takeaway: true)` →
+  checkout at once. Abandoned → waits in `PosOtherOrdersScreen` ("To'langach oshxonaga
+  yuboriladi") with its own "To'lovga o'tish".
+- **Waiter / board:** `canAddItems` is owner/admin only (and allowed on a served-but-unpaid bill).
+  The order form disables busy tables for a waiter ("· band" + hint) and only marks them for
+  owner/admin. Board and order detail say "Olib ketish" for a takeaway.
+- **Data:** `RestaurantOrder.isTakeaway/saleId/kitchenHeld` (+ `isTableOrder`, `isEditable`,
+  `unitCount`), `RestaurantOrderItem.kitchenSent`; `findUnpaid` / `removeItem` on the repository
+  (+ use cases). Strings: `rpos*` (uz/ru/en).
+- **Verified (2026-11-07):**
+  - `flutter analyze` clean, 170 unit tests (9 new in `test/features/restaurant_pos/`).
+  - A temporary integration test on the iPhone 16e simulator against the real local API
+    (throwaway restaurant; admin + waiter runs, 22 checks): tables screen, a waiter's order on the
+    card, remove 1 plov (server qty), add a shashlik, 7 000 discount → 69 300, checkout total and
+    service switch, receipt "Buyurtma #…", sale 69 300 / discount 7 000, order SERVED, back on a
+    free floor; takeaway 80 000 → receipt "· Olib ketish" → kitchen ticket `isTakeaway`; free table →
+    order → cancel → table free; served-unpaid card + filter; delivery in other orders; waiter form
+    disabling the busy table. Screenshots reviewed; two phone-width fixes made (bill buttons
+    stacked, top button labels scale down). Test rows cleaned up, `.env` restored, test file
+    deleted.
+  - Not checked on Android or a real phone.
+- **Known gaps:** a special customer picked at a restaurant checkout is charged retail prices by
+  the server but the screen shows the bill's prices; online-order approval isn't on the restaurant
+  Kassa (still under orders); no per-dish notes in the picker.
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

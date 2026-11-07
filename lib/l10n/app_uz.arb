@@ -3057,5 +3057,161 @@
       }
     }
   },
-  "whRecipeDeleted": "Retsept o'chirildi"
+  "whRecipeDeleted": "Retsept o'chirildi",
+  "rposFilterAll": "Hammasi",
+  "rposFilterBusy": "Band",
+  "rposFilterFree": "Bo'sh",
+  "rposFilterReady": "Tayyor",
+  "rposFilterUnpaid": "To'lov kutilmoqda",
+  "rposStateFree": "Bo'sh",
+  "rposStateOpen": "Band",
+  "rposStateReady": "Tayyor",
+  "rposStateUnpaid": "To'lov",
+  "rposTapToOrder": "Buyurtma olish",
+  "rposReadyToServe": "Tayyor — olib boring",
+  "rposTakePayment": "Xizmat qilindi — to'lovni oling",
+  "rposMoreItems": "+{n} ta yana",
+  "@rposMoreItems": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "rposBills": "{n} ta hisob",
+  "@rposBills": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "rposTakenAtCashier": "Kassada olingan",
+  "rposServicePercent": "+{percent}% xizmat",
+  "@rposServicePercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "rposTakeaway": "Olib ketish",
+  "rposTakeawayTitle": "Olib ketish — yangi buyurtma",
+  "rposTakeawayHint": "Oshxonaga to'lovdan keyin yuboriladi",
+  "rposTakeawayHeld": "To'langach oshxonaga yuboriladi",
+  "rposOtherOrders": "Boshqa buyurtmalar",
+  "rposNoOtherOrders": "Boshqa buyurtma yo'q",
+  "rposNoTables": "Hali stol qo'shilmagan",
+  "rposNoTablesHint": "«Stollar» bo'limida stol yoki xonalarni qo'shing.",
+  "rposNoMatches": "Bu filtr bo'yicha stol yo'q",
+  "rposServedUnpaid": "Ofitsiant «Berildi» deb belgilagan — to'lov hali olinmagan",
+  "rposRemove": "Olib tashlash",
+  "rposRemoveHowMany": "Nechtasini olib tashlaysiz?",
+  "rposRemoveOne": "«{name}» olib tashlansinmi?",
+  "@rposRemoveOne": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "rposRemoved": "{name}: {n} ta olib tashlandi",
+  "@rposRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "rposLastItem": "Oxirgi taomni olib bo'lmaydi — buyurtmani bekor qiling",
+  "rposKitchenNotified": "Oshxona chek orqali xabardor qilinadi",
+  "rposNotSentToKitchen": "Oshxonaga hali yuborilmagan",
+  "rposAddDishes": "Taom qo'shish",
+  "rposAddDishesTo": "{order} — taom qo'shish",
+  "@rposAddDishesTo": {
+    "placeholders": {
+      "order": {
+        "type": "String"
+      }
+    }
+  },
+  "rposNewBill": "Alohida hisob ochish",
+  "rposNewOrderFor": "{table} — yangi buyurtma",
+  "@rposNewOrderFor": {
+    "placeholders": {
+      "table": {
+        "type": "String"
+      }
+    }
+  },
+  "rposSendToKitchen": "Oshxonaga yuborish",
+  "rposAddToOrder": "Qo'shib yuborish",
+  "rposPickDishes": "Menyudan taom tanlang",
+  "rposPay": "To'lovga o'tish",
+  "rposPayHint": "To'lovdan keyin stol bo'shaydi",
+  "rposToPay": "To'lov uchun",
+  "rposAlreadyPaid": "Bu buyurtma allaqachon to'langan",
+  "rposOrderSent": "{table}: buyurtma oshxonaga yuborildi",
+  "@rposOrderSent": {
+    "placeholders": {
+      "table": {
+        "type": "String"
+      }
+    }
+  },
+  "rposItemsAdded": "{order}: taomlar qo'shildi",
+  "@rposItemsAdded": {
+    "placeholders": {
+      "order": {
+        "type": "String"
+      }
+    }
+  },
+  "rposCustomerOptional": "Mijoz (ixtiyoriy)",
+  "rposWalkInCustomer": "Mehmon xaridor",
+  "rposDebtNeedsCustomer": "Qarzga yozish uchun mijozni tanlang",
+  "rposOrderLabel": "Buyurtma #{number}",
+  "@rposOrderLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "rposOrderLabelTakeaway": "Buyurtma #{number} · Olib ketish",
+  "@rposOrderLabelTakeaway": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "rposDiscardTitle": "Tanlangan taomlar yuborilmagan. Chiqasizmi?",
+  "rposDiscardLeave": "Chiqish",
+  "rposCancelConfirm": "Bu hisob bekor qilinsinmi? Oshxona xabardor qilinadi.",
+  "rposTableBusy": "band",
+  "rposWaiterBusyHint": "Band stolga taomni kassir yoki admin qo'shadi",
+  "rposJustNow": "hozir",
+  "rposElapsedMin": "{n} daq",
+  "@rposElapsedMin": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "rposElapsedHour": "{h} soat {m} daq",
+  "@rposElapsedHour": {
+    "placeholders": {
+      "h": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      }
+    }
+  }
 }

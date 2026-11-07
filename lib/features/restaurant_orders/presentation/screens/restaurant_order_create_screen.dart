@@ -22,6 +22,9 @@ import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_ord
 import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_order_write_params.dart';
 import 'package:bsmart/features/restaurant_orders/domain/usecases/create_restaurant_order_usecase.dart';
 import 'package:bsmart/features/restaurant_tables/presentation/providers/restaurant_tables_list_notifier.dart';
+import 'package:bsmart/core/enums/user_role.dart';
+import 'package:bsmart/features/auth/presentation/providers/session_notifier.dart';
+import 'package:bsmart/features/restaurant_orders/presentation/providers/open_restaurant_orders_notifier.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
 import 'package:bsmart/shared/widgets/location_picker_field.dart';
@@ -140,6 +143,13 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
     final l10n = context.l10n;
     final colors = BrandColors.of(context);
     final tablesAsync = ref.watch(restaurantTablesListProvider);
+    // A waiter only seats a free table; more food for a busy one is added at the Kassa (the server
+    // refuses it too). The owner/admin may open a second bill there, so for them it's only marked.
+    final isWaiter = ref.watch(sessionNotifierProvider).valueOrNull?.session?.role == UserRole.waiter;
+    final busyTableIds = {
+      for (final o in ref.watch(openRestaurantOrdersProvider).valueOrNull ?? const [])
+        if (o.isTableOrder && !o.status.isTerminal) o.table!.id,
+    };
     // Loaded now so the menu sheet can show which dishes the kitchen can make.
     ref.watch(dishAvailabilityProvider);
     final count = _cart.fold<int>(0, (sum, line) => sum + line.quantity);
@@ -173,16 +183,29 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
               tablesAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Text(l10n.commonErrorWith('$error')),
-                data: (tables) => Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                data: (tables) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    for (final t in tables)
-                      _TablePill(
-                        name: t.name,
-                        selected: t.id == _tableId,
-                        onTap: () => setState(() => _tableId = t.id),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final t in tables)
+                          _TablePill(
+                            name: busyTableIds.contains(t.id) ? '${t.name} · ${l10n.rposTableBusy}' : t.name,
+                            selected: t.id == _tableId,
+                            enabled: !(isWaiter && busyTableIds.contains(t.id)),
+                            onTap: () => setState(() => _tableId = t.id),
+                          ),
+                      ],
+                    ),
+                    if (isWaiter && busyTableIds.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.rposWaiterBusyHint,
+                        style: TextStyle(color: colors.textMuted, fontSize: 12.5, fontWeight: FontWeight.w600),
                       ),
+                    ],
                   ],
                 ),
               ),
@@ -307,10 +330,11 @@ class _RestaurantOrderCreateScreenState extends ConsumerState<RestaurantOrderCre
 
 /// A table to pick for a dine-in order (selected = yellow).
 class _TablePill extends StatelessWidget {
-  const _TablePill({required this.name, required this.selected, required this.onTap});
+  const _TablePill({required this.name, required this.selected, required this.onTap, this.enabled = true});
 
   final String name;
   final bool selected;
+  final bool enabled;
   final VoidCallback onTap;
 
   @override
@@ -319,11 +343,16 @@ class _TablePill extends StatelessWidget {
     return Semantics(
       selected: selected,
       button: true,
+      enabled: enabled,
       child: Material(
-        color: selected ? AppColors.brandYellow : DashColors.card(context),
+        color: selected
+            ? AppColors.brandYellow
+            : enabled
+            ? DashColors.card(context)
+            : colors.disabledFill,
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
-          onTap: onTap,
+          onTap: enabled ? onTap : null,
           borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -339,7 +368,11 @@ class _TablePill extends StatelessWidget {
                 Text(
                   name,
                   style: TextStyle(
-                    color: selected ? AppColors.onBrand : colors.textPrimary,
+                    color: selected
+                        ? AppColors.onBrand
+                        : enabled
+                        ? colors.textPrimary
+                        : colors.disabledText,
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
                   ),

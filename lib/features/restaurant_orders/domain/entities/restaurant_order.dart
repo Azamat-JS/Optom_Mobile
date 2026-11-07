@@ -44,6 +44,9 @@ class RestaurantOrder {
     this.deliveredAt,
     this.cancelledAt,
     required this.createdAt,
+    this.isTakeaway = false,
+    this.saleId,
+    this.kitchenHeld = false,
   });
 
   final String id;
@@ -73,6 +76,24 @@ class RestaurantOrder {
   final DateTime? deliveredAt;
   final DateTime? cancelledAt;
   final DateTime createdAt;
+
+  /// A walk-in takeaway sold at the Kassa: DINE_IN with no table (Optom_Savdo "Restaurant POS").
+  final bool isTakeaway;
+
+  /// Set once it's paid at the Kassa.
+  final String? saleId;
+
+  /// Some dish hasn't gone to the kitchen yet.
+  final bool kitchenHeld;
+
+  /// Seated at a table — shown as a table card at the Kassa; everything else is an "other order".
+  bool get isTableOrder => type == RestaurantOrderType.dineIn && table != null && !isTakeaway;
+
+  /// Dishes can change until it's paid (also after a waiter marked it served).
+  bool get isEditable =>
+      saleId == null && status != RestaurantOrderStatus.cancelled && status != RestaurantOrderStatus.delivered;
+
+  int get unitCount => items.fold(0, (sum, i) => sum + i.quantity);
 
   /// Assigned (courier set) but not yet accepted, and still actionable —
   /// mirrors the web app's `isCourierAssignmentPending` exactly, including

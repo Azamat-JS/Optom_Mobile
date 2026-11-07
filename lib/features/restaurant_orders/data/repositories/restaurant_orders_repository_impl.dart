@@ -34,6 +34,24 @@ class RestaurantOrdersRepositoryImpl implements RestaurantOrdersRepository {
   }
 
   @override
+  Future<Result<List<RestaurantOrder>>> findUnpaid() async {
+    try {
+      return Result.ok(await _remote.findUnpaid());
+    } on DioException catch (e) {
+      return Result.err(mapDioException(e));
+    }
+  }
+
+  @override
+  Future<Result<RestaurantOrder>> removeItem(String id, String itemId, int? quantity) async {
+    try {
+      return Result.ok(await _remote.removeItem(id, itemId, quantity));
+    } on DioException catch (e) {
+      return Result.err(mapDioException(e));
+    }
+  }
+
+  @override
   Future<Result<RestaurantOrder>> findOne(String id) async {
     try {
       return Result.ok(await _remote.findOne(id));

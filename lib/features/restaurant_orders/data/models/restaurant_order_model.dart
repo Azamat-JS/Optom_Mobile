@@ -21,6 +21,7 @@ RestaurantOrderItem _itemFromJson(Map<String, dynamic> json) => RestaurantOrderI
       quantity: (json['quantity'] as num).toInt(),
       unitPrice: parseDecimal(json['unitPrice']),
       notes: json['notes'] as String?,
+      kitchenSent: json['kitchenSentAt'] != null,
     );
 
 RestaurantOrder restaurantOrderFromJson(Map<String, dynamic> json) {
@@ -60,5 +61,8 @@ RestaurantOrder restaurantOrderFromJson(Map<String, dynamic> json) {
     deliveredAt: json['deliveredAt'] != null ? DateTime.parse(json['deliveredAt'] as String) : null,
     cancelledAt: json['cancelledAt'] != null ? DateTime.parse(json['cancelledAt'] as String) : null,
     createdAt: DateTime.parse(json['createdAt'] as String),
+    isTakeaway: json['isTakeaway'] as bool? ?? false,
+    saleId: json['saleId'] as String?,
+    kitchenHeld: json['kitchenHeld'] as bool? ?? false,
   );
 }

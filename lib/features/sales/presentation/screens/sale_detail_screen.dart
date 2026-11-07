@@ -33,10 +33,14 @@ import 'package:bsmart/shared/widgets/dash_page.dart';
 /// screen shows what it is instead of a product list, and offers
 /// "Bekor qilish" (with a confirmation) instead of a return.
 class SaleDetailScreen extends ConsumerStatefulWidget {
-  const SaleDetailScreen({super.key, required this.saleId, this.justCreated = false});
+  const SaleDetailScreen({super.key, required this.saleId, this.justCreated = false, this.orderLabel});
 
   final String saleId;
   final bool justCreated;
+
+  /// The restaurant order this sale paid ("Buyurtma #K3F9QX · Olib ketish") — the number the
+  /// kitchen calls out, shown big on the receipt.
+  final String? orderLabel;
 
   @override
   ConsumerState<SaleDetailScreen> createState() => _SaleDetailScreenState();
@@ -290,6 +294,14 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                     ),
                   ),
                 ),
+                if (widget.orderLabel != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    widget.orderLabel!,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: colors.textPrimary, fontSize: 20, fontWeight: FontWeight.w800),
+                  ),
+                ],
                 const SizedBox(height: 10),
                 Wrap(
                   spacing: 8,

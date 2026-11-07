@@ -9,6 +9,8 @@ abstract class CustomersRepository {
 
   Future<Result<Customer>> getById(String id);
 
+  Future<Result<Customer>> resolveWalkIn();
+
   Future<Result<Customer>> create(CreateCustomerParams params);
 
   Future<Result<Customer>> update(String id, UpdateCustomerParams params);

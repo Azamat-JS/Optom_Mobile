@@ -8025,6 +8025,360 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Retsept o\'chirildi'**
   String get whRecipeDeleted;
+
+  /// No description provided for @rposFilterAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hammasi'**
+  String get rposFilterAll;
+
+  /// No description provided for @rposFilterBusy.
+  ///
+  /// In uz, this message translates to:
+  /// **'Band'**
+  String get rposFilterBusy;
+
+  /// No description provided for @rposFilterFree.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bo\'sh'**
+  String get rposFilterFree;
+
+  /// No description provided for @rposFilterReady.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tayyor'**
+  String get rposFilterReady;
+
+  /// No description provided for @rposFilterUnpaid.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov kutilmoqda'**
+  String get rposFilterUnpaid;
+
+  /// No description provided for @rposStateFree.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bo\'sh'**
+  String get rposStateFree;
+
+  /// No description provided for @rposStateOpen.
+  ///
+  /// In uz, this message translates to:
+  /// **'Band'**
+  String get rposStateOpen;
+
+  /// No description provided for @rposStateReady.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tayyor'**
+  String get rposStateReady;
+
+  /// No description provided for @rposStateUnpaid.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov'**
+  String get rposStateUnpaid;
+
+  /// No description provided for @rposTapToOrder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma olish'**
+  String get rposTapToOrder;
+
+  /// No description provided for @rposReadyToServe.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tayyor — olib boring'**
+  String get rposReadyToServe;
+
+  /// No description provided for @rposTakePayment.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xizmat qilindi — to\'lovni oling'**
+  String get rposTakePayment;
+
+  /// No description provided for @rposMoreItems.
+  ///
+  /// In uz, this message translates to:
+  /// **'+{n} ta yana'**
+  String rposMoreItems(int n);
+
+  /// No description provided for @rposBills.
+  ///
+  /// In uz, this message translates to:
+  /// **'{n} ta hisob'**
+  String rposBills(int n);
+
+  /// No description provided for @rposTakenAtCashier.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kassada olingan'**
+  String get rposTakenAtCashier;
+
+  /// No description provided for @rposServicePercent.
+  ///
+  /// In uz, this message translates to:
+  /// **'+{percent}% xizmat'**
+  String rposServicePercent(String percent);
+
+  /// No description provided for @rposTakeaway.
+  ///
+  /// In uz, this message translates to:
+  /// **'Olib ketish'**
+  String get rposTakeaway;
+
+  /// No description provided for @rposTakeawayTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Olib ketish — yangi buyurtma'**
+  String get rposTakeawayTitle;
+
+  /// No description provided for @rposTakeawayHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oshxonaga to\'lovdan keyin yuboriladi'**
+  String get rposTakeawayHint;
+
+  /// No description provided for @rposTakeawayHeld.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'langach oshxonaga yuboriladi'**
+  String get rposTakeawayHeld;
+
+  /// No description provided for @rposOtherOrders.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqa buyurtmalar'**
+  String get rposOtherOrders;
+
+  /// No description provided for @rposNoOtherOrders.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqa buyurtma yo\'q'**
+  String get rposNoOtherOrders;
+
+  /// No description provided for @rposNoTables.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hali stol qo\'shilmagan'**
+  String get rposNoTables;
+
+  /// No description provided for @rposNoTablesHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'«Stollar» bo\'limida stol yoki xonalarni qo\'shing.'**
+  String get rposNoTablesHint;
+
+  /// No description provided for @rposNoMatches.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu filtr bo\'yicha stol yo\'q'**
+  String get rposNoMatches;
+
+  /// No description provided for @rposServedUnpaid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ofitsiant «Berildi» deb belgilagan — to\'lov hali olinmagan'**
+  String get rposServedUnpaid;
+
+  /// No description provided for @rposRemove.
+  ///
+  /// In uz, this message translates to:
+  /// **'Olib tashlash'**
+  String get rposRemove;
+
+  /// No description provided for @rposRemoveHowMany.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nechtasini olib tashlaysiz?'**
+  String get rposRemoveHowMany;
+
+  /// No description provided for @rposRemoveOne.
+  ///
+  /// In uz, this message translates to:
+  /// **'«{name}» olib tashlansinmi?'**
+  String rposRemoveOne(String name);
+
+  /// No description provided for @rposRemoved.
+  ///
+  /// In uz, this message translates to:
+  /// **'{name}: {n} ta olib tashlandi'**
+  String rposRemoved(String name, int n);
+
+  /// No description provided for @rposLastItem.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oxirgi taomni olib bo\'lmaydi — buyurtmani bekor qiling'**
+  String get rposLastItem;
+
+  /// No description provided for @rposKitchenNotified.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oshxona chek orqali xabardor qilinadi'**
+  String get rposKitchenNotified;
+
+  /// No description provided for @rposNotSentToKitchen.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oshxonaga hali yuborilmagan'**
+  String get rposNotSentToKitchen;
+
+  /// No description provided for @rposAddDishes.
+  ///
+  /// In uz, this message translates to:
+  /// **'Taom qo\'shish'**
+  String get rposAddDishes;
+
+  /// No description provided for @rposAddDishesTo.
+  ///
+  /// In uz, this message translates to:
+  /// **'{order} — taom qo\'shish'**
+  String rposAddDishesTo(String order);
+
+  /// No description provided for @rposNewBill.
+  ///
+  /// In uz, this message translates to:
+  /// **'Alohida hisob ochish'**
+  String get rposNewBill;
+
+  /// No description provided for @rposNewOrderFor.
+  ///
+  /// In uz, this message translates to:
+  /// **'{table} — yangi buyurtma'**
+  String rposNewOrderFor(String table);
+
+  /// No description provided for @rposSendToKitchen.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oshxonaga yuborish'**
+  String get rposSendToKitchen;
+
+  /// No description provided for @rposAddToOrder.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo\'shib yuborish'**
+  String get rposAddToOrder;
+
+  /// No description provided for @rposPickDishes.
+  ///
+  /// In uz, this message translates to:
+  /// **'Menyudan taom tanlang'**
+  String get rposPickDishes;
+
+  /// No description provided for @rposPay.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lovga o\'tish'**
+  String get rposPay;
+
+  /// No description provided for @rposPayHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lovdan keyin stol bo\'shaydi'**
+  String get rposPayHint;
+
+  /// No description provided for @rposToPay.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov uchun'**
+  String get rposToPay;
+
+  /// No description provided for @rposAlreadyPaid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu buyurtma allaqachon to\'langan'**
+  String get rposAlreadyPaid;
+
+  /// No description provided for @rposOrderSent.
+  ///
+  /// In uz, this message translates to:
+  /// **'{table}: buyurtma oshxonaga yuborildi'**
+  String rposOrderSent(String table);
+
+  /// No description provided for @rposItemsAdded.
+  ///
+  /// In uz, this message translates to:
+  /// **'{order}: taomlar qo\'shildi'**
+  String rposItemsAdded(String order);
+
+  /// No description provided for @rposCustomerOptional.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mijoz (ixtiyoriy)'**
+  String get rposCustomerOptional;
+
+  /// No description provided for @rposWalkInCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mehmon xaridor'**
+  String get rposWalkInCustomer;
+
+  /// No description provided for @rposDebtNeedsCustomer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qarzga yozish uchun mijozni tanlang'**
+  String get rposDebtNeedsCustomer;
+
+  /// No description provided for @rposOrderLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma #{number}'**
+  String rposOrderLabel(String number);
+
+  /// No description provided for @rposOrderLabelTakeaway.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtma #{number} · Olib ketish'**
+  String rposOrderLabelTakeaway(String number);
+
+  /// No description provided for @rposDiscardTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tanlangan taomlar yuborilmagan. Chiqasizmi?'**
+  String get rposDiscardTitle;
+
+  /// No description provided for @rposDiscardLeave.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chiqish'**
+  String get rposDiscardLeave;
+
+  /// No description provided for @rposCancelConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu hisob bekor qilinsinmi? Oshxona xabardor qilinadi.'**
+  String get rposCancelConfirm;
+
+  /// No description provided for @rposTableBusy.
+  ///
+  /// In uz, this message translates to:
+  /// **'band'**
+  String get rposTableBusy;
+
+  /// No description provided for @rposWaiterBusyHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Band stolga taomni kassir yoki admin qo\'shadi'**
+  String get rposWaiterBusyHint;
+
+  /// No description provided for @rposJustNow.
+  ///
+  /// In uz, this message translates to:
+  /// **'hozir'**
+  String get rposJustNow;
+
+  /// No description provided for @rposElapsedMin.
+  ///
+  /// In uz, this message translates to:
+  /// **'{n} daq'**
+  String rposElapsedMin(int n);
+
+  /// No description provided for @rposElapsedHour.
+  ///
+  /// In uz, this message translates to:
+  /// **'{h} soat {m} daq'**
+  String rposElapsedHour(int h, int m);
 }
 
 class _AppLocalizationsDelegate

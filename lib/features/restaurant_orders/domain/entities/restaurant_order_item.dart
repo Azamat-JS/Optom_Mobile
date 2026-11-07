@@ -6,6 +6,7 @@ class RestaurantOrderItem {
     required this.quantity,
     required this.unitPrice,
     this.notes,
+    this.kitchenSent = true,
   });
 
   final String id;
@@ -14,6 +15,10 @@ class RestaurantOrderItem {
   final int quantity;
   final double unitPrice;
   final String? notes;
+
+  /// Went to the kitchen (a ticket was written). False while a delivery waits for its courier or
+  /// a takeaway waits for payment.
+  final bool kitchenSent;
 
   double get total => quantity * unitPrice;
 }

@@ -4899,4 +4899,210 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get whRecipeDeleted => 'Recipe deleted';
+
+  @override
+  String get rposFilterAll => 'All';
+
+  @override
+  String get rposFilterBusy => 'Occupied';
+
+  @override
+  String get rposFilterFree => 'Free';
+
+  @override
+  String get rposFilterReady => 'Ready';
+
+  @override
+  String get rposFilterUnpaid => 'Awaiting payment';
+
+  @override
+  String get rposStateFree => 'Free';
+
+  @override
+  String get rposStateOpen => 'Occupied';
+
+  @override
+  String get rposStateReady => 'Ready';
+
+  @override
+  String get rposStateUnpaid => 'Payment';
+
+  @override
+  String get rposTapToOrder => 'Take order';
+
+  @override
+  String get rposReadyToServe => 'Ready — serve it';
+
+  @override
+  String get rposTakePayment => 'Served — take payment';
+
+  @override
+  String rposMoreItems(int n) {
+    return '+$n more';
+  }
+
+  @override
+  String rposBills(int n) {
+    return '$n bills';
+  }
+
+  @override
+  String get rposTakenAtCashier => 'Taken at the till';
+
+  @override
+  String rposServicePercent(String percent) {
+    return '+$percent% service';
+  }
+
+  @override
+  String get rposTakeaway => 'Takeaway';
+
+  @override
+  String get rposTakeawayTitle => 'Takeaway — new order';
+
+  @override
+  String get rposTakeawayHint => 'The kitchen gets it once it\'s paid';
+
+  @override
+  String get rposTakeawayHeld => 'Goes to the kitchen once paid';
+
+  @override
+  String get rposOtherOrders => 'Other orders';
+
+  @override
+  String get rposNoOtherOrders => 'No other orders';
+
+  @override
+  String get rposNoTables => 'No tables yet';
+
+  @override
+  String get rposNoTablesHint => 'Add tables or rooms in the Tables section.';
+
+  @override
+  String get rposNoMatches => 'No tables match this filter';
+
+  @override
+  String get rposServedUnpaid =>
+      'The waiter marked it served — payment not taken yet';
+
+  @override
+  String get rposRemove => 'Remove';
+
+  @override
+  String get rposRemoveHowMany => 'How many to remove?';
+
+  @override
+  String rposRemoveOne(String name) {
+    return 'Remove \"$name\"?';
+  }
+
+  @override
+  String rposRemoved(String name, int n) {
+    return '$name: $n removed';
+  }
+
+  @override
+  String get rposLastItem =>
+      'You can\'t remove the last dish — cancel the order instead';
+
+  @override
+  String get rposKitchenNotified => 'The kitchen gets a cancellation slip';
+
+  @override
+  String get rposNotSentToKitchen => 'Not sent to the kitchen yet';
+
+  @override
+  String get rposAddDishes => 'Add dishes';
+
+  @override
+  String rposAddDishesTo(String order) {
+    return '$order — add dishes';
+  }
+
+  @override
+  String get rposNewBill => 'Open a separate bill';
+
+  @override
+  String rposNewOrderFor(String table) {
+    return '$table — new order';
+  }
+
+  @override
+  String get rposSendToKitchen => 'Send to the kitchen';
+
+  @override
+  String get rposAddToOrder => 'Add to the order';
+
+  @override
+  String get rposPickDishes => 'Pick dishes from the menu';
+
+  @override
+  String get rposPay => 'Go to payment';
+
+  @override
+  String get rposPayHint => 'The table is freed after payment';
+
+  @override
+  String get rposToPay => 'To pay';
+
+  @override
+  String get rposAlreadyPaid => 'This order has already been paid';
+
+  @override
+  String rposOrderSent(String table) {
+    return '$table: order sent to the kitchen';
+  }
+
+  @override
+  String rposItemsAdded(String order) {
+    return '$order: dishes added';
+  }
+
+  @override
+  String get rposCustomerOptional => 'Customer (optional)';
+
+  @override
+  String get rposWalkInCustomer => 'Walk-in customer';
+
+  @override
+  String get rposDebtNeedsCustomer => 'Pick a customer to put it on credit';
+
+  @override
+  String rposOrderLabel(String number) {
+    return 'Order #$number';
+  }
+
+  @override
+  String rposOrderLabelTakeaway(String number) {
+    return 'Order #$number · Takeaway';
+  }
+
+  @override
+  String get rposDiscardTitle => 'The dishes you picked weren\'t sent. Leave?';
+
+  @override
+  String get rposDiscardLeave => 'Leave';
+
+  @override
+  String get rposCancelConfirm => 'Cancel this bill? The kitchen will be told.';
+
+  @override
+  String get rposTableBusy => 'occupied';
+
+  @override
+  String get rposWaiterBusyHint =>
+      'Dishes for an occupied table are added by the cashier or an admin';
+
+  @override
+  String get rposJustNow => 'now';
+
+  @override
+  String rposElapsedMin(int n) {
+    return '$n min';
+  }
+
+  @override
+  String rposElapsedHour(int h, int m) {
+    return '$h h $m min';
+  }
 }

@@ -12,6 +12,10 @@ abstract class RestaurantOrdersRepository {
 
   Future<Result<RestaurantOrder>> findOne(String id);
 
+  Future<Result<List<RestaurantOrder>>> findUnpaid();
+
+  Future<Result<RestaurantOrder>> removeItem(String id, String itemId, int? quantity);
+
   Future<Result<RestaurantOrder>> addItems(String id, List<RestaurantOrderItemInput> items);
 
   Future<Result<RestaurantOrder>> updateStatus(String id, RestaurantOrderStatus status);

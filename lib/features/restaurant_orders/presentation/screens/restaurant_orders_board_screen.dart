@@ -91,9 +91,18 @@ class RestaurantOrdersBoardScreen extends ConsumerWidget {
                         color: tint.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: Icon(dineIn ? Icons.table_restaurant_rounded : Icons.moped_rounded, color: tint),
+                      child: Icon(
+                        order.isTakeaway
+                            ? Icons.shopping_bag_rounded
+                            : dineIn
+                            ? Icons.table_restaurant_rounded
+                            : Icons.moped_rounded,
+                        color: tint,
+                      ),
                     ),
-                    title: dineIn
+                    title: order.isTakeaway
+                        ? l10n.rposTakeaway
+                        : dineIn
                         ? l10n.restTableWith(order.tableNumber ?? order.table?.name ?? '—')
                         : (order.customerName?.isNotEmpty == true ? order.customerName! : order.orderNumber),
                     subtitle: [

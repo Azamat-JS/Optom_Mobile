@@ -283,8 +283,9 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
               Expanded(
                 child: Text(
                   [
-                    order.type.label,
-                    if (dineIn) context.l10n.restTableWith(order.tableNumber ?? order.table?.name ?? '—'),
+                    if (order.isTakeaway) context.l10n.rposTakeaway else order.type.label,
+                    if (dineIn && !order.isTakeaway)
+                      context.l10n.restTableWith(order.tableNumber ?? order.table?.name ?? '—'),
                   ].join(' · '),
                   style: TextStyle(color: colors.textSecondary, fontSize: 14, fontWeight: FontWeight.w700),
                 ),
