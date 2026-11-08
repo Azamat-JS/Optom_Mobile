@@ -8,7 +8,7 @@ import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_ord
 /// ported directly from the reference web app's own `status-actions.ts`.
 ///
 /// Flow: `NEW → PREPARING → READY → SERVED` (dine-in) or `→ DELIVERED`
-/// (delivery); `CANCELLED` reachable from any non-terminal status.
+/// (delivery); `CANCELLED` reachable from any non-terminal status, for the owner/admin only.
 List<RestaurantOrderStatus> getStatusActions(RestaurantOrder order, UserRole role, String userId) {
   if (order.status.isTerminal) return const [];
 
@@ -38,9 +38,12 @@ List<RestaurantOrderStatus> getStatusActions(RestaurantOrder order, UserRole rol
     case RestaurantOrderStatus.cancelled:
       break;
   }
-  actions.add(RestaurantOrderStatus.cancelled);
+  // Cancelling is the owner's or an admin's — the server answers 403 to a waiter.
+  if (_isOwnerOrAdmin(role)) actions.add(RestaurantOrderStatus.cancelled);
   return actions;
 }
+
+bool _isOwnerOrAdmin(UserRole role) => role == UserRole.retailer || role == UserRole.retailerAdmin;
 
 /// Whether a courier may tap "Qabul qilish" (Accept) on this order — either
 /// it's unclaimed (broadcast to every courier) or already assigned to this
@@ -72,10 +75,15 @@ bool canShareTrackingLink(RestaurantOrder order, UserRole role) {
   return order.courier != null && order.courierAcceptedAt != null;
 }
 
-/// Adding or taking off dishes is the owner's or an admin's job at the Kassa — a waiter only takes
-/// the order (Optom_Savdo "Restaurant POS"). Allowed until the bill is paid, also after a waiter
-/// marked it served.
-bool canAddItems(RestaurantOrder order, UserRole role) {
-  if (role != UserRole.retailer && role != UserRole.retailerAdmin) return false;
-  return order.isEditable;
+/// Owner/admin add dishes to any unpaid order; a waiter only to an order they took (Optom_Savdo
+/// "Restaurant POS", mirrors `RestaurantOrderService.addItems`). Allowed until the bill is paid,
+/// also after a waiter marked it served.
+bool canAddItems(RestaurantOrder order, UserRole role, String userId) {
+  if (!order.isEditable) return false;
+  if (_isOwnerOrAdmin(role)) return true;
+  return role == UserRole.waiter && userId.isNotEmpty && order.waiter?.id == userId && !order.isTakeaway;
 }
+
+/// Taking dishes off (cancelling single dishes or drinks) is the owner's or an admin's only
+/// (`RestaurantOrderService.removeItem`).
+bool canRemoveItems(RestaurantOrder order, UserRole role) => _isOwnerOrAdmin(role) && order.isEditable;

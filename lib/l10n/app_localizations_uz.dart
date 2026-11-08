@@ -2136,6 +2136,10 @@ class AppLocalizationsUz extends AppLocalizations {
   String get restCancelOrder => 'Bekor qilish';
 
   @override
+  String get restCancelAtCashier =>
+      'Buyurtmani yoki undagi taomni bekor qilish uchun kassir yoki adminga murojaat qiling';
+
+  @override
   String get restAccept => 'Qabul qilish';
 
   @override

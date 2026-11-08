@@ -618,6 +618,7 @@
   "restActionServed": "Отметить поданным",
   "restActionDelivered": "Отметить доставленным",
   "restCancelOrder": "Отменить",
+  "restCancelAtCashier": "Чтобы отменить заказ или блюдо в нём, обратитесь к кассиру или администратору",
   "restAccept": "Принять",
   "restCancelOrderTitle": "Отмена заказа",
   "restCancelOrderConfirm": "Подтверждаете отмену этого заказа?",

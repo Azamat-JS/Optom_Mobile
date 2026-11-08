@@ -1186,6 +1186,7 @@
   "restActionServed": "Berildi deb belgilash",
   "restActionDelivered": "Yetkazildi deb belgilash",
   "restCancelOrder": "Bekor qilish",
+  "restCancelAtCashier": "Buyurtmani yoki undagi taomni bekor qilish uchun kassir yoki adminga murojaat qiling",
   "restAccept": "Qabul qilish",
   "restCancelOrderTitle": "Buyurtmani bekor qilish",
   "restCancelOrderConfirm": "Bu buyurtmani bekor qilishni tasdiqlaysizmi?",

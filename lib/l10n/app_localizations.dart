@@ -3760,6 +3760,12 @@ abstract class AppLocalizations {
   /// **'Bekor qilish'**
   String get restCancelOrder;
 
+  /// No description provided for @restCancelAtCashier.
+  ///
+  /// In uz, this message translates to:
+  /// **'Buyurtmani yoki undagi taomni bekor qilish uchun kassir yoki adminga murojaat qiling'**
+  String get restCancelAtCashier;
+
   /// No description provided for @restAccept.
   ///
   /// In uz, this message translates to:

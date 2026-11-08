@@ -42,6 +42,18 @@ Future<int?> showRemoveDishSheet(BuildContext context, RestaurantOrderItem item,
   );
 }
 
+/// Asks how many portions of [item] to take off [order] (owner/admin) — null when the user backed
+/// out, or when it's the order's last dish (that's cancelling the whole order; a snackbar says so).
+Future<int?> pickDishRemoval(BuildContext context, RestaurantOrder order, RestaurantOrderItem item) async {
+  final max = item.quantity < order.unitCount - 1 ? item.quantity : order.unitCount - 1;
+  if (max < 1) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.rposLastItem)));
+    return null;
+  }
+  final kitchenNotified = item.kitchenSent && order.status != RestaurantOrderStatus.served;
+  return showRemoveDishSheet(context, item, max, kitchenNotified);
+}
+
 class _RemoveDishSheet extends StatefulWidget {
   const _RemoveDishSheet({required this.item, required this.max, required this.kitchenNotified});
 
@@ -172,15 +184,7 @@ class _PosBillCardState extends State<PosBillCard> {
       (double.tryParse(_discount.text.trim().replaceAll(',', '.')) ?? 0).clamp(0, widget.order.subtotal).toDouble();
 
   Future<void> _remove(RestaurantOrderItem item) async {
-    final order = widget.order;
-    // The last dish can't go — that's cancelling the bill.
-    final max = item.quantity < order.unitCount - 1 ? item.quantity : order.unitCount - 1;
-    if (max < 1) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.rposLastItem)));
-      return;
-    }
-    final kitchenNotified = item.kitchenSent && order.status != RestaurantOrderStatus.served;
-    final quantity = await showRemoveDishSheet(context, item, max, kitchenNotified);
+    final quantity = await pickDishRemoval(context, widget.order, item);
     if (quantity != null) widget.onRemove(item, quantity);
   }
 
@@ -213,7 +217,8 @@ class _PosBillCardState extends State<PosBillCard> {
     final actions = getStatusActions(order, widget.role, widget.userId);
     final forward = actions.where((s) => s != RestaurantOrderStatus.cancelled).toList();
     final canCancel = actions.contains(RestaurantOrderStatus.cancelled);
-    final canEdit = canAddItems(order, widget.role);
+    final canAdd = canAddItems(order, widget.role, widget.userId);
+    final canRemove = canRemoveItems(order, widget.role);
     final discount = _discountValue;
     final pre = (order.subtotal - discount).clamp(0, double.infinity).toDouble();
     final service = _round2(pre * order.serviceChargePercent / 100);
@@ -313,7 +318,7 @@ class _PosBillCardState extends State<PosBillCard> {
                     money(item.total),
                     style: TextStyle(color: colors.textSecondary, fontSize: 14, fontWeight: FontWeight.w700),
                   ),
-                  if (canEdit)
+                  if (canRemove)
                     IconButton(
                       visualDensity: VisualDensity.compact,
                       tooltip: '${l10n.rposRemove}: ${item.productName}',
@@ -329,7 +334,7 @@ class _PosBillCardState extends State<PosBillCard> {
             _Note(text: order.notes!, color: const Color(0xFFB4690E)),
           ],
           // Stacked full width: the labels ("Tayyorlashni boshlash") don't fit side by side on a phone.
-          if (canEdit) ...[
+          if (canAdd) ...[
             const SizedBox(height: 10),
             OutlinedButton.icon(
               onPressed: widget.busy ? null : widget.onAddDishes,

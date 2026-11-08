@@ -2209,6 +2209,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get restCancelOrder => 'Отменить';
 
   @override
+  String get restCancelAtCashier =>
+      'Чтобы отменить заказ или блюдо в нём, обратитесь к кассиру или администратору';
+
+  @override
   String get restAccept => 'Принять';
 
   @override

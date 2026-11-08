@@ -618,6 +618,7 @@
   "restActionServed": "Mark as served",
   "restActionDelivered": "Mark as delivered",
   "restCancelOrder": "Cancel order",
+  "restCancelAtCashier": "To cancel the order or a dish in it, ask the cashier or an admin",
   "restAccept": "Accept",
   "restCancelOrderTitle": "Cancel the order",
   "restCancelOrderConfirm": "Do you want to cancel this order?",

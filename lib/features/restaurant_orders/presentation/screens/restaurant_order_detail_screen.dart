@@ -19,13 +19,18 @@ import 'package:bsmart/features/deliveries/presentation/widgets/delivery_outcome
 import 'package:bsmart/features/deliveries/presentation/widgets/delivery_status_badge.dart';
 import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_order.dart';
 import 'package:bsmart/features/restaurant_orders/domain/restaurant_order_status_actions.dart';
+import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_order_item.dart';
 import 'package:bsmart/features/restaurant_orders/domain/usecases/accept_restaurant_order_usecase.dart';
+import 'package:bsmart/features/restaurant_orders/domain/usecases/add_restaurant_order_items_usecase.dart';
 import 'package:bsmart/features/restaurant_orders/domain/usecases/assign_restaurant_order_courier_usecase.dart';
 import 'package:bsmart/features/restaurant_orders/domain/usecases/get_restaurant_order_usecase.dart';
 import 'package:bsmart/features/restaurant_orders/domain/usecases/list_restaurant_order_couriers_usecase.dart';
+import 'package:bsmart/features/restaurant_orders/domain/usecases/remove_restaurant_order_item_usecase.dart';
 import 'package:bsmart/features/restaurant_orders/domain/usecases/update_restaurant_order_status_usecase.dart';
 import 'package:bsmart/features/restaurant_orders/domain/entities/restaurant_order_person_ref.dart';
 import 'package:bsmart/features/restaurant_orders/presentation/widgets/restaurant_order_status_badge.dart';
+import 'package:bsmart/features/restaurant_pos/presentation/screens/dish_picker_screen.dart';
+import 'package:bsmart/features/restaurant_pos/presentation/widgets/pos_bill_card.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
 
@@ -174,6 +179,48 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
     await _loadDelivery();
   }
 
+  /// Owner/admin on any unpaid order, a waiter on an order they took (Optom_Savdo "Restaurant POS").
+  Future<void> _addDishes(RestaurantOrder order) async {
+    final l10n = context.l10n;
+    final messenger = ScaffoldMessenger.of(context);
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => DishPickerScreen(
+          title: l10n.rposAddDishesTo(order.orderNumber),
+          subtitle: order.table?.name,
+          submitLabel: l10n.rposAddToOrder,
+          askNote: false,
+          onSubmit: (items, _) async {
+            final result = await getIt<AddRestaurantOrderItemsUseCase>().call(order.id, items);
+            return result.fold((_) {
+              messenger.showSnackBar(SnackBar(content: Text(l10n.rposItemsAdded(order.orderNumber))));
+              return true;
+            }, (failure) {
+              messenger.showSnackBar(SnackBar(content: Text(failure.message)));
+              return false;
+            });
+          },
+        ),
+      ),
+    );
+    if (saved == true && mounted) await _load();
+  }
+
+  /// Cancels some portions of one dish or drink — owner/admin only.
+  Future<void> _removeDish(RestaurantOrder order, RestaurantOrderItem item) async {
+    final quantity = await pickDishRemoval(context, order, item);
+    if (quantity == null || !mounted) return;
+    final l10n = context.l10n;
+    setState(() => _isBusy = true);
+    final result = await getIt<RemoveRestaurantOrderItemUseCase>().call(order.id, item.id, quantity: quantity);
+    if (!mounted) return;
+    setState(() => _isBusy = false);
+    result.fold((updated) {
+      setState(() => _order = updated);
+      _showError(l10n.rposRemoved(item.productName, quantity));
+    }, (failure) => _showError(failure.message));
+  }
+
   void _showError(String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -233,7 +280,36 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
                       style: TextStyle(color: BrandColors.of(context).textMuted, fontWeight: FontWeight.w700),
                     ),
                   ),
-                  _buildItemsCard(order),
+                  _buildItemsCard(order, removable: role != null && canRemoveItems(order, role)),
+                  if (role != null && userId != null && canAddItems(order, role, userId)) ...[
+                    const SizedBox(height: 10),
+                    OutlinedButton.icon(
+                      onPressed: _isBusy ? null : () => _addDishes(order),
+                      icon: const Icon(Icons.add_rounded),
+                      label: Text(l10n.rposAddDishes),
+                      style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+                    ),
+                  ],
+                  if (role == UserRole.waiter && !order.status.isTerminal) ...[
+                    const SizedBox(height: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.info_outline_rounded, size: 18, color: BrandColors.of(context).textMuted),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            l10n.restCancelAtCashier,
+                            style: TextStyle(
+                              color: BrandColors.of(context).textMuted,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                   if (order.type == RestaurantOrderType.delivery) ...[
                     const SizedBox(height: 12),
                     _buildCourierCard(context, order, role),
@@ -341,7 +417,7 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
     );
   }
 
-  Widget _buildItemsCard(RestaurantOrder order) {
+  Widget _buildItemsCard(RestaurantOrder order, {required bool removable}) {
     final l10n = context.l10n;
     final colors = BrandColors.of(context);
     String money(double v) => CurrencyFormatter.format(v, Currency.uzs);
@@ -374,6 +450,13 @@ class _RestaurantOrderDetailScreenState extends ConsumerState<RestaurantOrderDet
                   money(item.total),
                   style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w800),
                 ),
+                if (removable)
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    tooltip: '${l10n.rposRemove}: ${item.productName}',
+                    onPressed: _isBusy ? null : () => _removeDish(order, item),
+                    icon: Icon(Icons.delete_outline_rounded, color: colors.textMuted),
+                  ),
               ],
             ),
           ],

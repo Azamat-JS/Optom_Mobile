@@ -2197,6 +2197,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get restCancelOrder => 'Cancel order';
 
   @override
+  String get restCancelAtCashier =>
+      'To cancel the order or a dish in it, ask the cashier or an admin';
+
+  @override
   String get restAccept => 'Accept';
 
   @override

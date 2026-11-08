@@ -2980,7 +2980,8 @@ is sold.
 - **Takeaway:** "Olib ketish" → `DishPickerScreen` → `CreateRestaurantOrderParams(takeaway: true)` →
   checkout at once. Abandoned → waits in `PosOtherOrdersScreen` ("To'langach oshxonaga
   yuboriladi") with its own "To'lovga o'tish".
-- **Waiter / board:** `canAddItems` is owner/admin only (and allowed on a served-but-unpaid bill).
+- **Waiter / board:** superseded 2026-11-08 (see "Waiter add / owner-only cancel" below).
+  `canAddItems` was owner/admin only (and allowed on a served-but-unpaid bill).
   The order form disables busy tables for a waiter ("· band" + hint) and only marks them for
   owner/admin. Board and order detail say "Olib ketish" for a takeaway.
 - **Data:** `RestaurantOrder.isTakeaway/saleId/kitchenHeld` (+ `isTableOrder`, `isEditable`,
@@ -3001,6 +3002,19 @@ is sold.
 - **Known gaps:** a special customer picked at a restaurant checkout is charged retail prices by
   the server but the screen shows the bill's prices; online-order approval isn't on the restaurant
   Kassa (still under orders); no per-dish notes in the picker.
+- **Waiter add / owner-only cancel (2026-11-08, user decision; server + web in Optom_Savdo
+  "Restaurant POS" → "Waiter limits"):**
+  - `restaurant_order_status_actions.dart`: `getStatusActions` gives CANCELLED to owner/admin only;
+    `canAddItems(order, role, userId)` = owner/admin on any unpaid order, a waiter only on an order
+    whose `waiter.id` is theirs (not a takeaway); new `canRemoveItems(order, role)` = owner/admin.
+  - `PosBillCard`: bins follow `canRemoveItems`, "Taom qo'shish" follows `canAddItems`.
+    `pickDishRemoval()` (public, in `pos_bill_card.dart`) holds the last-dish rule + the stepper sheet.
+  - `RestaurantOrderDetailScreen` (waiter board, owner board, "Boshqa buyurtmalar"): a bin per dish
+    for owner/admin (single dishes/drinks of delivery and takeaway orders can now be cancelled from
+    the app too), "Taom qo'shish" → `DishPickerScreen` for owner/admin and the waiter's own order,
+    and for a waiter an info line `restCancelAtCashier` instead of the cancel button.
+  - Verified: `flutter analyze` clean, 171 tests (the `editing` group rewritten: own/other waiter,
+    takeaway, paid, cancel actions per role). **Not run on a device/simulator.**
 
 ### Backend-Enhancement Track (new, separate service — same stack, no Firebase)
 Push notifications, a real Click/Payme payment gateway, working OTP/SMS login, and (lowest

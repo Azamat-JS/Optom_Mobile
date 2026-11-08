@@ -24,6 +24,7 @@ Map<String, dynamic> _json({
   num subtotal = 85000,
   num servicePercent = 10,
   num waiterPercent = 0,
+  String? waiterId,
   List<Map<String, dynamic>>? items,
 }) => {
   'id': id,
@@ -42,6 +43,7 @@ Map<String, dynamic> _json({
   'grandTotal': '${subtotal * (1 + (servicePercent + waiterPercent) / 100)}',
   'isTakeaway': isTakeaway,
   'saleId': saleId,
+  'waiter': waiterId == null ? null : {'id': waiterId, 'firstName': 'Ali', 'lastName': 'Valiyev'},
   'kitchenHeld': isTakeaway,
   'items':
       items ??
@@ -61,6 +63,7 @@ RestaurantOrder _order({
   String? saleId,
   String createdAt = '2026-11-07T10:00:00.000Z',
   num waiterPercent = 0,
+  String? waiterId,
 }) => restaurantOrderFromJson(
   _json(
     id: id,
@@ -71,6 +74,7 @@ RestaurantOrder _order({
     saleId: saleId,
     createdAt: createdAt,
     waiterPercent: waiterPercent,
+    waiterId: waiterId,
   ),
 );
 
@@ -131,14 +135,30 @@ void main() {
   });
 
   group('editing', () {
-    test('only the owner and admins change dishes, until paid', () {
-      final open = _order();
-      expect(canAddItems(open, UserRole.retailer), isTrue);
-      expect(canAddItems(open, UserRole.retailerAdmin), isTrue);
-      expect(canAddItems(open, UserRole.waiter), isFalse);
-      expect(canAddItems(_order(status: 'SERVED'), UserRole.retailer), isTrue);
-      expect(canAddItems(_order(saleId: 's'), UserRole.retailer), isFalse);
-      expect(canAddItems(_order(status: 'CANCELLED'), UserRole.retailer), isFalse);
+    test('owner and admins add dishes to any order until paid; a waiter only to their own', () {
+      final open = _order(waiterId: 'w1');
+      expect(canAddItems(open, UserRole.retailer, 'owner'), isTrue);
+      expect(canAddItems(open, UserRole.retailerAdmin, 'admin'), isTrue);
+      expect(canAddItems(open, UserRole.waiter, 'w1'), isTrue);
+      expect(canAddItems(open, UserRole.waiter, 'w2'), isFalse);
+      expect(canAddItems(_order(), UserRole.waiter, 'w1'), isFalse);
+      expect(canAddItems(_order(waiterId: 'w1', isTakeaway: true, tableId: null), UserRole.waiter, 'w1'), isFalse);
+      expect(canAddItems(_order(waiterId: 'w1', saleId: 's'), UserRole.waiter, 'w1'), isFalse);
+      expect(canAddItems(_order(status: 'SERVED'), UserRole.retailer, 'owner'), isTrue);
+      expect(canAddItems(_order(saleId: 's'), UserRole.retailer, 'owner'), isFalse);
+      expect(canAddItems(_order(status: 'CANCELLED'), UserRole.retailer, 'owner'), isFalse);
+    });
+
+    test('only the owner and admins cancel — the order or single dishes', () {
+      final open = _order(waiterId: 'w1');
+      expect(canRemoveItems(open, UserRole.retailer), isTrue);
+      expect(canRemoveItems(open, UserRole.retailerAdmin), isTrue);
+      expect(canRemoveItems(open, UserRole.waiter), isFalse);
+      expect(canRemoveItems(_order(saleId: 's'), UserRole.retailer), isFalse);
+      expect(getStatusActions(open, UserRole.retailer, 'owner'), contains(RestaurantOrderStatus.cancelled));
+      expect(getStatusActions(open, UserRole.retailerAdmin, 'admin'), contains(RestaurantOrderStatus.cancelled));
+      expect(getStatusActions(open, UserRole.waiter, 'w1'), isNot(contains(RestaurantOrderStatus.cancelled)));
+      expect(getStatusActions(open, UserRole.waiter, 'w1'), [RestaurantOrderStatus.preparing]);
     });
   });
 
