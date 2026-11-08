@@ -54,7 +54,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get languageHint => 'Interfeys tilini tanlang';
 
   @override
-  String get themeTitle => 'Mavzu';
+  String get themeTitle => 'Fon rangi';
 
   @override
   String get themeHint =>

@@ -3862,7 +3862,7 @@ above.
   needs a real customer (`rposDebtNeedsCustomer`). The customer card has a ✕ to go back to none.
   `SalePersonRef.isWalkIn` (+ `saleCustomerName`) shows the walk-in in the app's language on the
   receipt, sales history and return screen. New ARB key `salesWalkInHint`.
-- **Theme setting:** Settings → "Mavzu": Telefon sozlamasi (default) / Yorug' / Qorong'i.
+- **Theme setting:** Settings → "Fon rangi": Telefon sozlamasi (default) / Yorug' / Qorong'i.
   `core/theme/theme_mode_provider.dart` (`themeModeProvider`, SharedPreferences
   `bsmart.themeMode`, read in `bootstrap()` like the language) → `MaterialApp.themeMode`. Every
   screen (incl. `BrandTheme.of`) reads brightness from `Theme.of(context)`, so nothing else needed

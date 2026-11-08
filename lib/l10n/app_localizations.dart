@@ -163,7 +163,7 @@ abstract class AppLocalizations {
   /// No description provided for @themeTitle.
   ///
   /// In uz, this message translates to:
-  /// **'Mavzu'**
+  /// **'Fon rangi'**
   String get themeTitle;
 
   /// No description provided for @themeHint.
