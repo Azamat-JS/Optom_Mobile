@@ -3,12 +3,12 @@ import 'package:bsmart/core/utils/decimal_parser.dart';
 import 'package:bsmart/features/sales/domain/entities/shared_cart.dart';
 
 SharedCartItem sharedCartItemFromJson(Map<String, dynamic> json) => SharedCartItem(
-      productId: json['productId'] as String,
-      productName: json['productName'] as String,
-      quantity: (json['quantity'] as num).toDouble(),
-      unitPrice: (json['unitPrice'] as num).toDouble(),
-      discount: (json['discount'] as num?)?.toDouble() ?? 0,
-    );
+  productId: json['productId'] as String,
+  productName: json['productName'] as String,
+  quantity: (json['quantity'] as num).toDouble(),
+  unitPrice: (json['unitPrice'] as num).toDouble(),
+  discount: (json['discount'] as num?)?.toDouble() ?? 0,
+);
 
 /// Parses a `SharedCart` row as returned by `shared-cart.service.ts` — unlike
 /// `Product`/`Sale`, `items` is a raw `Json` column so its own fields

@@ -19,6 +19,7 @@ import 'package:bsmart/features/sales/presentation/screens/sale_return_screen.da
 import 'package:bsmart/features/sales/presentation/widgets/sale_status_badge.dart';
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
+import 'package:bsmart/features/sales/presentation/widgets/sale_customer_name.dart';
 
 /// A sale's receipt-like detail — items, totals, payment(s)/debt, and
 /// (while [Sale.canReturn]) a "Qaytarish" action. There is no separate
@@ -316,7 +317,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                 const SizedBox(height: 10),
                 Text(
                   [
-                    if (sale.customer != null) sale.customer!.fullName,
+                    if (sale.customer != null) saleCustomerName(sale.customer!, l10n),
                     _dateFormat.format(sale.createdAt.toLocal()),
                   ].join(' · '),
                   textAlign: TextAlign.center,

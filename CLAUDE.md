@@ -3855,3 +3855,23 @@ above.
   (Excel)" on the Reports screen's Ish kuni card → the Android share sheet correctly showed
   **`qarzlar.xlsx`** as the filename (screenshot-confirmed), not a UUID. Seed data removed
   afterward via a companion cleanup script.
+### 2026-11-08 — POS walk-in sales, light/dark theme setting, first real-iPhone run
+- **POS checkout without a customer** (matches the web `CheckoutDrawer`): a PAID sale with no
+  customer picked goes to the store's walk-in customer ("Mehmon xaridor", phone `000000000`,
+  `POST /customers/walk-in` via the existing `ResolveWalkInCustomerUseCase`). A DEBT sale still
+  needs a real customer (`rposDebtNeedsCustomer`). The customer card has a ✕ to go back to none.
+  `SalePersonRef.isWalkIn` (+ `saleCustomerName`) shows the walk-in in the app's language on the
+  receipt, sales history and return screen. New ARB key `salesWalkInHint`.
+- **Theme setting:** Settings → "Mavzu": Telefon sozlamasi (default) / Yorug' / Qorong'i.
+  `core/theme/theme_mode_provider.dart` (`themeModeProvider`, SharedPreferences
+  `bsmart.themeMode`, read in `bootstrap()` like the language) → `MaterialApp.themeMode`. Every
+  screen (incl. `BrandTheme.of`) reads brightness from `Theme.of(context)`, so nothing else needed
+  changing — keep it that way: never read `MediaQuery.platformBrightness` for colours.
+- **Real iPhone (iPhone 16 Pro Max, iOS 27):** signing uses the user's free Personal Team
+  (`DEVELOPMENT_TEAM = 8D4Y54AMFW` in `project.pbxproj`; free profiles expire after 7 days →
+  just rebuild). `API_BASE_URL` must be the Mac's LAN IP (`http://192.168.x.x:4005/api`).
+  Install with `flutter build ios --release` + `xcrun devicectl device install app` + `process
+  launch` — `flutter run --release` hung at "Installing and launching…" here. A debug build on a
+  real device only opens while attached to the debugger.
+- Verified: `flutter analyze` clean, 175 unit tests (4 new), a no-customer PAID sale accepted by
+  the real API (walk-in customer attached); on-device check by the user.

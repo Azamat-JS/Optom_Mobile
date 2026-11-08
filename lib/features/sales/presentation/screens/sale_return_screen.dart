@@ -12,6 +12,7 @@ import 'package:bsmart/features/sales/domain/usecases/create_sale_return_usecase
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
 import 'package:bsmart/shared/widgets/payment_method_tiles.dart';
+import 'package:bsmart/features/sales/presentation/widgets/sale_customer_name.dart';
 
 /// Return part or all of a sale — mirrors `CreateSaleReturnDto` exactly.
 /// `refundMethod` is required only when the original sale was PAID (a DEBT
@@ -114,7 +115,7 @@ class _SaleReturnScreenState extends State<SaleReturnScreen> {
                 decoration: BoxDecoration(color: DashColors.inset(context), borderRadius: BorderRadius.circular(14)),
                 child: Icon(Icons.receipt_rounded, color: colors.textSecondary),
               ),
-              title: sale.customer?.fullName ?? sale.saleNumber,
+              title: sale.customer == null ? sale.saleNumber : saleCustomerName(sale.customer!, l10n),
               subtitle: sale.saleNumber,
               trailing: Text(
                 CurrencyFormatter.format(sale.total, sale.currency),

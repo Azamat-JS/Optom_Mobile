@@ -160,6 +160,36 @@ abstract class AppLocalizations {
   /// **'Interfeys tilini tanlang'**
   String get languageHint;
 
+  /// No description provided for @themeTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mavzu'**
+  String get themeTitle;
+
+  /// No description provided for @themeHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ilovaning yorug\' yoki qorong\'i ko\'rinishini tanlang'**
+  String get themeHint;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon sozlamasi'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yorug\''**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qorong\'i'**
+  String get themeDark;
+
   /// No description provided for @languageChange.
   ///
   /// In uz, this message translates to:
@@ -3423,6 +3453,12 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Har bir sotuv mijoz nomiga yoziladi'**
   String get salesCustomerHint;
+
+  /// No description provided for @salesWalkInHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tanlanmasa, sotuv mehmon xaridorga yoziladi'**
+  String get salesWalkInHint;
 
   /// No description provided for @salesDebtLeft.
   ///

@@ -54,6 +54,22 @@ class AppLocalizationsUz extends AppLocalizations {
   String get languageHint => 'Interfeys tilini tanlang';
 
   @override
+  String get themeTitle => 'Mavzu';
+
+  @override
+  String get themeHint =>
+      'Ilovaning yorug\' yoki qorong\'i ko\'rinishini tanlang';
+
+  @override
+  String get themeSystem => 'Telefon sozlamasi';
+
+  @override
+  String get themeLight => 'Yorug\'';
+
+  @override
+  String get themeDark => 'Qorong\'i';
+
+  @override
   String get languageChange => 'Tilni o\'zgartirish';
 
   @override
@@ -1947,6 +1963,9 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get salesCustomerHint => 'Har bir sotuv mijoz nomiga yoziladi';
+
+  @override
+  String get salesWalkInHint => 'Tanlanmasa, sotuv mehmon xaridorga yoziladi';
 
   @override
   String get salesDebtLeft => 'Qarzga qoladi';

@@ -54,6 +54,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageHint => 'Choose the interface language';
 
   @override
+  String get themeTitle => 'Theme';
+
+  @override
+  String get themeHint => 'Choose a light or dark look for the app';
+
+  @override
+  String get themeSystem => 'Same as phone';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
   String get languageChange => 'Change language';
 
   @override
@@ -1995,6 +2010,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get salesCustomerHint => 'Every sale is recorded to a customer';
+
+  @override
+  String get salesWalkInHint =>
+      'If none is chosen, it\'s recorded as a walk-in sale';
 
   @override
   String get salesDebtLeft => 'Left as debt';

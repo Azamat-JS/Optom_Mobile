@@ -15,6 +15,7 @@ import 'package:bsmart/features/sales/presentation/screens/manual_revenue_form_s
 import 'package:bsmart/features/sales/presentation/screens/sale_detail_screen.dart';
 import 'package:bsmart/features/sales/presentation/widgets/sale_status_badge.dart';
 import 'package:bsmart/shared/widgets/dash_page.dart';
+import 'package:bsmart/features/sales/presentation/widgets/sale_customer_name.dart';
 
 /// The history chips: paid/debt filter the loaded page on the phone; "manual"
 /// asks the server for manual revenues only (`?kind=manual`).
@@ -169,7 +170,7 @@ class _SalesListScreenState extends ConsumerState<SalesListScreen> {
                         titleTrailing: sale.isManualRevenue
                             ? DashTag(label: l10n.manualRevenueTag, color: colors.accentText)
                             : null,
-                        title: sale.customer?.fullName ?? sale.saleNumber,
+                        title: sale.customer == null ? sale.saleNumber : saleCustomerName(sale.customer!, l10n),
                         subtitle: '${_dateFormat.format(sale.createdAt.toLocal())} · ${sale.saleNumber}',
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,

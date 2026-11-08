@@ -25,13 +25,13 @@ class CreateSaleItemParams {
   final double? costPrice;
 
   Map<String, dynamic> toRequestBody() => {
-        if (productId != null) 'productId': productId,
-        if (productName != null) 'productName': productName,
-        'quantity': quantity,
-        if (unitPrice != null) 'unitPrice': unitPrice,
-        if (discount != null && discount! > 0) 'discount': discount,
-        if (costPrice != null) 'costPrice': costPrice,
-      };
+    if (productId != null) 'productId': productId,
+    if (productName != null) 'productName': productName,
+    'quantity': quantity,
+    if (unitPrice != null) 'unitPrice': unitPrice,
+    if (discount != null && discount! > 0) 'discount': discount,
+    if (costPrice != null) 'costPrice': costPrice,
+  };
 }
 
 /// Mirrors `CreateSaleDto` exactly.
@@ -63,17 +63,17 @@ class CreateSaleParams {
   final double? paidAmount;
 
   Map<String, dynamic> toRequestBody() => {
-        'customerId': customerId,
-        'type': type.toWire(),
-        if (paymentMethod != null) 'paymentMethod': paymentMethod!.toWire(),
-        'items': items.map((i) => i.toRequestBody()).toList(),
-        if (discount != null && discount! > 0) 'discount': discount,
-        if (notes != null && notes!.isNotEmpty) 'notes': notes,
-        if (dueDate != null) 'dueDate': dueDate!.toUtc().toIso8601String(),
-        if (debtNotes != null && debtNotes!.isNotEmpty) 'debtNotes': debtNotes,
-        if (paidAmount != null && paidAmount! > 0) 'paidAmount': paidAmount,
-        if (restaurantOrderId != null) 'restaurantOrderId': restaurantOrderId,
-      };
+    'customerId': customerId,
+    'type': type.toWire(),
+    if (paymentMethod != null) 'paymentMethod': paymentMethod!.toWire(),
+    'items': items.map((i) => i.toRequestBody()).toList(),
+    if (discount != null && discount! > 0) 'discount': discount,
+    if (notes != null && notes!.isNotEmpty) 'notes': notes,
+    if (dueDate != null) 'dueDate': dueDate!.toUtc().toIso8601String(),
+    if (debtNotes != null && debtNotes!.isNotEmpty) 'debtNotes': debtNotes,
+    if (paidAmount != null && paidAmount! > 0) 'paidAmount': paidAmount,
+    if (restaurantOrderId != null) 'restaurantOrderId': restaurantOrderId,
+  };
 }
 
 /// Mirrors `CreateSaleReturnDto`.
@@ -94,10 +94,10 @@ class CreateSaleReturnParams {
   final PaymentMethod? refundMethod;
 
   Map<String, dynamic> toRequestBody() => {
-        'items': items.map((i) => i.toRequestBody()).toList(),
-        if (reason != null && reason!.isNotEmpty) 'reason': reason,
-        if (refundMethod != null) 'refundMethod': refundMethod!.toWire(),
-      };
+    'items': items.map((i) => i.toRequestBody()).toList(),
+    if (reason != null && reason!.isNotEmpty) 'reason': reason,
+    if (refundMethod != null) 'refundMethod': refundMethod!.toWire(),
+  };
 }
 
 /// `CreateManualRevenueDto.customer`: found by phone (last 9 digits) among the
@@ -110,10 +110,10 @@ class ManualRevenueCustomer {
   final String phone;
 
   Map<String, dynamic> toRequestBody() => {
-        'firstName': firstName,
-        if (lastName != null && lastName!.isNotEmpty) 'lastName': lastName,
-        'phone': phone,
-      };
+    'firstName': firstName,
+    if (lastName != null && lastName!.isNotEmpty) 'lastName': lastName,
+    'phone': phone,
+  };
 }
 
 /// Mirrors `CreateManualRevenueDto` (`POST /sales/manual-revenue`). Send
@@ -138,11 +138,11 @@ class CreateManualRevenueParams {
   final ManualRevenueCustomer? customer;
 
   Map<String, dynamic> toRequestBody() => {
-        'amount': amount,
-        'currency': currency.toWire(),
-        'paymentMethod': paymentMethod.toWire(),
-        if (date != null) 'date': date,
-        if (customerId != null) 'customerId': customerId,
-        if (customer != null) 'customer': customer!.toRequestBody(),
-      };
+    'amount': amount,
+    'currency': currency.toWire(),
+    'paymentMethod': paymentMethod.toWire(),
+    if (date != null) 'date': date,
+    if (customerId != null) 'customerId': customerId,
+    if (customer != null) 'customer': customer!.toRequestBody(),
+  };
 }

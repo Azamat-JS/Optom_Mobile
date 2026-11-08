@@ -5,6 +5,7 @@ import 'package:bsmart/core/l10n/l10n.dart';
 import 'package:bsmart/core/l10n/locale_provider.dart';
 import 'package:bsmart/core/router/app_router.dart';
 import 'package:bsmart/core/theme/app_theme.dart';
+import 'package:bsmart/core/theme/theme_mode_provider.dart';
 import 'package:bsmart/features/notifications/presentation/push/push_controller.dart';
 
 class BsmartApp extends ConsumerWidget {
@@ -14,6 +15,7 @@ class BsmartApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
     final locale = ref.watch(localeProvider);
+    final themeMode = ref.watch(themeModeProvider);
     // Push notifications follow the session for the app's whole life (Android only for now).
     ref.watch(pushControllerProvider);
 
@@ -22,6 +24,8 @@ class BsmartApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
+      // Light / dark / follow the phone — chosen in Settings.
+      themeMode: themeMode,
       routerConfig: router,
       scaffoldMessengerKey: rootScaffoldMessengerKey,
       // uz/ru/en (Phase 8) — strings from lib/l10n/*.arb via gen-l10n; the

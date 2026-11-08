@@ -54,6 +54,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get languageHint => 'Выберите язык интерфейса';
 
   @override
+  String get themeTitle => 'Тема';
+
+  @override
+  String get themeHint => 'Выберите светлое или тёмное оформление';
+
+  @override
+  String get themeSystem => 'Как в телефоне';
+
+  @override
+  String get themeLight => 'Светлая';
+
+  @override
+  String get themeDark => 'Тёмная';
+
+  @override
   String get languageChange => 'Сменить язык';
 
   @override
@@ -2006,6 +2021,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get salesCustomerHint => 'Каждая продажа записывается на клиента';
+
+  @override
+  String get salesWalkInHint => 'Если не выбрать, продажа запишется на гостя';
 
   @override
   String get salesDebtLeft => 'Останется в долг';

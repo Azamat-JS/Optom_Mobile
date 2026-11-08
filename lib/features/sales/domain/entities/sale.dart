@@ -14,7 +14,14 @@ class SalePersonRef {
   final String? phone;
 
   String get fullName => [firstName, lastName].where((e) => e != null && e.isNotEmpty).join(' ');
+
+  /// The store's shared "Mehmon xaridor" customer that a sale without a picked customer is
+  /// recorded to (`POST /customers/walk-in`). Same sentinel as the web's `isWalkInCustomer`.
+  bool get isWalkIn => firstName == 'Mehmon' && lastName == 'xaridor' && phone == walkInCustomerPhone;
 }
+
+/// The walk-in customer's sentinel phone (backend `customer.service.ts` WALK_IN).
+const walkInCustomerPhone = '000000000';
 
 class SaleItem {
   const SaleItem({
@@ -122,8 +129,7 @@ class Sale {
   final DateTime createdAt;
 
   /// A manual revenue moved no stock, so it's cancelled instead of returned.
-  bool get canReturn =>
-      !isManualRevenue && (status == SaleStatus.completed || status == SaleStatus.partiallyReturned);
+  bool get canReturn => !isManualRevenue && (status == SaleStatus.completed || status == SaleStatus.partiallyReturned);
 
   /// Only a manual revenue can be cancelled (`PATCH /sales/:id/cancel`).
   bool get canCancel => isManualRevenue && status == SaleStatus.completed;

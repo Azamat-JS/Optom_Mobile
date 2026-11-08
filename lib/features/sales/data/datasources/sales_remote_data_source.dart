@@ -14,10 +14,7 @@ class SalesRemoteDataSource {
   final Dio _dio;
 
   Future<PaginatedResult<Sale>> list(SaleQuery query) async {
-    final response = await _dio.get<Map<String, dynamic>>(
-      '/sales',
-      queryParameters: query.toQueryParameters(),
-    );
+    final response = await _dio.get<Map<String, dynamic>>('/sales', queryParameters: query.toQueryParameters());
     return PaginatedResult.fromJson(response.data!, saleFromJson);
   }
 
@@ -43,10 +40,7 @@ class SalesRemoteDataSource {
   }
 
   Future<Sale> createReturn(String saleId, CreateSaleReturnParams params) async {
-    final response = await _dio.post<Map<String, dynamic>>(
-      '/sales/$saleId/returns',
-      data: params.toRequestBody(),
-    );
+    final response = await _dio.post<Map<String, dynamic>>('/sales/$saleId/returns', data: params.toRequestBody());
     return saleFromJson(response.data!['sale'] as Map<String, dynamic>);
   }
 }

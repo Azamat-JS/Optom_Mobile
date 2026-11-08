@@ -8,6 +8,5 @@ class CreateSaleReturnUseCase {
 
   final SalesRepository _repository;
 
-  Future<Result<Sale>> call(String saleId, CreateSaleReturnParams params) =>
-      _repository.createReturn(saleId, params);
+  Future<Result<Sale>> call(String saleId, CreateSaleReturnParams params) => _repository.createReturn(saleId, params);
 }

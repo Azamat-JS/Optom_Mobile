@@ -15,25 +15,25 @@ SalePersonRef? salePersonRefFromJson(Map<String, dynamic>? json) {
 }
 
 SaleItem saleItemFromJson(Map<String, dynamic> json) => SaleItem(
-      id: json['id'] as String,
-      productName: json['productName'] as String,
-      productSku: json['productSku'] as String?,
-      productUnit: json['productUnit'] as String?,
-      quantity: parseDecimal(json['quantity']),
-      unitPrice: parseDecimal(json['unitPrice']),
-      discount: parseDecimal(json['discount'] ?? 0),
-      total: parseDecimal(json['total']),
-      returnedQuantity: parseDecimal(json['returnedQuantity'] ?? 0),
-      productId: json['productId'] as String?,
-    );
+  id: json['id'] as String,
+  productName: json['productName'] as String,
+  productSku: json['productSku'] as String?,
+  productUnit: json['productUnit'] as String?,
+  quantity: parseDecimal(json['quantity']),
+  unitPrice: parseDecimal(json['unitPrice']),
+  discount: parseDecimal(json['discount'] ?? 0),
+  total: parseDecimal(json['total']),
+  returnedQuantity: parseDecimal(json['returnedQuantity'] ?? 0),
+  productId: json['productId'] as String?,
+);
 
 SalePayment salePaymentFromJson(Map<String, dynamic> json) => SalePayment(
-      id: json['id'] as String,
-      amount: parseDecimal(json['amount']),
-      method: PaymentMethod.fromWire(json['method'] as String),
-      status: json['status'] as String,
-      paidAt: DateTime.parse(json['paidAt'] as String),
-    );
+  id: json['id'] as String,
+  amount: parseDecimal(json['amount']),
+  method: PaymentMethod.fromWire(json['method'] as String),
+  status: json['status'] as String,
+  paidAt: DateTime.parse(json['paidAt'] as String),
+);
 
 SaleDebtRef? saleDebtRefFromJson(dynamic json) {
   if (json is! Map<String, dynamic> || json.isEmpty) return null;

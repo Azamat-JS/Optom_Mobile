@@ -11,6 +11,7 @@ import 'package:bsmart/core/theme/app_colors.dart';
 import 'package:bsmart/core/theme/brand_theme.dart';
 import 'package:bsmart/core/utils/currency_formatter.dart';
 import 'package:bsmart/features/customers/domain/entities/customer.dart';
+import 'package:bsmart/features/customers/domain/usecases/resolve_walk_in_customer_usecase.dart';
 import 'package:bsmart/features/sales/domain/entities/sale_write_params.dart';
 import 'package:bsmart/features/sales/domain/pricing/discount_limit.dart';
 import 'package:bsmart/features/sales/domain/usecases/create_sale_usecase.dart';
@@ -23,9 +24,13 @@ import 'package:bsmart/features/customers/presentation/widgets/special_customer_
 import 'package:bsmart/shared/widgets/dash_kit.dart';
 import 'package:bsmart/shared/widgets/payment_method_tiles.dart';
 
-/// POS checkout — pick a customer, choose PAID (+ payment method) or DEBT
+/// POS checkout — optionally pick a customer, choose PAID (+ payment method) or DEBT
 /// (+ optional up-front `paidAmount`/due date), apply a sale-level discount,
 /// then submit. Mirrors `CreateSaleDto` exactly (see `sale.service.ts`).
+///
+/// The customer is optional for a PAID sale: with none picked the sale goes to the store's
+/// walk-in customer ("Mehmon xaridor", `POST /customers/walk-in`), the same as the web
+/// checkout. A DEBT sale still needs a real customer, since the debt is theirs.
 ///
 /// Phase 9 U4b: grey page with cards — customer, items with steppers, the
 /// paid/debt pill toggle, payment-method tiles, discount + note, the bill —
@@ -68,14 +73,14 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   Future<void> _submit() async {
     final cart = ref.read(posCartProvider);
     if (cart.isEmpty) return;
-    if (_customer == null) {
-      setState(() => _errorMessage = context.l10n.commonPickCustomer);
+    if (_type == SaleType.debt && _customer == null) {
+      setState(() => _errorMessage = context.l10n.rposDebtNeedsCustomer);
       return;
     }
 
     final discount = double.tryParse(_discountController.text.trim()) ?? 0;
     final paidAmount = double.tryParse(_paidAmountController.text.trim()) ?? 0;
-    final special = _customer!.isSpecial;
+    final special = _customer?.isSpecial ?? false;
     // The owners' discount limits cap the sale-level discount (the server spreads it over the
     // lines and refuses a sale that takes a product past its limit).
     final discountMax = _saleDiscountMax(cart, special);
@@ -91,8 +96,19 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       _errorMessage = null;
     });
 
+    var customerId = _customer?.id;
+    if (customerId == null) {
+      final walkIn = await getIt<ResolveWalkInCustomerUseCase>().call();
+      if (!mounted) return;
+      walkIn.fold((c) => customerId = c.id, (failure) => _errorMessage = failure.message);
+      if (customerId == null) {
+        setState(() => _isSubmitting = false);
+        return;
+      }
+    }
+
     final params = CreateSaleParams(
-      customerId: _customer!.id,
+      customerId: customerId!,
       type: _type,
       paymentMethod: _type == SaleType.paid ? _paymentMethod : (paidAmount > 0 ? _paymentMethod : null),
       items: cart.lines.values
@@ -129,7 +145,11 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
   static double? _saleDiscountMax(PosCartState cart, bool special) => maxSaleDiscount([
     for (final line in cart.lines.values)
-      LimitLine(product: line.product, quantity: line.quantity, total: line.totalFor(specialCustomer: special)),
+      LimitLine(
+        product: line.product,
+        quantity: line.quantity,
+        total: line.totalFor(specialCustomer: special),
+      ),
   ]);
 
   /// Asks for a line's discount in %, never above the owner's limit for it.
@@ -204,8 +224,20 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   ),
                 ],
               ),
-              DashSectionTitle(l10n.salesCustomer, padding: const EdgeInsets.fromLTRB(4, 18, 4, 10)),
-              _CustomerCard(customer: _customer, onTap: _pickCustomer, missing: _errorMessage != null),
+              DashSectionTitle(
+                _type == SaleType.debt ? l10n.salesCustomer : l10n.rposCustomerOptional,
+                padding: const EdgeInsets.fromLTRB(4, 18, 4, 10),
+              ),
+              _CustomerCard(
+                customer: _customer,
+                required: _type == SaleType.debt,
+                onTap: _pickCustomer,
+                onClear: () => setState(() {
+                  _customer = null;
+                  _errorMessage = null;
+                }),
+                missing: _errorMessage != null,
+              ),
               if (special) ...[
                 const SizedBox(height: 10),
                 SpecialPricingNotice(
@@ -335,12 +367,23 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   }
 }
 
-/// Picked customer (initial, name, phone, "O'zgartirish") or a prompt.
+/// Picked customer (initial, name, phone, "O'zgartirish", ✕ to clear) or, with none picked,
+/// the walk-in customer (paid sale) or a prompt to pick one (debt sale).
 class _CustomerCard extends StatelessWidget {
-  const _CustomerCard({required this.customer, required this.onTap, required this.missing});
+  const _CustomerCard({
+    required this.customer,
+    required this.required,
+    required this.onTap,
+    required this.onClear,
+    required this.missing,
+  });
 
   final Customer? customer;
+
+  /// A debt sale: a customer must be picked (no walk-in fallback).
+  final bool required;
   final VoidCallback onTap;
+  final VoidCallback onClear;
 
   /// Checkout was tried without a customer: outline the prompt in red.
   final bool missing;
@@ -356,7 +399,7 @@ class _CustomerCard extends StatelessWidget {
       position: DecorationPosition.foreground,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
-        border: c == null && missing ? Border.all(color: error, width: 1.5) : null,
+        border: c == null && required && missing ? Border.all(color: error, width: 1.5) : null,
       ),
       child: DashCard(
         onTap: onTap,
@@ -392,7 +435,7 @@ class _CustomerCard extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          c?.fullName ?? l10n.commonPickCustomer,
+                          c?.fullName ?? (required ? l10n.commonPickCustomer : l10n.rposWalkInCustomer),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w800),
@@ -402,11 +445,11 @@ class _CustomerCard extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    c == null ? l10n.salesCustomerHint : (c.phone ?? '—'),
+                    c == null ? (required ? l10n.rposDebtNeedsCustomer : l10n.salesWalkInHint) : (c.phone ?? '—'),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: c == null && missing ? error : colors.textMuted,
+                      color: c == null && required && missing ? error : colors.textMuted,
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                     ),
@@ -415,11 +458,21 @@ class _CustomerCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              c == null ? '' : l10n.commonChange,
-              style: TextStyle(color: colors.accentText, fontSize: 13.5, fontWeight: FontWeight.w800),
-            ),
-            Icon(Icons.chevron_right_rounded, color: colors.textMuted),
+            if (c == null)
+              Icon(Icons.chevron_right_rounded, color: colors.textMuted)
+            else ...[
+              Text(
+                l10n.commonChange,
+                style: TextStyle(color: colors.accentText, fontSize: 13.5, fontWeight: FontWeight.w800),
+              ),
+              // Back to no customer: a paid sale then goes to the walk-in customer.
+              IconButton(
+                tooltip: l10n.rposWalkInCustomer,
+                visualDensity: VisualDensity.compact,
+                onPressed: onClear,
+                icon: Icon(Icons.close_rounded, color: colors.textMuted),
+              ),
+            ],
           ],
         ),
       ),

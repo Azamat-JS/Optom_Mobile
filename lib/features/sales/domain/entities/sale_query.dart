@@ -33,22 +33,15 @@ class SaleQuery {
   }
 
   /// [kind] is nullable on purpose (null = both), so it has its own setter.
-  SaleQuery withKind(SaleKind? kind) => SaleQuery(
-        page: 1,
-        limit: limit,
-        type: type,
-        status: status,
-        customerId: customerId,
-        search: search,
-        kind: kind,
-      );
+  SaleQuery withKind(SaleKind? kind) =>
+      SaleQuery(page: 1, limit: limit, type: type, status: status, customerId: customerId, search: search, kind: kind);
 
   Map<String, dynamic> toQueryParameters() => {
-        'page': page,
-        'limit': limit,
-        if (type != null) 'type': type!.toWire(),
-        if (customerId != null) 'customerId': customerId,
-        if (search != null && search!.isNotEmpty) 'search': search,
-        if (kind != null) 'kind': kind!.toWire(),
-      };
+    'page': page,
+    'limit': limit,
+    if (type != null) 'type': type!.toWire(),
+    if (customerId != null) 'customerId': customerId,
+    if (search != null && search!.isNotEmpty) 'search': search,
+    if (kind != null) 'kind': kind!.toWire(),
+  };
 }
