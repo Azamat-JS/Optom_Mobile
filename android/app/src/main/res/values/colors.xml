@@ -3,6 +3,8 @@
     <!-- Same near-black as the Flutter splash (AppColors.ink), so the
          native launch window and the first Flutter frame match. -->
     <color name="launch_ink">#0B0D12</color>
+    <!-- Adaptive app icon background (tool/generate_app_icons.py). -->
+    <color name="ic_launcher_background">#0B0D12</color>
     <!-- Push notification accent (AppColors.brandYellow). -->
     <color name="notification_color">#FFC904</color>
 </resources>
